@@ -213,50 +213,51 @@ const VALIDATOR_NOTIFICATIONS: AuditNotification[] = [
 ];
 
 export function NotificationsTab({ role = 'Court Authority', onSelectTab }: { role?: string; onSelectTab?: (tab: string) => void }) {
-  const initialData = role === 'Independent Validator' ? VALIDATOR_NOTIFICATIONS : INITIAL_NOTIFICATIONS;
-  const initialSelected = role === 'Independent Validator' ? 'val-notif-01' : 'notif-duress-01';
-
-  const [notifications, setNotifications] = useState<AuditNotification[]>(initialData);
+  const [notifications, setNotifications] = useState<AuditNotification[]>([]);
   const [filterType, setFilterType] = useState<NotificationType | 'all'>('all');
   const [readFilter, setReadFilter] = useState<'all' | 'unread'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedId, setSelectedId] = useState<string | null>(initialSelected);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const fetchLiveNotifications = () => {
+    api.getNotifications(role)
+      .then(res => {
+        if (res.notifications && Array.isArray(res.notifications)) {
+          const mapped: AuditNotification[] = res.notifications.map((n: any) => ({
+            id: n.id,
+            type: n.type || 'system',
+            title: n.title,
+            message: n.message,
+            timestamp: n.timestamp || 'Just now',
+            isoDate: n.isoDate || n.createdAt || new Date().toISOString(),
+            isRead: Boolean(n.isRead),
+            readAt: n.readAt,
+            priority: n.priority || 'medium',
+            caseId: n.caseId,
+            sender: n.sender || 'Nyayakasha System',
+            details: n.details || n.message,
+            actionUrlTab: n.actionUrlTab,
+            actionLabel: n.actionLabel
+          }));
+          setNotifications(mapped);
+          if (mapped.length > 0 && !selectedId) {
+            setSelectedId(mapped[0].id);
+          }
+        }
+      })
+      .catch(err => console.log('Notifications backend fetch info:', err.message));
+  };
 
   useEffect(() => {
-    if (role === 'Independent Validator') {
-      api.getValidatorDashboard().then(data => {
-        if (data.activityLogs && data.activityLogs.length > 0) {
-          const live: AuditNotification[] = data.activityLogs.map((log: any) => ({
-            id: log.id || `log-${Math.random()}`,
-            type: log.type === 'Duress Protocol' ? 'duress' : 'consensus',
-            title: log.action,
-            message: `Event processed on ${log.nodeId || 'Validator Node'} with Zero-Knowledge verification.`,
-            timestamp: log.time || 'Just now',
-            isoDate: new Date().toISOString(),
-            isRead: false,
-            priority: log.type === 'Duress Protocol' ? 'high' : 'normal',
-            sender: 'Zero-Knowledge Consensus Engine',
-            details: `Action: ${log.action} | Node: ${log.nodeId}`
-          }));
-          if (data.activeDuressAlert) {
-            live.unshift({
-              id: data.activeDuressAlert.id,
-              type: 'duress',
-              title: data.activeDuressAlert.title,
-              message: data.activeDuressAlert.description,
-              timestamp: data.activeDuressAlert.timeAgo || 'Recent',
-              isoDate: data.activeDuressAlert.timestamp,
-              isRead: false,
-              priority: 'critical',
-              sender: 'Silent Duress Event Bus',
-              details: `Field Node: ${data.activeDuressAlert.fieldNodeId}`
-            });
-          }
-          setNotifications(live);
-          if (live.length > 0) setSelectedId(live[0].id);
-        }
-      }).catch(err => console.log('Live notifications fetch error:', err));
+    fetchLiveNotifications();
+    const interval = setInterval(fetchLiveNotifications, 3000);
+
+    // Request Web Push Notification Permission
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().catch(() => {});
     }
+
+    return () => clearInterval(interval);
   }, [role]);
 
   const unreadCount = useMemo(() => {
@@ -280,23 +281,15 @@ export function NotificationsTab({ role = 'Court Authority', onSelectTab }: { ro
   }, [notifications, filterType, readFilter, searchQuery]);
 
   const activeNotification = useMemo(() => {
-    return notifications.find(n => n.id === selectedId) || null;
+    return notifications.find(n => n.id === selectedId) || notifications[0] || null;
   }, [notifications, selectedId]);
 
   const handleToggleRead = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    setNotifications(prev => prev.map(n => {
-      if (n.id === id) {
-        const newIsRead = !n.isRead;
-        return {
-          ...n,
-          isRead: newIsRead,
-          readAt: newIsRead ? `Today at ${now}` : undefined
-        };
-      }
-      return n;
-    }));
+    const target = notifications.find(n => n.id === id);
+    if (target && !target.isRead) {
+      handleMarkAsRead(id, e);
+    }
   };
 
   const handleMarkAsRead = (id: string, e?: React.MouseEvent) => {
@@ -308,6 +301,7 @@ export function NotificationsTab({ role = 'Court Authority', onSelectTab }: { ro
       }
       return n;
     }));
+    api.markNotificationRead(id).catch(err => console.log('Mark read error:', err.message));
   };
 
   const handleMarkAllRead = () => {
@@ -317,6 +311,7 @@ export function NotificationsTab({ role = 'Court Authority', onSelectTab }: { ro
       isRead: true,
       readAt: n.readAt || `Today at ${now}`
     })));
+    api.markAllNotificationsRead(role).catch(err => console.log('Mark all read error:', err.message));
   };
 
   const handleViewRoute = (notif: AuditNotification, e?: React.MouseEvent) => {

@@ -252,6 +252,26 @@ export interface ValidatorActivityLogRecord {
   color?: string;
 }
 
+export interface NotificationRecord {
+  id: string;
+  type: 'forgery' | 'consensus' | 'precedent' | 'duress' | 'identity_unlock' | 'system';
+  title: string;
+  message: string;
+  timestamp: string;
+  isoDate: string;
+  isRead: boolean;
+  readAt?: string;
+  priority: 'critical' | 'high' | 'medium' | 'low';
+  caseId?: string;
+  sender: string;
+  details: string;
+  actionUrlTab?: string;
+  actionLabel?: string;
+  roleScope?: string;
+  userId?: string;
+  createdAt: string;
+}
+
 export interface OversightEscalationRecord {
   id: string;
   ticketId?: string;
@@ -286,6 +306,8 @@ class PrimaryDataStore {
   private analyticsReports: any[] = [];
   private oversightEscalations: any[] = [];
   private validatorActivityLogs: any[] = [];
+  private notifications: NotificationRecord[] = [];
+  private fcmTokens: Map<string, string> = new Map();
 
   // DECOY HONEYPOT DATASETS FOR DURESS SESSIONS
   private decoyCases = new Map<string, CaseRecord>();
@@ -497,6 +519,63 @@ class PrimaryDataStore {
           escalationRationale: 'Disposition rate anomaly exceeds threshold for independent oversight inquiry.',
           escalationCategory: 'Zone 4 West Special Tribunal',
           createdAt: '2026-08-07T08:15:00Z'
+        }
+      ];
+    }
+
+    // Notifications Seed
+    if (this.notifications.length === 0) {
+      this.notifications = [
+        {
+          id: 'notif-duress-01',
+          type: 'duress',
+          title: 'CRITICAL: Duress-Alert Escalation Logged',
+          message: 'Silent panic key entered at Zone 4 Field Terminal during evidence hashing.',
+          timestamp: '10 minutes ago',
+          isoDate: new Date().toISOString(),
+          isRead: false,
+          priority: 'critical',
+          caseId: 'FIR-2026-001',
+          sender: 'Oversight Security Sentinel',
+          details: 'Terminal #04 detected a silent duress PIN sequence. Visual evidence feed and officer geolocation locked in high-security audit ledger. Instant judicial oversight review triggered under Rule 88-B.',
+          actionUrlTab: 'Case Files',
+          actionLabel: 'Inspect Escalation Payload',
+          roleScope: 'all',
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'notif-forgery-01',
+          type: 'forgery',
+          title: 'New Item in Forgery Review Queue',
+          message: 'AI Anomaly Detector flagged probability of deepfake image tampering on exhibit EV-8825.',
+          timestamp: '28 minutes ago',
+          isoDate: new Date().toISOString(),
+          isRead: false,
+          priority: 'high',
+          caseId: 'FIR-2026-006',
+          sender: 'Forensic Neural Scanner v4.2',
+          details: 'JPEG compression grid inconsistency detected. Hash comparison against raw sensor snapshot failed checksum verification. Judicial review required.',
+          actionUrlTab: 'Chain of Custody',
+          actionLabel: 'Open Forgery Queue',
+          roleScope: 'all',
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'notif-consensus-01',
+          type: 'consensus',
+          title: 'Consensus Vote Required for Evidence Seal',
+          message: 'Multi-signature quorum pending (2/3 signatures) for high-value seizure log.',
+          timestamp: '1 hour ago',
+          isoDate: new Date().toISOString(),
+          isRead: false,
+          priority: 'high',
+          caseId: 'FIR-2026-002',
+          sender: 'High Court Quorum Engine',
+          details: 'Your judicial key signature is required to finalize block immutability.',
+          actionUrlTab: 'Chain of Custody',
+          actionLabel: 'Cast Quorum Vote',
+          roleScope: 'all',
+          createdAt: new Date().toISOString()
         }
       ];
     }
@@ -943,6 +1022,62 @@ class PrimaryDataStore {
       this.persistToDisk();
     }
     return alert;
+  }
+
+  // --- NOTIFICATIONS STORE & REAL-TIME DISPATCH ---
+  public getNotifications(role?: string): NotificationRecord[] {
+    if (!role || role === 'all') return [...this.notifications];
+    return this.notifications.filter(n => 
+      !n.roleScope || 
+      n.roleScope === 'all' || 
+      n.roleScope === role || 
+      n.roleScope.toLowerCase().includes(role.toLowerCase())
+    );
+  }
+
+  public saveNotification(notif: NotificationRecord): NotificationRecord {
+    const existingIdx = this.notifications.findIndex(n => n.id === notif.id);
+    if (existingIdx >= 0) {
+      this.notifications[existingIdx] = notif;
+    } else {
+      this.notifications.unshift(notif);
+    }
+    this.persistToDisk();
+    return notif;
+  }
+
+  public markNotificationRead(id: string): NotificationRecord | null {
+    const notif = this.notifications.find(n => n.id === id);
+    if (notif) {
+      notif.isRead = true;
+      notif.readAt = new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+      this.persistToDisk();
+      return notif;
+    }
+    return null;
+  }
+
+  public markAllNotificationsRead(role?: string): boolean {
+    let updated = false;
+    this.notifications.forEach(n => {
+      if (!role || !n.roleScope || n.roleScope === 'all' || n.roleScope === role) {
+        if (!n.isRead) {
+          n.isRead = true;
+          n.readAt = new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+          updated = true;
+        }
+      }
+    });
+    if (updated) this.persistToDisk();
+    return updated;
+  }
+
+  public registerDeviceToken(userId: string, token: string) {
+    this.fcmTokens.set(userId, token);
+  }
+
+  public getDeviceToken(userId: string): string | undefined {
+    return this.fcmTokens.get(userId);
   }
 
   public getDashboardCounts() {

@@ -417,6 +417,30 @@ export const api = {
     return fetchAPI(`/audit-log/verify-anchor/${encodeURIComponent(hash)}`, { method: 'GET' });
   },
 
+  // --- NOTIFICATIONS & FCM PUSH ---
+  getNotifications: async (role?: string) => {
+    const query = role ? `?role=${encodeURIComponent(role)}` : '';
+    return fetchAPI(`/notifications${query}`, { method: 'GET' });
+  },
+
+  markNotificationRead: async (id: string) => {
+    return fetchAPI(`/notifications/${id}/read`, { method: 'POST' });
+  },
+
+  markAllNotificationsRead: async (role?: string) => {
+    return fetchAPI('/notifications/read-all', {
+      method: 'POST',
+      body: JSON.stringify({ role })
+    });
+  },
+
+  registerDeviceToken: async (userId: string, deviceToken: string) => {
+    return fetchAPI('/notifications/register-device', {
+      method: 'POST',
+      body: JSON.stringify({ userId, deviceToken })
+    });
+  },
+
   getHealth: async () => {
     return fetchAPI('/health', { method: 'GET' });
   }

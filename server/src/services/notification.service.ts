@@ -92,13 +92,30 @@ class NotificationService {
   /**
    * Send FCM Push Notification (Firebase Cloud Messaging)
    */
-  public async sendFCMPush(deviceToken: string, title: string, body: string): Promise<boolean> {
+  public async sendFCMPush(deviceToken: string, title: string, body: string, data?: Record<string, string>): Promise<boolean> {
     auditLedger.appendEvent({
       eventType: 'NOTIFICATION_DISPATCH',
       userId: 'DEVICE_TOKEN',
       userRole: 'SYSTEM',
       details: { channel: 'FCM_PUSH', deviceToken, title }
     });
+
+    try {
+      const { getMessaging } = await import('firebase-admin/messaging');
+      const { getApps } = await import('firebase-admin/app');
+
+      if (getApps().length > 0 && deviceToken) {
+        await getMessaging().send({
+          token: deviceToken,
+          notification: { title, body },
+          data: data || {}
+        });
+        console.log(`🔥 Real Firebase FCM Push notification sent to token: ${deviceToken.slice(0, 10)}...`);
+        return true;
+      }
+    } catch (err: any) {
+      console.log('Firebase FCM Push notification info:', err.message || err);
+    }
     return true;
   }
 }
