@@ -1033,7 +1033,7 @@ class PrimaryDataStore {
       { key: 'Zone 5', name: 'Zone 5 (Central Apex Appellate)', code: 'DIST-05' },
     ];
 
-    return zones.map((z, idx) => {
+    return zones.map((z) => {
       const zoneCases = casesArr.filter(c => 
         c.jurisdictionCode?.includes(z.code) || 
         c.location?.toLowerCase().includes(z.key.toLowerCase()) ||
@@ -1048,16 +1048,18 @@ class PrimaryDataStore {
       zoneCases.forEach(c => {
         const created = new Date(c.createdAt || c.date || Date.now()).getTime();
         const updated = new Date(c.updatedAt || Date.now()).getTime();
-        const diffDays = Math.max(0.5, (updated - created) / (1000 * 60 * 60 * 24));
+        const diffDays = Math.max(0, (updated - created) / (1000 * 60 * 60 * 24));
         totalDays += diffDays;
       });
 
-      const avgDays = incidents > 0 ? Number((totalDays / incidents).toFixed(1)) : Number((1.2 + idx * 0.2).toFixed(1));
-      const resolveRate = incidents > 0 ? Number(((resolvedCount / incidents) * 100).toFixed(1)) : Number((94.0 - idx * 1.5).toFixed(1));
+      const avgDays = incidents > 0 ? Number((totalDays / incidents).toFixed(1)) : 0;
+      const resolveRate = incidents > 0 ? Number(((resolvedCount / incidents) * 100).toFixed(1)) : 0;
 
       const zoneEvidence = evidenceArr.filter(e => zoneCases.some(c => c.id === e.caseId));
       const sealedEvidenceCount = zoneEvidence.filter(e => e.status === 'Sealed' || e.status === 'Verified').length;
-      const integrity = zoneEvidence.length > 0 ? Number(((sealedEvidenceCount / zoneEvidence.length) * 100).toFixed(2)) : Number((99.95 - idx * 0.03).toFixed(2));
+      const integrity = zoneEvidence.length > 0 
+        ? Number(((sealedEvidenceCount / zoneEvidence.length) * 100).toFixed(2)) 
+        : (evidenceArr.length > 0 ? Number(((evidenceArr.filter(e => e.status === 'Sealed' || e.status === 'Verified').length / evidenceArr.length) * 100).toFixed(2)) : 100.0);
 
       return {
         zone: z.name,
@@ -1092,15 +1094,15 @@ class PrimaryDataStore {
       benchCases.forEach(c => {
         const created = new Date(c.createdAt || Date.now()).getTime();
         const updated = new Date(c.updatedAt || Date.now()).getTime();
-        totalDays += Math.max(0.5, (updated - created) / (1000 * 60 * 60 * 24));
+        totalDays += Math.max(0, (updated - created) / (1000 * 60 * 60 * 24));
       });
-      const avgDispositionDays = benchCases.length > 0 ? Number((totalDays / benchCases.length).toFixed(1)) : 1.4;
+      const avgDispositionDays = benchCases.length > 0 ? Number((totalDays / benchCases.length).toFixed(1)) : 0;
 
       const resolved = benchCases.filter(c => c.status === 'Closed' || c.status === 'Sealed').length;
-      const efficiency = benchCases.length > 0 ? Number(((resolved / benchCases.length) * 100).toFixed(1)) : 95.1;
+      const efficiency = benchCases.length > 0 ? Number(((resolved / benchCases.length) * 100).toFixed(1)) : 0;
 
       const flaggedPrecedents = precedentArr.filter(p => benchCases.some(c => c.id === p.caseId) && p.status === 'Flagged').length;
-      const precedentAlign = benchCases.length > 0 ? Number((((benchCases.length - flaggedPrecedents) / benchCases.length) * 100).toFixed(1)) : 98.2;
+      const precedentAlign = benchCases.length > 0 ? Number((((benchCases.length - flaggedPrecedents) / benchCases.length) * 100).toFixed(1)) : 100.0;
 
       const assignedOfficer = benchCases.find(c => c.officer)?.officer || b.judge;
 

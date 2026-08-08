@@ -15,41 +15,12 @@ import {
   AlertCircle, ExternalLink, Shield, UserCheck
 } from 'lucide-react';
 
-// ==================== MOCK ANALYTICAL DATASETS ==================== //
+// ==================== REAL ANALYTICAL DATASETS (FROM BACKEND STORE) ==================== //
 
-const TIME_SERIES_VOLUME = [
-  { date: 'Mon, Oct 12', digitalEvidence: 420, testimonies: 180, judicialOrders: 95, integrityScore: 99.9 },
-  { date: 'Tue, Oct 13', digitalEvidence: 510, testimonies: 220, judicialOrders: 110, integrityScore: 99.8 },
-  { date: 'Wed, Oct 14', digitalEvidence: 380, testimonies: 150, judicialOrders: 88, integrityScore: 99.9 },
-  { date: 'Thu, Oct 15', digitalEvidence: 640, testimonies: 310, judicialOrders: 145, integrityScore: 99.7 },
-  { date: 'Fri, Oct 16', digitalEvidence: 590, testimonies: 280, judicialOrders: 132, integrityScore: 99.8 },
-  { date: 'Sat, Oct 17', digitalEvidence: 210, testimonies: 90, judicialOrders: 45, integrityScore: 100.0 },
-  { date: 'Sun, Oct 18', digitalEvidence: 180, testimonies: 75, judicialOrders: 38, integrityScore: 100.0 },
-];
-
-const CASE_CATEGORIES = [
-  { name: 'Cyber Crime & Extortion', value: 38, count: 5630, color: '#6366f1' },
-  { name: 'Financial & Corporate Fraud', value: 28, count: 4150, color: '#3b82f6' },
-  { name: 'Narcotics & Contraband (NDPS)', value: 16, count: 2370, color: '#10b981' },
-  { name: 'IPR & Commercial Contracts', value: 12, count: 1780, color: '#f59e0b' },
-  { name: 'Property & Land Disputes', value: 6, count: 890, color: '#ec4899' },
-];
-
-const ZONE_BENCHMARK_DATA = [
-  { zone: 'Zone 1 (North High Court)', incidents: 3240, resolveRate: 94.2, avgDays: 1.4, integrity: 99.95, backlog: 42 },
-  { zone: 'Zone 2 (South Commercial Bench)', incidents: 2890, resolveRate: 91.8, avgDays: 1.8, integrity: 99.88, backlog: 58 },
-  { zone: 'Zone 3 (East Cyber Precinct)', incidents: 3810, resolveRate: 95.6, avgDays: 1.2, integrity: 99.92, backlog: 31 },
-  { zone: 'Zone 4 (West Special Tribunal)', incidents: 4120, resolveRate: 89.4, avgDays: 2.1, integrity: 99.80, backlog: 89 },
-  { zone: 'Zone 5 (Central Apex Appellate)', incidents: 760, resolveRate: 98.1, avgDays: 0.9, integrity: 100.0, backlog: 12 },
-];
-
-const COURT_BENCHES_VELOCITY = [
-  { bench: 'Division Bench 1 (Cyber & Financial)', judge: 'Hon. Justice V. K. Deshmukh', avgDispositionDays: 1.4, activeDockets: 112, efficiency: 96.8, precedentAlign: 98.2 },
-  { bench: 'Division Bench 2 (Commercial & IPR)', judge: 'Hon. Justice S. K. Roy', avgDispositionDays: 2.1, activeDockets: 98, efficiency: 92.4, precedentAlign: 95.4 },
-  { bench: 'Division Bench 3 (Criminal & NDPS)', judge: 'Hon. Magistrate P. L. Bhatia', avgDispositionDays: 1.6, activeDockets: 145, efficiency: 95.1, precedentAlign: 92.1 },
-  { bench: 'Special Writs & Constitution Bench', judge: 'Hon. Justice M. G. Rao', avgDispositionDays: 2.3, activeDockets: 77, efficiency: 90.5, precedentAlign: 97.6 },
-  { bench: 'Appellate Quality & Precedent Cell', judge: 'Hon. Senior Registrar A. K. Varma', avgDispositionDays: 1.1, activeDockets: 50, efficiency: 98.2, precedentAlign: 99.1 },
-];
+const TIME_SERIES_VOLUME: any[] = [];
+const CASE_CATEGORIES: any[] = [];
+const ZONE_BENCHMARK_DATA: any[] = [];
+const COURT_BENCHES_VELOCITY: any[] = [];
 
 // ==================== ANALYTICAL CORE MODULE INTERFACE ==================== //
 
@@ -1718,7 +1689,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {ZONE_BENCHMARK_DATA.map((zone, idx) => (
+              {zoneBenchmarkData.map((zone, idx) => (
                 <div key={idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 hover:border-indigo-300 transition-all">
                   <div className="flex items-start justify-between gap-2">
                     <h4 className="text-xs font-bold text-slate-900">{zone.zone}</h4>
@@ -2075,7 +2046,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 text-xs font-medium text-slate-800">
-                      {COURT_BENCHES_VELOCITY.map((b, idx) => (
+                      {courtBenchesVelocity.map((b, idx) => (
                         <tr key={idx} className="hover:bg-slate-50">
                           <td className="py-3.5 px-4 font-bold text-slate-900">{b.bench}</td>
                           <td className="py-3.5 px-4 text-slate-600">{b.judge}</td>
