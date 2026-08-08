@@ -213,3 +213,38 @@ analyticsRouter.post('/reports/:id/escalate', (req: Request, res: Response) => {
   });
 });
 
+/**
+ * POST /api/analytics/modules/attest
+ * Formally sign off on an aggregate analytics module as a Court Authority
+ */
+analyticsRouter.post('/modules/attest', (req: Request, res: Response) => {
+  const { moduleId, attestationNotes, judgePasskey } = req.body || {};
+
+  if (!moduleId || !judgePasskey) {
+    return res.status(400).json({
+      success: false,
+      message: 'Module ID and Judicial Private Signature Key Token are required.'
+    });
+  }
+
+  // Validate the bench key (simplified validation for MVP)
+  if (judgePasskey.trim() !== 'JUDGE-BENCH-KEY-2026-SECRET') {
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid Cryptographic Key: The provided bench key could not be verified.'
+    });
+  }
+
+  // Record event to hash-chained audit ledger
+  auditLedger.recordEvent('JUDICIAL_ANALYTICS_ATTESTATION', 'Court Authority', {
+    moduleId,
+    attestationNotes: attestationNotes || 'No notes provided',
+    attestedBy: 'Hon. High Court Judge',
+  });
+
+  return res.json({
+    success: true,
+    message: `Judicial Aggregate Analytics Attestation officially signed & sealed to Judicial Ledger.`
+  });
+});
+

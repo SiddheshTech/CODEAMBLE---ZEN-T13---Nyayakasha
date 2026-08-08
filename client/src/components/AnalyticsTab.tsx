@@ -15,12 +15,7 @@ import {
   AlertCircle, ExternalLink, Shield, UserCheck
 } from 'lucide-react';
 
-// ==================== REAL ANALYTICAL DATASETS (FROM BACKEND STORE) ==================== //
 
-const TIME_SERIES_VOLUME: any[] = [];
-const CASE_CATEGORIES: any[] = [];
-const ZONE_BENCHMARK_DATA: any[] = [];
-const COURT_BENCHES_VELOCITY: any[] = [];
 
 // ==================== ANALYTICAL CORE MODULE INTERFACE ==================== //
 
@@ -45,232 +40,7 @@ export interface AnalyticalModuleItem {
   statutoryAuditLog: Array<{ event: string; timestamp: string; hash: string; status: string }>;
 }
 
-const ANALYTICAL_MODULES: AnalyticalModuleItem[] = [
-  {
-    id: 'MOD-001',
-    title: 'Digital Evidence Ingestion & Sealing Velocity',
-    category: 'Evidence Integrity & Volume',
-    kpiPrimary: '14,820 Assets',
-    kpiLabel: 'Total Sealed Evidence',
-    trendPercentage: '+14.2% YoY',
-    trendDirection: 'up',
-    description: 'Cryptographic SHA-256 sealing throughput, zero-knowledge attestation speed, and zone-wise ingestion volume.',
-    statusBadge: '100% HSM Sealing Operational',
-    badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-300',
-    iconName: 'FileCheck',
-    lastSync: 'Sync Live (2 mins ago)',
-
-    metricHighlights: [
-      { label: 'Avg Sealing Duration', value: '1.2 Seconds', note: 'Hardware Security Module (HSM) cluster response' },
-      { label: 'ZK-Proof Validation', value: '99.91% Instant', note: 'Zero-knowledge verification of exhibit provenance' },
-      { label: 'Tamper Penetration Attempts', value: '0 Breaches', note: 'All multi-sig hash nodes verified intact' },
-    ],
-    zoneBreakdown: [
-      { zone: 'Zone 1 (North High Court)', metricValue: '3,240 Assets • 1.1s Seal', status: 'Optimal' },
-      { zone: 'Zone 2 (South Commercial Bench)', metricValue: '2,890 Assets • 1.3s Seal', status: 'Normal' },
-      { zone: 'Zone 3 (East Cyber Precinct)', metricValue: '3,810 Assets • 1.2s Seal', status: 'Optimal' },
-      { zone: 'Zone 4 (West Special Tribunal)', metricValue: '4,120 Assets • 1.0s Seal', status: 'Optimal' },
-      { zone: 'Zone 5 (Central Apex Appellate)', metricValue: '760 Assets • 0.9s Seal', status: 'Optimal' },
-    ],
-    timeSeriesDetailed: [
-      { time: '08:00 AM', valueA: 120, valueB: 118, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-      { time: '10:00 AM', valueA: 340, valueB: 338, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-      { time: '12:00 PM', valueA: 580, valueB: 579, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-      { time: '02:00 PM', valueA: 490, valueB: 488, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-      { time: '04:00 PM', valueA: 620, valueB: 619, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-      { time: '06:00 PM', valueA: 280, valueB: 280, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-    ],
-    statutoryAuditLog: [
-      { event: 'Batch Block #90210 Sealed via secp256k1', timestamp: '10 mins ago', hash: '0x8821...FA31', status: 'Verified' },
-      { event: 'CCTV Stream #EV-4412 Provenance Attestation', timestamp: '25 mins ago', hash: '0x9924...BC12', status: 'Verified' },
-      { event: 'Forensic Audio Hash Ledger Sync Completed', timestamp: '1 hour ago', hash: '0x7712...EE90', status: 'Verified' },
-    ]
-  },
-  {
-    id: 'MOD-002',
-    title: 'Judicial Adjudication Velocity & Docket Throughput',
-    category: 'Court Operations & Efficiency',
-    kpiPrimary: '1.8 Days',
-    kpiLabel: 'Avg Disposition Velocity',
-    trendPercentage: '-34% Backlog Days',
-    trendDirection: 'down',
-    description: 'Average time required to issue binding judicial orders, resolve evidentiary objections, and seal case files.',
-    statusBadge: 'High Efficiency Zone',
-    badgeColor: 'bg-indigo-100 text-indigo-900 border-indigo-300',
-    iconName: 'Clock',
-    lastSync: 'Sync Live (5 mins ago)',
-
-    metricHighlights: [
-      { label: 'Active Court Dockets', value: '482 Cases', note: 'Spread across 5 division benches' },
-      { label: 'On-Time Adjudication Ratio', value: '94.2%', note: 'Orders executed within statutory timetable' },
-      { label: 'Backlog Clearance Index', value: '1.24 Ratio', note: 'Cases resolved exceeds new incoming filings' },
-    ],
-    zoneBreakdown: [
-      { zone: 'Division Bench 1 (Cyber & Financial)', metricValue: '1.4 Days Avg • 112 Dockets', status: 'Optimal' },
-      { zone: 'Division Bench 2 (Commercial & IPR)', metricValue: '2.1 Days Avg • 98 Dockets', status: 'Normal' },
-      { zone: 'Division Bench 3 (Criminal & NDPS)', metricValue: '1.6 Days Avg • 145 Dockets', status: 'Optimal' },
-      { zone: 'Special Writs Bench', metricValue: '2.3 Days Avg • 77 Dockets', status: 'Attention' },
-      { zone: 'Appellate Quality Cell', metricValue: '1.1 Days Avg • 50 Dockets', status: 'Optimal' },
-    ],
-    timeSeriesDetailed: [
-      { time: 'Week 1', valueA: 85, valueB: 110, labelA: 'New Filings', labelB: 'Orders Executed' },
-      { time: 'Week 2', valueA: 92, valueB: 125, labelA: 'New Filings', labelB: 'Orders Executed' },
-      { time: 'Week 3', valueA: 78, valueB: 105, labelA: 'New Filings', labelB: 'Orders Executed' },
-      { time: 'Week 4', valueA: 110, valueB: 140, labelA: 'New Filings', labelB: 'Orders Executed' },
-    ],
-    statutoryAuditLog: [
-      { event: 'Interim Bail Order Executed in Case #HC-BOM-1104', timestamp: '12 mins ago', hash: '0xORDER_9901', status: 'Signed' },
-      { event: 'Commercial Liquidated Damages Ruling Issued', timestamp: '45 mins ago', hash: '0xORDER_9902', status: 'Signed' },
-      { event: 'Precedent Flag Review Formally Recorded', timestamp: '2 hours ago', hash: '0xORDER_9903', status: 'Signed' },
-    ]
-  },
-  {
-    id: 'MOD-003',
-    title: 'Zero-Knowledge Forensic Integrity & Forgery Engine Audit',
-    category: 'Security & Anti-Tampering',
-    kpiPrimary: '99.85%',
-    kpiLabel: 'System Integrity Index',
-    trendPercentage: '0 Breaches',
-    trendDirection: 'up',
-    description: 'AI-driven forgery detection, digital signature verification, frame-level video analysis, and hash integrity logs.',
-    statusBadge: '12 Flags Resolved',
-    badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-300',
-    iconName: 'ShieldCheck',
-    lastSync: 'Sync Live (1 min ago)',
-
-    metricHighlights: [
-      { label: 'CCTV Frame Discrepancies', value: '5 Detected', note: 'AI model isolated frame insertion attempts' },
-      { label: 'Audio Spectrum Tampering', value: '3 Discovered', note: 'Voice frequency anomaly auto-flagged' },
-      { label: 'Metadata Hash Variances', value: '4 Audited', note: 'Reconciled with original police device logs' },
-    ],
-    zoneBreakdown: [
-      { zone: 'Zone 1 (North)', metricValue: '0 Active Anomalies • 99.95% Score', status: 'Optimal' },
-      { zone: 'Zone 2 (South)', metricValue: '1 Hash Discrepancy (Resolved)', status: 'Optimal' },
-      { zone: 'Zone 3 (East)', metricValue: '0 Active Anomalies • 99.92% Score', status: 'Optimal' },
-      { zone: 'Zone 4 (West)', metricValue: '2 CCTV Flags (Judicial Review)', status: 'Attention' },
-      { zone: 'Zone 5 (Central)', metricValue: '0 Active Anomalies • 100% Score', status: 'Optimal' },
-    ],
-    timeSeriesDetailed: [
-      { time: 'Day 1', valueA: 100, valueB: 0, labelA: 'Integrity %', labelB: 'Unresolved Flags' },
-      { time: 'Day 2', valueA: 99.8, valueB: 1, labelA: 'Integrity %', labelB: 'Unresolved Flags' },
-      { time: 'Day 3', valueA: 99.9, valueB: 0, labelA: 'Integrity %', labelB: 'Unresolved Flags' },
-      { time: 'Day 4', valueA: 99.7, valueB: 2, labelA: 'Integrity %', labelB: 'Unresolved Flags' },
-      { time: 'Day 5', valueA: 99.9, valueB: 0, labelA: 'Integrity %', labelB: 'Unresolved Flags' },
-    ],
-    statutoryAuditLog: [
-      { event: 'Forgery Flag #FLAG-2026-001 Struck from Record', timestamp: '30 mins ago', hash: '0xFORG_8820', status: 'Resolved' },
-      { event: 'CCTV Audio Track Hash Cleared by Validator', timestamp: '3 hours ago', hash: '0xFORG_8821', status: 'Resolved' },
-    ]
-  },
-  {
-    id: 'MOD-004',
-    title: 'Precedent Neural Benchmarking & Outlier Variance',
-    category: 'Judicial Quality & Consistency',
-    kpiPrimary: '4,830 Rulings',
-    kpiLabel: 'Benchmark Cohort Size',
-    trendPercentage: '+3.4σ Max Outlier',
-    trendDirection: 'up',
-    description: 'Neural vector embedding similarity analysis comparing past judicial orders against historical circuit precedent cohorts.',
-    statusBadge: 'Layer 6 Digital Twin Active',
-    badgeColor: 'bg-purple-100 text-purple-900 border-purple-300',
-    iconName: 'Scale',
-    lastSync: 'Sync Live (3 mins ago)',
-
-    metricHighlights: [
-      { label: 'Appellate Alignment Score', value: '98.1%', note: 'Rulings aligned with higher court doctrine' },
-      { label: 'Active Outlier Flags', value: '3 Pending', note: 'Auto-routed to Judicial Quality Panel' },
-      { label: 'Vector Match Accuracy', value: '94.8% Cosine', note: 'Multi-dimensional legal semantic similarity' },
-    ],
-    zoneBreakdown: [
-      { zone: 'Cyber Extortion Cohort', metricValue: '1,240 Cases • 1 Flag (+3.4σ)', status: 'Attention' },
-      { zone: 'Commercial Contracts Cohort', metricValue: '850 Cases • 1 Flag (+2.8σ)', status: 'Attention' },
-      { zone: 'NDPS Search Procedure Cohort', metricValue: '2,100 Cases • 1 Flag (-2.9σ)', status: 'Attention' },
-      { zone: 'IPR Generic Drug Injunctions', metricValue: '640 Cases • 1 Flag (Reviewed)', status: 'Optimal' },
-    ],
-    timeSeriesDetailed: [
-      { time: 'Jan', valueA: 12, valueB: 11, labelA: 'Outliers Flagged', labelB: 'Quality Panel Reviewed' },
-      { time: 'Feb', valueA: 8, valueB: 8, labelA: 'Outliers Flagged', labelB: 'Quality Panel Reviewed' },
-      { time: 'Mar', valueA: 15, valueB: 14, labelA: 'Outliers Flagged', labelB: 'Quality Panel Reviewed' },
-      { time: 'Apr', valueA: 6, valueB: 5, labelA: 'Outliers Flagged', labelB: 'Quality Panel Reviewed' },
-    ],
-    statutoryAuditLog: [
-      { event: 'Precedent Flag #FLAG-001 Reviewed & Approved', timestamp: '1 hour ago', hash: '0xPREC_1101', status: 'Archived' },
-      { event: 'Gaussian Tail Distribution Calculated for N=1240', timestamp: '4 hours ago', hash: '0xPREC_1102', status: 'Calculated' },
-    ]
-  },
-  {
-    id: 'MOD-005',
-    title: 'Consensus Multi-Sig Voting & Validator Node Audit',
-    category: 'Consensus Governance',
-    kpiPrimary: '1,240 Seals',
-    kpiLabel: 'Consensus Blocks Sealed',
-    trendPercentage: '98.6% Quorum Rate',
-    trendDirection: 'up',
-    description: 'Multi-judge binding vote distribution, ZK-Proof validator node latency, and cryptographic block sealing ledger.',
-    statusBadge: '3 Nodes Online',
-    badgeColor: 'bg-emerald-100 text-emerald-900 border-emerald-300',
-    iconName: 'Users',
-    lastSync: 'Sync Live (1 min ago)',
-
-    metricHighlights: [
-      { label: 'Avg Consensus Latency', value: '3.8 Hours', note: 'Time from block creation to 3-node multi-sig' },
-      { label: 'Validator Node Uptime', value: '99.8% Online', note: 'Independent authority node health' },
-      { label: 'Quorum Compliance', value: '100% Validated', note: 'Zero unconfirmed blocks in active ledger' },
-    ],
-    zoneBreakdown: [
-      { zone: 'Node Alpha (Court Authority 1)', metricValue: '99.8% Uptime • 2.1h Avg Vote', status: 'Optimal' },
-      { zone: 'Node Beta (Independent Validator 1)', metricValue: '99.5% Uptime • 3.4h Avg Vote', status: 'Optimal' },
-      { zone: 'Node Gamma (Independent Validator 2)', metricValue: '98.9% Uptime • 4.2h Avg Vote', status: 'Normal' },
-    ],
-    timeSeriesDetailed: [
-      { time: 'Block #891', valueA: 3.2, valueB: 3, labelA: 'Hours to Quorum', labelB: 'Nodes Signed' },
-      { time: 'Block #892', valueA: 2.8, valueB: 3, labelA: 'Hours to Quorum', labelB: 'Nodes Signed' },
-      { time: 'Block #893', valueA: 4.1, valueB: 3, labelA: 'Hours to Quorum', labelB: 'Nodes Signed' },
-      { time: 'Block #894', valueA: 3.5, valueB: 3, labelA: 'Hours to Quorum', labelB: 'Nodes Signed' },
-    ],
-    statutoryAuditLog: [
-      { event: 'Consensus Block #89201 Sealed with 3/3 Signatures', timestamp: '15 mins ago', hash: '0xBLOCK_89201', status: 'Sealed' },
-      { event: 'Validator Node Beta Heartbeat Confirmed', timestamp: '1 hour ago', hash: '0xNODE_BETA_99', status: 'Active' },
-    ]
-  },
-  {
-    id: 'MOD-006',
-    title: 'Cross-Jurisdictional District Court Equity Benchmark',
-    category: 'Administrative Equity',
-    kpiPrimary: '5 Districts',
-    kpiLabel: 'Synchronized Benches',
-    trendPercentage: '100% Ledger Sync',
-    trendDirection: 'up',
-    description: 'Resource allocation, case load balance, equipment calibration, and digital infrastructure readiness across all court districts.',
-    statusBadge: 'Fully Synchronized',
-    badgeColor: 'bg-blue-100 text-blue-900 border-blue-300',
-    iconName: 'MapPin',
-    lastSync: 'Sync Live (4 mins ago)',
-
-    metricHighlights: [
-      { label: 'Resource Utilization Ratio', value: '98.2%', note: 'Optimal distribution of digital evidence servers' },
-      { label: 'Untracked Physical Exhibits', value: '0 Items', note: '100% barcodes mapped to cryptographic ledger' },
-      { label: 'Appellate Reversal Reduction', value: '-22% YoY', note: 'Attributable to digital twin precedent audits' },
-    ],
-    zoneBreakdown: [
-      { zone: 'District 1 (North Metropolitan)', metricValue: '3,240 Active Cases • 98.4% Sync', status: 'Optimal' },
-      { zone: 'District 2 (South Industrial)', metricValue: '2,890 Active Cases • 97.9% Sync', status: 'Optimal' },
-      { zone: 'District 3 (East Tech Hub)', metricValue: '3,810 Active Cases • 99.2% Sync', status: 'Optimal' },
-      { zone: 'District 4 (West Suburban)', metricValue: '4,120 Active Cases • 96.8% Sync', status: 'Normal' },
-      { zone: 'District 5 (Central Appellate)', metricValue: '760 Active Cases • 100% Sync', status: 'Optimal' },
-    ],
-    timeSeriesDetailed: [
-      { time: 'Q1 2025', valueA: 92, valueB: 88, labelA: 'Infrastructure Readiness', labelB: 'Resource Equity' },
-      { time: 'Q2 2025', valueA: 95, valueB: 91, labelA: 'Infrastructure Readiness', labelB: 'Resource Equity' },
-      { time: 'Q3 2025', valueA: 97, valueB: 94, labelA: 'Infrastructure Readiness', labelB: 'Resource Equity' },
-      { time: 'Q4 2025', valueA: 99, valueB: 98, labelA: 'Infrastructure Readiness', labelB: 'Resource Equity' },
-    ],
-    statutoryAuditLog: [
-      { event: 'District 3 Server Cluster Upgrade Verified', timestamp: '2 hours ago', hash: '0xDIST_03_UP', status: 'Completed' },
-      { event: 'Inter-Jurisdictional Ledger Audit Passed', timestamp: '5 hours ago', hash: '0xDIST_AUDIT', status: 'Passed' },
-    ]
-  }
-];
+const ANALYTICAL_MODULES: AnalyticalModuleItem[] = [];
 
 // ==================== HOMOMORPHIC ENCRYPTED DATASETS (INDEPENDENT VALIDATOR) ==================== //
 
@@ -300,33 +70,7 @@ export interface HomomorphicReportItem {
 
 const INITIAL_HOMOMORPHIC_REPORTS: HomomorphicReportItem[] = [];
 
-const FHE_DURATION_TRENDS = [
-  { period: 'Q1 2025', zone1North: 1.2, zone2South: 1.8, zone3Cyber: 1.1, zone4West: 1.9, zone5Apex: 0.9 },
-  { period: 'Q2 2025', zone1North: 1.3, zone2South: 1.7, zone3Cyber: 1.2, zone4West: 2.1, zone5Apex: 0.8 },
-  { period: 'Q3 2025', zone1North: 1.4, zone2South: 1.8, zone3Cyber: 1.1, zone4West: 2.4, zone5Apex: 0.9 },
-  { period: 'Q4 2025', zone1North: 1.3, zone2South: 1.9, zone3Cyber: 1.3, zone4West: 2.8, zone5Apex: 0.8 },
-  { period: 'Q1 2026', zone1North: 1.2, zone2South: 1.8, zone3Cyber: 1.2, zone4West: 3.1, zone5Apex: 0.9 },
-  { period: 'Q2 2026', zone1North: 1.4, zone2South: 1.7, zone3Cyber: 1.1, zone4West: 3.4, zone5Apex: 0.9 },
-  { period: 'Q3 2026', zone1North: 1.3, zone2South: 1.8, zone3Cyber: 1.2, zone4West: 3.2, zone5Apex: 0.9 },
-];
 
-const FHE_ANOMALY_TRENDS = [
-  { month: 'May 2026', bench1Cyber: 0.02, bench2Commercial: 0.05, bench3Criminal: 0.03, bench4WestTribunal: 0.08, bench5Apex: 0.01 },
-  { month: 'Jun 2026', bench1Cyber: 0.03, bench2Commercial: 0.04, bench3Criminal: 0.04, bench4WestTribunal: 0.12, bench5Apex: 0.01 },
-  { month: 'Jul 2026', bench1Cyber: 0.02, bench2Commercial: 0.06, bench3Criminal: 0.03, bench4WestTribunal: 0.25, bench5Apex: 0.01 },
-  { month: 'Aug 2026', bench1Cyber: 0.01, bench2Commercial: 0.05, bench3Criminal: 0.05, bench4WestTribunal: 0.48, bench5Apex: 0.01 },
-  { month: 'Sep 2026', bench1Cyber: 0.02, bench2Commercial: 0.04, bench3Criminal: 0.04, bench4WestTribunal: 0.71, bench5Apex: 0.01 },
-  { month: 'Oct 2026', bench1Cyber: 0.02, bench2Commercial: 0.05, bench3Criminal: 0.03, bench4WestTribunal: 0.84, bench5Apex: 0.01 },
-];
-
-const FHE_COHORT_PRIVACY_AUDIT = [
-  { category: 'Cyber Evidence Dockets', N: 5630, minThreshold: 50, isSafe: true },
-  { category: 'Financial & Corporate Fraud', N: 4150, minThreshold: 50, isSafe: true },
-  { category: 'NDPS Contraband Exhibits', N: 2370, minThreshold: 50, isSafe: true },
-  { category: 'IPR & Commercial Contracts', N: 1780, minThreshold: 50, isSafe: true },
-  { category: 'Property & Land Disputes', N: 890, minThreshold: 50, isSafe: true },
-  { category: 'West Special Tribunal Zone 4', N: 312, minThreshold: 50, isSafe: true },
-];
 
 export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d' | '90d' | 'YTD'>('7d');
@@ -520,12 +264,21 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
 
     setIsSigning(true);
 
-    setTimeout(() => {
-      setIsSigning(false);
-      showToast(
-        `Judicial Aggregate Analytics Attestation for "${selectedModule.title}" OFFICIALLY SIGNED & SEALED to Judicial Ledger.`
-      );
-    }, 800);
+    api.attestAnalyticsModule(selectedModule.id, attestationNotes, judgePasskey)
+      .then(res => {
+        if (res.success) {
+          showToast(res.message || `Judicial Aggregate Analytics Attestation for "${selectedModule.title}" OFFICIALLY SIGNED & SEALED to Judicial Ledger.`);
+          fetchAnalyticsData();
+        } else {
+          showToast(`Attestation Failed: ${res.message}`);
+        }
+      })
+      .catch(err => {
+        showToast(`Error: ${err.message || 'Failed to submit attestation.'}`);
+      })
+      .finally(() => {
+        setIsSigning(false);
+      });
   };
 
   if (role === 'Independent Validator') {
