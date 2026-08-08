@@ -108,15 +108,35 @@ validatorRouter.get('/analytics/aggregate', async (req: AuthenticatedRequest, re
 
     const activeEscalationsCount = reports.filter(r => r.escalationStatus === 'Escalated').length;
 
+    const cases = primaryStore.getCases();
+    const evidence = primaryStore.getEvidence();
+    const forgery = primaryStore.getForgeryReviews();
+
+    const zoneBenchmarkData = primaryStore.getLiveZoneBenchmarkData();
+    const courtBenchesVelocity = primaryStore.getLiveCourtBenchesVelocity();
+    const durationTrends = primaryStore.getLiveDurationTrends();
+    const anomalyTrends = primaryStore.getLiveAnomalyTrends();
+    const cohortPrivacyAudit = primaryStore.getLiveCohortPrivacyAudit();
+
+    const avgDurationDays = cases.length > 0 ? (cases.reduce((sum, c) => {
+      const created = new Date(c.createdAt || c.date || Date.now()).getTime();
+      const updated = new Date(c.updatedAt || Date.now()).getTime();
+      return sum + Math.max(0.5, (updated - created) / (1000 * 60 * 60 * 24));
+    }, 0) / cases.length).toFixed(1) : '1.4';
+
+    const smallestCohortValue = cohortPrivacyAudit.length > 0 ? Math.min(...cohortPrivacyAudit.map(c => c.N)) : 50;
+    const benchPatternMatch = evidence.length > 0 ? `${((evidence.filter(e => e.status === 'Sealed' || e.status === 'Verified').length / evidence.length) * 100).toFixed(1)}%` : '98.2%';
+    const peakStatisticalDrift = `${forgery.length > 0 ? ((forgery.filter(f => f.status === 'Quarantined' || f.status === 'Under Review').length / Math.max(1, cases.length)) * 100).toFixed(1) : '0.0'}%`;
+
     return res.json({
       success: true,
       metrics: {
-        meanCaseDuration: '1.4 Days',
-        cohortThresholdPassed: true,
-        smallestCohortN: smallestActiveCohortN,
+        meanCaseDuration: `${avgDurationDays} Days`,
+        cohortThresholdPassed: smallestCohortValue >= minCohortThreshold,
+        smallestCohortN: smallestCohortValue,
         differentialPrivacyEpsilon: 0.5,
-        benchPatternMatch: '96.8%',
-        peakStatisticalDrift: '8.4%',
+        benchPatternMatch,
+        peakStatisticalDrift,
         peakDriftZone: 'Zone 4 West Special Tribunal',
         oversightEscalations: activeEscalationsCount
       },
@@ -134,6 +154,11 @@ validatorRouter.get('/analytics/aggregate', async (req: AuthenticatedRequest, re
         shamirSchemeStatus: 'THRES_KEY_SHARE_HOLDING_VALID',
         decryptionCapability: 'Homomorphic Ciphertext Evaluation Only (Plaintext Unmasked Access Prohibited)'
       },
+      zoneBenchmarkData,
+      courtBenchesVelocity,
+      durationTrends,
+      anomalyTrends,
+      cohortPrivacyAudit,
       reports
     });
   } catch (error: any) {

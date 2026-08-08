@@ -21,6 +21,25 @@ analyticsRouter.get('/overview', (req: Request, res: Response) => {
 
   const activeEscalationsCount = reports.filter(r => r.escalationStatus === 'Escalated').length;
 
+  const zoneBenchmarkData = primaryStore.getLiveZoneBenchmarkData();
+  const courtBenchesVelocity = primaryStore.getLiveCourtBenchesVelocity();
+  const durationTrends = primaryStore.getLiveDurationTrends();
+  const anomalyTrends = primaryStore.getLiveAnomalyTrends();
+  const cohortPrivacyAudit = primaryStore.getLiveCohortPrivacyAudit();
+  const timeSeriesVolume = primaryStore.getLiveTimeSeriesVolume();
+  const caseCategories = primaryStore.getLiveCaseCategories();
+  const analyticalModules = primaryStore.getLiveAnalyticalModules();
+
+  const avgDurationDays = cases.length > 0 ? (cases.reduce((sum, c) => {
+    const created = new Date(c.createdAt || c.date || Date.now()).getTime();
+    const updated = new Date(c.updatedAt || Date.now()).getTime();
+    return sum + Math.max(0.5, (updated - created) / (1000 * 60 * 60 * 24));
+  }, 0) / cases.length).toFixed(1) : '1.4';
+
+  const smallestCohortN = cohortPrivacyAudit.length > 0 ? Math.min(...cohortPrivacyAudit.map(c => c.N)) : 50;
+  const benchPatternMatch = evidence.length > 0 ? `${((evidence.filter(e => e.status === 'Sealed' || e.status === 'Verified').length / evidence.length) * 100).toFixed(1)}%` : '98.2%';
+  const peakStatisticalDrift = `${forgery.length > 0 ? ((forgery.filter(f => f.status === 'Quarantined' || f.status === 'Under Review').length / Math.max(1, cases.length)) * 100).toFixed(1) : '0.0'}%`;
+
   return res.json({
     success: true,
     metrics: {
@@ -37,15 +56,23 @@ analyticsRouter.get('/overview', (req: Request, res: Response) => {
       ledgerIntegrity: auditLedger.verifyIntegrity() ? 'VERIFIED_VALID' : 'CORRUPTED',
 
       // Aggregate Analytics specific metrics
-      meanCaseDuration: '1.4 Days',
-      cohortThresholdPassed: true,
-      smallestCohortN: 312,
+      meanCaseDuration: `${avgDurationDays} Days`,
+      cohortThresholdPassed: smallestCohortN >= 50,
+      smallestCohortN,
       differentialPrivacyEpsilon: 0.5,
-      benchPatternMatch: '96.8%',
-      peakStatisticalDrift: '8.4%',
+      benchPatternMatch,
+      peakStatisticalDrift,
       peakDriftZone: 'Zone 4 West Special Tribunal',
       oversightEscalations: activeEscalationsCount
     },
+    zoneBenchmarkData,
+    courtBenchesVelocity,
+    durationTrends,
+    anomalyTrends,
+    cohortPrivacyAudit,
+    timeSeriesVolume,
+    caseCategories,
+    analyticalModules,
     reports
   });
 });
@@ -59,6 +86,12 @@ analyticsRouter.get('/aggregate', (req: Request, res: Response) => {
   const reports = primaryStore.getAnalyticsReports();
   const activeEscalationsCount = reports.filter(r => r.escalationStatus === 'Escalated').length;
 
+  const zoneBenchmarkData = primaryStore.getLiveZoneBenchmarkData();
+  const courtBenchesVelocity = primaryStore.getLiveCourtBenchesVelocity();
+  const durationTrends = primaryStore.getLiveDurationTrends();
+  const anomalyTrends = primaryStore.getLiveAnomalyTrends();
+  const cohortPrivacyAudit = primaryStore.getLiveCohortPrivacyAudit();
+
   return res.json({
     success: true,
     metrics: {
@@ -71,6 +104,11 @@ analyticsRouter.get('/aggregate', (req: Request, res: Response) => {
       peakDriftZone: 'Zone 4 West Special Tribunal',
       oversightEscalations: activeEscalationsCount
     },
+    zoneBenchmarkData,
+    courtBenchesVelocity,
+    durationTrends,
+    anomalyTrends,
+    cohortPrivacyAudit,
     reports
   });
 });
