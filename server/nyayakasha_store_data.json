@@ -5334,16 +5334,18 @@
       "updatedAt": "2026-08-08T23:03:55.568Z"
     },
     {
+      "barCouncilNumber": "POL-99482",
+      "role": "field_submitter",
+      "badgeId": "POL-99482",
+      "appointmentRef": "POL-99482",
+      "fullName": "Officer Vikram Singh",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$OuAFf5lU3lCcuZb/nkq9qg$tcmz/3Iw6z6qnYdWfQJpSFBum2NPmbr6MTYuRIhrkjI",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T23:09:56.999Z",
+      "jurisdictionCode": "MH-MUM-DIST-01",
       "id": "usr_field_submitter_1786230596999",
       "email": "fs_test_1786230596705@nyayakasha.gov.in",
-      "fullName": "Officer Vikram Singh",
-      "role": "field_submitter",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$OuAFf5lU3lCcuZb/nkq9qg$tcmz/3Iw6z6qnYdWfQJpSFBum2NPmbr6MTYuRIhrkjI",
-      "badgeId": "POL-99482",
-      "barCouncilNumber": "POL-99482",
-      "appointmentRef": "POL-99482",
-      "jurisdictionCode": "MH-MUM-DIST-01",
-      "approvalState": "mfa_pending",
       "stateHistory": [
         {
           "state": "submitted",
@@ -5360,24 +5362,24 @@
           "timestamp": "2026-08-08T23:09:57.432Z"
         }
       ],
+      "approvalState": "mfa_pending",
       "institutionVerified": true,
-      "vettingApproved": false,
-      "mfaEnrolled": false,
-      "createdAt": "2026-08-08T23:09:56.999Z",
-      "updatedAt": "2026-08-08T23:09:57.595Z",
       "realPinHash": "$argon2id$v=19$m=65536,t=3,p=4$owrHWOwNtWzyDQBFEwsDsg$jUnDmuZXz6QgQx1rvjZmu7q8P9gqatAB+tceLVuWkjE",
-      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$/qDJwmRi7z72uG1rCaD7IA$dsR79rwpyKfEm7B3cZ1Ekzyc0vrRXWT3lNwBpudMXF4"
+      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$/qDJwmRi7z72uG1rCaD7IA$dsR79rwpyKfEm7B3cZ1Ekzyc0vrRXWT3lNwBpudMXF4",
+      "updatedAt": "2026-08-08T23:09:57.595Z"
     },
     {
+      "barCouncilNumber": "MAH/4821/2012",
+      "role": "court_authority",
+      "badgeId": "MAH/4821/2012",
+      "appointmentRef": "MAH/4821/2012",
+      "fullName": "Judge Ananya Sharma",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$6BYepILwJIHajggZ9ucoxw$0Z47dJrDopk3aYIujgQLqlsDUc6goy1yRrjWQPo2JS4",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T23:09:57.151Z",
       "id": "usr_court_authority_1786230597151",
       "email": "court_test_1786230596705@nyayakasha.gov.in",
-      "fullName": "Judge Ananya Sharma",
-      "role": "court_authority",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$6BYepILwJIHajggZ9ucoxw$0Z47dJrDopk3aYIujgQLqlsDUc6goy1yRrjWQPo2JS4",
-      "badgeId": "MAH/4821/2012",
-      "barCouncilNumber": "MAH/4821/2012",
-      "appointmentRef": "MAH/4821/2012",
-      "approvalState": "mfa_pending",
       "stateHistory": [
         {
           "state": "submitted",
@@ -5395,21 +5397,21 @@
           "note": "Verified against Bar Council Records"
         }
       ],
+      "approvalState": "mfa_pending",
       "institutionVerified": true,
-      "vettingApproved": false,
-      "mfaEnrolled": false,
-      "createdAt": "2026-08-08T23:09:57.151Z",
       "updatedAt": "2026-08-08T23:09:57.401Z"
     },
     {
+      "role": "independent_validator",
+      "institutionId": "HIGH_COURT_OVERSIGHT",
+      "appointmentRef": "HIGH_COURT_OVERSIGHT",
+      "fullName": "Dr. Ramesh Patel",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$qsFgV8jjohqzPIj4iNR4/w$UOZsnICvdYs6GUfGYPjX5kikuUiWo3hngk1315unmMQ",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T23:09:57.271Z",
       "id": "usr_independent_validator_1786230597271",
       "email": "validator_test_1786230596705@nyayakasha.gov.in",
-      "fullName": "Dr. Ramesh Patel",
-      "role": "independent_validator",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$qsFgV8jjohqzPIj4iNR4/w$UOZsnICvdYs6GUfGYPjX5kikuUiWo3hngk1315unmMQ",
-      "appointmentRef": "HIGH_COURT_OVERSIGHT",
-      "institutionId": "HIGH_COURT_OVERSIGHT",
-      "approvalState": "institution_review",
       "stateHistory": [
         {
           "state": "submitted",
@@ -5422,23 +5424,24 @@
           "note": "Verified by Institutional Registry"
         }
       ],
+      "approvalState": "institution_review",
       "institutionVerified": true,
-      "vettingApproved": false,
-      "mfaEnrolled": false,
-      "createdAt": "2026-08-08T23:09:57.271Z",
       "updatedAt": "2026-08-08T23:09:57.278Z"
     },
     {
+      "barCouncilNumber": "POL-99482",
+      "role": "field_submitter",
+      "badgeId": "POL-99482",
+      "appointmentRef": "POL-99482",
+      "fullName": "Officer Vikram Singh",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$gx2bKmKrtBEp4FXcc5bfqw$UFeZTCk42MJm9zM0gO1Zbr87E3guKo2Me1X65+7hQIg",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T23:11:31.098Z",
+      "jurisdictionCode": "MH-MUM-DIST-01",
       "id": "usr_field_submitter_1786230691098",
       "email": "fs_test_1786230691012@nyayakasha.gov.in",
-      "fullName": "Officer Vikram Singh",
-      "role": "field_submitter",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$gx2bKmKrtBEp4FXcc5bfqw$UFeZTCk42MJm9zM0gO1Zbr87E3guKo2Me1X65+7hQIg",
-      "badgeId": "POL-99482",
-      "barCouncilNumber": "POL-99482",
-      "appointmentRef": "POL-99482",
-      "jurisdictionCode": "MH-MUM-DIST-01",
-      "approvalState": "mfa_pending",
+      "institutionVerified": true,
       "stateHistory": [
         {
           "state": "submitted",
@@ -5455,24 +5458,23 @@
           "timestamp": "2026-08-08T23:11:31.518Z"
         }
       ],
-      "institutionVerified": true,
-      "vettingApproved": false,
-      "mfaEnrolled": false,
-      "createdAt": "2026-08-08T23:11:31.098Z",
-      "updatedAt": "2026-08-08T23:11:31.691Z",
+      "approvalState": "mfa_pending",
       "realPinHash": "$argon2id$v=19$m=65536,t=3,p=4$UAPdrJ+kPXbmjfqfhYDdqw$oSUcbDxUR0mg4TrZaZWE7jsBDvBy2+VYHa3SaOU8HkY",
-      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$ZTlMtUYSX7BaUf8zOlzyoA$834bnMDNesIHRUDziWkMoRRcTzx419PBPQ5FyHxt2+c"
+      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$ZTlMtUYSX7BaUf8zOlzyoA$834bnMDNesIHRUDziWkMoRRcTzx419PBPQ5FyHxt2+c",
+      "updatedAt": "2026-08-08T23:11:31.691Z"
     },
     {
+      "barCouncilNumber": "MAH/4821/2012",
+      "role": "court_authority",
+      "badgeId": "MAH/4821/2012",
+      "appointmentRef": "MAH/4821/2012",
+      "fullName": "Judge Ananya Sharma",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$yGsc8+S1Yjo/5k6r1Wy4PQ$bcOX/+Ml/BdFf7L+pcaRde9DGBtryjhZQBC6D9fvPqQ",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T23:11:31.218Z",
       "id": "usr_court_authority_1786230691218",
       "email": "court_test_1786230691012@nyayakasha.gov.in",
-      "fullName": "Judge Ananya Sharma",
-      "role": "court_authority",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$yGsc8+S1Yjo/5k6r1Wy4PQ$bcOX/+Ml/BdFf7L+pcaRde9DGBtryjhZQBC6D9fvPqQ",
-      "badgeId": "MAH/4821/2012",
-      "barCouncilNumber": "MAH/4821/2012",
-      "appointmentRef": "MAH/4821/2012",
-      "approvalState": "mfa_pending",
       "stateHistory": [
         {
           "state": "submitted",
@@ -5490,50 +5492,46 @@
           "note": "Verified against Bar Council Records"
         }
       ],
+      "approvalState": "mfa_pending",
       "institutionVerified": true,
-      "vettingApproved": false,
-      "mfaEnrolled": false,
-      "createdAt": "2026-08-08T23:11:31.218Z",
       "updatedAt": "2026-08-08T23:11:31.496Z"
     },
     {
+      "role": "independent_validator",
+      "institutionId": "HIGH_COURT_OVERSIGHT",
+      "appointmentRef": "HIGH_COURT_OVERSIGHT",
+      "fullName": "Dr. Ramesh Patel",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$2nLqZfJWLGQ5N4Z1WweVzg$OmVspSHPcUaz9ZfO6jsdlbb4+BOhn6zl8EwDza2/kvc",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T23:11:31.315Z",
       "id": "usr_independent_validator_1786230691315",
       "email": "validator_test_1786230691012@nyayakasha.gov.in",
-      "fullName": "Dr. Ramesh Patel",
-      "role": "independent_validator",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$2nLqZfJWLGQ5N4Z1WweVzg$OmVspSHPcUaz9ZfO6jsdlbb4+BOhn6zl8EwDza2/kvc",
-      "appointmentRef": "HIGH_COURT_OVERSIGHT",
-      "institutionId": "HIGH_COURT_OVERSIGHT",
-      "approvalState": "institution_review",
       "stateHistory": [
         {
           "state": "submitted",
           "timestamp": "2026-08-08T23:11:31.315Z",
           "note": "Account signup submitted"
-        },
-        {
-          "state": "institution_review",
-          "timestamp": "2026-08-08T23:11:31.330Z",
-          "note": "Verified by Institutional Registry"
         }
       ],
-      "institutionVerified": true,
-      "vettingApproved": false,
-      "mfaEnrolled": false,
-      "createdAt": "2026-08-08T23:11:31.315Z",
-      "updatedAt": "2026-08-08T23:11:31.330Z"
+      "approvalState": "submitted",
+      "institutionVerified": false,
+      "updatedAt": "2026-08-08T23:11:31.315Z"
     },
     {
+      "barCouncilNumber": "POL-99482",
+      "role": "field_submitter",
+      "badgeId": "POL-99482",
+      "appointmentRef": "POL-99482",
+      "fullName": "Officer Vikram Singh",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$oKuphPivDOjbTBGTcoXegQ$oD8q12mDwamJVsUqFN44wNAW7IwakrGh1wVdYjTs4FQ",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T23:47:33.225Z",
+      "jurisdictionCode": "MH-MUM-DIST-01",
       "id": "usr_field_submitter_1786232853225",
       "email": "fs_test_1786232853104@nyayakasha.gov.in",
-      "fullName": "Officer Vikram Singh",
-      "role": "field_submitter",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$oKuphPivDOjbTBGTcoXegQ$oD8q12mDwamJVsUqFN44wNAW7IwakrGh1wVdYjTs4FQ",
-      "badgeId": "POL-99482",
-      "barCouncilNumber": "POL-99482",
-      "appointmentRef": "POL-99482",
-      "jurisdictionCode": "MH-MUM-DIST-01",
-      "approvalState": "mfa_pending",
+      "institutionVerified": true,
       "stateHistory": [
         {
           "state": "submitted",
@@ -5550,24 +5548,23 @@
           "timestamp": "2026-08-08T23:47:33.660Z"
         }
       ],
-      "institutionVerified": true,
-      "vettingApproved": false,
-      "mfaEnrolled": false,
-      "createdAt": "2026-08-08T23:47:33.225Z",
-      "updatedAt": "2026-08-08T23:47:33.857Z",
+      "approvalState": "mfa_pending",
       "realPinHash": "$argon2id$v=19$m=65536,t=3,p=4$2nRYie3fbgzR0BkfxJxlbw$lyOEaqD33mPWjbZOAAKFaU4rRdam/7s1xS5FgPNrEb8",
-      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$00+EG1kgcHrxqm01K0f0mw$K1J/Tfb+AF79mmn4TrLyO366q2i7AD1SsOy22YC+33o"
+      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$00+EG1kgcHrxqm01K0f0mw$K1J/Tfb+AF79mmn4TrLyO366q2i7AD1SsOy22YC+33o",
+      "updatedAt": "2026-08-08T23:47:33.857Z"
     },
     {
+      "barCouncilNumber": "MAH/4821/2012",
+      "role": "court_authority",
+      "badgeId": "MAH/4821/2012",
+      "appointmentRef": "MAH/4821/2012",
+      "fullName": "Judge Ananya Sharma",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$1WjTgiQU5qO9U/IL3b/FUQ$SUplmEeH6B4727DN/r22uDlXBI1W7/YMF1eechDDXxk",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T23:47:33.365Z",
       "id": "usr_court_authority_1786232853365",
       "email": "court_test_1786232853104@nyayakasha.gov.in",
-      "fullName": "Judge Ananya Sharma",
-      "role": "court_authority",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$1WjTgiQU5qO9U/IL3b/FUQ$SUplmEeH6B4727DN/r22uDlXBI1W7/YMF1eechDDXxk",
-      "badgeId": "MAH/4821/2012",
-      "barCouncilNumber": "MAH/4821/2012",
-      "appointmentRef": "MAH/4821/2012",
-      "approvalState": "mfa_pending",
       "stateHistory": [
         {
           "state": "submitted",
@@ -5585,21 +5582,21 @@
           "note": "Verified against Bar Council Records"
         }
       ],
+      "approvalState": "mfa_pending",
       "institutionVerified": true,
-      "vettingApproved": false,
-      "mfaEnrolled": false,
-      "createdAt": "2026-08-08T23:47:33.365Z",
       "updatedAt": "2026-08-08T23:47:33.629Z"
     },
     {
+      "role": "independent_validator",
+      "institutionId": "HIGH_COURT_OVERSIGHT",
+      "appointmentRef": "HIGH_COURT_OVERSIGHT",
+      "fullName": "Dr. Ramesh Patel",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$iFtP8bOD5OmzL+TNJVcdmw$rgbg4eGKcP2nEOUvBmbHl1qG8ngGrv0NsIINrwE3ZBc",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T23:47:33.507Z",
       "id": "usr_independent_validator_1786232853507",
       "email": "validator_test_1786232853104@nyayakasha.gov.in",
-      "fullName": "Dr. Ramesh Patel",
-      "role": "independent_validator",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$iFtP8bOD5OmzL+TNJVcdmw$rgbg4eGKcP2nEOUvBmbHl1qG8ngGrv0NsIINrwE3ZBc",
-      "appointmentRef": "HIGH_COURT_OVERSIGHT",
-      "institutionId": "HIGH_COURT_OVERSIGHT",
-      "approvalState": "institution_review",
       "stateHistory": [
         {
           "state": "submitted",
@@ -5612,14 +5609,177 @@
           "note": "Verified by Institutional Registry"
         }
       ],
+      "approvalState": "institution_review",
+      "institutionVerified": true,
+      "updatedAt": "2026-08-08T23:47:33.511Z"
+    },
+    {
+      "id": "usr_field_submitter_1786233103551",
+      "email": "fs_test_1786233103264@nyayakasha.gov.in",
+      "fullName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$jSIQVHtktD4JsWtl7vJX2A$fxVkuWiTe9knp7ZRQoGJw2BMssO0ffXOAHqICaaDeW4",
+      "badgeId": "POL-99482",
+      "barCouncilNumber": "POL-99482",
+      "appointmentRef": "POL-99482",
+      "jurisdictionCode": "MH-MUM-DIST-01",
+      "approvalState": "mfa_pending",
+      "stateHistory": [
+        {
+          "state": "submitted",
+          "timestamp": "2026-08-08T23:51:43.551Z",
+          "note": "Account signup submitted"
+        },
+        {
+          "state": "institution_review",
+          "timestamp": "2026-08-08T23:51:43.565Z",
+          "note": "Verified by Institutional Registry"
+        },
+        {
+          "state": "mfa_pending",
+          "timestamp": "2026-08-08T23:51:44.209Z"
+        }
+      ],
       "institutionVerified": true,
       "vettingApproved": false,
       "mfaEnrolled": false,
-      "createdAt": "2026-08-08T23:47:33.507Z",
-      "updatedAt": "2026-08-08T23:47:33.511Z"
+      "createdAt": "2026-08-08T23:51:43.551Z",
+      "updatedAt": "2026-08-08T23:51:44.513Z",
+      "realPinHash": "$argon2id$v=19$m=65536,t=3,p=4$7kKyb3HSWkykCfR1LC4YOg$GUOtgEv5xToQc0Oo2p8lrpY+Fk5ORgm3QuqLvbpAAP0",
+      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$GG2K094eX6zk56rxCIlXng$1jyLAcjjwKswfJNtsYaSD1eAYrNBRpwVOC5mPJvooAk"
+    },
+    {
+      "id": "usr_court_authority_1786233103775",
+      "email": "court_test_1786233103264@nyayakasha.gov.in",
+      "fullName": "Judge Ananya Sharma",
+      "role": "court_authority",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$xLpblArY4aD3cY6WClNKrQ$qMZtIF/lTQYSWi72qtTleTzfeTeM/MmVnMy+Biwdmow",
+      "badgeId": "MAH/4821/2012",
+      "barCouncilNumber": "MAH/4821/2012",
+      "appointmentRef": "MAH/4821/2012",
+      "approvalState": "mfa_pending",
+      "stateHistory": [
+        {
+          "state": "submitted",
+          "timestamp": "2026-08-08T23:51:43.775Z",
+          "note": "Account signup submitted"
+        },
+        {
+          "state": "institution_review",
+          "timestamp": "2026-08-08T23:51:43.784Z",
+          "note": "Verified by Institutional Registry"
+        },
+        {
+          "state": "mfa_pending",
+          "timestamp": "2026-08-08T23:51:44.173Z",
+          "note": "Verified against Bar Council Records"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": false,
+      "mfaEnrolled": false,
+      "createdAt": "2026-08-08T23:51:43.775Z",
+      "updatedAt": "2026-08-08T23:51:44.173Z"
+    },
+    {
+      "id": "usr_independent_validator_1786233103985",
+      "email": "validator_test_1786233103264@nyayakasha.gov.in",
+      "fullName": "Dr. Ramesh Patel",
+      "role": "independent_validator",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$t1C1B6XP9lzIHkKxbE57jQ$rb2mneh+BYBBiZQlicmGwA1WecXeVkxoxI1PmIWAp/Q",
+      "appointmentRef": "HIGH_COURT_OVERSIGHT",
+      "institutionId": "HIGH_COURT_OVERSIGHT",
+      "approvalState": "institution_review",
+      "stateHistory": [
+        {
+          "state": "submitted",
+          "timestamp": "2026-08-08T23:51:43.985Z",
+          "note": "Account signup submitted"
+        },
+        {
+          "state": "institution_review",
+          "timestamp": "2026-08-08T23:51:43.995Z",
+          "note": "Verified by Institutional Registry"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": false,
+      "mfaEnrolled": false,
+      "createdAt": "2026-08-08T23:51:43.985Z",
+      "updatedAt": "2026-08-08T23:51:43.995Z"
     }
   ],
   "duressAlerts": [
+    {
+      "userId": "usr_field_submitter_1786233103551",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786233106339_p1hi",
+      "timestamp": "2026-08-08T23:51:46.339Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786233103551",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786233105992_jjwa",
+      "timestamp": "2026-08-08T23:51:45.992Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786233103551",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786233105620_mzv8",
+      "timestamp": "2026-08-08T23:51:45.620Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786233103551",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786233105215_zvxf",
+      "timestamp": "2026-08-08T23:51:45.215Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786233103551",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786233104855_zig6",
+      "timestamp": "2026-08-08T23:51:44.855Z",
+      "status": "UNACKNOWLEDGED"
+    },
     {
       "userId": "usr_field_submitter_1786232853225",
       "userName": "Officer Vikram Singh",
@@ -9525,6 +9685,12 @@
       "userId": "usr_independent_validator_1786232853507",
       "submittedAt": "2026-08-08T23:47:33.525Z",
       "consentGiven": true
+    },
+    {
+      "id": "vet_1786233104022",
+      "userId": "usr_independent_validator_1786233103985",
+      "submittedAt": "2026-08-08T23:51:44.022Z",
+      "consentGiven": true
     }
   ],
   "cases": [
@@ -10093,33 +10259,32 @@
   "evidence": [
     {
       "id": "EV-8825",
-      "caseId": "132asd13213",
-      "title": "dadad",
+      "caseId": "eqwee34324",
+      "title": "rw3rqwererq",
       "type": "Digital Photo Snapshot",
-      "date": "Aug 08, 2026, 11:58 PM",
-      "hash": "0x8a4e73f65dbd6f8a187af74f8393d5e633c42921e6ab7a8d43314d6db258228b",
-      "status": "Transfer Pending",
-      "custodian": "Dr. S. Mehta (Cyber Forensics)",
+      "date": "Aug 09, 2026, 05:19 AM",
+      "hash": "0xdc75ee193678ecd472688e6f6adae9c45c14358e3047beb95097c843b9f315ef",
+      "status": "Sealed",
+      "custodian": "Officer R. Kulkarni (Zone 4 Field Operations)",
       "incidentLocation": "Field Location",
       "confidentialityLevel": "Restricted",
       "customMetadata": "",
-      "latitude": 18.5204,
-      "longitude": 73.8567,
-      "signature": "data:image/png;base64,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",
-      "seizureBagId": "SEZ-2026-70988",
+      "latitude": 19.076,
+      "longitude": 72.8774,
+      "signature": "data:image/png;base64,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",
+      "seizureBagId": "SEZ-2026-61867",
       "seizureMethod": "Crime Scene Search",
       "priorityLevel": "High Priority",
       "witnessName": "Witness at Scene (Sec 65B)",
       "preservationType": "Tamper-Evident Sealed Bag",
       "tags": [
-        "adadas"
+        "3eqweqw"
       ],
-      "evidenceNotes": "FSfSFaf",
-      "txHash": "0x27e048e7d6773ffa9fe69085d27a6de77a57ae644608f9ecd6f7b55ca8a241ac",
-      "blockNumber": 15058125,
-      "merkleRoot": "0x486b2255988d134e6391f8692dcc1b958fb6c8e0e86ab974a25f47cdf1c3b77f",
-      "createdAt": "2026-08-08T18:28:20.577Z",
-      "updatedAt": "2026-08-08T19:12:18.192Z"
+      "evidenceNotes": "",
+      "txHash": "0xc8fd70dd82fcc8c48a9df3a707766625a7e33a13e02bd4f8d7177734f8afb1e2",
+      "blockNumber": 15066727,
+      "merkleRoot": "0xe2fb97aef8a75eb31724d92757377bbc62d251b21177969d3400354c627354b6",
+      "createdAt": "2026-08-08T23:49:23.432Z"
     },
     {
       "id": "EV-8826",
@@ -11286,6 +11451,13 @@
       "privacyType": "Differential Privacy (ε=0.5)",
       "status": "SEALED",
       "createdAt": "2026-08-08T18:44:24.679Z"
+    },
+    {
+      "id": "REP-413",
+      "title": "rw3rqwererq Telemetry Audit",
+      "privacyType": "Differential Privacy (ε=0.5)",
+      "status": "SEALED",
+      "createdAt": "2026-08-08T23:49:23.455Z"
     }
   ],
   "oversightEscalations": [

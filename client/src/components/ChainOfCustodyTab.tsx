@@ -90,16 +90,21 @@ export function ChainOfCustodyTab() {
       if (selectedItem) {
         api.getEvidenceChain(selectedItem.id).then(res => {
           if (res && res.chainOfCustody && res.chainOfCustody.length > 0) {
-            setTimeline(res.chainOfCustody.map((event: any) => ({
-              time: new Date(event.timestamp).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-              title: event.eventType.replace(/_/g, ' '),
-              desc: event.details?.immutabilityNotice || (event.details?.reason ? `Reason: ${event.details.reason}` : null) || event.details?.notes || null,
-              actor: event.details?.newCustodian ? `${event.actorRole || event.actorId} -> ${event.details.newCustodian}` : (event.actorRole || event.actorId || null),
-              role: event.actorRole || 'Field Officer',
-              icon: CheckCircle2,
-              status: 'Verified',
-              hash: event.details?.txHash ? event.details.txHash.slice(0, 18) + '...' : (event.blockHash ? event.blockHash.slice(0, 18) + '...' : null)
-            })));
+            setTimeline(res.chainOfCustody.map((event: any) => {
+              const prev = event.details?.previousCustodian || event.userId || event.userRole || 'Officer R. Kulkarni (Zone 4 Field Operations)';
+              const next = event.details?.newCustodian;
+              const actorDisplay = next ? `${prev} -> ${next}` : (event.userId || event.userRole || event.actorRole || 'Field Officer');
+              return {
+                time: new Date(event.timestamp).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                title: event.eventType.replace(/_/g, ' '),
+                desc: event.details?.immutabilityNotice || (event.details?.reason ? `Reason: ${event.details.reason}` : null) || event.details?.notes || null,
+                actor: actorDisplay,
+                role: event.actorRole || (event.userRole === 'court_authority' ? 'Judicial Magistrate' : 'Field Officer'),
+                icon: CheckCircle2,
+                status: 'Verified',
+                hash: event.details?.txHash ? event.details.txHash.slice(0, 18) + '...' : (event.blockHash ? event.blockHash.slice(0, 18) + '...' : null)
+              };
+            }));
           } else {
             // No audit trail entries yet — show the sealed submission entry derived from evidence metadata
             if (selectedItem.hash || selectedItem.txHash) {

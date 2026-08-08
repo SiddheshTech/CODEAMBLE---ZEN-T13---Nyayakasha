@@ -65,7 +65,7 @@ evidenceRouter.post('/:id/transfer', async (req: Request, res: Response) => {
     }
 
     // Update exhibit custodian & status in store
-    const previousCustodian = exhibit.custodian;
+    const previousCustodian = exhibit.custodian || 'Officer R. Kulkarni (Zone 4 Field Operations)';
     exhibit.custodian = targetCustodian;
     exhibit.status = 'Transfer Pending';
     exhibit.updatedAt = new Date().toISOString();
