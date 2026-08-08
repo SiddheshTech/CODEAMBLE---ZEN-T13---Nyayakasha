@@ -860,14 +860,14 @@ export function DashboardPage({
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-black/5">
-                      {(realEvidence.length > 0 ? realEvidence.slice(0, 8).map((e: any) => ({
+                      {realEvidence.slice(0, 10).map((e: any) => ({
                         id: e.id,
                         title: e.title,
                         type: e.type || 'Evidence',
                         timestamp: e.date || 'Today, 10:42 AM',
-                        hash: e.hash ? (e.hash.startsWith('0x') ? e.hash.slice(0, 10) + '...' + e.hash.slice(-4) : '0x' + e.hash.slice(0, 6) + '...' + e.hash.slice(-4)) : '0x8f9a...3c2e',
+                        hash: e.hash ? (e.hash.startsWith('0x') ? e.hash.slice(0, 10) + '...' + e.hash.slice(-4) : '0x' + e.hash.slice(0, 8) + '...' + e.hash.slice(-4)) : '0x8f9a...3c2e',
                         status: e.status === 'Sealed' ? 'Hashed & Sealed' : e.status === 'Verified' ? 'Verified' : 'Pending Sync'
-                      })) : recentSubmissions).map((item) => (
+                      })).map((item) => (
                         <tr
                           key={item.id}
                           className="hover:bg-black/2 transition-colors"

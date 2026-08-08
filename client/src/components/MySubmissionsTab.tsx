@@ -386,15 +386,15 @@ export function MySubmissionsTab() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-black/5 p-4 rounded-2xl border border-black/5">
             <p className="text-[10px] uppercase font-bold text-black/50 mb-1">Total Submissions</p>
-            <p className="text-2xl font-bold text-black">{realSubmissions.length > 0 ? realSubmissions.length : 42}</p>
+            <p className="text-2xl font-bold text-black">{realSubmissions.length}</p>
           </div>
           <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
             <p className="text-[10px] uppercase font-bold text-emerald-600/70 mb-1">Verified Entries</p>
-            <p className="text-2xl font-bold text-emerald-700">{realSubmissions.filter(s => s.status === 'Verified' || s.status === 'Secured').length || 38}</p>
+            <p className="text-2xl font-bold text-emerald-700">{realSubmissions.filter(s => s.status === 'Verified' || s.status === 'Secured').length}</p>
           </div>
           <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100">
             <p className="text-[10px] uppercase font-bold text-amber-600/70 mb-1">Pending Review</p>
-            <p className="text-2xl font-bold text-amber-700">{realSubmissions.filter(s => s.status === 'Pending Review' || s.status === 'Pending').length || 3}</p>
+            <p className="text-2xl font-bold text-amber-700">{realSubmissions.filter(s => s.status === 'Pending Review' || s.status === 'Pending').length}</p>
           </div>
           <div className="bg-purple-50 p-4 rounded-2xl border border-purple-100">
             <p className="text-[10px] uppercase font-bold text-purple-600/70 mb-1">Total Data Secured</p>
@@ -404,7 +404,7 @@ export function MySubmissionsTab() {
 
         {/* Submissions List */}
         <div className="space-y-3">
-          {(realSubmissions.length > 0 ? realSubmissions : MOCK_SUBMISSIONS).map((sub) => (
+          {realSubmissions.map((sub) => (
             <div
               key={sub.id}
               onClick={() => setSelectedSub(sub)}
