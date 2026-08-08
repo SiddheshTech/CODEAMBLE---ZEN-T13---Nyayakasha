@@ -8,8 +8,9 @@ export const evidenceRouter = Router();
 // GET all evidence (optional ?caseId=...)
 evidenceRouter.get('/', (req: Request, res: Response) => {
   const caseId = req.query.caseId as string | undefined;
-  const list = primaryStore.getEvidence(caseId);
-  return res.json({ success: true, evidence: list });
+  const isDuress = req.headers['x-duress-session'] === 'true' || req.query.duress === 'true';
+  const list = primaryStore.getEvidence(caseId, isDuress);
+  return res.json({ success: true, evidence: list, isDuressSession: isDuress });
 });
 
 // GET evidence by ID
@@ -74,6 +75,36 @@ evidenceRouter.post('/submit', (req: Request, res: Response) => {
 
   const saved = primaryStore.saveEvidence(newExhibit);
 
+  // Dynamically push a new multi-sig consensus request block for Independent Validator node attestation
+  const blockId = `BLOCK-${Math.floor(89200 + Math.random() * 800)}`;
+  primaryStore.saveConsensusRequest({
+    id: blockId,
+    queue: `${newExhibit.type} Hash Consensus`,
+    waitTimeHours: 0.05,
+    waitTimeFormatted: '3 mins',
+    slaLimitFormatted: '12.0h SLA Limit',
+    urgency: 'NORMAL',
+    urgencyColor: 'bg-emerald-100 text-emerald-900 border-emerald-200',
+    badgeColor: 'bg-emerald-500',
+    quorumSigned: 0,
+    quorumTotal: 3,
+    merkleRoot: generatedHash,
+    zkProofType: 'ZK-SNARK-secp256k1',
+    entropyScore: '0.999',
+    cryptographicDetails: `Cryptographic state payload for Exhibit #${id} (${title}). Zero case content embedded for neutral validation.`,
+    createdAt: new Date().toISOString(),
+    signedBy: {}
+  });
+
+  // Dynamically push an encrypted analytics report
+  primaryStore.addAnalyticsReport({
+    id: `REP-${Math.floor(400 + Math.random() * 99)}`,
+    title: `${title} Telemetry Audit`,
+    privacyType: 'Differential Privacy (ε=0.5)',
+    status: 'SEALED',
+    createdAt: new Date().toISOString()
+  });
+
   // Append block to cryptographic audit ledger
   auditLedger.recordEvent('EVIDENCE_EXHIBIT_SEALED', custodian || 'FIELD_OFFICER', {
     exhibitId: id,
@@ -83,5 +114,5 @@ evidenceRouter.post('/submit', (req: Request, res: Response) => {
     geoCoords: { lat: newExhibit.latitude, lng: newExhibit.longitude }
   });
 
-  return res.status(201).json({ success: true, evidence: saved });
+  return res.status(201).json({ success: true, evidence: saved, blockId });
 });

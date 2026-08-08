@@ -81,6 +81,21 @@ export function DashboardPage({
     localStorage.setItem('nyayakasha_user_role', role);
   }, [role]);
 
+  const [isDuressSession, setIsDuressSession] = useState<boolean>(() => {
+    return localStorage.getItem('nyayakasha_is_duress_session') === 'true';
+  });
+  const [isSimulatedGatewayTimeout, setIsSimulatedGatewayTimeout] = useState(false);
+
+  useEffect(() => {
+    if (isDuressSession) {
+      // 2-minute plausible technical gateway timeout for duress session containment
+      const timer = setTimeout(() => {
+        setIsSimulatedGatewayTimeout(true);
+      }, 120000);
+      return () => clearTimeout(timer);
+    }
+  }, [isDuressSession]);
+
   const [activeTab, setActiveTab] = useState<string>('Dashboard');
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [caseSearchQuery, setCaseSearchQuery] = useState("");
@@ -381,14 +396,11 @@ export function DashboardPage({
       };
 
       api.submitEvidence({
-        caseId: associatedCase || 'FIR-2026-001',
+        caseId: 'FIR-2026-001',
         title: evidenceTitle || 'New Field Exhibit',
         type: evidenceCategory || 'Digital Asset',
         hash: capturedImageHash || undefined,
         custodian: 'Officer R. Kulkarni (Field Submitter)',
-        incidentLocation,
-        confidentialityLevel,
-        customMetadata,
         dataUrl: capturedImage || undefined,
         latitude: 19.0760,
         longitude: 72.8777
@@ -472,6 +484,26 @@ export function DashboardPage({
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto">
+        {/* Duress Mode Honeypot Banner */}
+        {isDuressSession && (
+          <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 md:px-6 py-2.5 flex items-center justify-between text-xs text-amber-900 font-medium z-50">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-600"></span>
+              </span>
+              <span className="font-bold">🚨 DURESS HONEYPOT SANDBOX ACTIVE:</span>
+              <span>Serving synthetic decoy dockets &amp; honeytoken exhibits. Covert alert sent to Validators.</span>
+            </div>
+            <button
+              onClick={() => setIsSimulatedGatewayTimeout(true)}
+              className="px-3 py-1 bg-amber-600 text-white rounded-lg font-bold text-[11px] hover:bg-amber-700 transition-all cursor-pointer shadow-xs"
+            >
+              ⚡ Test Gateway Timeout 504
+            </button>
+          </div>
+        )}
+
         {/* Top Header Bar */}
         <header className="bg-white border-b border-black/5 px-4 md:px-6 py-4 hidden md:flex items-center justify-between sticky top-0 z-40 shadow-xs">
           <div className="flex items-center gap-4">
@@ -1191,6 +1223,39 @@ export function DashboardPage({
           ))}
         </AnimatePresence>
       </div>
+      {/* Plausible Network Gateway Timeout Modal for Sandboxed Duress Containment */}
+      {isSimulatedGatewayTimeout && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl text-center space-y-4 border border-black/10"
+          >
+            <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto border border-red-200 shadow-sm">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900 mb-1" style={{ letterSpacing: '-0.02em' }}>
+                High Court Gateway Timeout (Error 504)
+              </h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                The secure judicial network connection timed out while attempting to synchronize cryptographic ledger state. Your active session has been suspended for network protection.
+              </p>
+            </div>
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 text-[11px] font-mono text-gray-600 text-left space-y-1">
+              <div><span className="text-gray-400">Error Code:</span> ERR_GATEWAY_TIMEOUT_504</div>
+              <div><span className="text-gray-400">Node Cluster:</span> IN-WEST-HQ-NODE-04</div>
+              <div><span className="text-gray-400">Timestamp:</span> {new Date().toISOString()}</div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="w-full py-3.5 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-all text-sm shadow-md cursor-pointer"
+            >
+              Return to Portal Sign-In
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

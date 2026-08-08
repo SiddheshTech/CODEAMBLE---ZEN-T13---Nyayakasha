@@ -173,6 +173,12 @@ class PrimaryDataStore {
   private identityUnlocks: IdentityUnlockRequest[] = [];
   private precedentFlags: PrecedentFlagItem[] = [];
 
+  // DECOY HONEYPOT DATASETS FOR DURESS SESSIONS
+  private decoyCases = new Map<string, CaseRecord>();
+  private decoyEvidence = new Map<string, EvidenceRecord>();
+  private decoyConsensusRequests: ConsensusRequest[] = [];
+  private decoyForgeryReviews: ForgeryReviewItem[] = [];
+
   constructor() {
     this.seedDefaults();
     this.loadFromDisk();
@@ -301,6 +307,54 @@ class PrimaryDataStore {
         status: 'Flagged'
       }
     ];
+
+    // Seed Decoy Honeypot Datasets (Served ONLY during Duress Sessions)
+    const defaultDecoyCases: CaseRecord[] = [
+      { id: 'FIR-DECOY-8801', title: 'State vs. Cyber Transport Syndicate (Decoy Docket)', status: 'Active', type: 'Cyber Crime', date: 'Oct 14, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 6, testimonyCount: 2, priority: 'High', description: 'Simulated traffic monitoring log analysis for Western precinct routing.', location: 'Western Suburb Precinct 9', jurisdictionCode: 'MH-MUM-DIST-01', createdAt: '2026-10-14T10:00:00Z', updatedAt: '2026-10-14T10:00:00Z' },
+      { id: 'FIR-DECOY-8802', title: 'Deshmukh Land Registry Audit (Decoy File)', status: 'Pending Review', type: 'Financial', date: 'Oct 11, 2026', officer: 'Inspector S. Patel', evidenceCount: 4, testimonyCount: 1, priority: 'Medium', description: 'Deed register verification for Municipal Ward 42.', location: 'Sub-Registry Ward 42', jurisdictionCode: 'MH-MUM-DIST-02', createdAt: '2026-10-11T11:30:00Z', updatedAt: '2026-10-11T11:30:00Z' }
+    ];
+    defaultDecoyCases.forEach(c => this.decoyCases.set(c.id, c));
+
+    const defaultDecoyEvidence: EvidenceRecord[] = [
+      { id: 'EV-DECOY-9901', caseId: 'FIR-DECOY-8801', title: 'Traffic Packet Capture Log (Honeytoken)', type: 'Document', date: 'Oct 14, 2026 11:00', hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', status: 'Sealed', custodian: 'Officer R. Kulkarni', incidentLocation: 'Western Suburb Precinct 9', confidentialityLevel: 'Restricted', createdAt: '2026-10-14T11:00:00Z' }
+    ];
+    defaultDecoyEvidence.forEach(e => this.decoyEvidence.set(e.id, e));
+
+    this.decoyConsensusRequests = [
+      {
+        id: 'REQ-DECOY-901',
+        caseId: 'FIR-DECOY-8801',
+        caseTitle: 'State vs. Cyber Transport Syndicate (Decoy Docket)',
+        exhibitId: 'EV-DECOY-9901',
+        exhibitTitle: 'Traffic Packet Capture Log (Honeytoken)',
+        submittedBy: 'Officer R. Kulkarni',
+        requiredVotes: 3,
+        currentVotes: 1,
+        status: 'Pending',
+        votes: [
+          { validatorId: 'val_01', validatorName: 'Judge V. Sharma', vote: 'APPROVE', timestamp: '2026-10-14T12:00:00Z', note: 'Decoy Hash verified.' }
+        ],
+        createdAt: '2026-10-14T11:30:00Z'
+      }
+    ];
+
+    this.decoyForgeryReviews = [
+      {
+        id: 'FORG-DECOY-801',
+        exhibitId: 'EV-DECOY-9901',
+        caseId: 'FIR-DECOY-8801',
+        title: 'Traffic Packet Capture Log (Honeytoken)',
+        type: 'Document File',
+        submittedBy: 'Forensics Specialist A. Roy',
+        timestamp: '2026-10-14 11:30',
+        spectralScore: 91.2,
+        metadataIntegrityScore: 89.5,
+        perceptualDiffScore: 14.1,
+        aiConfidence: 98.4,
+        flagReason: 'Honeytoken digital marker verified clean baseline.',
+        status: 'Under Review'
+      }
+    ];
   }
 
   private async loadFromFirestore() {
@@ -308,7 +362,7 @@ class PrimaryDataStore {
     if (!db) return;
     try {
       const usersSnap = await db.collection('users').get();
-      usersSnap.forEach((doc) => {
+      usersSnap.forEach((doc: any) => {
         const u = doc.data() as UserRecord;
         this.users.set(u.id, u);
         this.usersByEmail.set(u.email.toLowerCase(), u);
@@ -316,17 +370,18 @@ class PrimaryDataStore {
 
       const duressSnap = await db.collection('duress_alerts').orderBy('timestamp', 'desc').get();
       const loadedAlerts: DuressAlert[] = [];
-      duressSnap.forEach((doc) => loadedAlerts.push(doc.data() as DuressAlert));
+      duressSnap.forEach((doc: any) => loadedAlerts.push(doc.data() as DuressAlert));
       if (loadedAlerts.length > 0) this.duressAlerts = loadedAlerts;
 
       const vettingSnap = await db.collection('vetting_queue').get();
       const loadedVetting: Array<{ id: string; userId: string; submittedAt: string; consentGiven: boolean }> = [];
-      vettingSnap.forEach((doc) => loadedVetting.push(doc.data() as any));
+      vettingSnap.forEach((doc: any) => loadedVetting.push(doc.data() as any));
       if (loadedVetting.length > 0) this.vettingQueue = loadedVetting;
       
       console.log('🔥 Synced data from Firebase Firestore');
-    } catch (err) {
-      console.log('Firestore load info:', err);
+    } catch (err: any) {
+      console.log('ℹ️  Firestore DB API status:', err.message || err);
+      console.log('ℹ️  Operating with high-performance local store fallback.');
     }
   }
 
@@ -397,9 +452,13 @@ class PrimaryDataStore {
     this.persistToDisk();
 
     // Real-time Firestore sync
-    const db = getFirestore();
-    if (db) {
-      db.collection('users').doc(user.id).set(user, { merge: true }).catch(err => console.log('Firestore save user err:', err));
+    try {
+      const db = getFirestore();
+      if (db) {
+        db.collection('users').doc(user.id).set(user, { merge: true }).catch((err: any) => console.log('Firestore save user status:', err.message || err));
+      }
+    } catch (e: any) {
+      console.log('Firestore write info:', e.message || e);
     }
 
     return user;
@@ -421,6 +480,7 @@ class PrimaryDataStore {
   public addDuressAlert(alert: Omit<DuressAlert, 'id' | 'timestamp' | 'status'>): DuressAlert {
     const record: DuressAlert = {
       ...alert,
+      locationInfo: alert.locationInfo || { lat: 19.0760, lng: 72.8777, jurisdiction: 'MH-MUM-DIST-01' },
       id: `alert_dur_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
       timestamp: new Date().toISOString(),
       status: 'UNACKNOWLEDGED'
@@ -428,9 +488,13 @@ class PrimaryDataStore {
     this.duressAlerts.unshift(record);
     this.persistToDisk();
 
-    const db = getFirestore();
-    if (db) {
-      db.collection('duress_alerts').doc(record.id).set(record).catch(err => console.log('Firestore duress alert err:', err));
+    try {
+      const db = getFirestore();
+      if (db) {
+        db.collection('duress_alerts').doc(record.id).set(record).catch((err: any) => console.log('Firestore alert status:', err.message || err));
+      }
+    } catch (e: any) {
+      console.log('Firestore write info:', e.message || e);
     }
 
     return record;
@@ -451,9 +515,13 @@ class PrimaryDataStore {
     this.vettingQueue.push(item);
     this.persistToDisk();
 
-    const db = getFirestore();
-    if (db) {
-      db.collection('vetting_queue').doc(item.id).set(item).catch(err => console.log('Firestore vetting queue err:', err));
+    try {
+      const db = getFirestore();
+      if (db) {
+        db.collection('vetting_queue').doc(item.id).set(item).catch((err: any) => console.log('Firestore vetting status:', err.message || err));
+      }
+    } catch (e: any) {
+      console.log('Firestore write info:', e.message || e);
     }
 
     return item;
@@ -464,11 +532,17 @@ class PrimaryDataStore {
   }
 
   // --- CASES API ---
-  public getCases(): CaseRecord[] {
+  public getCases(isDuressSession?: boolean): CaseRecord[] {
+    if (isDuressSession) {
+      return Array.from(this.decoyCases.values());
+    }
     return Array.from(this.cases.values());
   }
 
-  public getCaseById(id: string): CaseRecord | undefined {
+  public getCaseById(id: string, isDuressSession?: boolean): CaseRecord | undefined {
+    if (isDuressSession) {
+      return this.decoyCases.get(id);
+    }
     return this.cases.get(id);
   }
 
@@ -480,8 +554,9 @@ class PrimaryDataStore {
   }
 
   // --- EVIDENCE API ---
-  public getEvidence(caseId?: string): EvidenceRecord[] {
-    const all = Array.from(this.evidence.values());
+  public getEvidence(caseId?: string, isDuressSession?: boolean): EvidenceRecord[] {
+    const targetMap = isDuressSession ? this.decoyEvidence : this.evidence;
+    const all = Array.from(targetMap.values());
     if (caseId) {
       return all.filter(e => e.caseId === caseId);
     }
@@ -506,7 +581,10 @@ class PrimaryDataStore {
   }
 
   // --- CONSENSUS APPROVALS ---
-  public getConsensusRequests(): ConsensusRequest[] {
+  public getConsensusRequests(isDuressSession?: boolean): ConsensusRequest[] {
+    if (isDuressSession) {
+      return [...this.decoyConsensusRequests];
+    }
     return [...this.consensusRequests];
   }
 
@@ -534,7 +612,10 @@ class PrimaryDataStore {
   }
 
   // --- FORGERY REVIEWS ---
-  public getForgeryReviews(): ForgeryReviewItem[] {
+  public getForgeryReviews(isDuressSession?: boolean): ForgeryReviewItem[] {
+    if (isDuressSession) {
+      return [...this.decoyForgeryReviews];
+    }
     return [...this.forgeryReviews];
   }
 

@@ -6,8 +6,9 @@ export const casesRouter = Router();
 
 // GET all cases
 casesRouter.get('/', (req: Request, res: Response) => {
-  const cases = primaryStore.getCases();
-  return res.json({ success: true, cases });
+  const isDuress = req.headers['x-duress-session'] === 'true' || req.query.duress === 'true';
+  const cases = primaryStore.getCases(isDuress);
+  return res.json({ success: true, cases, isDuressSession: isDuress });
 });
 
 // GET single case by ID

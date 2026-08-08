@@ -535,26 +535,11 @@ export function ForgeryReviewQueueTab() {
           setItems(prev => {
             const existingMap = new Map(prev.map(i => [i.id, i]));
             res.reviews.forEach((r: any) => {
-              existingMap.set(r.id, {
-                id: r.id,
-                title: r.title,
-                caseNumber: r.caseId,
-                caseTitle: r.title,
-                status: r.status as any,
-                aiConfidenceScore: r.aiConfidence || 94,
-                spectralAnalysisScore: r.spectralScore || 88,
-                metadataIntegrityScore: r.metadataIntegrityScore || 42,
-                perceptualHashDiffScore: r.perceptualDiffScore || 79,
-                flaggedReason: r.flagReason,
-                submittedByRole: r.submittedBy,
-                timestamp: r.timestamp,
-                fileType: r.type,
-                pramanaHash: r.exhibitId,
-                previewImageDataUrl: undefined,
-                custodyChain: [],
-                precedents: [],
-                directives: []
-              });
+              const item = existingMap.get(r.id);
+              if (item) {
+                item.status = r.status as any;
+                item.confidenceScore = r.aiConfidence || item.confidenceScore;
+              }
             });
             return Array.from(existingMap.values());
           });

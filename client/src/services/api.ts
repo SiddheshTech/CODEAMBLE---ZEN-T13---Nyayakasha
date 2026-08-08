@@ -24,6 +24,10 @@ async function fetchAPI<T = any>(endpoint: string, options: RequestInit = {}): P
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  if (localStorage.getItem('nyayakasha_is_duress_session') === 'true') {
+    headers['X-Duress-Session'] = 'true';
+  }
+
   const response = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
     headers
@@ -64,10 +68,10 @@ export const api = {
     return res;
   },
 
-  signin: async (email: string, password: string, turnstileToken: string = 'dev_turnstile_token') => {
+  signin: async (email: string, password: string, expectedRole?: string, turnstileToken: string = 'dev_turnstile_token') => {
     const res = await fetchAPI('/auth/signin', {
       method: 'POST',
-      body: JSON.stringify({ email, password, turnstileToken })
+      body: JSON.stringify({ email, password, expectedRole, turnstileToken })
     });
     if (res.sessionId) {
       localStorage.setItem('nyayakasha_session_id', res.sessionId);
@@ -99,11 +103,19 @@ export const api = {
       headers['x-longitude'] = String(coords.lng);
       headers['x-jurisdiction-code'] = coords.jurisdictionCode || 'MH-MUM-DIST-01';
     }
-    return fetchAPI('/auth/verify-duress-pin', {
+    const res = await fetchAPI('/auth/verify-duress-pin', {
       method: 'POST',
       headers,
       body: JSON.stringify({ pin, locationInfo: coords })
     });
+
+    if (res && res.isDuressSession) {
+      localStorage.setItem('nyayakasha_is_duress_session', 'true');
+    } else {
+      localStorage.removeItem('nyayakasha_is_duress_session');
+    }
+
+    return res;
   },
 
   // --- VERIFICATION & DOCUMENT ---
@@ -225,14 +237,29 @@ export const api = {
   },
 
   // --- CONSENSUS & FORGERY ---
+  getPendingConsensus: async () => {
+    return fetchAPI('/consensus/pending', { method: 'GET' });
+  },
+
+  getConsensusById: async (id: string) => {
+    return fetchAPI(`/consensus/${id}`, { method: 'GET' });
+  },
+
   getConsensusApprovals: async () => {
-    return fetchAPI('/consensus/approvals', { method: 'GET' });
+    return fetchAPI('/consensus/pending', { method: 'GET' });
+  },
+
+  castConsensusVote: async (id: string, decision: 'Approved' | 'Rejected' | 'Flagged Forgery', justificationNote: string, validatorName?: string) => {
+    return fetchAPI(`/consensus/${id}/vote`, {
+      method: 'POST',
+      body: JSON.stringify({ decision, justificationNote, note: justificationNote, validatorName })
+    });
   },
 
   voteConsensus: async (requestId: string, vote: 'APPROVE' | 'REJECT' | 'FLAG_FORGERY', note?: string, validatorName?: string) => {
-    return fetchAPI('/consensus/vote', {
+    return fetchAPI(`/consensus/${requestId}/vote`, {
       method: 'POST',
-      body: JSON.stringify({ requestId, vote, note, validatorName })
+      body: JSON.stringify({ requestId, decision: vote === 'APPROVE' ? 'Approved' : 'Rejected', vote, justificationNote: note, note, validatorName })
     });
   },
 
@@ -307,6 +334,42 @@ export const api = {
 
   getDuressAlerts: async () => {
     return fetchAPI('/security/validator/duress-alerts', { method: 'GET' });
+  },
+
+  // --- INDEPENDENT VALIDATOR WORKSPACE ---
+  getValidatorDashboard: async () => {
+    return fetchAPI('/validator/dashboard', { method: 'GET' });
+  },
+
+  castValidatorVote: async (blockId: string, decision: 'Approve' | 'Reject', pin?: string) => {
+    return fetchAPI('/validator/vote', {
+      method: 'POST',
+      body: JSON.stringify({ blockId, decision, pin })
+    });
+  },
+
+  acknowledgeDuressAlert: async (alertId?: string) => {
+    return fetchAPI('/validator/duress/acknowledge', {
+      method: 'POST',
+      body: JSON.stringify({ alertId })
+    });
+  },
+
+  getValidatorActivityLogs: async () => {
+    return fetchAPI('/validator/activity-log', { method: 'GET' });
+  },
+
+  // --- AGGREGATE ANALYTICS & DIFFERENTIAL PRIVACY ---
+
+  getAnalyticsReportById: async (id: string) => {
+    return fetchAPI(`/analytics/reports/${id}`, { method: 'GET' });
+  },
+
+  escalateAnalyticsReport: async (id: string, rationale: string, category?: string) => {
+    return fetchAPI(`/analytics/reports/${id}/escalate`, {
+      method: 'POST',
+      body: JSON.stringify({ rationale, category })
+    });
   },
 
   getHealth: async () => {

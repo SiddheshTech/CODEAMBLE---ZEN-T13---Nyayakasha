@@ -327,84 +327,7 @@ export interface HomomorphicReportItem {
   escalationCategory?: string;
 }
 
-const INITIAL_HOMOMORPHIC_REPORTS: HomomorphicReportItem[] = [
-  {
-    id: 'FHE-RPT-101',
-    reportCode: 'FHE-AGG-2026-001',
-    title: 'Case Duration Distribution & Disposition Velocity across Zones',
-    courtScope: 'All 5 Court Districts',
-    benchScope: 'All Active Benches',
-    cohortSize: 14820,
-    minCohortThreshold: 50,
-    differentialPrivacyEpsilon: 0.5,
-    isKAnonymityValid: true,
-    caseDurationAvgDays: 1.4,
-    caseDurationBaselineDays: 1.35,
-    precedentVarianceScore: 3.2,
-    anomalyScore: 0.04,
-    anomalySeverity: 'Low',
-    summaryDescription: 'Homomorphically aggregated case duration times across 14,820 closed & active dockets. Mean duration remains steady at 1.4 days with zero statistical outliers detected.',
-    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
-    escalationStatus: 'None',
-  },
-  {
-    id: 'FHE-RPT-102',
-    reportCode: 'FHE-AGG-2026-002',
-    title: 'Zone 4 Special Tribunal - Duration Deviation & Re-hash Frequency Spike',
-    courtScope: 'Zone 4 (West Special Tribunal)',
-    benchScope: 'Division Bench 4',
-    cohortSize: 312,
-    minCohortThreshold: 50,
-    differentialPrivacyEpsilon: 0.5,
-    isKAnonymityValid: true,
-    caseDurationAvgDays: 3.2,
-    caseDurationBaselineDays: 1.4,
-    precedentVarianceScore: 18.6,
-    anomalyScore: 8.4,
-    anomalySeverity: 'Critical',
-    summaryDescription: 'Homomorphic analysis detected a statistically significant 128% spike in average disposition days (+1.8 days over baseline) combined with an elevated Section 65B re-hash request rate in Zone 4.',
-    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
-    escalationStatus: 'None',
-  },
-  {
-    id: 'FHE-RPT-103',
-    reportCode: 'FHE-AGG-2026-003',
-    title: 'Bench-Level Precedent Alignment & Out-of-Band Sealing Distribution',
-    courtScope: 'Zone 2 (South Commercial Bench)',
-    benchScope: 'Division Bench 2',
-    cohortSize: 890,
-    minCohortThreshold: 50,
-    differentialPrivacyEpsilon: 0.5,
-    isKAnonymityValid: true,
-    caseDurationAvgDays: 1.8,
-    caseDurationBaselineDays: 1.7,
-    precedentVarianceScore: 6.8,
-    anomalyScore: 2.1,
-    anomalySeverity: 'Medium',
-    summaryDescription: 'Pattern comparison indicates minor variance in Section 144 sealing request distribution. Cohort size N=890 safely satisfies differential privacy limits.',
-    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
-    escalationStatus: 'None',
-  },
-  {
-    id: 'FHE-RPT-104',
-    reportCode: 'FHE-AGG-2026-004',
-    title: 'Cyber Precinct CCTV Exhibit Ingestion Homomorphic Variance',
-    courtScope: 'Zone 3 (East Cyber Precinct)',
-    benchScope: 'Division Bench 1',
-    cohortSize: 3810,
-    minCohortThreshold: 50,
-    differentialPrivacyEpsilon: 0.5,
-    isKAnonymityValid: true,
-    caseDurationAvgDays: 1.2,
-    caseDurationBaselineDays: 1.2,
-    precedentVarianceScore: 1.1,
-    anomalyScore: 0.1,
-    anomalySeverity: 'Low',
-    summaryDescription: 'High-density evidence ingestion velocity is consistent with regional fiber gateway logs. Zero identity leakage or cohort threshold warnings.',
-    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
-    escalationStatus: 'None',
-  },
-];
+const INITIAL_HOMOMORPHIC_REPORTS: HomomorphicReportItem[] = [];
 
 const FHE_DURATION_TRENDS = [
   { period: 'Q1 2025', zone1North: 1.2, zone2South: 1.8, zone3Cyber: 1.1, zone4West: 1.9, zone5Apex: 0.9 },
@@ -440,14 +363,21 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [backendMetrics, setBackendMetrics] = useState<any>(null);
 
-  useEffect(() => {
+  const fetchAnalyticsData = () => {
     api.getAnalyticsOverview()
       .then(res => {
         if (res.metrics) {
           setBackendMetrics(res.metrics);
         }
+        if (res.reports && Array.isArray(res.reports) && res.reports.length > 0) {
+          setHomomorphicReports(res.reports);
+        }
       })
       .catch(err => console.log('Analytics backend overview info:', err.message));
+  };
+
+  useEffect(() => {
+    fetchAnalyticsData();
   }, []);
 
   // INDEPENDENT VALIDATOR HOMOMORPHIC STATE
@@ -474,29 +404,20 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
       return;
     }
 
-    const ticketId = `ESC-2026-${Math.floor(10000 + Math.random() * 90000)}`;
-    const nowStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-    setHomomorphicReports((prev) =>
-      prev.map((rpt) =>
-        rpt.id === escalationModalReport.id
-          ? {
-              ...rpt,
-              escalationStatus: 'Escalated',
-              escalationTicketId: ticketId,
-              escalationDate: nowStr,
-              escalationRationale: escalationRationale.trim(),
-              escalationCategory: escalationCategory,
-            }
-          : rpt
-      )
-    );
-
-    showToast(`Formal Oversight Escalation Created: Ticket #${ticketId} routed to Independent Judicial Oversight Board`);
-    setEscalationModalReport(null);
-    setEscalationRationale('');
-    setEscalationConfirmCheck(false);
-    setEscalationError(null);
+    api.escalateAnalyticsReport(escalationModalReport.id, escalationRationale.trim(), escalationCategory)
+      .then(res => {
+        if (res.success) {
+          showToast(res.message || `Formal Oversight Escalation Created: Ticket #${res.ticketId} routed to Independent Judicial Oversight Board`);
+          fetchAnalyticsData();
+          setEscalationModalReport(null);
+          setEscalationRationale('');
+          setEscalationConfirmCheck(false);
+          setEscalationError(null);
+        } else {
+          setEscalationError(res.message || 'Failed to submit escalation');
+        }
+      })
+      .catch(err => setEscalationError(err.message || 'Failed to submit escalation to server'));
   };
 
   const handleExportSummaryPDF = () => {
