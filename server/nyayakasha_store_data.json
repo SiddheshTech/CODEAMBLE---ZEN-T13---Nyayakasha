@@ -1,6 +1,90 @@
 {
   "users": [
     {
+      "id": "usr_seed_validator",
+      "email": "m.vasudevan@oversight.nyayakasha.gov.in",
+      "fullName": "DR. MEERA VASUDEVAN",
+      "role": "independent_validator",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$p6bG2HxcaW9nqAdvZSR35A$tITymx+ASDLH8ON1QMD7Zn7xso6ShsUFLHvWREnH/9M",
+      "approvalState": "active",
+      "stateHistory": [
+        {
+          "state": "active",
+          "timestamp": "2026-08-08T20:15:12.009Z"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": true,
+      "mfaEnrolled": true,
+      "contactExtension": "+91 (022) 2288-1100 ext. 901",
+      "chambersLocation": "Chambers 901, Judicial Oversight Tower, Fort, Mumbai",
+      "appointmentRef": "HC-REG-2026-9902",
+      "authorityScope": "Division Bench Quorum (1-of-3 Threshold)",
+      "barCouncilNumber": "BCM-MH-2012/88421",
+      "keyShareFingerprint": "0x9D4F-88E2-11A9-C43B-7720-F01A-99D8-23E1-44B0",
+      "hardwareTokenName": "YubiKey 5 FIDO2 Hardware Security Token",
+      "keyGenesisDate": "Nov 12, 2025",
+      "mfaAttestationLevel": "WebAuthn Hardware-Attested • Level 3 Enclave Security",
+      "createdAt": "2026-08-08T20:15:12.010Z",
+      "updatedAt": "2026-08-08T20:34:40.357Z"
+    },
+    {
+      "id": "usr_seed_court",
+      "email": "a.mehta@highcourt.nyayakasha.gov.in",
+      "fullName": "HON. JUSTICE ADV. A. MEHTA",
+      "role": "court_authority",
+      "passwordHash": "seeded",
+      "approvalState": "active",
+      "stateHistory": [
+        {
+          "state": "active",
+          "timestamp": "2026-08-08T20:15:12.010Z"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": true,
+      "mfaEnrolled": true,
+      "contactExtension": "+91 (022) 2284-9042 ext. 402",
+      "chambersLocation": "Chambers 402, High Court Main Building",
+      "appointmentRef": "HC-JUD-2026-0892",
+      "authorityScope": "Division Bench 3 (Presiding Judge)",
+      "barCouncilNumber": "BCM-MH-1998/1042",
+      "keyShareFingerprint": "0x8F9A-41B0-C82E-99B1-3310-7F2A-00B2-11D4-884E-90C1-FA32",
+      "hardwareTokenName": "YubiKey 5 FIDO2 Hardware Security Token",
+      "keyGenesisDate": "Nov 12, 2025",
+      "mfaAttestationLevel": "WebAuthn Hardware-Attested • Level 3 Enclave Security",
+      "createdAt": "2026-08-08T20:15:12.010Z",
+      "updatedAt": "2026-08-08T20:15:12.010Z"
+    },
+    {
+      "id": "usr_seed_field",
+      "email": "r.kulkarni@nyayakasha.gov.in",
+      "fullName": "OFFICER RAJESH KULKARNI",
+      "role": "field_submitter",
+      "passwordHash": "seeded",
+      "approvalState": "active",
+      "stateHistory": [
+        {
+          "state": "active",
+          "timestamp": "2026-08-08T20:15:12.010Z"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": true,
+      "mfaEnrolled": true,
+      "contactExtension": "+91 (022) 2650-1122 ext. 104",
+      "chambersLocation": "Room 104, Zone 4 Cyber Crime Precinct",
+      "appointmentRef": "MH-POL-29384",
+      "authorityScope": "Zone 4 Metropolitan Precinct",
+      "barCouncilNumber": "POL-MH-2015/4921",
+      "keyShareFingerprint": "0x3E1C-99B4-11A0-7C08-44F2-88B1-002E-77D1-2290-A81B-12D9",
+      "hardwareTokenName": "Ed25519-EdDSA Enclave",
+      "keyGenesisDate": "Nov 12, 2025",
+      "mfaAttestationLevel": "Standard App Enclave",
+      "createdAt": "2026-08-08T20:15:12.010Z",
+      "updatedAt": "2026-08-08T20:15:12.010Z"
+    },
+    {
       "id": "usr_field_submitter_1786198877108",
       "email": "fs_test_1786198876860@nyayakasha.gov.in",
       "fullName": "Officer Vikram Singh",
@@ -3309,6 +3393,26 @@
       "mfaEnrolled": false,
       "createdAt": "2026-08-08T19:20:42.188Z",
       "updatedAt": "2026-08-08T19:20:42.194Z"
+    },
+    {
+      "id": "usr_auto_1786220236663",
+      "email": "smithkadam24@gmail.com",
+      "fullName": "SMITHKADAM24",
+      "role": "independent_validator",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$DMZlDSP3pspPEZsdZt1EnQ$G6cAq+tdnDuTiycAink+rtODc0wGBO0C3v+xBvb0MGg",
+      "approvalState": "active",
+      "stateHistory": [
+        {
+          "state": "active",
+          "timestamp": "2026-08-08T20:17:16.663Z",
+          "note": "Auto-provisioned"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": true,
+      "mfaEnrolled": true,
+      "createdAt": "2026-08-08T20:17:16.663Z",
+      "updatedAt": "2026-08-08T20:17:16.663Z"
     }
   ],
   "duressAlerts": [

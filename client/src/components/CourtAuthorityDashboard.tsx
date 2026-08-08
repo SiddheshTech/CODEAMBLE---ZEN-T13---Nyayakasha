@@ -695,9 +695,10 @@ export function CourtAuthorityDashboard({
 
     const filteredVotes = rawPending
       .filter((v: any) =>
-        v.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        v.queue.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        v.zkProofType.toLowerCase().includes(searchQuery.toLowerCase())
+        (v.id && v.id.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (v.queue && v.queue.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (v.zkProofType && v.zkProofType.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (v.caseTitle && v.caseTitle.toLowerCase().includes(searchQuery.toLowerCase()))
       )
       .sort((a: any, b: any) => b.waitTimeHours - a.waitTimeHours);
 
@@ -1019,10 +1020,10 @@ export function CourtAuthorityDashboard({
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-xs">
                           <span className="font-bold text-slate-900 font-mono">
-                            Merkle Root: {item.merkleRoot.slice(0, 18)}...{item.merkleRoot.slice(-8)}
+                            Merkle Root: {item.merkleRoot ? `${item.merkleRoot.slice(0, 18)}...${item.merkleRoot.slice(-8)}` : '0x000...000'}
                           </span>
                           <span className="px-2 py-0.5 rounded bg-slate-200 text-slate-700 text-[10px] font-mono font-bold">
-                            {item.zkProofType}
+                            {item.zkProofType || 'SNARK'}
                           </span>
                         </div>
                         <p className="text-xs text-slate-600 leading-relaxed pt-1">
