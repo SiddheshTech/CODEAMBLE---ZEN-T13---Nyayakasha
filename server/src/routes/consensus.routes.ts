@@ -22,7 +22,8 @@ const getConsensusData = (req: Request, res: Response) => {
   );
 
   // Cross-reference against duress alerts for suspicious activity flags & enrich all metadata fields
-  const processedRequests = requests.map(r => {
+  const processedRequests = requests.map(reqItem => {
+    const r = reqItem as any;
     const caseIdentifier = (r.caseRef || r.caseId || '').toUpperCase();
     const isSuspicious = duressCaseIds.has(caseIdentifier) || (r.systemFlagIndicator && r.systemFlagIndicator.isFlagged);
     

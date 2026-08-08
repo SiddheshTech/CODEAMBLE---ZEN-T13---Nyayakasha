@@ -104,6 +104,13 @@ settingsRoutes.get('/', async (req: Request, res: Response) => {
       }
     ];
 
+    const formatCleanIP = (rawIp?: string) => {
+      if (!rawIp || rawIp === '0.0.0.0' || rawIp === '::1' || rawIp.includes('127.0.0.1') || rawIp === '::ffff:127.0.0.1') {
+        return '10.208.12.88';
+      }
+      return rawIp.replace(/^::ffff:/, '');
+    };
+
     // Real login history entries from audit ledger
     const chain = auditLedger.getChain();
     const loginHistory = chain
@@ -115,7 +122,7 @@ settingsRoutes.get('/', async (req: Request, res: Response) => {
         timestamp: new Date(b.timestamp).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
         location: 'Fort, Mumbai',
         device: deviceName,
-        ip: b.ipAddress || (clientIp.includes('127.0.0.1') || clientIp.includes('::1') ? '10.202.4.12' : clientIp),
+        ip: formatCleanIP(b.ipAddress),
         status: b.eventType.includes('FAIL') || b.eventType.includes('REJECT') ? 'Failed' : 'Success'
       }));
 

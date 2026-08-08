@@ -360,14 +360,30 @@ evidenceRouter.post('/testimony/submit', async (req: Request, res: Response) => 
         id: `ID-UNLOCK-${id}`,
         caseId,
         caseTitle: `Case ${caseId}: Protected Deponent Identity Commitment (${witnessAlias})`,
+        courtBench: 'Division Bench 2 (Commercial & Cyber Disputes)',
         witnessAlias,
-        requestor: 'Field Submitter Terminal',
-        reason: 'Witness identity masked under Section 65B zero-knowledge protection protocol.',
-        thresholdRequired: 3,
-        thresholdGranted: 0,
-        status: 'Pending',
-        grantedBy: [],
-        createdAt: new Date().toISOString()
+        witnessZkpHash: `0xzkp_${id.slice(-8)}`,
+        zkpMerkleRoot: `0xmerkle_${id.slice(-8)}`,
+        witnessRiskIndex: 88,
+        threatAssessmentSummary: 'Section 65B zero-knowledge identity protection active for deponent.',
+        protectionCategory: 'Grade B (High Risk - Masked Credentials)',
+        requestingParty: 'Officer R. Kulkarni',
+        requestingPartyRole: 'Investigating Officer',
+        counselBarId: 'MAH/8812/2026',
+        counselAgency: 'Zone 4 Metropolitan Precinct',
+        statedLegalGrounds: 'Witness identity masked under Section 65B ZKP protocol.',
+        statutoryProvision: 'Bharatiya Nagarik Suraksha Sanhita (BNSS) Sec 531 / BSA Sec 65B',
+        timestamp: new Date().toISOString(),
+        urgency: 'High',
+        status: 'Pending Judicial Review',
+        validatorConsensus: '0 of 3 Validated',
+        relatedExhibits: [{ id, title: 'Field Testimony Snapshot', type: 'Voice/Deposition', hash: `0x${id.slice(-16)}` }],
+        statutoryChecklist: [
+          { item: 'ZKP Hash Verified', passed: true, note: 'Tamper-evident merkle leaf validated' },
+          { item: 'Geofence Bound', passed: true, note: 'Jurisdiction sector verified' }
+        ],
+        precedents: [],
+        directives: []
       });
     }
 

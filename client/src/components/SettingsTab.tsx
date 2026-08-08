@@ -143,7 +143,17 @@ export function SettingsTab({ role }: { role: string }) {
         themeMode
       });
       if (res.success) {
-        showToast('System settings and security preferences saved successfully.');
+        localStorage.setItem('nyayakasha_session_timeout', sessionTimeout);
+        localStorage.setItem('nyayakasha_language', language);
+        localStorage.setItem('nyayakasha_theme', themeMode);
+
+        if (themeMode.toLowerCase().includes('dark')) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+
+        showToast('System settings, session timeout & display preferences saved successfully.');
       } else {
         showToast(res.message || 'Failed to save settings');
       }
