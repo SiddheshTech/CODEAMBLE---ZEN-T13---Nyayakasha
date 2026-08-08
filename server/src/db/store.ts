@@ -1147,7 +1147,7 @@ class PrimaryDataStore {
         details: `Location: ${a.locationInfo?.jurisdiction || 'Zone 4 Field Terminal'}. Status: ${a.status}. Visual evidence feed and officer geolocation locked in audit ledger under Rule 88-B.`,
         actionUrlTab: 'Audit log',
         actionLabel: 'Inspect Duress Payload',
-        roleScope: 'all',
+        roleScope: 'court_authority,independent_validator',
         createdAt: a.timestamp || new Date().toISOString()
       });
     });
@@ -1172,7 +1172,7 @@ class PrimaryDataStore {
         details: `Hash: ${e.hash}. Status: ${e.status}. Custodian: ${e.custodian}. Location: ${e.incidentLocation || 'Zone 4 Field Terminal'}.`,
         actionUrlTab: 'Chain of Custody',
         actionLabel: 'View Evidence Ledger',
-        roleScope: 'all',
+        roleScope: 'field_submitter,court_authority',
         createdAt: e.createdAt || new Date().toISOString()
       });
     });
@@ -1196,7 +1196,7 @@ class PrimaryDataStore {
         details: `Flag Reason: ${f.flagReason}. Spectral Score: ${f.spectralScore}. Metadata Score: ${f.metadataIntegrityScore}.`,
         actionUrlTab: 'Chain of Custody',
         actionLabel: 'Open Forgery Queue',
-        roleScope: 'all',
+        roleScope: 'court_authority,independent_validator',
         createdAt: new Date().toISOString()
       });
     });
@@ -1220,7 +1220,7 @@ class PrimaryDataStore {
         details: `Status: ${c.status}. Submitted by: ${c.submittedBy}. Required votes: ${c.requiredVotes}.`,
         actionUrlTab: 'Chain of Custody',
         actionLabel: 'Cast Quorum Vote',
-        roleScope: 'all',
+        roleScope: 'court_authority,independent_validator',
         createdAt: c.createdAt || new Date().toISOString()
       });
     });
@@ -1241,12 +1241,22 @@ class PrimaryDataStore {
     realNotifs.sort((a, b) => new Date(b.isoDate).getTime() - new Date(a.isoDate).getTime());
 
     if (!role || role === 'all') return realNotifs;
-    return realNotifs.filter(n => 
-      !n.roleScope || 
-      n.roleScope === 'all' || 
-      n.roleScope === role || 
-      n.roleScope.toLowerCase().includes(role.toLowerCase())
-    );
+
+    const userRoleRaw = role.toLowerCase();
+    let targetRoleKey = 'court_authority';
+    if (userRoleRaw.includes('field') || userRoleRaw.includes('submitter')) {
+      targetRoleKey = 'field_submitter';
+    } else if (userRoleRaw.includes('validator') || userRoleRaw.includes('independent')) {
+      targetRoleKey = 'independent_validator';
+    } else if (userRoleRaw.includes('court') || userRoleRaw.includes('authority')) {
+      targetRoleKey = 'court_authority';
+    }
+
+    return realNotifs.filter(n => {
+      if (!n.roleScope || n.roleScope === 'all') return true;
+      const scopes = n.roleScope.split(',').map(s => s.trim().toLowerCase());
+      return scopes.includes(targetRoleKey);
+    });
   }
 
   public saveNotification(notif: NotificationRecord): NotificationRecord {

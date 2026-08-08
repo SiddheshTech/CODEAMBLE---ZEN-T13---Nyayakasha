@@ -45,13 +45,6 @@ class NotificationService {
       details: { channel: 'EMAIL', recipient, subject }
     });
 
-    // Skip SMTP transmission for synthetic test domains to avoid Gmail bounce-back emails
-    const lowerRecipient = recipient.toLowerCase();
-    if (lowerRecipient.endsWith('@nyayakasha.gov.in') || lowerRecipient.endsWith('@example.com') || lowerRecipient.endsWith('@test.com')) {
-      console.log(`ℹ️  Simulated email dispatch for test domain: ${recipient}`);
-      return true;
-    }
-
     if (this.transporter) {
       try {
         const fromName = process.env.EMAIL_FROM_NAME || 'Nyayakasha Security System';
