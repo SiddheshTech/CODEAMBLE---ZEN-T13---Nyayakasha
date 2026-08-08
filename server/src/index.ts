@@ -40,7 +40,7 @@ app.use('/api/security/device', deviceRouter);
 app.use('/api/security', securityRouter);
 app.use('/api/cases', casesRouter);
 app.use('/api/evidence', evidenceRouter);
-app.use('/api/consensus', consensusRouter);
+app.use(['/api/consensus', '/api/consensus/'], consensusRouter);
 app.use('/api/forgery', forgeryRouter);
 app.use('/api/identity', identityRouter);
 app.use('/api/precedents', precedentsRouter);

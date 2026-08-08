@@ -56,7 +56,7 @@ const getConsensusData = (req: Request, res: Response) => {
   });
 };
 
-consensusRouter.get('/', getConsensusData);
+consensusRouter.get(['/', ''], getConsensusData);
 consensusRouter.get('/pending', getConsensusData);
 
 /**
