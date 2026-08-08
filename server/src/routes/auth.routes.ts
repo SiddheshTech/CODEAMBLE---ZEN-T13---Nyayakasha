@@ -299,8 +299,9 @@ authRouter.post('/verify-duress-pin', requireAuth, verifyJurisdictionGeofence, a
       return res.status(401).json({ error: 'INVALID_PIN', message: 'PIN verification failed.' });
     }
 
-    if (req.sessionId) {
-      const sess = await sessionStore.getSession(req.sessionId);
+    const sessId = (req as any).sessionId || (req as any).session?.id || req.headers['authorization']?.replace('Bearer ', '');
+    if (sessId) {
+      const sess = await sessionStore.getSession(sessId);
       if (sess) {
         sess.isDuressSession = result.isDuress;
         await sessionStore.setSession(sess);

@@ -96,7 +96,7 @@ validatorRouter.get('/analytics/aggregate', async (req: AuthenticatedRequest, re
 
     // Minimum Cohort Guard: PostgreSQL HAVING COUNT(*) >= threshold simulation
     const minCohortThreshold = Number(req.query?.minCohort) || 50;
-    const smallestActiveCohortN = Math.min(...reports.map(r => r.cohortSize || 312));
+    const smallestActiveCohortN = Math.min(...reports.map((r: any) => r.cohortSize || 312));
 
     if (smallestActiveCohortN < minCohortThreshold) {
       return res.status(400).json({
@@ -106,7 +106,7 @@ validatorRouter.get('/analytics/aggregate', async (req: AuthenticatedRequest, re
       });
     }
 
-    const activeEscalationsCount = reports.filter(r => r.escalationStatus === 'Escalated').length;
+    const activeEscalationsCount = reports.filter((r: any) => r.escalationStatus === 'Escalated').length;
 
     const cases = primaryStore.getCases();
     const evidence = primaryStore.getEvidence();

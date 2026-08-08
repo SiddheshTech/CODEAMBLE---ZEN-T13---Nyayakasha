@@ -132,6 +132,8 @@ evidenceRouter.post('/submit', async (req: Request, res: Response) => {
     const blockId = `BLOCK-${Math.floor(89200 + Math.random() * 800)}`;
     primaryStore.saveConsensusRequest({
       id: blockId,
+      caseId: caseId || 'FIR-2026-001',
+      status: 'Pending',
       queue: `${newExhibit.type} Hash Consensus`,
       waitTimeHours: 0.05,
       waitTimeFormatted: '3 mins',

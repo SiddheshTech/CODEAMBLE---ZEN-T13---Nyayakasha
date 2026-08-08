@@ -121,7 +121,7 @@ const handleVote = async (req: Request, res: Response) => {
 
   // Add node vote entry
   reqItem.nodeVotes = reqItem.nodeVotes || [];
-  reqItem.nodeVotes = reqItem.nodeVotes.filter(nv => !nv.nodeRole?.includes('Validator') && !nv.nodeName?.includes('Validator'));
+  reqItem.nodeVotes = reqItem.nodeVotes.filter((nv: any) => !nv.nodeRole?.includes('Validator') && !nv.nodeName?.includes('Validator'));
   reqItem.nodeVotes.push({
     nodeName,
     nodeRole: 'Certified Independent Validator',

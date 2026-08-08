@@ -48,7 +48,10 @@ export interface DuressAlert {
   role: UserRole;
   ipAddress: string;
   locationInfo?: { lat: number; lng: number; jurisdiction?: string };
-  status: 'UNACKNOWLEDGED' | 'INVESTIGATING' | 'RESOLVED';
+  status: 'UNACKNOWLEDGED' | 'INVESTIGATING' | 'RESOLVED' | 'ESCALATED' | string;
+  refId?: string;
+  fieldNodeId?: string;
+  detailsText?: string;
 }
 
 export interface CaseRecord {
@@ -109,15 +112,52 @@ export interface ConsensusVote {
 export interface ConsensusRequest {
   id: string;
   caseId: string;
-  caseTitle: string;
-  exhibitId: string;
-  exhibitTitle: string;
-  submittedBy: string;
-  requiredVotes: number;
-  currentVotes: number;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'Flagged Forgery';
-  votes: ConsensusVote[];
-  createdAt: string;
+  caseTitle?: string;
+  caseRef?: string;
+  exhibitId?: string;
+  exhibitTitle?: string;
+  submittedBy?: string;
+  requiredVotes?: number;
+  currentVotes?: number;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Flagged Forgery' | 'Flagged suspicious' | string;
+  validatorVoteStatus?: string;
+  votes?: ConsensusVote[];
+  createdAt?: string;
+  queue?: string;
+  waitTimeHours?: number;
+  waitTimeFormatted?: string;
+  slaLimitFormatted?: string;
+  urgency?: string;
+  urgencyColor?: string;
+  badgeColor?: string;
+  quorumSigned?: number;
+  quorumTotal?: number;
+  merkleRoot?: string;
+  zkProofType?: string;
+  entropyScore?: string;
+  cryptographicDetails?: string;
+  signedBy?: Record<string, boolean>;
+  txHash?: string;
+  blockNumber?: number;
+  category?: string;
+  requestAgency?: string;
+  description?: string;
+  targetRecordHash?: string;
+  validatorVote?: string;
+  validatorJustificationNote?: string;
+  nodeVotes?: any[];
+  courtAuthorityVoteStatus?: string;
+  yourVote?: string;
+  title?: string;
+  proposedRecordHash?: string;
+  currentApprovalCount?: number;
+  totalRequiredCount?: number;
+  systemFlagIndicator?: {
+    isFlagged: boolean;
+    flagType?: string;
+    title?: string;
+    description?: string;
+  };
 }
 
 export interface ForgeryReviewItem {
@@ -162,6 +202,66 @@ export interface PrecedentFlagItem {
   status: 'Flagged' | 'Resolved' | 'Overridden';
   resolvedBy?: string;
   resolvedAt?: string;
+}
+
+export interface AnalyticsReportRecord {
+  id: string;
+  reportCode?: string;
+  title: string;
+  privacyType?: string;
+  status?: string;
+  courtScope?: string;
+  benchScope?: string;
+  cohortSize?: number;
+  minCohortThreshold?: number;
+  differentialPrivacyEpsilon?: number;
+  isKAnonymityValid?: boolean;
+  caseDurationAvgDays?: number;
+  caseDurationBaselineDays?: number;
+  precedentVarianceScore?: number;
+  anomalyScore?: number;
+  anomalySeverity?: string;
+  summaryDescription?: string;
+  encryptionAlgorithm?: string;
+  escalationStatus?: string;
+  escalationTicketId?: string;
+  escalationDate?: string;
+  escalationRationale?: string;
+  escalationCategory?: string;
+  createdAt?: string;
+}
+
+export interface ValidatorActivityLogRecord {
+  id: string;
+  eventType: string;
+  userId: string;
+  userRole?: string;
+  timestamp: string;
+  category?: string;
+  actionName?: string;
+  targetScope?: string;
+  outcome?: string;
+  blockNumber?: number;
+  details?: Record<string, any>;
+  action?: string;
+  type?: string;
+  time?: string;
+  nodeId?: string;
+  icon?: string;
+  color?: string;
+}
+
+export interface OversightEscalationRecord {
+  id: string;
+  ticketId?: string;
+  reportId?: string;
+  reportCode?: string;
+  title?: string;
+  category?: string;
+  rationale?: string;
+  validatorName?: string;
+  status?: string;
+  createdAt?: string;
 }
 
 import fs from 'fs';
@@ -500,7 +600,7 @@ class PrimaryDataStore {
     }
   }
 
-  private loadFromDisk() {
+  public loadFromDisk() {
     try {
       if (fs.existsSync(DATA_FILE)) {
         const raw = fs.readFileSync(DATA_FILE, 'utf-8');
@@ -745,11 +845,30 @@ class PrimaryDataStore {
     return [...this.consensusRequests];
   }
 
+  public getConsensusRequestById(id: string, isDuressSession?: boolean): ConsensusRequest | undefined {
+    if (isDuressSession) {
+      return this.decoyConsensusRequests.find(r => r.id === id);
+    }
+    return this.consensusRequests.find(r => r.id === id);
+  }
+
+  public saveConsensusRequest(request: ConsensusRequest): ConsensusRequest {
+    const idx = this.consensusRequests.findIndex(r => r.id === request.id);
+    if (idx >= 0) {
+      this.consensusRequests[idx] = request;
+    } else {
+      this.consensusRequests.push(request);
+    }
+    this.persistToDisk();
+    return request;
+  }
+
   public addConsensusVote(requestId: string, validatorId: string, validatorName: string, vote: 'APPROVE' | 'REJECT' | 'FLAG_FORGERY', note?: string): ConsensusRequest | undefined {
     const req = this.consensusRequests.find(r => r.id === requestId);
     if (!req) return undefined;
     
     // Check if already voted
+    if (!req.votes) req.votes = [];
     const existing = req.votes.find(v => v.validatorId === validatorId);
     if (!existing) {
       req.votes.push({
@@ -760,12 +879,87 @@ class PrimaryDataStore {
         note
       });
       req.currentVotes = req.votes.length;
-      if (req.currentVotes >= req.requiredVotes) {
+      if (req.requiredVotes && req.currentVotes >= req.requiredVotes) {
         req.status = 'Approved';
       }
       this.persistToDisk();
     }
     return req;
+  }
+
+  // --- ANALYTICS REPORTS ---
+  public addAnalyticsReport(report: AnalyticsReportRecord): AnalyticsReportRecord {
+    this.analyticsReports.push(report);
+    this.persistToDisk();
+    return report;
+  }
+
+  public getAnalyticsReports(): AnalyticsReportRecord[] {
+    return [...this.analyticsReports];
+  }
+
+  public getAnalyticsReportById(id: string): AnalyticsReportRecord | undefined {
+    return this.analyticsReports.find(r => r.id === id);
+  }
+
+  public saveAnalyticsReport(report: AnalyticsReportRecord): AnalyticsReportRecord {
+    const idx = this.analyticsReports.findIndex(r => r.id === report.id);
+    if (idx >= 0) {
+      this.analyticsReports[idx] = report;
+    } else {
+      this.analyticsReports.push(report);
+    }
+    this.persistToDisk();
+    return report;
+  }
+
+  // --- OVERSIGHT ESCALATIONS ---
+  public getOversightEscalations(): OversightEscalationRecord[] {
+    return [...this.oversightEscalations];
+  }
+
+  public saveOversightEscalation(escalation: OversightEscalationRecord): OversightEscalationRecord {
+    const idx = this.oversightEscalations.findIndex(e => e.id === escalation.id);
+    if (idx >= 0) {
+      this.oversightEscalations[idx] = escalation;
+    } else {
+      this.oversightEscalations.push(escalation);
+    }
+    this.persistToDisk();
+    return escalation;
+  }
+
+  // --- VALIDATOR ACTIVITY LOGS ---
+  public getValidatorActivityLogs(): ValidatorActivityLogRecord[] {
+    return [...this.validatorActivityLogs];
+  }
+
+  public addValidatorActivityLog(log: ValidatorActivityLogRecord): ValidatorActivityLogRecord {
+    this.validatorActivityLogs.push(log);
+    this.persistToDisk();
+    return log;
+  }
+
+  public acknowledgeDuressAlert(alertId: string, status: string = 'INVESTIGATING'): DuressAlert | undefined {
+    const alert = this.duressAlerts.find(a => a.id === alertId);
+    if (alert) {
+      alert.status = status as any;
+      this.persistToDisk();
+    }
+    return alert;
+  }
+
+  public getDashboardCounts() {
+    return {
+      pendingConsensus: this.consensusRequests.filter(r => r.status === 'Pending').length,
+      duressAlerts: this.duressAlerts.length,
+      flaggedAnomalies: this.forgeryReviews.filter(f => f.status === 'Quarantined').length,
+      activeCases: this.cases.size,
+      consensusAwaitingCount: this.consensusRequests.filter(r => r.status === 'Pending').length,
+      analyticsReportsCount: this.analyticsReports.length,
+      activeDuressCount: this.duressAlerts.filter(a => a.status !== 'RESOLVED').length,
+      bottleneckInfo: 'Zone 4 West Special Tribunal (SLA 12h)'
+    };
   }
 
   // --- FORGERY REVIEWS ---
