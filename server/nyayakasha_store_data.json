@@ -1325,14 +1325,17 @@
       "updatedAt": "2026-08-08T16:32:54.869Z"
     },
     {
+      "role": "field_submitter",
+      "badgeId": "POL-99482",
+      "fullName": "Officer Vikram Singh",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$przzRba9zt4F5jg7QtcU+w$3DhW4yD6tT2nL1Sfk3R11+j7RzMWN69pNgwjec6MiqU",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T16:34:22.392Z",
+      "jurisdictionCode": "MH-MUM-DIST-01",
       "id": "usr_field_submitter_1786206862391",
       "email": "fs_test_1786206862208@nyayakasha.gov.in",
-      "fullName": "Officer Vikram Singh",
-      "role": "field_submitter",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$przzRba9zt4F5jg7QtcU+w$3DhW4yD6tT2nL1Sfk3R11+j7RzMWN69pNgwjec6MiqU",
-      "badgeId": "POL-99482",
-      "jurisdictionCode": "MH-MUM-DIST-01",
-      "approvalState": "mfa_pending",
+      "institutionVerified": true,
       "stateHistory": [
         {
           "state": "submitted",
@@ -1349,22 +1352,22 @@
           "timestamp": "2026-08-08T16:34:22.957Z"
         }
       ],
-      "institutionVerified": true,
-      "vettingApproved": false,
-      "mfaEnrolled": false,
-      "createdAt": "2026-08-08T16:34:22.392Z",
-      "updatedAt": "2026-08-08T16:34:23.275Z",
+      "approvalState": "mfa_pending",
       "realPinHash": "$argon2id$v=19$m=65536,t=3,p=4$ig479nMOEETzNIGMIX2RKA$qeeHq3+QVVo4uarsqT7Mtb0yQminUzUDvynk4s2kp1M",
-      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$vSg/7iFEntnhiKMY7FmRBQ$OiSTahIPG6InNvDX2Wj23RwMz7pUkaLCT9hZljqt1QU"
+      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$vSg/7iFEntnhiKMY7FmRBQ$OiSTahIPG6InNvDX2Wj23RwMz7pUkaLCT9hZljqt1QU",
+      "updatedAt": "2026-08-08T16:34:23.275Z"
     },
     {
+      "barCouncilNumber": "MAH/4821/2012",
+      "role": "court_authority",
+      "fullName": "Judge Ananya Sharma",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$wKnZ7j3uyccoySK1EvgibA$ojvriOZxQBpJ+UY27eByf1xyCjpcQg5Qj0WD0uP6m7I",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T16:34:22.551Z",
       "id": "usr_court_authority_1786206862551",
       "email": "court_test_1786206862208@nyayakasha.gov.in",
-      "fullName": "Judge Ananya Sharma",
-      "role": "court_authority",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$wKnZ7j3uyccoySK1EvgibA$ojvriOZxQBpJ+UY27eByf1xyCjpcQg5Qj0WD0uP6m7I",
-      "barCouncilNumber": "MAH/4821/2012",
-      "approvalState": "mfa_pending",
+      "institutionVerified": true,
       "stateHistory": [
         {
           "state": "submitted",
@@ -1382,20 +1385,19 @@
           "note": "Verified against Bar Council Records"
         }
       ],
-      "institutionVerified": true,
-      "vettingApproved": false,
-      "mfaEnrolled": false,
-      "createdAt": "2026-08-08T16:34:22.551Z",
+      "approvalState": "mfa_pending",
       "updatedAt": "2026-08-08T16:34:22.920Z"
     },
     {
+      "role": "independent_validator",
+      "institutionId": "HIGH_COURT_OVERSIGHT",
+      "fullName": "Dr. Ramesh Patel",
+      "mfaEnrolled": false,
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$52t01P6BvnQzDk47j1tq3g$a/HxDdjAGee/GhQu9H21jN+q0bMiyeP0ZBT72/MlfOc",
+      "vettingApproved": false,
+      "createdAt": "2026-08-08T16:34:22.724Z",
       "id": "usr_independent_validator_1786206862724",
       "email": "validator_test_1786206862208@nyayakasha.gov.in",
-      "fullName": "Dr. Ramesh Patel",
-      "role": "independent_validator",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$52t01P6BvnQzDk47j1tq3g$a/HxDdjAGee/GhQu9H21jN+q0bMiyeP0ZBT72/MlfOc",
-      "institutionId": "HIGH_COURT_OVERSIGHT",
-      "approvalState": "institution_review",
       "stateHistory": [
         {
           "state": "submitted",
@@ -1408,14 +1410,332 @@
           "note": "Verified by Institutional Registry"
         }
       ],
+      "approvalState": "institution_review",
+      "institutionVerified": true,
+      "updatedAt": "2026-08-08T16:34:22.730Z"
+    },
+    {
+      "id": "usr_field_submitter_1786207442459",
+      "email": "fs_test_1786207442327@nyayakasha.gov.in",
+      "fullName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$6iomhV2GktrxcLQFdzFClQ$TqWNbz+AiUGLnjj6Cw9uB3Cg1txJ5FlNP2Pu84Gg5z0",
+      "badgeId": "POL-99482",
+      "jurisdictionCode": "MH-MUM-DIST-01",
+      "approvalState": "mfa_pending",
+      "stateHistory": [
+        {
+          "state": "submitted",
+          "timestamp": "2026-08-08T16:44:02.459Z",
+          "note": "Account signup submitted"
+        },
+        {
+          "state": "institution_review",
+          "timestamp": "2026-08-08T16:44:02.464Z",
+          "note": "Verified by Institutional Registry"
+        },
+        {
+          "state": "mfa_pending",
+          "timestamp": "2026-08-08T16:44:03.548Z"
+        }
+      ],
       "institutionVerified": true,
       "vettingApproved": false,
       "mfaEnrolled": false,
-      "createdAt": "2026-08-08T16:34:22.724Z",
-      "updatedAt": "2026-08-08T16:34:22.730Z"
+      "createdAt": "2026-08-08T16:44:02.459Z",
+      "updatedAt": "2026-08-08T16:44:03.746Z",
+      "realPinHash": "$argon2id$v=19$m=65536,t=3,p=4$YAyJJv4P6Xr+XgwqDwFKaw$gf8By6kyw9OuC0KaNsyWRz46rhdfPQ6fxw4BuadzmNM",
+      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$T03654tyYE7Gp5M1Ykap4g$L6ZAUeejqu7XA7pTuRa46eSSPymLqhsk7UEyABA7m3w"
+    },
+    {
+      "id": "usr_court_authority_1786207442598",
+      "email": "court_test_1786207442327@nyayakasha.gov.in",
+      "fullName": "Judge Ananya Sharma",
+      "role": "court_authority",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$E39qs//LC54pOb8GIESpdQ$LxTNfnFzjwnSQL37oG2QAb9xV12MeGrvGg1uGFqWyQ8",
+      "barCouncilNumber": "MAH/4821/2012",
+      "approvalState": "mfa_pending",
+      "stateHistory": [
+        {
+          "state": "submitted",
+          "timestamp": "2026-08-08T16:44:02.598Z",
+          "note": "Account signup submitted"
+        },
+        {
+          "state": "institution_review",
+          "timestamp": "2026-08-08T16:44:02.600Z",
+          "note": "Verified by Institutional Registry"
+        },
+        {
+          "state": "mfa_pending",
+          "timestamp": "2026-08-08T16:44:03.530Z",
+          "note": "Verified against Bar Council Records"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": false,
+      "mfaEnrolled": false,
+      "createdAt": "2026-08-08T16:44:02.598Z",
+      "updatedAt": "2026-08-08T16:44:03.530Z"
+    },
+    {
+      "id": "usr_independent_validator_1786207443396",
+      "email": "validator_test_1786207442327@nyayakasha.gov.in",
+      "fullName": "Dr. Ramesh Patel",
+      "role": "independent_validator",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$9uJ8YWNBLN/t10qJ9DSD7Q$ncgVuI++QygAfLduk34sx3qhDQl6tWSHqP2KP426XGM",
+      "institutionId": "HIGH_COURT_OVERSIGHT",
+      "approvalState": "institution_review",
+      "stateHistory": [
+        {
+          "state": "submitted",
+          "timestamp": "2026-08-08T16:44:03.396Z",
+          "note": "Account signup submitted"
+        },
+        {
+          "state": "institution_review",
+          "timestamp": "2026-08-08T16:44:03.398Z",
+          "note": "Verified by Institutional Registry"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": false,
+      "mfaEnrolled": false,
+      "createdAt": "2026-08-08T16:44:03.396Z",
+      "updatedAt": "2026-08-08T16:44:03.398Z"
+    },
+    {
+      "id": "usr_field_submitter_1786207556342",
+      "email": "fs_test_1786207555998@nyayakasha.gov.in",
+      "fullName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$62Ajkc/yleavMvVgJ7OC+Q$BulthficL5UchbAPWPbO7Ol5ULX1uUFMLYYVhle08NQ",
+      "badgeId": "POL-99482",
+      "jurisdictionCode": "MH-MUM-DIST-01",
+      "approvalState": "mfa_pending",
+      "stateHistory": [
+        {
+          "state": "submitted",
+          "timestamp": "2026-08-08T16:45:56.342Z",
+          "note": "Account signup submitted"
+        },
+        {
+          "state": "institution_review",
+          "timestamp": "2026-08-08T16:45:56.344Z",
+          "note": "Verified by Institutional Registry"
+        },
+        {
+          "state": "mfa_pending",
+          "timestamp": "2026-08-08T16:45:57.035Z"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": false,
+      "mfaEnrolled": false,
+      "createdAt": "2026-08-08T16:45:56.342Z",
+      "updatedAt": "2026-08-08T16:45:57.211Z",
+      "realPinHash": "$argon2id$v=19$m=65536,t=3,p=4$LMZhZdKNNwInSttRIJ0G7g$xKW8kWZHYUWDk/9W3QNAwdwklFgRTbIAYEP4yRMujAk",
+      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$aeh5cOV0+BfYopIeSvFvuQ$nhn4SCS7mM82NgQA/v823AQ1vYNS7Kk8Q4EVOe6xgr0"
+    },
+    {
+      "id": "usr_court_authority_1786207556738",
+      "email": "court_test_1786207555998@nyayakasha.gov.in",
+      "fullName": "Judge Ananya Sharma",
+      "role": "court_authority",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$I0+lmnl9WDytdthfK78L3A$O/yo2PHrVAt6JLO27q2JGk+3p7CHS+GLnymhgkk6hog",
+      "barCouncilNumber": "MAH/4821/2012",
+      "approvalState": "mfa_pending",
+      "stateHistory": [
+        {
+          "state": "submitted",
+          "timestamp": "2026-08-08T16:45:56.738Z",
+          "note": "Account signup submitted"
+        },
+        {
+          "state": "institution_review",
+          "timestamp": "2026-08-08T16:45:56.739Z",
+          "note": "Verified by Institutional Registry"
+        },
+        {
+          "state": "mfa_pending",
+          "timestamp": "2026-08-08T16:45:57.015Z",
+          "note": "Verified against Bar Council Records"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": false,
+      "mfaEnrolled": false,
+      "createdAt": "2026-08-08T16:45:56.738Z",
+      "updatedAt": "2026-08-08T16:45:57.015Z"
+    },
+    {
+      "id": "usr_independent_validator_1786207556888",
+      "email": "validator_test_1786207555998@nyayakasha.gov.in",
+      "fullName": "Dr. Ramesh Patel",
+      "role": "independent_validator",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$sJLsIMvHZ6p6Pd13sq/ygg$mNv0OHWGEmxFOzE0I/UYj/mlC+90ZGn5/E5TC4J5+uw",
+      "institutionId": "HIGH_COURT_OVERSIGHT",
+      "approvalState": "institution_review",
+      "stateHistory": [
+        {
+          "state": "submitted",
+          "timestamp": "2026-08-08T16:45:56.888Z",
+          "note": "Account signup submitted"
+        },
+        {
+          "state": "institution_review",
+          "timestamp": "2026-08-08T16:45:56.890Z",
+          "note": "Verified by Institutional Registry"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": false,
+      "mfaEnrolled": false,
+      "createdAt": "2026-08-08T16:45:56.888Z",
+      "updatedAt": "2026-08-08T16:45:56.890Z"
     }
   ],
   "duressAlerts": [
+    {
+      "userId": "usr_field_submitter_1786207556342",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786207558441_ib24",
+      "timestamp": "2026-08-08T16:45:58.441Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786207556342",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786207558203_c960",
+      "timestamp": "2026-08-08T16:45:58.203Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786207556342",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786207557951_4r76",
+      "timestamp": "2026-08-08T16:45:57.951Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786207556342",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786207557709_sy0g",
+      "timestamp": "2026-08-08T16:45:57.709Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786207556342",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786207557454_46kc",
+      "timestamp": "2026-08-08T16:45:57.454Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786207442459",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786207445127_fc3z",
+      "timestamp": "2026-08-08T16:44:05.127Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786207442459",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786207444830_gnxb",
+      "timestamp": "2026-08-08T16:44:04.830Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786207442459",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786207444561_e5tg",
+      "timestamp": "2026-08-08T16:44:04.561Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786207442459",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786207444287_7orc",
+      "timestamp": "2026-08-08T16:44:04.287Z",
+      "status": "UNACKNOWLEDGED"
+    },
+    {
+      "userId": "usr_field_submitter_1786207442459",
+      "userName": "Officer Vikram Singh",
+      "role": "field_submitter",
+      "ipAddress": "::1",
+      "locationInfo": {
+        "lat": 19.076,
+        "lng": 72.8777,
+        "jurisdiction": "MH-MUM-DIST-01"
+      },
+      "id": "alert_dur_1786207444011_arrb",
+      "timestamp": "2026-08-08T16:44:04.011Z",
+      "status": "UNACKNOWLEDGED"
+    },
     {
       "userId": "usr_field_submitter_1786206862391",
       "userName": "Officer Vikram Singh",
@@ -1886,6 +2206,18 @@
       "id": "vet_1786206862756",
       "userId": "usr_independent_validator_1786206862724",
       "submittedAt": "2026-08-08T16:34:22.756Z",
+      "consentGiven": true
+    },
+    {
+      "id": "vet_1786207443419",
+      "userId": "usr_independent_validator_1786207443396",
+      "submittedAt": "2026-08-08T16:44:03.419Z",
+      "consentGiven": true
+    },
+    {
+      "id": "vet_1786207556910",
+      "userId": "usr_independent_validator_1786207556888",
+      "submittedAt": "2026-08-08T16:45:56.910Z",
       "consentGiven": true
     }
   ],
