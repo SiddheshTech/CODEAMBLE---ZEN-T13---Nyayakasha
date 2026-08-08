@@ -171,13 +171,13 @@ settingsRoutes.patch('/', async (req: Request, res: Response) => {
     const clientIp = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '10.208.12.88';
 
     // Record in tamper-evident audit ledger
-    auditLedger.appendEntry(
-      'SETTINGS_UPDATED',
-      user.email,
-      user.role,
-      clientIp,
-      { updatedKeys: Object.keys(validated) }
-    );
+    auditLedger.appendEvent({
+      eventType: 'SETTINGS_UPDATED',
+      userId: user.email,
+      userRole: user.role,
+      ipAddress: clientIp,
+      details: { updatedKeys: Object.keys(validated) }
+    });
 
     return res.json({
       success: true,
@@ -210,13 +210,13 @@ settingsRoutes.post('/revoke-session', async (req: Request, res: Response) => {
 
     const clientIp = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || '10.208.12.88';
 
-    auditLedger.appendEntry(
-      'SESSION_REVOKED',
-      user.email,
-      user.role,
-      clientIp,
-      { sessionId, revokedAt: new Date().toISOString() }
-    );
+    auditLedger.appendEvent({
+      eventType: 'SESSION_REVOKED',
+      userId: user.email,
+      userRole: user.role,
+      ipAddress: clientIp,
+      details: { sessionId, revokedAt: new Date().toISOString() }
+    });
 
     return res.json({
       success: true,
