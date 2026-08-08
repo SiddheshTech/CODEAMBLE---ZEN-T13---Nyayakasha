@@ -25,20 +25,21 @@ export function ChainOfCustodyTab() {
       if (res && res.evidence) {
         setCustodyItems(res.evidence.map((e: any) => ({
           id: e.id,
-          caseId: e.caseId || 'FIR-2026-001',
+          caseId: e.caseId || null,
           title: e.title,
-          type: e.type === 'Document' ? 'Document' : e.type === 'Video' ? 'Digital Asset' : 'Physical Evidence',
-          currentCustodian: e.custodian || 'Officer R. Kulkarni',
-          status: e.status === 'Sealed' ? 'Secured' : e.status || 'Secured',
-          lastUpdated: e.date || 'Recently',
-          hash: e.hash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-          txHash: e.txHash,
-          blockNumber: e.blockNumber,
-          merkleRoot: e.merkleRoot,
-          fileUrl: e.fileUrl,
-          dataUrl: e.dataUrl,
-          evidenceNotes: e.evidenceNotes,
-          witnessName: e.witnessName
+          date: e.date,
+          type: e.type || 'Physical Evidence',
+          currentCustodian: e.custodian || null,
+          status: e.status === 'Sealed' ? 'Secured' : e.status || null,
+          lastUpdated: e.date ? new Date(e.date).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : null,
+          hash: e.hash || null,
+          txHash: e.txHash || null,
+          blockNumber: e.blockNumber || null,
+          merkleRoot: e.merkleRoot || null,
+          fileUrl: e.fileUrl || null,
+          dataUrl: e.dataUrl || null,
+          evidenceNotes: e.evidenceNotes || null,
+          witnessName: e.witnessName || null
         })));
       }
     } catch (err) {
@@ -63,10 +64,10 @@ export function ChainOfCustodyTab() {
         type: selectedItem.type,
         currentCustodian: selectedItem.currentCustodian,
         status: selectedItem.status,
-        sha256Hash: selectedItem.hash,
-        txHash: selectedItem.txHash || "0x27e048e7d6773ffa9fe69085d27a6de77a57ae644608f9ecd6f7b55ca8a241ac",
-        blockNumber: selectedItem.blockNumber || 15058125,
-        merkleRoot: selectedItem.merkleRoot || "0x486b2255988d134e6391f8692dcc1b958fb6c8e0e86ab974a25f47cdf1c3b77f"
+        sha256Hash: selectedItem.hash || null,
+        txHash: selectedItem.txHash || null,
+        blockNumber: selectedItem.blockNumber || null,
+        merkleRoot: selectedItem.merkleRoot || null
       },
       chainOfCustodyTrail: timeline,
       certificateVerification: "100% IMMUTABLE & VERIFIED ON POLYGON POS BLOCKCHAIN"
@@ -90,26 +91,31 @@ export function ChainOfCustodyTab() {
             setTimeline(res.chainOfCustody.map((event: any) => ({
               time: new Date(event.timestamp).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
               title: event.eventType.replace(/_/g, ' '),
-              desc: event.details?.immutabilityNotice || (event.details?.reason ? `Reason: ${event.details.reason}` : undefined) || event.details?.notes || `Action executed by ${event.actorRole || 'Field Submitter'}`,
-              actor: event.details?.newCustodian ? `${event.actorRole || 'Officer'} -> ${event.details.newCustodian}` : (event.actorRole || 'Officer R. Kulkarni'),
-              role: 'Custodian / Officer',
+              desc: event.details?.immutabilityNotice || (event.details?.reason ? `Reason: ${event.details.reason}` : null) || event.details?.notes || null,
+              actor: event.details?.newCustodian ? `${event.actorRole || event.actorId} -> ${event.details.newCustodian}` : (event.actorRole || event.actorId || null),
+              role: event.actorRole || 'Field Officer',
               icon: CheckCircle2,
               status: 'Verified',
-              hash: event.details?.txHash ? event.details.txHash.slice(0, 14) + '...' : (event.blockHash ? event.blockHash.slice(0, 14) + '...' : 'Polygon PoS Block')
+              hash: event.details?.txHash ? event.details.txHash.slice(0, 18) + '...' : (event.blockHash ? event.blockHash.slice(0, 18) + '...' : null)
             })));
           } else {
-            setTimeline([
-              {
-                time: selectedItem.lastUpdated || "Oct 12, 2026 • 10:42 AM",
-                title: "EVIDENCE BLOCKCHAIN ANCHORED",
-                desc: selectedItem.evidenceNotes || "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
-                actor: selectedItem.currentCustodian || "Officer R. Kulkarni",
-                role: "Custodian / Officer",
-                icon: Camera,
-                status: "Verified",
-                hash: selectedItem.hash ? selectedItem.hash.slice(0, 16) + '...' : '0xe3b0...b855'
-              }
-            ]);
+            // No audit trail entries yet — show the sealed submission entry derived from evidence metadata
+            if (selectedItem.hash || selectedItem.txHash) {
+              setTimeline([
+                {
+                  time: selectedItem.date ? new Date(selectedItem.date).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : selectedItem.lastUpdated,
+                  title: "EVIDENCE BLOCKCHAIN ANCHORED",
+                  desc: selectedItem.evidenceNotes || "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+                  actor: selectedItem.currentCustodian,
+                  role: "Custodian / Officer",
+                  icon: Camera,
+                  status: "Verified",
+                  hash: selectedItem.txHash ? selectedItem.txHash.slice(0, 18) + '...' : (selectedItem.hash ? selectedItem.hash.slice(0, 16) + '...' : null)
+                }
+              ]);
+            } else {
+              setTimeline([]);
+            }
           }
         }).catch(err => {
           console.error("Chain fetch error:", err);
@@ -267,22 +273,26 @@ export function ChainOfCustodyTab() {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-black">{step.status}</span>
                         </div>
                       </div>
-                      <p className="text-sm text-black/70 leading-relaxed mb-4">{step.desc}</p>
+                      {step.desc && <p className="text-sm text-black/70 leading-relaxed mb-4">{step.desc}</p>}
                       
                       <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-black/5">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center">
-                            <User className="w-3 h-3 text-black/60" />
+                        {step.actor && (
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center">
+                              <User className="w-3 h-3 text-black/60" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-black leading-tight">{step.actor}</p>
+                              <p className="text-[10px] text-black/50">{step.role}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-xs font-bold text-black leading-tight">{step.actor}</p>
-                            <p className="text-[10px] text-black/50">{step.role}</p>
+                        )}
+                        {step.hash && (
+                          <div className="sm:ml-auto flex items-center gap-2 text-[10px] font-mono text-black/40 bg-white px-2 py-1 rounded border border-black/5">
+                            <Key className="w-3 h-3" />
+                            {step.hash}
                           </div>
-                        </div>
-                        <div className="sm:ml-auto flex items-center gap-2 text-[10px] font-mono text-black/40 bg-white px-2 py-1 rounded border border-black/5">
-                          <Key className="w-3 h-3" />
-                          {step.hash}
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>
