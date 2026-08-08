@@ -18,6 +18,7 @@ import { SecurityPage } from './components/SecurityPage';
 import { AuthPage } from './components/AuthPage';
 import { InviteSignupPage } from './components/InviteSignupPage';
 import { DashboardPage } from './components/DashboardPage';
+import { CNNPage } from './components/CNNPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -70,6 +71,11 @@ export default function App() {
         <InviteSignupPage onNavigate={setCurrentPage} />
       ) : currentPage === 'dashboard' ? (
         <DashboardPage onNavigate={setCurrentPage} />
+      ) : currentPage === 'cnn' ? (
+        <>
+          <Navbar onNavigate={setCurrentPage} currentPage={currentPage} />
+          <CNNPage />
+        </>
       ) : null}
       {currentPage !== 'auth' && currentPage !== 'invite' && currentPage !== 'dashboard' && (
         <FooterSection 

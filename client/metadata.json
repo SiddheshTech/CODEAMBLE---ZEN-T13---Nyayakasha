@@ -1,6 +1,23 @@
 {
   "name": "Nyayakasha",
   "description": "A blockchain justice-infrastructure making it cryptographically impossible to fabricate, coerce, or corrupt evidence, testimony, or judgments.",
-  "requestFramePermissions": ["camera"],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ],
+  "cnn_page": {
+    "latest_model": "maya_break_cnn_model.h5",
+    "results_path": "cnn/results.json",
+    "aggregated_path": "cnn/aggregated.json",
+    "summary_path": "cnn/summary.json",
+    "plots": {
+      "roc": "cnn/plots/roc.png",
+      "confusion": "cnn/plots/confusion.png"
+    },
+    "analysis_dir": "cnn/analysis",
+    "model_package": "cnn/models/model_v1_package.zip",
+    "last_updated": "2026-08-08T16:33:21.271406"
+  }
 }

@@ -5,7 +5,7 @@ import { LogoIcon } from './LogoIcon';
 export function Navbar({ onNavigate, currentPage = 'home' }: { onNavigate?: (page: string) => void, currentPage?: string }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const navClass = (currentPage === 'contact' || currentPage === 'infrastructure' || currentPage === 'evidence' || currentPage === 'security') 
+  const navClass = (currentPage === 'contact' || currentPage === 'infrastructure' || currentPage === 'evidence' || currentPage === 'security' || currentPage === 'cnn') 
     ? "relative top-0 left-0 right-0 z-40 px-6 py-5 bg-[#F5F5F5]"
     : `absolute top-0 left-0 right-0 z-40 px-6 py-5 ${isMobileMenuOpen ? 'bg-[#F5F5F5]' : ''}`;
 
@@ -51,6 +51,12 @@ export function Navbar({ onNavigate, currentPage = 'home' }: { onNavigate?: (pag
             >
               Contact
             </button>
+            <button 
+              onClick={() => onNavigate?.('cnn')} 
+              className={`hover:text-black transition-colors duration-200 cursor-pointer ${currentPage === 'cnn' ? 'text-black font-semibold' : ''}`}
+            >
+              CNN
+            </button>
           </div>
 
           <div className="flex items-center gap-4 relative z-50">
@@ -82,6 +88,7 @@ export function Navbar({ onNavigate, currentPage = 'home' }: { onNavigate?: (pag
           <button onClick={() => handleNavigate('security')} className="text-left py-2 border-b border-black/10 hover:text-black/70">Security</button>
           <button onClick={() => handleNavigate('evidence')} className="text-left py-2 border-b border-black/10 hover:text-black/70">Evidence</button>
           <button onClick={() => handleNavigate('contact')} className="text-left py-2 border-b border-black/10 hover:text-black/70">Contact</button>
+          <button onClick={() => handleNavigate('cnn')} className="text-left py-2 border-b border-black/10 hover:text-black/70">CNN</button>
         </div>
         
         <div className="mt-auto pb-12">
