@@ -309,6 +309,29 @@ export const api = {
     return fetchAPI('/security/validator/duress-alerts', { method: 'GET' });
   },
 
+  // --- INDEPENDENT VALIDATOR WORKSPACE ---
+  getValidatorDashboard: async () => {
+    return fetchAPI('/validator/dashboard', { method: 'GET' });
+  },
+
+  castValidatorVote: async (blockId: string, decision: 'Approve' | 'Reject', pin?: string) => {
+    return fetchAPI('/validator/vote', {
+      method: 'POST',
+      body: JSON.stringify({ blockId, decision, pin })
+    });
+  },
+
+  acknowledgeDuressAlert: async (alertId?: string) => {
+    return fetchAPI('/validator/duress/acknowledge', {
+      method: 'POST',
+      body: JSON.stringify({ alertId })
+    });
+  },
+
+  getValidatorActivityLogs: async () => {
+    return fetchAPI('/validator/activity-log', { method: 'GET' });
+  },
+
   getHealth: async () => {
     return fetchAPI('/health', { method: 'GET' });
   }

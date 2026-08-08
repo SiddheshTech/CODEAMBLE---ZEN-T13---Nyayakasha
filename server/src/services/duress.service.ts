@@ -75,12 +75,7 @@ export async function verifyPinAndHandleDuress(
     });
 
     // Notify connected Independent Validator WebSockets covertly
-    const payload = JSON.stringify({ type: 'DURESS_ALERT', alert });
-    validatorSockets.forEach(socket => {
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.send(payload);
-      }
-    });
+    notifyValidatorSockets({ type: 'DURESS_ALERT', alert });
 
     return { isMatch: true, isDuress: true };
   }
@@ -90,4 +85,13 @@ export async function verifyPinAndHandleDuress(
   }
 
   return { isMatch: false, isDuress: false };
+}
+
+export function notifyValidatorSockets(data: any) {
+  const payload = JSON.stringify(data);
+  validatorSockets.forEach(socket => {
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(payload);
+    }
+  });
 }

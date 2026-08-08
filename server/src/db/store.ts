@@ -48,7 +48,31 @@ export interface DuressAlert {
   role: UserRole;
   ipAddress: string;
   locationInfo?: { lat: number; lng: number; jurisdiction?: string };
-  status: 'UNACKNOWLEDGED' | 'INVESTIGATING' | 'RESOLVED';
+  status: 'UNACKNOWLEDGED' | 'INVESTIGATING' | 'ESCALATED' | 'RESOLVED';
+  refId?: string;
+  detailsText?: string;
+  fieldNodeId?: string;
+}
+
+
+
+export interface AnalyticsReportRecord {
+  id: string;
+  title: string;
+  privacyType: string;
+  status: string;
+  createdAt: string;
+}
+
+export interface ValidatorActivityLogRecord {
+  id: string;
+  action: string;
+  type: string;
+  time: string;
+  timestamp: string;
+  nodeId: string;
+  icon: string;
+  color: string;
 }
 
 export interface CaseRecord {
@@ -98,15 +122,35 @@ export interface ConsensusVote {
 
 export interface ConsensusRequest {
   id: string;
-  caseId: string;
-  caseTitle: string;
-  exhibitId: string;
-  exhibitTitle: string;
-  submittedBy: string;
-  requiredVotes: number;
-  currentVotes: number;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'Flagged Forgery';
-  votes: ConsensusVote[];
+  // Case Consensus fields
+  caseId?: string;
+  caseTitle?: string;
+  exhibitId?: string;
+  exhibitTitle?: string;
+  submittedBy?: string;
+  requiredVotes?: number;
+  currentVotes?: number;
+  status?: 'Pending' | 'Approved' | 'Rejected' | 'Flagged Forgery';
+  votes?: ConsensusVote[];
+
+  // Validator Block Consensus fields
+  queue?: string;
+  waitTimeHours?: number;
+  waitTimeFormatted?: string;
+  slaLimitFormatted?: string;
+  urgency?: 'URGENT BOTTLENECK' | 'HIGH' | 'NORMAL';
+  urgencyColor?: string;
+  badgeColor?: string;
+  quorumSigned?: number;
+  quorumTotal?: number;
+  merkleRoot?: string;
+  zkProofType?: string;
+  entropyScore?: string;
+  cryptographicDetails?: string;
+  signedBy?: Record<string, string>;
+  txHash?: string;
+  blockNumber?: number;
+
   createdAt: string;
 }
 
@@ -165,13 +209,14 @@ class PrimaryDataStore {
   private usersByEmail = new Map<string, UserRecord>();
   private duressAlerts: DuressAlert[] = [];
   private vettingQueue: Array<{ id: string; userId: string; submittedAt: string; consentGiven: boolean }> = [];
-  
   private cases = new Map<string, CaseRecord>();
   private evidence = new Map<string, EvidenceRecord>();
   private consensusRequests: ConsensusRequest[] = [];
   private forgeryReviews: ForgeryReviewItem[] = [];
   private identityUnlocks: IdentityUnlockRequest[] = [];
   private precedentFlags: PrecedentFlagItem[] = [];
+  private analyticsReports: AnalyticsReportRecord[] = [];
+  private validatorActivityLogs: ValidatorActivityLogRecord[] = [];
 
   constructor() {
     this.seedDefaults();
@@ -308,7 +353,7 @@ class PrimaryDataStore {
     if (!db) return;
     try {
       const usersSnap = await db.collection('users').get();
-      usersSnap.forEach((doc) => {
+      usersSnap.forEach((doc: any) => {
         const u = doc.data() as UserRecord;
         this.users.set(u.id, u);
         this.usersByEmail.set(u.email.toLowerCase(), u);
@@ -316,16 +361,16 @@ class PrimaryDataStore {
 
       const duressSnap = await db.collection('duress_alerts').orderBy('timestamp', 'desc').get();
       const loadedAlerts: DuressAlert[] = [];
-      duressSnap.forEach((doc) => loadedAlerts.push(doc.data() as DuressAlert));
+      duressSnap.forEach((doc: any) => loadedAlerts.push(doc.data() as DuressAlert));
       if (loadedAlerts.length > 0) this.duressAlerts = loadedAlerts;
 
       const vettingSnap = await db.collection('vetting_queue').get();
       const loadedVetting: Array<{ id: string; userId: string; submittedAt: string; consentGiven: boolean }> = [];
-      vettingSnap.forEach((doc) => loadedVetting.push(doc.data() as any));
+      vettingSnap.forEach((doc: any) => loadedVetting.push(doc.data() as any));
       if (loadedVetting.length > 0) this.vettingQueue = loadedVetting;
       
       console.log('🔥 Synced data from Firebase Firestore');
-    } catch (err) {
+    } catch (err: any) {
       console.log('Firestore load info:', err);
     }
   }
@@ -365,11 +410,26 @@ class PrimaryDataStore {
         if (data.precedentFlags && Array.isArray(data.precedentFlags)) {
           this.precedentFlags = data.precedentFlags;
         }
+        if (data.analyticsReports && Array.isArray(data.analyticsReports)) {
+          this.analyticsReports = data.analyticsReports;
+        }
+        if (data.validatorActivityLogs && Array.isArray(data.validatorActivityLogs)) {
+          this.validatorActivityLogs = data.validatorActivityLogs;
+        }
       }
+      this.seedDefaults();
     } catch (err) {
       console.log('Info: Disk store load status:', err);
     }
   }
+
+  public addAnalyticsReport(report: AnalyticsReportRecord): AnalyticsReportRecord {
+    this.analyticsReports.unshift(report);
+    this.persistToDisk();
+    return report;
+  }
+
+
 
   private persistToDisk() {
     try {
@@ -382,7 +442,9 @@ class PrimaryDataStore {
         consensusRequests: this.consensusRequests,
         forgeryReviews: this.forgeryReviews,
         identityUnlocks: this.identityUnlocks,
-        precedentFlags: this.precedentFlags
+        precedentFlags: this.precedentFlags,
+        analyticsReports: this.analyticsReports,
+        validatorActivityLogs: this.validatorActivityLogs
       };
       fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
     } catch (err) {
@@ -399,7 +461,7 @@ class PrimaryDataStore {
     // Real-time Firestore sync
     const db = getFirestore();
     if (db) {
-      db.collection('users').doc(user.id).set(user, { merge: true }).catch(err => console.log('Firestore save user err:', err));
+      db.collection('users').doc(user.id).set(user, { merge: true }).catch((err: any) => console.log('Firestore save user err:', err));
     }
 
     return user;
@@ -430,7 +492,7 @@ class PrimaryDataStore {
 
     const db = getFirestore();
     if (db) {
-      db.collection('duress_alerts').doc(record.id).set(record).catch(err => console.log('Firestore duress alert err:', err));
+      db.collection('duress_alerts').doc(record.id).set(record).catch((err: any) => console.log('Firestore duress alert err:', err));
     }
 
     return record;
@@ -438,6 +500,87 @@ class PrimaryDataStore {
 
   public getDuressAlerts(): DuressAlert[] {
     return [...this.duressAlerts];
+  }
+
+  public acknowledgeDuressAlert(alertId?: string): DuressAlert | undefined {
+    let target = this.duressAlerts.find(a => alertId ? a.id === alertId : a.status === 'UNACKNOWLEDGED');
+    if (!target && this.duressAlerts.length > 0) {
+      target = this.duressAlerts[0];
+    }
+    if (target) {
+      target.status = 'ESCALATED';
+      this.persistToDisk();
+
+      const db = getFirestore();
+      if (db) {
+        db.collection('duress_alerts').doc(target.id).update({ status: 'ESCALATED' }).catch((err: any) => console.log('Firestore duress update err:', err));
+      }
+    }
+    return target;
+  }
+
+  // Consensus Requests for Independent Validator
+  public getConsensusRequests(): ConsensusRequest[] {
+    return [...this.consensusRequests];
+  }
+
+  public getConsensusRequestById(id: string): ConsensusRequest | undefined {
+    return this.consensusRequests.find(r => r.id === id);
+  }
+
+  public saveConsensusRequest(req: ConsensusRequest): ConsensusRequest {
+    const idx = this.consensusRequests.findIndex(r => r.id === req.id);
+    if (idx >= 0) {
+      this.consensusRequests[idx] = req;
+    } else {
+      this.consensusRequests.unshift(req);
+    }
+    this.persistToDisk();
+    return req;
+  }
+
+  // Analytics Reports
+  public getAnalyticsReportsCount(): number {
+    return this.analyticsReports.length;
+  }
+
+  // Validator Activity Logs
+  public getValidatorActivityLogs(): ValidatorActivityLogRecord[] {
+    return [...this.validatorActivityLogs];
+  }
+
+  public addValidatorActivityLog(log: Omit<ValidatorActivityLogRecord, 'id' | 'timestamp'>): ValidatorActivityLogRecord {
+    const newLog: ValidatorActivityLogRecord = {
+      ...log,
+      id: `log_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      timestamp: new Date().toISOString()
+    };
+    this.validatorActivityLogs.unshift(newLog);
+    this.persistToDisk();
+    return newLog;
+  }
+
+  // SQL COUNT Query Equivalent for Validator Dashboard (Selects counts & ZK categories ONLY)
+  public async getDashboardCounts() {
+    // SELECT COUNT(*) FROM consensus_requests WHERE quorum_signed < quorum_total;
+    const consensusAwaitingCount = this.consensusRequests.filter(r => (r.quorumSigned ?? 0) < (r.quorumTotal ?? 3)).length;
+    // SELECT COUNT(*) FROM analytics_reports;
+    const analyticsReportsCount = this.analyticsReports.length;
+    // SELECT COUNT(*) FROM duress_alerts WHERE status = 'UNACKNOWLEDGED';
+    const activeDuressCount = this.duressAlerts.filter(a => a.status === 'UNACKNOWLEDGED').length;
+    // Bottleneck info
+    const bottleneck = this.consensusRequests.find(r => r.urgency === 'URGENT BOTTLENECK');
+
+    return {
+      consensusAwaitingCount,
+      analyticsReportsCount,
+      activeDuressCount,
+      bottleneckInfo: bottleneck ? {
+        count: 1,
+        waitTimeFormatted: bottleneck.waitTimeFormatted,
+        blockId: bottleneck.id
+      } : { count: 0, waitTimeFormatted: '0h' }
+    };
   }
 
   // Vetting Queue for Validator
@@ -453,7 +596,7 @@ class PrimaryDataStore {
 
     const db = getFirestore();
     if (db) {
-      db.collection('vetting_queue').doc(item.id).set(item).catch(err => console.log('Firestore vetting queue err:', err));
+      db.collection('vetting_queue').doc(item.id).set(item).catch((err: any) => console.log('Firestore vetting queue err:', err));
     }
 
     return item;
@@ -506,15 +649,12 @@ class PrimaryDataStore {
   }
 
   // --- CONSENSUS APPROVALS ---
-  public getConsensusRequests(): ConsensusRequest[] {
-    return [...this.consensusRequests];
-  }
-
   public addConsensusVote(requestId: string, validatorId: string, validatorName: string, vote: 'APPROVE' | 'REJECT' | 'FLAG_FORGERY', note?: string): ConsensusRequest | undefined {
     const req = this.consensusRequests.find(r => r.id === requestId);
     if (!req) return undefined;
     
     // Check if already voted
+    req.votes = req.votes || [];
     const existing = req.votes.find(v => v.validatorId === validatorId);
     if (!existing) {
       req.votes.push({
@@ -525,7 +665,7 @@ class PrimaryDataStore {
         note
       });
       req.currentVotes = req.votes.length;
-      if (req.currentVotes >= req.requiredVotes) {
+      if (req.requiredVotes && req.currentVotes >= req.requiredVotes) {
         req.status = 'Approved';
       }
       this.persistToDisk();

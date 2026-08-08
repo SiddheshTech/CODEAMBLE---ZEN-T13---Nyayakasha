@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { api } from '../services/api';
 import {
   Search,
   AlertTriangle,
@@ -83,12 +84,60 @@ export function CourtAuthorityDashboard({
   const [isSigningKey, setIsSigningKey] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // INDEPENDENT VALIDATOR STATE
+  // INDEPENDENT VALIDATOR STATE & REAL BACKEND DATA
   const [validatorSignedVotes, setValidatorSignedVotes] = useState<Record<string, string>>({});
   const [duressEscalated, setDuressEscalated] = useState(false);
   const [activeValidatorVoteModal, setActiveValidatorVoteModal] = useState<any | null>(null);
   const [validatorPin, setValidatorPin] = useState('');
   const [isSubmittingValidatorVote, setIsSubmittingValidatorVote] = useState(false);
+
+  const [validatorDashboardData, setValidatorDashboardData] = useState<any | null>(null);
+  const [isLoadingValidatorDashboard, setIsLoadingValidatorDashboard] = useState<boolean>(false);
+
+  const fetchValidatorDashboard = async () => {
+    setIsLoadingValidatorDashboard(true);
+    try {
+      const data = await api.getValidatorDashboard();
+      setValidatorDashboardData(data);
+      if (data?.activeDuressAlert) {
+        setDuressEscalated(data.activeDuressAlert.escalated);
+      }
+    } catch (err: any) {
+      console.log('Validator Dashboard load status:', err.message);
+    } finally {
+      setIsLoadingValidatorDashboard(false);
+    }
+  };
+
+  useEffect(() => {
+    if (role === 'Independent Validator') {
+      fetchValidatorDashboard();
+
+      // Real-time WebSocket connection to duress / validator event bus
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${wsProtocol}//${window.location.hostname}:5000/ws/duress-bus`;
+      let socket: WebSocket | null = null;
+      try {
+        socket = new WebSocket(wsUrl);
+        socket.onmessage = (event) => {
+          try {
+            const msg = JSON.parse(event.data);
+            if (
+              msg.type === 'CONSENSUS_VOTE_CAST' ||
+              msg.type === 'DURESS_ALERT_ACKNOWLEDGED' ||
+              msg.type === 'SILENT_DURESS_TRIGGERED'
+            ) {
+              fetchValidatorDashboard();
+            }
+          } catch (e) {}
+        };
+      } catch (e) {}
+
+      return () => {
+        if (socket) socket.close();
+      };
+    }
+  }, [role]);
 
   // Attention Items
   const attentionItems: AttentionItem[] = [
@@ -632,77 +681,60 @@ export function CourtAuthorityDashboard({
 
   // INDEPENDENT VALIDATOR DASHBOARD VIEW
   if (role === 'Independent Validator') {
-    const pendingValidatorVotes = [
-      {
-        id: 'BLOCK-89201',
-        queue: 'Forensic Hash Consensus',
-        waitTimeHours: 4.87,
-        waitTimeFormatted: '4 hours 52 mins',
-        slaLimitFormatted: '6.0h SLA Limit',
-        urgency: 'URGENT BOTTLENECK',
-        urgencyColor: 'bg-amber-100 text-amber-900 border-amber-300',
-        badgeColor: 'bg-amber-500',
-        quorumSigned: 2,
-        quorumTotal: 3,
-        merkleRoot: '0x8f921a4e892c019d4f2a7b8e11029c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b',
-        zkProofType: 'ZK-SNARK-secp256k1',
-        entropyScore: '0.999',
-        cryptographicDetails: 'Cryptographic state payload verified by Node #1 and Node #2. Zero case content embedded to maintain neutral validation.',
-      },
-      {
-        id: 'BLOCK-89208',
-        queue: 'Telemetry Hash Verification',
-        waitTimeHours: 1.80,
-        waitTimeFormatted: '1 hour 48 mins',
-        slaLimitFormatted: '12.0h SLA Limit',
-        urgency: 'HIGH',
-        urgencyColor: 'bg-blue-100 text-blue-900 border-blue-200',
-        badgeColor: 'bg-blue-500',
-        quorumSigned: 1,
-        quorumTotal: 3,
-        merkleRoot: '0x3c119e88a7b1c4029f8a3d11e2233445566778899aabbccddeeff00112233445',
-        zkProofType: 'ZK-STARK-v2',
-        entropyScore: '0.998',
-        cryptographicDetails: 'Aggregate telemetry array hash matched against distributed ledger state quorum.',
-      },
-      {
-        id: 'BLOCK-89215',
-        queue: 'Audit Trail Sealing Block',
-        waitTimeHours: 0.53,
-        waitTimeFormatted: '32 mins',
-        slaLimitFormatted: '24.0h SLA Limit',
-        urgency: 'NORMAL',
-        urgencyColor: 'bg-emerald-100 text-emerald-900 border-emerald-200',
-        badgeColor: 'bg-emerald-500',
-        quorumSigned: 1,
-        quorumTotal: 3,
-        merkleRoot: '0x92a400fe112233445566778899aabbccddeeff00112233445566778899aabbcc',
-        zkProofType: 'ECDSA-secp256k1',
-        entropyScore: '1.000',
-        cryptographicDetails: 'Chain-of-custody transfer event hash payload submitted for multi-party consensus.',
-      },
-    ];
+    if (isLoadingValidatorDashboard && !validatorDashboardData) {
+      return (
+        <div className="p-16 text-center bg-white rounded-3xl border border-slate-200 shadow-xs space-y-4 max-w-7xl mx-auto my-8">
+          <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto" />
+          <h3 className="text-lg font-bold text-slate-900">Loading Validator Node Workspace...</h3>
+          <p className="text-xs text-slate-500">Fetching live zero-knowledge consensus queries from server...</p>
+        </div>
+      );
+    }
 
-    const filteredVotes = pendingValidatorVotes
-      .filter((v) =>
+    const rawPending = validatorDashboardData?.pendingVotes || [];
+
+    const filteredVotes = rawPending
+      .filter((v: any) =>
         v.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         v.queue.toLowerCase().includes(searchQuery.toLowerCase()) ||
         v.zkProofType.toLowerCase().includes(searchQuery.toLowerCase())
       )
-      .sort((a, b) => b.waitTimeHours - a.waitTimeHours);
+      .sort((a: any, b: any) => b.waitTimeHours - a.waitTimeHours);
 
-    const awaitingCount = pendingValidatorVotes.filter(v => !validatorSignedVotes[v.id]).length;
+    const awaitingCount = validatorDashboardData?.summary?.consensusVotesAwaiting ?? 0;
+    const analyticsReportsCount = validatorDashboardData?.summary?.encryptedAnalyticsReports ?? 0;
+    const duressAlertsCount = validatorDashboardData?.summary?.duressAlertsCount ?? 0;
+    const bottleneckText = validatorDashboardData?.summary?.bottleneckText || '0 Bottlenecks';
+    const activeDuressAlert = validatorDashboardData?.activeDuressAlert;
 
-    const handleConfirmVote = (blockId: string, decision: string) => {
+    const handleConfirmVote = async (blockId: string, decision: 'Approve' | 'Reject') => {
       setIsSubmittingValidatorVote(true);
-      setTimeout(() => {
-        setIsSubmittingValidatorVote(false);
+      try {
+        const res = await api.castValidatorVote(blockId, decision, validatorPin);
         setValidatorSignedVotes(prev => ({ ...prev, [blockId]: decision }));
         setActiveValidatorVoteModal(null);
         setValidatorPin('');
-        showToast(`Consensus Vote Cast on ${blockId} • Multi-Sig Block ${decision}`);
-      }, 1200);
+        showToast(res.message || `Consensus Vote Cast on ${blockId} • Multi-Sig Block ${decision}`);
+        await fetchValidatorDashboard();
+      } catch (err: any) {
+        showToast(err.message || 'Failed to cast consensus vote');
+      } finally {
+        setIsSubmittingValidatorVote(false);
+      }
     };
+
+    const handleAcknowledgeDuress = async (alertId?: string) => {
+      try {
+        const res = await api.acknowledgeDuressAlert(alertId);
+        setDuressEscalated(true);
+        showToast(res.message || 'Duress Protocol Acknowledged & Escalated to Command Dispatch');
+        await fetchValidatorDashboard();
+      } catch (err: any) {
+        showToast(err.message || 'Failed to escalate duress alert');
+      }
+    };
+
+    const displayLogs = validatorDashboardData?.activityLogs || [];
 
     return (
       <motion.div
@@ -738,7 +770,7 @@ export function CourtAuthorityDashboard({
                 Validator Node Active • Blind Consensus Engine
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 pt-1">
-                Welcome, Adv. A. Mehta
+                Welcome, {validatorDashboardData?.validatorUser?.fullName || 'Adv. A. Mehta'}
               </h2>
               <p className="text-slate-500 text-xs">
                 Zero-Knowledge Validator Portal • Multi-party attestation dashboard with zero case content exposure.
@@ -776,7 +808,7 @@ export function CourtAuthorityDashboard({
                   Zero-Knowledge Isolation Enforced
                 </span>
                 <p className="text-[11px] text-slate-300 leading-relaxed max-w-3xl">
-                  You are operating in blind validation mode. Case titles, litigant names, and evidence files are strictly hidden to preserve absolute validator neutrality and eliminate contextual bias during multi-sig consensus.
+                  {validatorDashboardData?.zeroKnowledgePolicy?.notice || 'You are operating in blind validation mode. Case titles, litigant names, and evidence files are strictly hidden to preserve absolute validator neutrality and eliminate contextual bias during multi-sig consensus.'}
                 </p>
               </div>
             </div>
@@ -803,7 +835,7 @@ export function CourtAuthorityDashboard({
                   {awaitingCount}
                 </span>
                 <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-200/80 text-amber-900 border border-amber-300 animate-pulse">
-                  1 Bottleneck (4.8h)
+                  {bottleneckText}
                 </span>
               </div>
               <p className="text-xs font-semibold text-amber-800 flex items-center gap-1 group-hover:text-amber-950 transition-colors">
@@ -826,7 +858,7 @@ export function CourtAuthorityDashboard({
               </div>
               <div className="flex items-baseline justify-between">
                 <span className="text-3xl font-extrabold text-blue-950 tracking-tight">
-                  6
+                  {analyticsReportsCount}
                 </span>
                 <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
                   Differential Privacy
@@ -841,8 +873,7 @@ export function CourtAuthorityDashboard({
             <div
               onClick={() => {
                 if (!duressEscalated) {
-                  setDuressEscalated(true);
-                  showToast('Duress Protocol Acknowledged & Escalated to Command Dispatch');
+                  handleAcknowledgeDuress(activeDuressAlert?.id);
                 }
               }}
               className="p-5 rounded-3xl bg-rose-50/60 border border-rose-200/90 hover:border-rose-400 hover:shadow-md transition-all cursor-pointer group space-y-3"
@@ -857,7 +888,7 @@ export function CourtAuthorityDashboard({
               </div>
               <div className="flex items-baseline justify-between">
                 <span className="text-3xl font-extrabold text-rose-950 tracking-tight">
-                  {duressEscalated ? '0' : '1'}
+                  {duressEscalated ? 0 : duressAlertsCount}
                 </span>
                 <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${
                   duressEscalated ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-rose-200/80 text-rose-900 border-rose-300 animate-pulse'
@@ -874,55 +905,67 @@ export function CourtAuthorityDashboard({
         </div>
 
         {/* Duress Alert Banner */}
-        <div className={`p-6 rounded-3xl border transition-all ${
-          duressEscalated ? 'bg-slate-50 border-slate-200' : 'bg-rose-50 border-rose-200/90 shadow-sm'
-        }`}>
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-start gap-3.5">
-              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
-                duressEscalated ? 'bg-slate-200 text-slate-700' : 'bg-rose-100 text-rose-700 animate-bounce'
-              }`}>
-                <ShieldAlert className="w-5 h-5" />
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className={`px-2.5 py-0.5 text-[10px] font-extrabold uppercase rounded border ${
-                    duressEscalated ? 'bg-slate-200 text-slate-700 border-slate-300' : 'bg-rose-200 text-rose-900 border-rose-300'
-                  }`}>
-                    {duressEscalated ? 'ESCALATED TO DISPATCH' : 'ACTIVE DURESS SIGNAL • FIELD NODE #04'}
-                  </span>
-                  <span className="text-xs font-mono text-slate-500 font-semibold">42 mins ago</span>
+        {activeDuressAlert ? (
+          <div className={`p-6 rounded-3xl border transition-all ${
+            duressEscalated ? 'bg-slate-50 border-slate-200' : 'bg-rose-50 border-rose-200/90 shadow-sm'
+          }`}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-start gap-3.5">
+                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
+                  duressEscalated ? 'bg-slate-200 text-slate-700' : 'bg-rose-100 text-rose-700 animate-bounce'
+                }`}>
+                  <ShieldAlert className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm font-bold text-slate-900">
-                  Silent Duress Override Authenticated (Ref: DURESS-SIG-2026-04)
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed max-w-3xl">
-                  Field submitter entered silent distress PIN during evidence submission. Zero-knowledge distress hash authenticated against hardware HSM. No case content or officer location is exposed to unauthorized peers.
-                </p>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`px-2.5 py-0.5 text-[10px] font-extrabold uppercase rounded border ${
+                      duressEscalated ? 'bg-slate-200 text-slate-700 border-slate-300' : 'bg-rose-200 text-rose-900 border-rose-300'
+                    }`}>
+                      {duressEscalated ? 'ESCALATED TO DISPATCH' : `ACTIVE DURESS SIGNAL • ${activeDuressAlert.fieldNodeId}`}
+                    </span>
+                    <span className="text-xs font-mono text-slate-500 font-semibold">{activeDuressAlert.timeAgo}</span>
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    {activeDuressAlert.title}
+                  </h3>
+                  <p className="text-xs text-slate-600 leading-relaxed max-w-3xl">
+                    {activeDuressAlert.description}
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <div className="shrink-0">
-              {duressEscalated ? (
-                <span className="px-4 py-2 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bold inline-flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-700" />
-                  Protocol Escalated & Logged
-                </span>
-              ) : (
-                <button
-                  onClick={() => {
-                    setDuressEscalated(true);
-                    showToast('Duress Protocol Acknowledged & Escalated to Command Dispatch');
-                  }}
-                  className="px-5 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2"
-                >
-                  <ShieldAlert className="w-4 h-4" />
-                  <span>Acknowledge & Escalate Duress</span>
-                </button>
-              )}
+              <div className="shrink-0">
+                {duressEscalated ? (
+                  <span className="px-4 py-2 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bold inline-flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                    Protocol Escalated & Logged
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => handleAcknowledgeDuress(activeDuressAlert.id)}
+                    className="px-5 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2"
+                  >
+                    <ShieldAlert className="w-4 h-4" />
+                    <span>Acknowledge & Escalate Duress</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="p-5 rounded-3xl bg-emerald-50/60 border border-emerald-200 text-emerald-900 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+              <div>
+                <h4 className="text-xs font-bold">All Field Nodes Secure</h4>
+                <p className="text-[11px] text-emerald-700">No active silent distress signals reported across field nodes.</p>
+              </div>
+            </div>
+            <span className="px-3 py-1 bg-emerald-100 border border-emerald-200 rounded-xl text-[10px] font-mono font-bold text-emerald-800">
+              HSM Monitor Online
+            </span>
+          </div>
+        )}
 
         {/* Needs Your Attention List - Pending Votes Sorted by Wait Time */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -945,8 +988,8 @@ export function CourtAuthorityDashboard({
               </div>
 
               <div className="space-y-4">
-                {filteredVotes.map((item) => {
-                  const signedStatus = validatorSignedVotes[item.id];
+                {filteredVotes.map((item: any) => {
+                  const signedStatus = validatorSignedVotes[item.id] || item.userSignedDecision;
 
                   return (
                     <div
@@ -1004,7 +1047,7 @@ export function CourtAuthorityDashboard({
                           {signedStatus ? (
                             <span className="px-3.5 py-1.5 rounded-xl bg-emerald-100 text-emerald-900 text-xs font-bold flex items-center gap-1.5 border border-emerald-300">
                               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
-                              {signedStatus}
+                              Signed: {signedStatus}
                             </span>
                           ) : (
                             <button
@@ -1049,42 +1092,13 @@ export function CourtAuthorityDashboard({
                   </h3>
                 </div>
                 <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                  Node #IV-882
+                  {validatorDashboardData?.validatorUser?.nodeId || 'Node #IV-882'}
                 </span>
               </div>
 
               <div className="space-y-4">
-                {[
-                  {
-                    action: 'Cast "Approve" vote on Block #BLOCK-89190',
-                    type: 'Multi-Sig Vote',
-                    time: '12 mins ago',
-                    icon: CheckCircle2,
-                    color: 'text-emerald-600 bg-emerald-50',
-                  },
-                  {
-                    action: 'Verified Encrypted Telemetry Report #REP-402',
-                    type: 'ZK Analytics Review',
-                    time: '1 hour ago',
-                    icon: BarChart3,
-                    color: 'text-blue-600 bg-blue-50',
-                  },
-                  {
-                    action: 'Acknowledged Silent Duress Heartbeat #DUR-01',
-                    type: 'Duress Protocol',
-                    time: '3 hours ago',
-                    icon: ShieldAlert,
-                    color: 'text-rose-600 bg-rose-50',
-                  },
-                  {
-                    action: 'Signed Quorum Attestation for Block #BLOCK-89182',
-                    type: 'Attestation',
-                    time: 'Yesterday',
-                    icon: ShieldCheck,
-                    color: 'text-indigo-600 bg-indigo-50',
-                  },
-                ].map((act, idx) => {
-                  const Icon = act.icon;
+                {displayLogs.map((act: any, idx: number) => {
+                  const Icon = act.icon === 'CheckCircle2' ? CheckCircle2 : act.icon === 'BarChart3' ? BarChart3 : act.icon === 'ShieldAlert' ? ShieldAlert : ShieldCheck;
                   return (
                     <div
                       key={idx}
@@ -1208,7 +1222,7 @@ export function CourtAuthorityDashboard({
                     Cancel
                   </button>
                   <button
-                    onClick={() => handleConfirmVote(activeValidatorVoteModal.id, 'Approved & Signed')}
+                    onClick={() => handleConfirmVote(activeValidatorVoteModal.id, 'Approve')}
                     disabled={isSubmittingValidatorVote || validatorPin.length !== 6}
                     className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all disabled:opacity-50 flex items-center gap-2 shadow-md"
                   >

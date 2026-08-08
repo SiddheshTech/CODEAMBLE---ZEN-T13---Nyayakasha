@@ -161,7 +161,7 @@ const emailOtpStore = new Map<string, { otp: string; expiresAt: number }>();
 /**
  * POST /api/mfa/otp/send
  */
-mfaRouter.post('/otp/send', async (req: Request, res: Response) => {
+mfaRouter.post('/otp/send', async (req: any, res: any) => {
   try {
     const { email } = req.body;
     if (!email) {
@@ -191,7 +191,7 @@ mfaRouter.post('/otp/send', async (req: Request, res: Response) => {
 /**
  * POST /api/mfa/otp/verify
  */
-mfaRouter.post('/otp/verify', async (req: Request, res: Response) => {
+mfaRouter.post('/otp/verify', async (req: any, res: any) => {
   try {
     const { email, otp } = req.body;
     if (!email || !otp) {

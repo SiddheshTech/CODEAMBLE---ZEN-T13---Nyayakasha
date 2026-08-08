@@ -381,14 +381,11 @@ export function DashboardPage({
       };
 
       api.submitEvidence({
-        caseId: associatedCase || 'FIR-2026-001',
+        caseId: 'FIR-2026-001',
         title: evidenceTitle || 'New Field Exhibit',
         type: evidenceCategory || 'Digital Asset',
         hash: capturedImageHash || undefined,
         custodian: 'Officer R. Kulkarni (Field Submitter)',
-        incidentLocation,
-        confidentialityLevel,
-        customMetadata,
         dataUrl: capturedImage || undefined,
         latitude: 19.0760,
         longitude: 72.8777

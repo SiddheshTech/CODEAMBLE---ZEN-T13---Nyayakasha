@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { api } from '../services/api';
 import { 
   Bell, CheckCircle2, AlertTriangle, Clock, Filter, Settings, FileText, User, 
   ShieldAlert, Search, Check, X, Lock, Scale, Copy, ScanLine, Users, Radio, 
@@ -220,6 +221,43 @@ export function NotificationsTab({ role = 'Court Authority', onSelectTab }: { ro
   const [readFilter, setReadFilter] = useState<'all' | 'unread'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(initialSelected);
+
+  useEffect(() => {
+    if (role === 'Independent Validator') {
+      api.getValidatorDashboard().then(data => {
+        if (data.activityLogs && data.activityLogs.length > 0) {
+          const live: AuditNotification[] = data.activityLogs.map((log: any) => ({
+            id: log.id || `log-${Math.random()}`,
+            type: log.type === 'Duress Protocol' ? 'duress' : 'consensus',
+            title: log.action,
+            message: `Event processed on ${log.nodeId || 'Validator Node'} with Zero-Knowledge verification.`,
+            timestamp: log.time || 'Just now',
+            isoDate: new Date().toISOString(),
+            isRead: false,
+            priority: log.type === 'Duress Protocol' ? 'high' : 'normal',
+            sender: 'Zero-Knowledge Consensus Engine',
+            details: `Action: ${log.action} | Node: ${log.nodeId}`
+          }));
+          if (data.activeDuressAlert) {
+            live.unshift({
+              id: data.activeDuressAlert.id,
+              type: 'duress',
+              title: data.activeDuressAlert.title,
+              message: data.activeDuressAlert.description,
+              timestamp: data.activeDuressAlert.timeAgo || 'Recent',
+              isoDate: data.activeDuressAlert.timestamp,
+              isRead: false,
+              priority: 'critical',
+              sender: 'Silent Duress Event Bus',
+              details: `Field Node: ${data.activeDuressAlert.fieldNodeId}`
+            });
+          }
+          setNotifications(live);
+          if (live.length > 0) setSelectedId(live[0].id);
+        }
+      }).catch(err => console.log('Live notifications fetch error:', err));
+    }
+  }, [role]);
 
   const unreadCount = useMemo(() => {
     return notifications.filter(n => !n.isRead).length;
