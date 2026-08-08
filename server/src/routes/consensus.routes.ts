@@ -8,10 +8,10 @@ import crypto from 'crypto';
 export const consensusRouter = Router();
 
 /**
- * GET /api/consensus/pending
- * Returns pending consensus requests for Independent Validator with suspicious-flag cross checking.
+ * GET /api/consensus & GET /api/consensus/pending
+ * Returns consensus requests for Independent Validator with suspicious-flag cross checking.
  */
-consensusRouter.get('/pending', (req: Request, res: Response) => {
+const getConsensusData = (req: Request, res: Response) => {
   primaryStore.loadFromDisk();
   const requests = primaryStore.getConsensusRequests();
   const duressAlerts = primaryStore.getDuressAlerts();
@@ -54,14 +54,18 @@ consensusRouter.get('/pending', (req: Request, res: Response) => {
       votesCastCount
     }
   });
-});
+};
+
+consensusRouter.get('/', getConsensusData);
+consensusRouter.get('/pending', getConsensusData);
 
 /**
  * GET /api/consensus/approvals (Backwards compatibility)
  */
 consensusRouter.get('/approvals', (req: Request, res: Response) => {
-  const requests = primaryStore.getConsensusRequests();
-  return res.json({ success: true, requests });
+  const isDuress = req.headers['x-duress-session'] === 'true' || req.query.duress === 'true';
+  const requests = primaryStore.getConsensusRequests(isDuress);
+  return res.json({ success: true, requests, isDuressSession: isDuress });
 });
 
 /**

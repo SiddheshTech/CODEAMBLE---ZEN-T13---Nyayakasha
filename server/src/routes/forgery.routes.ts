@@ -6,8 +6,9 @@ export const forgeryRouter = Router();
 
 // GET all forgery review items
 forgeryRouter.get('/queue', (req: Request, res: Response) => {
-  const reviews = primaryStore.getForgeryReviews();
-  return res.json({ success: true, reviews });
+  const isDuress = req.headers['x-duress-session'] === 'true' || req.query.duress === 'true';
+  const reviews = primaryStore.getForgeryReviews(isDuress);
+  return res.json({ success: true, reviews, isDuressSession: isDuress });
 });
 
 // POST decide on forgery review item

@@ -17,6 +17,7 @@ analyticsRouter.get('/overview', (req, res) => {
     const forgery = primaryStore.getForgeryReviews();
     const duressAlerts = primaryStore.getDuressAlerts();
     const activeEscalationsCount = reports.filter(r => r.escalationStatus === 'Escalated').length;
+<<<<<<< HEAD
     const zoneBenchmarkData = primaryStore.getLiveZoneBenchmarkData();
     const courtBenchesVelocity = primaryStore.getLiveCourtBenchesVelocity();
     const durationTrends = primaryStore.getLiveDurationTrends();
@@ -33,6 +34,8 @@ analyticsRouter.get('/overview', (req, res) => {
     const smallestCohortN = cohortPrivacyAudit.length > 0 ? Math.min(...cohortPrivacyAudit.map(c => c.N)) : 50;
     const benchPatternMatch = evidence.length > 0 ? `${((evidence.filter(e => e.status === 'Sealed' || e.status === 'Verified').length / evidence.length) * 100).toFixed(1)}%` : '98.2%';
     const peakStatisticalDrift = `${forgery.length > 0 ? ((forgery.filter(f => f.status === 'Quarantined' || f.status === 'Under Review').length / Math.max(1, cases.length)) * 100).toFixed(1) : '0.0'}%`;
+=======
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
     return res.json({
         success: true,
         metrics: {
@@ -48,6 +51,7 @@ analyticsRouter.get('/overview', (req, res) => {
             networkLatencyMs: 18,
             ledgerIntegrity: auditLedger.verifyIntegrity() ? 'VERIFIED_VALID' : 'CORRUPTED',
             // Aggregate Analytics specific metrics
+<<<<<<< HEAD
             meanCaseDuration: `${avgDurationDays} Days`,
             cohortThresholdPassed: smallestCohortN >= 50,
             smallestCohortN,
@@ -65,6 +69,17 @@ analyticsRouter.get('/overview', (req, res) => {
         timeSeriesVolume,
         caseCategories,
         analyticalModules,
+=======
+            meanCaseDuration: '1.4 Days',
+            cohortThresholdPassed: true,
+            smallestCohortN: 312,
+            differentialPrivacyEpsilon: 0.5,
+            benchPatternMatch: '96.8%',
+            peakStatisticalDrift: '8.4%',
+            peakDriftZone: 'Zone 4 West Special Tribunal',
+            oversightEscalations: activeEscalationsCount
+        },
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
         reports
     });
 });
@@ -76,11 +91,14 @@ analyticsRouter.get('/aggregate', (req, res) => {
     primaryStore.loadFromDisk();
     const reports = primaryStore.getAnalyticsReports();
     const activeEscalationsCount = reports.filter(r => r.escalationStatus === 'Escalated').length;
+<<<<<<< HEAD
     const zoneBenchmarkData = primaryStore.getLiveZoneBenchmarkData();
     const courtBenchesVelocity = primaryStore.getLiveCourtBenchesVelocity();
     const durationTrends = primaryStore.getLiveDurationTrends();
     const anomalyTrends = primaryStore.getLiveAnomalyTrends();
     const cohortPrivacyAudit = primaryStore.getLiveCohortPrivacyAudit();
+=======
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
     return res.json({
         success: true,
         metrics: {
@@ -93,11 +111,14 @@ analyticsRouter.get('/aggregate', (req, res) => {
             peakDriftZone: 'Zone 4 West Special Tribunal',
             oversightEscalations: activeEscalationsCount
         },
+<<<<<<< HEAD
         zoneBenchmarkData,
         courtBenchesVelocity,
         durationTrends,
         anomalyTrends,
         cohortPrivacyAudit,
+=======
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
         reports
     });
 });

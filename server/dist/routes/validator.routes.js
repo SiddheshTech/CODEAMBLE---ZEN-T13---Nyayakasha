@@ -96,6 +96,7 @@ validatorRouter.get('/analytics/aggregate', async (req, res) => {
             });
         }
         const activeEscalationsCount = reports.filter(r => r.escalationStatus === 'Escalated').length;
+<<<<<<< HEAD
         const cases = primaryStore.getCases();
         const evidence = primaryStore.getEvidence();
         const forgery = primaryStore.getForgeryReviews();
@@ -121,6 +122,17 @@ validatorRouter.get('/analytics/aggregate', async (req, res) => {
                 differentialPrivacyEpsilon: 0.5,
                 benchPatternMatch,
                 peakStatisticalDrift,
+=======
+        return res.json({
+            success: true,
+            metrics: {
+                meanCaseDuration: '1.4 Days',
+                cohortThresholdPassed: true,
+                smallestCohortN: smallestActiveCohortN,
+                differentialPrivacyEpsilon: 0.5,
+                benchPatternMatch: '96.8%',
+                peakStatisticalDrift: '8.4%',
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
                 peakDriftZone: 'Zone 4 West Special Tribunal',
                 oversightEscalations: activeEscalationsCount
             },
@@ -138,11 +150,14 @@ validatorRouter.get('/analytics/aggregate', async (req, res) => {
                 shamirSchemeStatus: 'THRES_KEY_SHARE_HOLDING_VALID',
                 decryptionCapability: 'Homomorphic Ciphertext Evaluation Only (Plaintext Unmasked Access Prohibited)'
             },
+<<<<<<< HEAD
             zoneBenchmarkData,
             courtBenchesVelocity,
             durationTrends,
             anomalyTrends,
             cohortPrivacyAudit,
+=======
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
             reports
         });
     }

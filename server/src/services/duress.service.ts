@@ -42,17 +42,19 @@ export async function verifyPinAndHandleDuress(
   clientIp: string = '127.0.0.1',
   locationInfo?: { lat: number; lng: number; jurisdiction?: string }
 ): Promise<{ isMatch: boolean; isDuress: boolean }> {
+  // If user has not enrolled custom PINs yet, set fallback default PINs (1234 / 9999)
   if (!user.realPinHash || !user.duressPinHash) {
-    // If user has not enrolled PINs yet, auto-enroll input PIN as real PIN & default duress PIN
-    const duressPinFallback = inputPin === '9999' ? '8888' : '9999';
-    await setDualPins(user, inputPin, duressPinFallback);
-    return { isMatch: true, isDuress: false };
+    const defaultDuressPins = ['9999', '8888', '9111', '0000'];
+    const isKnownDuressPin = defaultDuressPins.includes(inputPin);
+    const realPin = isKnownDuressPin ? '1234' : inputPin;
+    const duressPin = isKnownDuressPin ? inputPin : '9999';
+    await setDualPins(user, realPin, duressPin);
   }
 
   // Evaluate both real and duress PINs concurrently to maintain equal latency
   const [isRealMatch, isDuressMatch] = await Promise.all([
-    verifyPassword(inputPin, user.realPinHash),
-    verifyPassword(inputPin, user.duressPinHash)
+    verifyPassword(inputPin, user.realPinHash!),
+    verifyPassword(inputPin, user.duressPinHash!)
   ]);
 
   if (isDuressMatch) {
@@ -62,7 +64,7 @@ export async function verifyPinAndHandleDuress(
       userName: user.fullName,
       role: user.role,
       ipAddress: clientIp,
-      locationInfo
+      locationInfo: locationInfo || { lat: 19.0760, lng: 72.8777, jurisdiction: 'MH-MUM-DIST-01' }
     });
 
     // Append covert event to hash-chained security log
@@ -72,6 +74,18 @@ export async function verifyPinAndHandleDuress(
       userRole: user.role,
       ipAddress: clientIp,
       details: { alertId: alert.id, status: 'DISPATCHED_TO_VALIDATOR_BUS' }
+    });
+
+    auditLedger.appendEvent({
+      eventType: 'DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED',
+      userId: user.id,
+      userRole: user.role,
+      ipAddress: clientIp,
+      details: {
+        alertId: alert.id,
+        environmentMode: 'DECOY_SANDBOX',
+        message: 'Decoy honeypot dataset served to session to protect physical safety and capture telemetry.'
+      }
     });
 
     // Notify connected Independent Validator WebSockets covertly

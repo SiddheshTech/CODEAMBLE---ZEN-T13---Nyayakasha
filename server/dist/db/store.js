@@ -105,6 +105,7 @@ class PrimaryDataStore {
                 status: 'Flagged'
             }
         ];
+<<<<<<< HEAD
         // Default Consensus Requests
         this.consensusRequests = [
             {
@@ -198,6 +199,93 @@ class PrimaryDataStore {
                 createdAt: '2026-08-07T08:42:00Z'
             }
         ];
+=======
+        // Default Homomorphic Analytics Reports in Backend Store
+        if (!this.analyticsReports || this.analyticsReports.length === 0) {
+            this.analyticsReports = [
+                {
+                    id: 'FHE-RPT-101',
+                    reportCode: 'FHE-AGG-2026-001',
+                    title: 'Case Duration Distribution & Disposition Velocity across Zones',
+                    courtScope: 'All 5 Court Districts',
+                    benchScope: 'All Active Benches',
+                    cohortSize: 14820,
+                    minCohortThreshold: 50,
+                    differentialPrivacyEpsilon: 0.5,
+                    isKAnonymityValid: true,
+                    caseDurationAvgDays: 1.4,
+                    caseDurationBaselineDays: 1.35,
+                    precedentVarianceScore: 3.2,
+                    anomalyScore: 0.04,
+                    anomalySeverity: 'Low',
+                    summaryDescription: 'Homomorphically aggregated case duration times across 14,820 closed & active dockets. Mean duration remains steady at 1.4 days with zero statistical outliers detected.',
+                    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
+                    escalationStatus: 'None',
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 'FHE-RPT-102',
+                    reportCode: 'FHE-AGG-2026-002',
+                    title: 'Zone 4 Special Tribunal - Duration Deviation & Re-hash Frequency Spike',
+                    courtScope: 'Zone 4 (West Special Tribunal)',
+                    benchScope: 'Division Bench 4',
+                    cohortSize: 312,
+                    minCohortThreshold: 50,
+                    differentialPrivacyEpsilon: 0.5,
+                    isKAnonymityValid: true,
+                    caseDurationAvgDays: 3.2,
+                    caseDurationBaselineDays: 1.4,
+                    precedentVarianceScore: 18.6,
+                    anomalyScore: 8.4,
+                    anomalySeverity: 'Critical',
+                    summaryDescription: 'Homomorphic analysis detected a statistically significant 128% spike in average disposition days (+1.8 days over baseline) combined with an elevated Section 65B re-hash request rate in Zone 4.',
+                    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
+                    escalationStatus: 'None',
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 'FHE-RPT-103',
+                    reportCode: 'FHE-AGG-2026-003',
+                    title: 'Bench-Level Precedent Alignment & Out-of-Band Sealing Distribution',
+                    courtScope: 'Zone 2 (South Commercial Bench)',
+                    benchScope: 'Division Bench 2',
+                    cohortSize: 890,
+                    minCohortThreshold: 50,
+                    differentialPrivacyEpsilon: 0.5,
+                    isKAnonymityValid: true,
+                    caseDurationAvgDays: 1.8,
+                    caseDurationBaselineDays: 1.7,
+                    precedentVarianceScore: 4.8,
+                    anomalyScore: 2.1,
+                    anomalySeverity: 'Medium',
+                    summaryDescription: 'Pattern comparison indicates minor variance in Section 144 sealing request distribution. Cohort size N=890 safely satisfies differential privacy limits.',
+                    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
+                    escalationStatus: 'None',
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 'FHE-RPT-104',
+                    reportCode: 'FHE-AGG-2026-004',
+                    title: 'Cyber Precinct CCTV Exhibit Ingestion Homomorphic Variance',
+                    courtScope: 'Zone 3 (East Cyber Precinct)',
+                    benchScope: 'Division Bench 1',
+                    cohortSize: 3810,
+                    minCohortThreshold: 50,
+                    differentialPrivacyEpsilon: 0.5,
+                    isKAnonymityValid: true,
+                    caseDurationAvgDays: 1.2,
+                    caseDurationBaselineDays: 1.2,
+                    precedentVarianceScore: 1.1,
+                    anomalyScore: 0.1,
+                    anomalySeverity: 'Low',
+                    summaryDescription: 'High-density evidence ingestion velocity is consistent with regional fiber gateway logs. Zero identity leakage or cohort threshold warnings.',
+                    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
+                    escalationStatus: 'None',
+                    createdAt: new Date().toISOString()
+                }
+            ];
+        }
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
     }
     async loadFromFirestore() {
         const db = getFirestore();
@@ -560,6 +648,7 @@ class PrimaryDataStore {
         this.persistToDisk();
         return flag;
     }
+<<<<<<< HEAD
     // --- LIVE AGGREGATE ANALYTICS COMPUTATION FROM DATABASE STORE ---
     getLiveZoneBenchmarkData() {
         const casesArr = Array.from(this.cases.values());
@@ -936,5 +1025,7 @@ class PrimaryDataStore {
             }
         ];
     }
+=======
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
 }
 export const primaryStore = new PrimaryDataStore();

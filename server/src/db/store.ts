@@ -48,22 +48,7 @@ export interface DuressAlert {
   role: UserRole;
   ipAddress: string;
   locationInfo?: { lat: number; lng: number; jurisdiction?: string };
-  status: 'UNACKNOWLEDGED' | 'INVESTIGATING' | 'ESCALATED' | 'RESOLVED';
-  refId?: string;
-  detailsText?: string;
-  fieldNodeId?: string;
-}
-
-
-export interface ValidatorActivityLogRecord {
-  id: string;
-  action: string;
-  type: string;
-  time: string;
-  timestamp: string;
-  nodeId: string;
-  icon: string;
-  color: string;
+  status: 'UNACKNOWLEDGED' | 'INVESTIGATING' | 'RESOLVED';
 }
 
 export interface CaseRecord {
@@ -100,6 +85,16 @@ export interface EvidenceRecord {
   latitude?: number;
   longitude?: number;
   signature?: string;
+  seizureBagId?: string;
+  seizureMethod?: string;
+  priorityLevel?: string;
+  witnessName?: string;
+  preservationType?: string;
+  tags?: string[];
+  evidenceNotes?: string;
+  txHash?: string;
+  blockNumber?: number;
+  merkleRoot?: string;
   createdAt: string;
 }
 
@@ -113,78 +108,15 @@ export interface ConsensusVote {
 
 export interface ConsensusRequest {
   id: string;
-  caseRef?: string;
-  caseId?: string;
-  caseTitle?: string;
-  title?: string;
-  category?: 'Metadata Correction' | 'Record Sealing' | 'Evidence Deletion' | 'Section 65B Re-hash' | 'Custody Handover';
-  changeTypeLabel?: string;
-  requestedBy?: string;
-  requestAgency?: string;
-  timestamp?: string;
-  status?: 'Awaiting your vote' | 'Awaiting validator' | 'Flagged suspicious' | 'Approved' | 'Rejected' | 'Pending' | 'Flagged Forgery';
-  
-  courtAuthorityVoteStatus?: 'Approved' | 'Pending' | 'Rejected';
-  validatorVoteStatus?: 'Approved' | 'Pending' | 'Rejected';
-  reasonForRequest?: string;
-
-  systemFlagIndicator?: {
-    isFlagged: boolean;
-    flagType: string;
-    title: string;
-    description: string;
-  } | null;
-
-  thresholdRequired?: '2 of 2' | '2 of 3';
-  currentApprovalCount?: number;
-  totalRequiredCount?: number;
-
-  yourVote?: 'pending' | 'approved' | 'rejected';
-  validatorVote?: 'pending' | 'approved' | 'rejected';
-  auditorVote?: 'pending' | 'approved' | 'rejected' | 'n/a';
-
-  riskScore?: number;
-  description?: string;
-  impactSummary?: string;
-
-  targetRecordHash?: string;
-  proposedRecordHash?: string;
-  previousBlockHash?: string;
-  merkleRoot?: string;
-  blockNumber?: number;
-
-  nodeVotes?: any[];
-  fieldDiffs?: any[];
-  custodyLogs?: any[];
-  precedents?: any[];
-  directives?: any[];
-
-  judicialDecision?: any;
-  validatorJustificationNote?: string;
-
-  // Case & Block fields
-  exhibitId?: string;
-  exhibitTitle?: string;
-  submittedBy?: string;
-  requiredVotes?: number;
-  currentVotes?: number;
-  votes?: ConsensusVote[];
-
-  queue?: string;
-  waitTimeHours?: number;
-  waitTimeFormatted?: string;
-  slaLimitFormatted?: string;
-  urgency?: 'URGENT BOTTLENECK' | 'HIGH' | 'NORMAL';
-  urgencyColor?: string;
-  badgeColor?: string;
-  quorumSigned?: number;
-  quorumTotal?: number;
-  zkProofType?: string;
-  entropyScore?: string;
-  cryptographicDetails?: string;
-  signedBy?: Record<string, string>;
-  txHash?: string;
-
+  caseId: string;
+  caseTitle: string;
+  exhibitId: string;
+  exhibitTitle: string;
+  submittedBy: string;
+  requiredVotes: number;
+  currentVotes: number;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Flagged Forgery';
+  votes: ConsensusVote[];
   createdAt: string;
 }
 
@@ -232,46 +164,6 @@ export interface PrecedentFlagItem {
   resolvedAt?: string;
 }
 
-export interface AnalyticsReportRecord {
-  id: string;
-  reportCode?: string;
-  title: string;
-  courtScope?: string;
-  benchScope?: string;
-  cohortSize?: number;
-  minCohortThreshold?: number;
-  differentialPrivacyEpsilon?: number;
-  isKAnonymityValid?: boolean;
-  caseDurationAvgDays?: number;
-  caseDurationBaselineDays?: number;
-  precedentVarianceScore?: number;
-  anomalyScore?: number;
-  anomalySeverity?: 'Low' | 'Medium' | 'Critical';
-  summaryDescription?: string;
-  encryptionAlgorithm?: string;
-  escalationStatus?: 'None' | 'Escalated';
-  escalationTicketId?: string;
-  escalationDate?: string;
-  escalationRationale?: string;
-  escalationCategory?: string;
-  status?: string;
-  privacyType?: string;
-  createdAt: string;
-}
-
-export interface OversightEscalationRecord {
-  id: string;
-  ticketId: string;
-  reportId: string;
-  reportCode: string;
-  title: string;
-  category: string;
-  rationale: string;
-  validatorName: string;
-  status: 'ROUTED_TO_OVERSIGHT_ENCLAVE' | 'UNDER_ENCLAVE_INSPECTION' | 'RESOLVED';
-  createdAt: string;
-}
-
 import fs from 'fs';
 import path from 'path';
 import { getFirestore } from './firebase.js';
@@ -283,15 +175,19 @@ class PrimaryDataStore {
   private usersByEmail = new Map<string, UserRecord>();
   private duressAlerts: DuressAlert[] = [];
   private vettingQueue: Array<{ id: string; userId: string; submittedAt: string; consentGiven: boolean }> = [];
+  
   private cases = new Map<string, CaseRecord>();
   private evidence = new Map<string, EvidenceRecord>();
   private consensusRequests: ConsensusRequest[] = [];
   private forgeryReviews: ForgeryReviewItem[] = [];
   private identityUnlocks: IdentityUnlockRequest[] = [];
   private precedentFlags: PrecedentFlagItem[] = [];
-  private analyticsReports: AnalyticsReportRecord[] = [];
-  private oversightEscalations: OversightEscalationRecord[] = [];
-  private validatorActivityLogs: ValidatorActivityLogRecord[] = [];
+
+  // DECOY HONEYPOT DATASETS FOR DURESS SESSIONS
+  private decoyCases = new Map<string, CaseRecord>();
+  private decoyEvidence = new Map<string, EvidenceRecord>();
+  private decoyConsensusRequests: ConsensusRequest[] = [];
+  private decoyForgeryReviews: ForgeryReviewItem[] = [];
 
   constructor() {
     this.seedDefaults();
@@ -320,8 +216,42 @@ class PrimaryDataStore {
     ];
     defaultEvidence.forEach(e => this.evidence.set(e.id, e));
 
-    // Consensus Requests - 100% dynamic starting empty
-    if (!this.consensusRequests) this.consensusRequests = [];
+    // Default Consensus Requests
+    this.consensusRequests = [
+      {
+        id: 'REQ-2026-901',
+        caseId: 'FIR-2026-001',
+        caseTitle: 'State vs. Unknown (Sector 4 Cyber Heist)',
+        exhibitId: 'EV-8821',
+        exhibitTitle: 'CCTV Footage - Main Server Room',
+        submittedBy: 'Officer R. Kulkarni',
+        requiredVotes: 3,
+        currentVotes: 2,
+        status: 'Pending',
+        votes: [
+          { validatorId: 'val_01', validatorName: 'Judge V. Sharma', vote: 'APPROVE', timestamp: '2026-10-12T16:00:00Z', note: 'Hash match verified on chain.' },
+          { validatorId: 'val_02', validatorName: 'Validator Dr. S. Rao', vote: 'APPROVE', timestamp: '2026-10-12T16:30:00Z', note: 'Hardware WebAuthn key validated.' }
+        ],
+        createdAt: '2026-10-12T15:00:00Z'
+      },
+      {
+        id: 'REQ-2026-902',
+        caseId: 'FIR-2026-002',
+        caseTitle: 'State vs. Deshmukh (Property Fraud)',
+        exhibitId: 'EV-8824',
+        exhibitTitle: 'Forged Land Ownership Deed',
+        submittedBy: 'Inspector S. Patel',
+        requiredVotes: 3,
+        currentVotes: 3,
+        status: 'Approved',
+        votes: [
+          { validatorId: 'val_01', validatorName: 'Judge V. Sharma', vote: 'APPROVE', timestamp: '2026-10-10T12:00:00Z' },
+          { validatorId: 'val_02', validatorName: 'Validator Dr. S. Rao', vote: 'APPROVE', timestamp: '2026-10-10T12:15:00Z' },
+          { validatorId: 'val_03', validatorName: 'Advocate M. Mehta', vote: 'APPROVE', timestamp: '2026-10-10T12:30:00Z' }
+        ],
+        createdAt: '2026-10-10T11:30:00Z'
+      }
+    ];
 
     // Default Forgery Reviews
     this.forgeryReviews = [
@@ -388,6 +318,7 @@ class PrimaryDataStore {
       }
     ];
 
+<<<<<<< HEAD
     // Consensus Requests — only seed if empty (real data from disk takes priority)
     if (this.consensusRequests.length === 0) {
       this.consensusRequests = [
@@ -489,6 +420,55 @@ class PrimaryDataStore {
         }
       ];
     }
+=======
+    // Seed Decoy Honeypot Datasets (Served ONLY during Duress Sessions)
+    const defaultDecoyCases: CaseRecord[] = [
+      { id: 'FIR-DECOY-8801', title: 'State vs. Cyber Transport Syndicate (Decoy Docket)', status: 'Active', type: 'Cyber Crime', date: 'Oct 14, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 6, testimonyCount: 2, priority: 'High', description: 'Simulated traffic monitoring log analysis for Western precinct routing.', location: 'Western Suburb Precinct 9', jurisdictionCode: 'MH-MUM-DIST-01', createdAt: '2026-10-14T10:00:00Z', updatedAt: '2026-10-14T10:00:00Z' },
+      { id: 'FIR-DECOY-8802', title: 'Deshmukh Land Registry Audit (Decoy File)', status: 'Pending Review', type: 'Financial', date: 'Oct 11, 2026', officer: 'Inspector S. Patel', evidenceCount: 4, testimonyCount: 1, priority: 'Medium', description: 'Deed register verification for Municipal Ward 42.', location: 'Sub-Registry Ward 42', jurisdictionCode: 'MH-MUM-DIST-02', createdAt: '2026-10-11T11:30:00Z', updatedAt: '2026-10-11T11:30:00Z' }
+    ];
+    defaultDecoyCases.forEach(c => this.decoyCases.set(c.id, c));
+
+    const defaultDecoyEvidence: EvidenceRecord[] = [
+      { id: 'EV-DECOY-9901', caseId: 'FIR-DECOY-8801', title: 'Traffic Packet Capture Log (Honeytoken)', type: 'Document', date: 'Oct 14, 2026 11:00', hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', status: 'Sealed', custodian: 'Officer R. Kulkarni', incidentLocation: 'Western Suburb Precinct 9', confidentialityLevel: 'Restricted', createdAt: '2026-10-14T11:00:00Z' }
+    ];
+    defaultDecoyEvidence.forEach(e => this.decoyEvidence.set(e.id, e));
+
+    this.decoyConsensusRequests = [
+      {
+        id: 'REQ-DECOY-901',
+        caseId: 'FIR-DECOY-8801',
+        caseTitle: 'State vs. Cyber Transport Syndicate (Decoy Docket)',
+        exhibitId: 'EV-DECOY-9901',
+        exhibitTitle: 'Traffic Packet Capture Log (Honeytoken)',
+        submittedBy: 'Officer R. Kulkarni',
+        requiredVotes: 3,
+        currentVotes: 1,
+        status: 'Pending',
+        votes: [
+          { validatorId: 'val_01', validatorName: 'Judge V. Sharma', vote: 'APPROVE', timestamp: '2026-10-14T12:00:00Z', note: 'Decoy Hash verified.' }
+        ],
+        createdAt: '2026-10-14T11:30:00Z'
+      }
+    ];
+
+    this.decoyForgeryReviews = [
+      {
+        id: 'FORG-DECOY-801',
+        exhibitId: 'EV-DECOY-9901',
+        caseId: 'FIR-DECOY-8801',
+        title: 'Traffic Packet Capture Log (Honeytoken)',
+        type: 'Document File',
+        submittedBy: 'Forensics Specialist A. Roy',
+        timestamp: '2026-10-14 11:30',
+        spectralScore: 91.2,
+        metadataIntegrityScore: 89.5,
+        perceptualDiffScore: 14.1,
+        aiConfidence: 98.4,
+        flagReason: 'Honeytoken digital marker verified clean baseline.',
+        status: 'Under Review'
+      }
+    ];
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
   }
 
   private async loadFromFirestore() {
@@ -514,11 +494,12 @@ class PrimaryDataStore {
       
       console.log('🔥 Synced data from Firebase Firestore');
     } catch (err: any) {
-      console.log('Firestore load info:', err);
+      console.log('ℹ️  Firestore DB API status:', err.message || err);
+      console.log('ℹ️  Operating with high-performance local store fallback.');
     }
   }
 
-  public loadFromDisk() {
+  private loadFromDisk() {
     try {
       if (fs.existsSync(DATA_FILE)) {
         const raw = fs.readFileSync(DATA_FILE, 'utf-8');
@@ -553,6 +534,7 @@ class PrimaryDataStore {
         if (data.precedentFlags && Array.isArray(data.precedentFlags)) {
           this.precedentFlags = data.precedentFlags;
         }
+<<<<<<< HEAD
         if (data.analyticsReports && Array.isArray(data.analyticsReports)) {
           this.analyticsReports = data.analyticsReports;
         }
@@ -564,46 +546,13 @@ class PrimaryDataStore {
         }
         // Seed only after disk data is loaded — so disk data takes priority
         this.seedDefaults();
+=======
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
       }
     } catch (err) {
       console.log('Info: Disk store load status:', err);
     }
   }
-
-  public getAnalyticsReports(): AnalyticsReportRecord[] {
-    return [...this.analyticsReports];
-  }
-
-  public getAnalyticsReportById(id: string): AnalyticsReportRecord | undefined {
-    return this.analyticsReports.find(r => r.id === id || r.reportCode === id);
-  }
-
-  public saveAnalyticsReport(report: AnalyticsReportRecord): AnalyticsReportRecord {
-    const idx = this.analyticsReports.findIndex(r => r.id === report.id || r.reportCode === report.reportCode);
-    if (idx >= 0) {
-      this.analyticsReports[idx] = report;
-    } else {
-      this.analyticsReports.unshift(report);
-    }
-    this.persistToDisk();
-    return report;
-  }
-
-  public getOversightEscalations(): OversightEscalationRecord[] {
-    return [...this.oversightEscalations];
-  }
-
-  public saveOversightEscalation(record: OversightEscalationRecord): OversightEscalationRecord {
-    this.oversightEscalations.unshift(record);
-    this.persistToDisk();
-    return record;
-  }
-
-  public addAnalyticsReport(report: AnalyticsReportRecord): AnalyticsReportRecord {
-    return this.saveAnalyticsReport(report);
-  }
-
-
 
   private persistToDisk() {
     try {
@@ -616,10 +565,14 @@ class PrimaryDataStore {
         consensusRequests: this.consensusRequests,
         forgeryReviews: this.forgeryReviews,
         identityUnlocks: this.identityUnlocks,
+<<<<<<< HEAD
         precedentFlags: this.precedentFlags,
         analyticsReports: this.analyticsReports,
         oversightEscalations: this.oversightEscalations,
         validatorActivityLogs: this.validatorActivityLogs
+=======
+        precedentFlags: this.precedentFlags
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
       };
       fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
     } catch (err) {
@@ -634,9 +587,13 @@ class PrimaryDataStore {
     this.persistToDisk();
 
     // Real-time Firestore sync
-    const db = getFirestore();
-    if (db) {
-      db.collection('users').doc(user.id).set(user, { merge: true }).catch((err: any) => console.log('Firestore save user err:', err));
+    try {
+      const db = getFirestore();
+      if (db) {
+        db.collection('users').doc(user.id).set(user, { merge: true }).catch((err: any) => console.log('Firestore save user status:', err.message || err));
+      }
+    } catch (e: any) {
+      console.log('Firestore write info:', e.message || e);
     }
 
     return user;
@@ -658,6 +615,7 @@ class PrimaryDataStore {
   public addDuressAlert(alert: Omit<DuressAlert, 'id' | 'timestamp' | 'status'>): DuressAlert {
     const record: DuressAlert = {
       ...alert,
+      locationInfo: alert.locationInfo || { lat: 19.0760, lng: 72.8777, jurisdiction: 'MH-MUM-DIST-01' },
       id: `alert_dur_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
       timestamp: new Date().toISOString(),
       status: 'UNACKNOWLEDGED'
@@ -665,9 +623,13 @@ class PrimaryDataStore {
     this.duressAlerts.unshift(record);
     this.persistToDisk();
 
-    const db = getFirestore();
-    if (db) {
-      db.collection('duress_alerts').doc(record.id).set(record).catch((err: any) => console.log('Firestore duress alert err:', err));
+    try {
+      const db = getFirestore();
+      if (db) {
+        db.collection('duress_alerts').doc(record.id).set(record).catch((err: any) => console.log('Firestore alert status:', err.message || err));
+      }
+    } catch (e: any) {
+      console.log('Firestore write info:', e.message || e);
     }
 
     return record;
@@ -675,87 +637,6 @@ class PrimaryDataStore {
 
   public getDuressAlerts(): DuressAlert[] {
     return [...this.duressAlerts];
-  }
-
-  public acknowledgeDuressAlert(alertId?: string): DuressAlert | undefined {
-    let target = this.duressAlerts.find(a => alertId ? a.id === alertId : a.status === 'UNACKNOWLEDGED');
-    if (!target && this.duressAlerts.length > 0) {
-      target = this.duressAlerts[0];
-    }
-    if (target) {
-      target.status = 'ESCALATED';
-      this.persistToDisk();
-
-      const db = getFirestore();
-      if (db) {
-        db.collection('duress_alerts').doc(target.id).update({ status: 'ESCALATED' }).catch((err: any) => console.log('Firestore duress update err:', err));
-      }
-    }
-    return target;
-  }
-
-  // Consensus Requests for Independent Validator
-  public getConsensusRequests(): ConsensusRequest[] {
-    return [...this.consensusRequests];
-  }
-
-  public getConsensusRequestById(id: string): ConsensusRequest | undefined {
-    return this.consensusRequests.find(r => r.id === id);
-  }
-
-  public saveConsensusRequest(req: ConsensusRequest): ConsensusRequest {
-    const idx = this.consensusRequests.findIndex(r => r.id === req.id);
-    if (idx >= 0) {
-      this.consensusRequests[idx] = req;
-    } else {
-      this.consensusRequests.unshift(req);
-    }
-    this.persistToDisk();
-    return req;
-  }
-
-  // Analytics Reports
-  public getAnalyticsReportsCount(): number {
-    return this.analyticsReports.length;
-  }
-
-  // Validator Activity Logs
-  public getValidatorActivityLogs(): ValidatorActivityLogRecord[] {
-    return [...this.validatorActivityLogs];
-  }
-
-  public addValidatorActivityLog(log: Omit<ValidatorActivityLogRecord, 'id' | 'timestamp'>): ValidatorActivityLogRecord {
-    const newLog: ValidatorActivityLogRecord = {
-      ...log,
-      id: `log_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-      timestamp: new Date().toISOString()
-    };
-    this.validatorActivityLogs.unshift(newLog);
-    this.persistToDisk();
-    return newLog;
-  }
-
-  // SQL COUNT Query Equivalent for Validator Dashboard (Selects counts & ZK categories ONLY)
-  public async getDashboardCounts() {
-    // SELECT COUNT(*) FROM consensus_requests WHERE quorum_signed < quorum_total;
-    const consensusAwaitingCount = this.consensusRequests.filter(r => (r.quorumSigned ?? 0) < (r.quorumTotal ?? 3)).length;
-    // SELECT COUNT(*) FROM analytics_reports;
-    const analyticsReportsCount = this.analyticsReports.length;
-    // SELECT COUNT(*) FROM duress_alerts WHERE status = 'UNACKNOWLEDGED';
-    const activeDuressCount = this.duressAlerts.filter(a => a.status === 'UNACKNOWLEDGED').length;
-    // Bottleneck info
-    const bottleneck = this.consensusRequests.find(r => r.urgency === 'URGENT BOTTLENECK');
-
-    return {
-      consensusAwaitingCount,
-      analyticsReportsCount,
-      activeDuressCount,
-      bottleneckInfo: bottleneck ? {
-        count: 1,
-        waitTimeFormatted: bottleneck.waitTimeFormatted,
-        blockId: bottleneck.id
-      } : { count: 0, waitTimeFormatted: '0h' }
-    };
   }
 
   // Vetting Queue for Validator
@@ -769,9 +650,13 @@ class PrimaryDataStore {
     this.vettingQueue.push(item);
     this.persistToDisk();
 
-    const db = getFirestore();
-    if (db) {
-      db.collection('vetting_queue').doc(item.id).set(item).catch((err: any) => console.log('Firestore vetting queue err:', err));
+    try {
+      const db = getFirestore();
+      if (db) {
+        db.collection('vetting_queue').doc(item.id).set(item).catch((err: any) => console.log('Firestore vetting status:', err.message || err));
+      }
+    } catch (e: any) {
+      console.log('Firestore write info:', e.message || e);
     }
 
     return item;
@@ -782,11 +667,17 @@ class PrimaryDataStore {
   }
 
   // --- CASES API ---
-  public getCases(): CaseRecord[] {
+  public getCases(isDuressSession?: boolean): CaseRecord[] {
+    if (isDuressSession) {
+      return Array.from(this.decoyCases.values());
+    }
     return Array.from(this.cases.values());
   }
 
-  public getCaseById(id: string): CaseRecord | undefined {
+  public getCaseById(id: string, isDuressSession?: boolean): CaseRecord | undefined {
+    if (isDuressSession) {
+      return this.decoyCases.get(id);
+    }
     return this.cases.get(id);
   }
 
@@ -794,12 +685,23 @@ class PrimaryDataStore {
     caseItem.updatedAt = new Date().toISOString();
     this.cases.set(caseItem.id, caseItem);
     this.persistToDisk();
+
+    try {
+      const db = getFirestore();
+      if (db) {
+        db.collection('cases').doc(caseItem.id).set(caseItem).catch((err: any) => console.log('Firestore case save status:', err.message || err));
+      }
+    } catch (e: any) {
+      console.log('Firestore write info:', e.message || e);
+    }
+
     return caseItem;
   }
 
   // --- EVIDENCE API ---
-  public getEvidence(caseId?: string): EvidenceRecord[] {
-    const all = Array.from(this.evidence.values());
+  public getEvidence(caseId?: string, isDuressSession?: boolean): EvidenceRecord[] {
+    const targetMap = isDuressSession ? this.decoyEvidence : this.evidence;
+    const all = Array.from(targetMap.values());
     if (caseId) {
       return all.filter(e => e.caseId === caseId);
     }
@@ -818,20 +720,42 @@ class PrimaryDataStore {
       c.evidenceCount += 1;
       c.updatedAt = new Date().toISOString();
       this.cases.set(c.id, c);
+      try {
+        const db = getFirestore();
+        if (db) {
+          db.collection('cases').doc(c.id).set(c).catch((err: any) => console.log('Firestore case update status:', err.message || err));
+        }
+      } catch (e: any) {
+        console.log('Firestore write info:', e.message || e);
+      }
     }
     this.persistToDisk();
+
+    try {
+      const db = getFirestore();
+      if (db) {
+        db.collection('evidence').doc(item.id).set(item).catch((err: any) => console.log('Firestore evidence save status:', err.message || err));
+      }
+    } catch (e: any) {
+      console.log('Firestore write info:', e.message || e);
+    }
+
     return item;
   }
 
   // --- CONSENSUS APPROVALS ---
-
+  public getConsensusRequests(isDuressSession?: boolean): ConsensusRequest[] {
+    if (isDuressSession) {
+      return [...this.decoyConsensusRequests];
+    }
+    return [...this.consensusRequests];
+  }
 
   public addConsensusVote(requestId: string, validatorId: string, validatorName: string, vote: 'APPROVE' | 'REJECT' | 'FLAG_FORGERY', note?: string): ConsensusRequest | undefined {
     const req = this.consensusRequests.find(r => r.id === requestId);
     if (!req) return undefined;
     
     // Check if already voted
-    req.votes = req.votes || [];
     const existing = req.votes.find(v => v.validatorId === validatorId);
     if (!existing) {
       req.votes.push({
@@ -842,7 +766,7 @@ class PrimaryDataStore {
         note
       });
       req.currentVotes = req.votes.length;
-      if (req.requiredVotes && req.currentVotes >= req.requiredVotes) {
+      if (req.currentVotes >= req.requiredVotes) {
         req.status = 'Approved';
       }
       this.persistToDisk();
@@ -851,7 +775,10 @@ class PrimaryDataStore {
   }
 
   // --- FORGERY REVIEWS ---
-  public getForgeryReviews(): ForgeryReviewItem[] {
+  public getForgeryReviews(isDuressSession?: boolean): ForgeryReviewItem[] {
+    if (isDuressSession) {
+      return [...this.decoyForgeryReviews];
+    }
     return [...this.forgeryReviews];
   }
 

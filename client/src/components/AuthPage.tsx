@@ -52,29 +52,10 @@ export function AuthPage({ onNavigate }: { onNavigate: (page: string) => void })
     return `${browser} / ${os}`;
   });
 
-  const [userLocationInfo, setUserLocationInfo] = useState<{ location: string; ip: string }>({
-    location: 'Detecting Geolocation...',
-    ip: '127.0.0.1'
+  const [userLocationInfo] = useState<{ location: string; ip: string }>({
+    location: 'Mumbai, MH (Statewide Network)',
+    ip: '192.168.1.104'
   });
-
-  useEffect(() => {
-    fetch('https://ipapi.co/json/')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.city) {
-          setUserLocationInfo({
-            location: `${data.city}, ${data.region_code || data.region} (${data.org || 'Regional Network'})`,
-            ip: data.ip || '127.0.0.1'
-          });
-        }
-      })
-      .catch(() => {
-        setUserLocationInfo({
-          location: 'Mumbai, MH (Statewide Network)',
-          ip: '192.168.1.104'
-        });
-      });
-  }, []);
 
   const completeDashboardLogin = (roleToSet?: UserRole) => {
     const role = roleToSet || selectedRole;
@@ -118,7 +99,7 @@ export function AuthPage({ onNavigate }: { onNavigate: (page: string) => void })
     try {
       const targetEmail = email.trim().toLowerCase();
       // Connect to real Express backend endpoint: POST /api/auth/signin
-      const response = await api.signin(targetEmail, password);
+      const response = await api.signin(targetEmail, password, selectedRole);
       console.log('Real Signin API Response:', response);
 
       // Trigger Real Gmail SMTP OTP dispatch

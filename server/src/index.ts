@@ -27,11 +27,11 @@ const server = http.createServer(app);
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-latitude', 'x-longitude', 'x-jurisdiction-code']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-latitude', 'x-longitude', 'x-jurisdiction-code', 'x-duress-session', 'X-Duress-Session']
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Register Routers
 app.use('/api/auth', authRouter);

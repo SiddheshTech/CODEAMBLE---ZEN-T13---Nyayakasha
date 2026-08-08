@@ -24,6 +24,10 @@ async function fetchAPI<T = any>(endpoint: string, options: RequestInit = {}): P
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  if (localStorage.getItem('nyayakasha_is_duress_session') === 'true') {
+    headers['X-Duress-Session'] = 'true';
+  }
+
   const response = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
     headers
@@ -64,10 +68,10 @@ export const api = {
     return res;
   },
 
-  signin: async (email: string, password: string, turnstileToken: string = 'dev_turnstile_token') => {
+  signin: async (email: string, password: string, expectedRole?: string, turnstileToken: string = 'dev_turnstile_token') => {
     const res = await fetchAPI('/auth/signin', {
       method: 'POST',
-      body: JSON.stringify({ email, password, turnstileToken })
+      body: JSON.stringify({ email, password, expectedRole, turnstileToken })
     });
     if (res.sessionId) {
       localStorage.setItem('nyayakasha_session_id', res.sessionId);
@@ -99,11 +103,19 @@ export const api = {
       headers['x-longitude'] = String(coords.lng);
       headers['x-jurisdiction-code'] = coords.jurisdictionCode || 'MH-MUM-DIST-01';
     }
-    return fetchAPI('/auth/verify-duress-pin', {
+    const res = await fetchAPI('/auth/verify-duress-pin', {
       method: 'POST',
       headers,
       body: JSON.stringify({ pin, locationInfo: coords })
     });
+
+    if (res && res.isDuressSession) {
+      localStorage.setItem('nyayakasha_is_duress_session', 'true');
+    } else {
+      localStorage.removeItem('nyayakasha_is_duress_session');
+    }
+
+    return res;
   },
 
   // --- VERIFICATION & DOCUMENT ---

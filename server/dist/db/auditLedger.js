@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+<<<<<<< HEAD
 import crypto from 'crypto';
 import { sha256 } from '../utils/crypto.js';
 import { primaryStore } from './store.js';
@@ -11,6 +12,10 @@ const AUDIT_FILE = path.join(process.cwd(), 'nyayakasha_audit_ledger.json');
 export function computeHashChainFormula(prevHash, timestamp, uid, eventType, payloadHash) {
     return crypto.createHash('sha256').update(prevHash + timestamp + uid + eventType + payloadHash).digest('hex');
 }
+=======
+import { sha256 } from '../utils/crypto.js';
+const AUDIT_FILE = path.join(process.cwd(), 'nyayakasha_audit_ledger.json');
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
 class AuditLedger {
     chain = [];
     genesisHash = '0000000000000000000000000000000000000000000000000000000000000000';
@@ -25,7 +30,10 @@ class AuditLedger {
                 ipAddress: '127.0.0.1',
                 details: { message: 'NYAYAKASHA Audit Ledger Initialized' }
             });
+<<<<<<< HEAD
             this.seedDefaultValidatorLogs();
+=======
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
         }
     }
     loadFromDisk() {
@@ -33,7 +41,11 @@ class AuditLedger {
             if (fs.existsSync(AUDIT_FILE)) {
                 const raw = fs.readFileSync(AUDIT_FILE, 'utf-8');
                 const data = JSON.parse(raw);
+<<<<<<< HEAD
                 if (Array.isArray(data) && data.length > 0) {
+=======
+                if (Array.isArray(data)) {
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
                     this.chain = data;
                 }
             }
@@ -42,6 +54,7 @@ class AuditLedger {
             console.log('Info: Audit ledger load status:', err);
         }
     }
+<<<<<<< HEAD
     seedDefaultValidatorLogs() {
         primaryStore.loadFromDisk();
         const consensusArr = primaryStore.getConsensusRequests();
@@ -114,6 +127,8 @@ class AuditLedger {
             });
         }
     }
+=======
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
     persistToDisk() {
         try {
             fs.writeFileSync(AUDIT_FILE, JSON.stringify(this.chain, null, 2), 'utf-8');
@@ -159,6 +174,7 @@ class AuditLedger {
     getEvents() {
         return this.getChain();
     }
+<<<<<<< HEAD
     getPersonalActions(uid) {
         this.loadFromDisk();
         if (this.chain.length <= 1) {
@@ -273,6 +289,8 @@ class AuditLedger {
             MerkleRootProof: merkleRoot
         };
     }
+=======
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
     recordEvent(eventType, userId, details, userRole = 'USER') {
         return this.appendEvent({
             eventType,
