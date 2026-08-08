@@ -450,6 +450,18 @@ export const api = {
     });
   },
 
+  // --- PROFILE MANAGEMENT ---
+  getProfile: async () => {
+    return fetchAPI('/profile', { method: 'GET' });
+  },
+
+  updateProfile: async (data: any) => {
+    return fetchAPI('/profile', {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+  },
+
   getHealth: async () => {
     return fetchAPI('/health', { method: 'GET' });
   }

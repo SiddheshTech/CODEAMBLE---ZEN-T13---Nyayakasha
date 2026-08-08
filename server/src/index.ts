@@ -51,6 +51,7 @@ app.use('/api/analytics', analyticsRouter);
 app.use('/api/validator', validatorRouter);
 app.use('/api/audit-log', auditRouter);
 app.use('/api/notifications', notificationsRouter);
+app.use('/api/profile', profileRoutes);
 app.use('/api', healthRouter);
 
 // WebSocket Server for Silent Duress Event Bus to Independent Validator
