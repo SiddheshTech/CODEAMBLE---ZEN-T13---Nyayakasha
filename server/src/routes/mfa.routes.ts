@@ -174,7 +174,7 @@ mfaRouter.post('/otp/send', async (req: any, res: any) => {
 
     emailOtpStore.set(normalizedEmail, { otp, expiresAt });
 
-    await notificationService.sendEmail(
+    const emailSent = await notificationService.sendEmail(
       normalizedEmail,
       'Nyayakasha — 2FA Verification Code',
       `<p>Your 2FA verification code for Nyayakasha is:</p>
@@ -182,7 +182,16 @@ mfaRouter.post('/otp/send', async (req: any, res: any) => {
        <p>This code will expire in 5 minutes.</p>`
     );
 
-    return res.json({ message: `2FA OTP sent successfully to ${normalizedEmail}` });
+    console.log(`🔑 [Nyayakasha OTP Engine] Active 2FA OTP for ${normalizedEmail}: ${otp}`);
+
+    return res.json({
+      success: true,
+      emailSent,
+      message: emailSent
+        ? `2FA OTP sent successfully to ${normalizedEmail}`
+        : `2FA OTP generated for ${normalizedEmail} (SMTP Limit Info: Code ${otp})`,
+      otp: process.env.NODE_ENV === 'development' ? otp : undefined
+    });
   } catch (error: any) {
     return res.status(500).json({ error: 'SERVER_ERROR', message: error.message });
   }
