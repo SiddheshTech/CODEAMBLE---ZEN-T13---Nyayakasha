@@ -3254,5 +3254,103 @@
     "payloadHash": "939dfc956fb9eeabedcf864fbbbdb47031ed07ba6f0600288f93587c1ee20f36",
     "prevHash": "c5754f56d83deec1f72ce9ba1b05c63708d33c19d643b60ad5d42bb1f6b84719",
     "hash": "7c8509d92a9cde9a5c636bf3d44e9aae2f9a73bb809faf3ec7cda6f4439c7ef1"
+  },
+  {
+    "id": "audit_1786195975782_199",
+    "index": 199,
+    "timestamp": "2026-08-08T13:32:55.781Z",
+    "eventType": "INSTITUTIONAL_REGISTRY_CHECK",
+    "userId": "usr_independent_validator_1786195975776",
+    "userRole": "independent_validator",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "registrySource": "Oversight Committee & High Court Registry",
+      "verified": true
+    },
+    "payloadHash": "7a76d295a8895cde2450ff4b18475f8afe618f829951c2ca68d9dccad20ac7db",
+    "prevHash": "7c8509d92a9cde9a5c636bf3d44e9aae2f9a73bb809faf3ec7cda6f4439c7ef1",
+    "hash": "d157df7de64efc69b4303f097009e24ccdf02fdb050328f9d5e87c3e2265f83b"
+  },
+  {
+    "id": "audit_1786195975787_200",
+    "index": 200,
+    "timestamp": "2026-08-08T13:32:55.787Z",
+    "eventType": "VALIDATOR_VETTING_QUEUED",
+    "userId": "usr_independent_validator_1786195975776",
+    "userRole": "independent_validator",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "consentGiven": true,
+      "vettingId": "vet_1786195975785"
+    },
+    "payloadHash": "3e04729a7ab417e2b595fb5820f8612b6f98e9f88be54b8a01a37440938e43fe",
+    "prevHash": "d157df7de64efc69b4303f097009e24ccdf02fdb050328f9d5e87c3e2265f83b",
+    "hash": "1f0724ca7bab12befd8b8079356830b2f7e1ff8a56548796d9d482c1aa27da9f"
+  },
+  {
+    "id": "audit_1786195975790_201",
+    "index": 201,
+    "timestamp": "2026-08-08T13:32:55.790Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "smithkadam24@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "smithkadam24@gmail.com",
+      "subject": "Nyayakasha — Registration Confirmation"
+    },
+    "payloadHash": "0afe75c38c83432dc1ff6dc3d90808d17a85ca17d85ed9310f8b3436a3425d67",
+    "prevHash": "1f0724ca7bab12befd8b8079356830b2f7e1ff8a56548796d9d482c1aa27da9f",
+    "hash": "b455ec6b467c9a3b7f6c8edc0036bfb78487003c862efc84f42bc36435796693"
+  },
+  {
+    "id": "audit_1786195975802_202",
+    "index": 202,
+    "timestamp": "2026-08-08T13:32:55.802Z",
+    "eventType": "USER_SIGNUP",
+    "userId": "usr_independent_validator_1786195975776",
+    "userRole": "independent_validator",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "email": "smithkadam24@gmail.com",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "83c34816333bd6a67f7c8ccf5b7f6ec2ae194a06060b1aa08b1c8a6ef3f932c5",
+    "prevHash": "b455ec6b467c9a3b7f6c8edc0036bfb78487003c862efc84f42bc36435796693",
+    "hash": "b28a058c5d2e0e4cb07ba17053a53322f966ee67f8ea5b132ee0ac16498f3c64"
+  },
+  {
+    "id": "audit_1786196665230_203",
+    "index": 203,
+    "timestamp": "2026-08-08T13:44:25.230Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_independent_validator_1786195975776",
+    "userRole": "independent_validator",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786196665229_bknyvu",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "3fc69df30c815755039728e57564b9ad9d83d0a2a4a694221754f2e8571ed9e6",
+    "prevHash": "b28a058c5d2e0e4cb07ba17053a53322f966ee67f8ea5b132ee0ac16498f3c64",
+    "hash": "ec2a30183bb96cf85faad86ca6b6002894b93422da7ed7cf5a3e65f7f0220560"
+  },
+  {
+    "id": "audit_1786196665244_204",
+    "index": 204,
+    "timestamp": "2026-08-08T13:44:25.244Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "smithkadam24@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "smithkadam24@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "23666f9d3167b67102af117ebdba9fa14b2c450c1a979b13f32ff3629251b7f6",
+    "prevHash": "ec2a30183bb96cf85faad86ca6b6002894b93422da7ed7cf5a3e65f7f0220560",
+    "hash": "29137e6ffdfe2c29e08c5512cf3c745768f0adbc4bbd8c9ca3060d1652b745d0"
   }
 ]

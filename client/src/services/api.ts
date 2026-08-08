@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000/api';
 
 /**
  * Retrieves the stored active session ID token from localStorage
@@ -53,10 +53,15 @@ export const api = {
     jurisdictionCode?: string;
     consentVetting?: boolean;
   }) => {
-    return fetchAPI('/auth/signup', {
+    const res = await fetchAPI('/auth/signup', {
       method: 'POST',
       body: JSON.stringify(params)
     });
+    if (res.sessionId) {
+      localStorage.setItem('nyayakasha_session_id', res.sessionId);
+      localStorage.setItem('nyayakasha_user', JSON.stringify(res.user));
+    }
+    return res;
   },
 
   signin: async (email: string, password: string, turnstileToken: string = 'dev_turnstile_token') => {

@@ -119,9 +119,35 @@ authRouter.post('/signup', async (req: Request, res: Response) => {
       details: { email: newUser.email, approvalState: newUser.approvalState }
     });
 
+    // Create Server-Side Session in Redis Store for newly registered user
+    const clientIp = req.ip || req.socket.remoteAddress || '127.0.0.1';
+    const sessionId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+    const session: UserSession = {
+      sessionId,
+      userId: newUser.id,
+      role: newUser.role,
+      createdAt: Date.now(),
+      lastAccessAt: Date.now(),
+      ipAddress: clientIp,
+      userAgent: req.headers['user-agent'] || 'unknown'
+    };
+
+    await sessionStore.setSession(session);
+
     return res.status(201).json({
       message: 'Signup successful. Institutional verification initiated.',
       userId: newUser.id,
+      sessionId,
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        fullName: newUser.fullName,
+        role: newUser.role,
+        approvalState: newUser.approvalState,
+        mfaEnrolled: newUser.mfaEnrolled,
+        mfaType: newUser.mfaType,
+        publicKeyPem: newUser.publicKeyPem
+      },
       approvalState: newUser.approvalState,
       institutionVerified: newUser.institutionVerified
     });

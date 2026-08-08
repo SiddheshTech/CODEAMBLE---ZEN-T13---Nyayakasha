@@ -840,6 +840,35 @@
       "mfaEnrolled": false,
       "createdAt": "2026-08-08T12:43:59.362Z",
       "updatedAt": "2026-08-08T12:43:59.363Z"
+    },
+    {
+      "id": "usr_independent_validator_1786195975776",
+      "email": "smithkadam24@gmail.com",
+      "fullName": "Smith Kadam",
+      "role": "independent_validator",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$vvR/RoscNy00PuvZ+xLVow$TIceTqG48AFNsZycp/ZQePmJje/gGZ0fXZlJDWNrIjg",
+      "badgeId": "BCM-MAH/8864/2026",
+      "barCouncilNumber": "BCM-MAH/8864/2026",
+      "institutionId": "BCM-MAH/8864/2026",
+      "jurisdictionCode": "MH-MUM-DIST-01",
+      "approvalState": "institution_review",
+      "stateHistory": [
+        {
+          "state": "submitted",
+          "timestamp": "2026-08-08T13:32:55.777Z",
+          "note": "Account signup submitted"
+        },
+        {
+          "state": "institution_review",
+          "timestamp": "2026-08-08T13:32:55.780Z",
+          "note": "Verified by Institutional Registry"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": false,
+      "mfaEnrolled": false,
+      "createdAt": "2026-08-08T13:32:55.777Z",
+      "updatedAt": "2026-08-08T13:32:55.780Z"
     }
   ],
   "duressAlerts": [
@@ -1302,6 +1331,12 @@
       "id": "vet_1786193039364",
       "userId": "usr_independent_validator_1786193039362",
       "submittedAt": "2026-08-08T12:43:59.364Z",
+      "consentGiven": true
+    },
+    {
+      "id": "vet_1786195975785",
+      "userId": "usr_independent_validator_1786195975776",
+      "submittedAt": "2026-08-08T13:32:55.785Z",
       "consentGiven": true
     }
   ]
