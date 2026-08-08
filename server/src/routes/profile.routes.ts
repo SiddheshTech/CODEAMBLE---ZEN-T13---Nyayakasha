@@ -11,6 +11,9 @@ const profilePatchSchema = z.object({
   contactExtension: z.string().optional(),
   chambersLocation: z.string().optional(),
   authorityScope: z.string().optional(),
+  barCouncilNumber: z.string().optional(),
+  badgeId: z.string().optional(),
+  appointmentRef: z.string().optional()
 });
 
 /**
@@ -134,6 +137,9 @@ profileRoutes.patch('/', async (req: Request, res: Response) => {
     if (validatedData.contactExtension !== undefined) user.contactExtension = validatedData.contactExtension;
     if (validatedData.chambersLocation !== undefined) user.chambersLocation = validatedData.chambersLocation;
     if (validatedData.authorityScope !== undefined) user.authorityScope = validatedData.authorityScope;
+    if (validatedData.barCouncilNumber !== undefined) user.barCouncilNumber = validatedData.barCouncilNumber;
+    if (validatedData.badgeId !== undefined) user.badgeId = validatedData.badgeId;
+    if (validatedData.appointmentRef !== undefined) user.appointmentRef = validatedData.appointmentRef;
 
     await primaryStore.saveUser(user);
 
