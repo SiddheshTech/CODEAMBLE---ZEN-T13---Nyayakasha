@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { primaryStore, UserRecord } from '../db/store.js';
@@ -55,12 +56,10 @@ profileRoutes.get('/', async (req: Request, res: Response) => {
     const formattedGenesisDate = user.keyGenesisDate || new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
 
     let calculatedFingerprint = user.keyShareFingerprint;
-    if (!calculatedFingerprint && user.publicKeyPem) {
-      const cleanPem = user.publicKeyPem.replace(/[^a-fA-F0-9]/g, '');
-      calculatedFingerprint = '0x' + (cleanPem.length >= 32 ? cleanPem.slice(0, 32).toUpperCase() : '9D4F88E211A9C43B7720F01A99D823E1').match(/.{1,4}/g)?.join('-');
-    }
     if (!calculatedFingerprint) {
-      calculatedFingerprint = '0x9D4F-88E2-11A9-C43B-7720-F01A-99D8-23E1-44B0';
+      const keyInput = user.publicKeyPem || `${user.id}_${user.email}_${user.role}`;
+      const hashHex = crypto.createHash('sha256').update(keyInput).digest('hex').toUpperCase();
+      calculatedFingerprint = '0x' + hashHex.slice(0, 32).match(/.{1,4}/g)?.join('-');
     }
 
     const userRoleKey = (user.role || 'court_authority').toLowerCase().replace(/\s+/g, '_');
