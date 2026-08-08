@@ -16,19 +16,20 @@ import { forgeryRouter } from './routes/forgery.routes.js';
 import { identityRouter } from './routes/identity.routes.js';
 import { precedentsRouter } from './routes/precedents.routes.js';
 import { analyticsRouter } from './routes/analytics.routes.js';
-<<<<<<< HEAD
 import { auditRouter } from './routes/audit.routes.js';
-=======
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
+import { notificationsRouter } from './routes/notifications.routes.js';
 import { deviceRouter } from './routes/device.routes.js';
+import { profileRoutes } from './routes/profile.routes.js';
+import { courtAuthorityRouter } from './routes/courtAuthority.routes.js';
+import { settingsRoutes } from './routes/settings.routes.js';
 import { registerValidatorSocket } from './services/duress.service.js';
 const app = express();
 const server = http.createServer(app);
 // CORS setup
 app.use(cors({
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-latitude', 'x-longitude', 'x-jurisdiction-code']
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-latitude', 'x-longitude', 'x-jurisdiction-code', 'x-duress-session', 'X-Duress-Session', 'x-user-email', 'X-User-Email', 'x-user-role', 'X-User-Role', 'x-user-id', 'X-User-Id']
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -40,21 +41,30 @@ app.use('/api/security/device', deviceRouter);
 app.use('/api/security', securityRouter);
 app.use('/api/cases', casesRouter);
 app.use('/api/evidence', evidenceRouter);
-app.use('/api/consensus', consensusRouter);
+app.use(['/api/consensus', '/api/consensus/'], consensusRouter);
 app.use('/api/forgery', forgeryRouter);
 app.use('/api/identity', identityRouter);
 app.use('/api/precedents', precedentsRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/validator', validatorRouter);
-<<<<<<< HEAD
 app.use('/api/audit-log', auditRouter);
-=======
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
+app.use('/api/notifications', notificationsRouter);
+app.use('/api/profile', profileRoutes);
+app.use('/api/court-authority', courtAuthorityRouter);
+app.use('/api/settings', settingsRoutes);
 app.use('/api', healthRouter);
 // WebSocket Server for Silent Duress Event Bus to Independent Validator
 const wss = new WebSocketServer({ server, path: '/ws/duress-bus' });
 wss.on('connection', (ws) => {
     registerValidatorSocket(ws);
+});
+wss.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.log(`ℹ️  WebSocket/HTTP Server port 5000 in use. Active instance running.`);
+    }
+    else {
+        console.warn('WebSocket error:', err.message);
+    }
 });
 export function startServer(port = ENV.PORT) {
     if (!server.listening) {
@@ -66,13 +76,20 @@ export function startServer(port = ENV.PORT) {
                 console.error('Server error:', err);
             }
         });
-        server.listen(port, () => {
-            console.log(`=======================================================`);
-            console.log(`🛡️  NYAYAKASHA Backend Authentication & Docket System Online`);
-            console.log(`🚀  HTTP API Server listening on port ${port}`);
-            console.log(`📡  WebSocket Duress Event Bus active at /ws/duress-bus`);
-            console.log(`=======================================================`);
-        });
+        try {
+            server.listen(port, () => {
+                console.log(`=======================================================`);
+                console.log(`🛡️  NYAYAKASHA Backend Authentication & Docket System Online`);
+                console.log(`🚀  HTTP API Server listening on port ${port}`);
+                console.log(`📡  WebSocket Duress Event Bus active at /ws/duress-bus`);
+                console.log(`=======================================================`);
+            });
+        }
+        catch (err) {
+            if (err.code === 'EADDRINUSE') {
+                console.log(`ℹ️  Server port ${port} in use. Using active background instance.`);
+            }
+        }
     }
     return server;
 }

@@ -1,4 +1,5 @@
-import * as admin from 'firebase-admin';
+import { initializeApp, cert, getApps } from 'firebase-admin/app';
+import { getFirestore as getAdminFirestore } from 'firebase-admin/firestore';
 import fs from 'fs';
 import path from 'path';
 let firestoreDb = null;
@@ -10,22 +11,28 @@ export function initFirebase() {
         const serviceAccountPath = path.join(process.cwd(), 'firebase-service-account.json');
         if (fs.existsSync(serviceAccountPath)) {
             const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf-8'));
-            admin.initializeApp({
-                credential: admin.credential?.cert(serviceAccount)
-            });
-            firestoreDb = admin.firestore ? admin.firestore() : null;
+            if (getApps().length === 0) {
+                initializeApp({
+                    credential: cert(serviceAccount)
+                });
+            }
+            firestoreDb = getAdminFirestore();
+            firestoreDb.settings({ ignoreUndefinedProperties: true });
             isFirebaseInitialized = true;
-            console.log('🔥 Firebase Admin SDK initialized via service account file');
+            console.log('🔥 Firebase Admin SDK initialized via service account file (nyayakasha-1d94f)');
         }
         else if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY) {
-            admin.initializeApp({
-                credential: admin.credential?.cert({
-                    projectId: process.env.FIREBASE_PROJECT_ID,
-                    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-                    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-                })
-            });
-            firestoreDb = admin.firestore ? admin.firestore() : null;
+            if (getApps().length === 0) {
+                initializeApp({
+                    credential: cert({
+                        projectId: process.env.FIREBASE_PROJECT_ID,
+                        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+                    })
+                });
+            }
+            firestoreDb = getAdminFirestore();
+            firestoreDb.settings({ ignoreUndefinedProperties: true });
             isFirebaseInitialized = true;
             console.log('🔥 Firebase Admin SDK initialized via environment variables');
         }
@@ -34,7 +41,7 @@ export function initFirebase() {
         }
     }
     catch (err) {
-        console.log('Firebase initialization info:', err);
+        console.log('Firebase initialization info:', err.message || err);
     }
     return firestoreDb;
 }

@@ -54,7 +54,7 @@ class ValidatorService {
                 consensusVotesAwaiting: counts.consensusAwaitingCount,
                 encryptedAnalyticsReports: counts.analyticsReportsCount,
                 duressAlertsCount: counts.activeDuressCount,
-                bottleneckText: counts.bottleneckInfo.count > 0 ? `${counts.bottleneckInfo.count} Bottleneck (${counts.bottleneckInfo.waitTimeFormatted})` : '0 Bottlenecks'
+                bottleneckText: typeof counts.bottleneckInfo === 'string' ? counts.bottleneckInfo : '0 Bottlenecks'
             },
             zeroKnowledgePolicy: {
                 enforced: true,
@@ -74,50 +74,35 @@ class ValidatorService {
                 status: activeDuressAlert.status,
                 escalated: activeDuressAlert.status === 'ESCALATED'
             } : null,
-            activityLogs: activityLogs.map(l => ({
+            activityLogs: activityLogs.map((l) => ({
                 id: l.id,
-                action: l.action,
-                type: l.type,
-                time: l.time,
-                nodeId: l.nodeId,
-                icon: l.icon,
-                color: l.color
-            })),
-            validatorUser: {
-                id: user.id,
-                fullName: user.fullName || 'Adv. A. Mehta',
-                role: 'Independent Validator',
-                nodeId: 'Node #IV-882'
-            }
+                action: l.action || l.actionName || 'Validator Activity',
+                type: l.type || l.category || 'Multi-Sig Vote',
+                time: l.time || l.timestamp || 'Just now',
+                nodeId: l.nodeId || 'Node #IV-882',
+                icon: l.icon || 'CheckCircle2',
+                color: l.color || 'text-emerald-600 bg-emerald-50'
+            }))
         };
-        // Store in 30s TTL cache
-        this.cache = {
-            timestamp: now,
-            data: dashboardPayload
-        };
-        return {
-            ...dashboardPayload,
-            cached: false
-        };
+        return dashboardPayload;
     }
     /**
-     * Cast Consensus Vote on Block Payload
+     * Submit Multi-Sig Vote for Consensus Request
      */
-    async castVote(userId, userName, blockId, decision, pin) {
-        this.cache = null;
+    async submitConsensusVote(userId, userName, blockId, decision, keyId = '0x8920...F391') {
         const block = primaryStore.getConsensusRequestById(blockId);
         if (!block) {
             throw new Error(`Block ${blockId} not found in consensus queue.`);
         }
         block.signedBy = block.signedBy || {};
         if (block.signedBy[userId]) {
-            throw new Error(`Validator ${userName} has already cast a ${block.signedBy[userId]} vote on ${blockId}.`);
+            throw new Error(`Validator ${userName} has already cast a vote on ${blockId}.`);
         }
         const merkleRoot = block.merkleRoot || '0x0000000000000000000000000000000000000000000000000000000000000000';
         // Cryptographically sign decision with Node's crypto library
         const signaturePayload = `${blockId}:${merkleRoot}:${decision}:${userId}:${Date.now()}`;
         const digitalSignature = crypto.createHash('sha256').update(signaturePayload).digest('hex');
-        block.signedBy[userId] = decision;
+        block.signedBy[userId] = true;
         const currentSigned = block.quorumSigned ?? 0;
         const currentTotal = block.quorumTotal ?? 3;
         block.quorumSigned = Math.min(currentTotal, currentSigned + 1);
@@ -133,6 +118,10 @@ class ValidatorService {
         // Append Activity Log
         const actionText = `Cast "${decision}" vote on Block #${blockId}`;
         primaryStore.addValidatorActivityLog({
+            id: `LOG-VOTE-${Date.now()}`,
+            eventType: 'VALIDATOR_CONSENSUS_VOTE',
+            userId,
+            timestamp: new Date().toISOString(),
             action: actionText,
             type: 'Multi-Sig Vote',
             time: 'Just now',
@@ -165,7 +154,7 @@ class ValidatorService {
             txHash
         });
         return {
-            message: `Consensus Vote successfully cast on ${blockId}`,
+            success: true,
             blockId,
             decision,
             digitalSignature,
@@ -177,12 +166,16 @@ class ValidatorService {
     /**
      * Acknowledge & Escalate Duress Signal
      */
-    async acknowledgeDuress(userId, userName, alertId) {
-        const alert = primaryStore.acknowledgeDuressAlert(alertId);
+    async acknowledgeDuress(userId, userName, alertId = 'alert_01') {
+        const alert = primaryStore.acknowledgeDuressAlert(alertId) || primaryStore.getDuressAlerts()[0];
         if (!alert) {
             throw new Error('No active duress alert found to acknowledge.');
         }
         primaryStore.addValidatorActivityLog({
+            id: `LOG-DURESS-${Date.now()}`,
+            eventType: 'DURESS_ALERT_ACKNOWLEDGED',
+            userId,
+            timestamp: new Date().toISOString(),
             action: `Escalated Silent Duress Signal Ref: ${alert.refId || 'DURESS-SIG-2026-04'}`,
             type: 'Duress Protocol',
             time: 'Just now',
@@ -206,6 +199,10 @@ class ValidatorService {
             message: 'Duress Protocol Acknowledged & Escalated to Command Dispatch',
             alert
         };
+    }
+    async castVote(userId, userName, blockId, decision, pin) {
+        const voteDecision = (decision === 'Approve' || decision === 'Approved') ? 'Approved' : 'Rejected';
+        return this.submitConsensusVote(userId, userName, blockId, voteDecision);
     }
 }
 export const validatorService = new ValidatorService();

@@ -8,20 +8,107 @@ class PrimaryDataStore {
     duressAlerts = [];
     vettingQueue = [];
     cases = new Map();
+    richCases = new Map();
     evidence = new Map();
     consensusRequests = [];
     forgeryReviews = [];
+    forgeryQueueItems = new Map();
     identityUnlocks = [];
+    identityUnlockLogs = [];
     precedentFlags = [];
     analyticsReports = [];
     oversightEscalations = [];
     validatorActivityLogs = [];
+    notifications = [];
+    fcmTokens = new Map();
+    attestedModules = [];
+    // DECOY HONEYPOT DATASETS FOR DURESS SESSIONS
+    decoyCases = new Map();
+    decoyEvidence = new Map();
+    decoyConsensusRequests = [];
+    decoyForgeryReviews = [];
     constructor() {
         this.seedDefaults();
         this.loadFromDisk();
         this.loadFromFirestore();
     }
     seedDefaults() {
+        // Seed default users so profile fetching always has rich data even on fresh start
+        if (this.users.size === 0) {
+            const defaultValidator = {
+                id: 'usr_seed_validator',
+                email: 'm.vasudevan@oversight.nyayakasha.gov.in',
+                fullName: 'DR. MEERA VASUDEVAN',
+                role: 'independent_validator',
+                passwordHash: 'seeded',
+                approvalState: 'active',
+                stateHistory: [{ state: 'active', timestamp: new Date().toISOString() }],
+                institutionVerified: true,
+                vettingApproved: true,
+                mfaEnrolled: true,
+                contactExtension: '+91 (022) 2288-1100 ext. 901',
+                chambersLocation: 'Chambers 901, Judicial Oversight Tower, Fort, Mumbai',
+                appointmentRef: 'HC-REG-2026-9902',
+                authorityScope: 'Division Bench Quorum (1-of-3 Threshold)',
+                barCouncilNumber: 'BCM-MH-2012/88421',
+                keyShareFingerprint: '0x9D4F-88E2-11A9-C43B-7720-F01A-99D8-23E1-44B0',
+                hardwareTokenName: 'YubiKey 5 FIDO2 Hardware Security Token',
+                keyGenesisDate: 'Nov 12, 2025',
+                mfaAttestationLevel: 'WebAuthn Hardware-Attested • Level 3 Enclave Security',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            const defaultCourtAuth = {
+                id: 'usr_seed_court',
+                email: 'a.mehta@highcourt.nyayakasha.gov.in',
+                fullName: 'HON. JUSTICE ADV. A. MEHTA',
+                role: 'court_authority',
+                passwordHash: 'seeded',
+                approvalState: 'active',
+                stateHistory: [{ state: 'active', timestamp: new Date().toISOString() }],
+                institutionVerified: true,
+                vettingApproved: true,
+                mfaEnrolled: true,
+                contactExtension: '+91 (022) 2284-9042 ext. 402',
+                chambersLocation: 'Chambers 402, High Court Main Building',
+                appointmentRef: 'HC-JUD-2026-0892',
+                authorityScope: 'Division Bench 3 (Presiding Judge)',
+                barCouncilNumber: 'BCM-MH-1998/1042',
+                keyShareFingerprint: '0x8F9A-41B0-C82E-99B1-3310-7F2A-00B2-11D4-884E-90C1-FA32',
+                hardwareTokenName: 'YubiKey 5 FIDO2 Hardware Security Token',
+                keyGenesisDate: 'Nov 12, 2025',
+                mfaAttestationLevel: 'WebAuthn Hardware-Attested • Level 3 Enclave Security',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            const defaultFieldSub = {
+                id: 'usr_seed_field',
+                email: 'r.kulkarni@nyayakasha.gov.in',
+                fullName: 'OFFICER RAJESH KULKARNI',
+                role: 'field_submitter',
+                passwordHash: 'seeded',
+                approvalState: 'active',
+                stateHistory: [{ state: 'active', timestamp: new Date().toISOString() }],
+                institutionVerified: true,
+                vettingApproved: true,
+                mfaEnrolled: true,
+                contactExtension: '+91 (022) 2650-1122 ext. 104',
+                chambersLocation: 'Room 104, Zone 4 Cyber Crime Precinct',
+                appointmentRef: 'MH-POL-29384',
+                authorityScope: 'Zone 4 Metropolitan Precinct',
+                barCouncilNumber: 'POL-MH-2015/4921',
+                keyShareFingerprint: '0x3E1C-99B4-11A0-7C08-44F2-88B1-002E-77D1-2290-A81B-12D9',
+                hardwareTokenName: 'Ed25519-EdDSA Enclave',
+                keyGenesisDate: 'Nov 12, 2025',
+                mfaAttestationLevel: 'Standard App Enclave',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            [defaultValidator, defaultCourtAuth, defaultFieldSub].forEach(u => {
+                this.users.set(u.id, u);
+                this.usersByEmail.set(u.email.toLowerCase(), u);
+            });
+        }
         // Default Cases
         const defaultCases = [
             { id: 'FIR-2026-001', title: 'State vs. Unknown (Sector 4 Cyber Heist)', status: 'Active', type: 'Cyber Crime', date: 'Oct 12, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 14, testimonyCount: 3, priority: 'High', description: 'Unauthorized access and data exfiltration from city municipal servers. Traced to IP addresses in Zone 4.', location: 'Sector 4, Central Station', jurisdictionCode: 'MH-MUM-DIST-01', createdAt: '2026-10-12T10:00:00Z', updatedAt: '2026-10-12T10:00:00Z' },
@@ -32,260 +119,1007 @@ class PrimaryDataStore {
             { id: 'FIR-2026-006', title: 'Counterfeit Currency Operation', status: 'Active', type: 'Forgery', date: 'Oct 14, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 19, testimonyCount: 4, priority: 'High', description: 'Distribution of fake currency notes in local markets.', location: 'Central Bazaar Market', jurisdictionCode: 'MH-MUM-DIST-01', createdAt: '2026-10-14T08:20:00Z', updatedAt: '2026-10-14T08:20:00Z' }
         ];
         defaultCases.forEach(c => this.cases.set(c.id, c));
+        // ── Rich Judicial Case Files (full forensic records for CaseFilesTab) ───
+        if (this.richCases.size === 0) {
+            const richCaseSeed = [
+                {
+                    id: 'CR-2026-904',
+                    title: 'State vs. Cyber Heist Syndicate (Municipal Server Exfiltration)',
+                    caseType: 'Cyber Crime',
+                    filingDate: '12 Oct 2026',
+                    currentStage: 'Judicial Review',
+                    status: 'Under Review',
+                    priority: 'CRITICAL',
+                    mayaBreakStatus: 'Flagged',
+                    mayaBreakDetails: '1 exhibit flagged: Hash mismatch on CCTV Exhibit #4',
+                    officerInCharge: 'Officer R. Kulkarni (Badge #8902)',
+                    courtBench: 'High Court Bench 3 (Presiding: Hon. Adv. A. Mehta)',
+                    prosecutor: 'Adv. V. S. Nambiar (State Cyber Cell)',
+                    defenseCounsel: 'Adv. S. Ramachandran',
+                    statutorySections: ['Sec 43A IT Act 2000', 'Sec 66B Computer Fraud', 'Sec 379 IPC Theft'],
+                    evidenceTimeline: [
+                        { id: 'EXH-001', title: 'CCTV Camera 04 Footage - Sector 4 Server Room (1080p)', type: 'Video MP4', submittedBy: 'Insp. V. Sharma', timestamp: '12 Oct 2026, 09:30 AM', pramanaHash: '0x8f2a...910b', blockNumber: 89201, integrityStatus: 'Flagged', integrityScore: '94.2% Integrity (Frame 1400 anomaly)', details: 'MAYA-BREAK detected potential frame insertion at timestamp 02:14:10.', expectedHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', actualHash: 'a1c4d92298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b112', anomalyTimeWindow: '00:02:14 - 00:02:18 (45 Frames inserted)' },
+                        { id: 'EXH-002', title: 'Server Access Syslog Excerpt (Encrypted Log)', type: 'Syslog Text', submittedBy: 'Cyber Forensics Unit', timestamp: '12 Oct 2026, 11:15 AM', pramanaHash: '0x3c11...4a89', blockNumber: 89203, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Hash anchor matched across 3 distributed validator nodes.', expectedHash: '9a31f...9011a', actualHash: '9a31f...9011a' },
+                        { id: 'EXH-003', title: 'Seized Encrypted USB Storage Drive (Zone 4 Vault)', type: 'Forensic Memory Dump', submittedBy: 'Officer R. Kulkarni', timestamp: '13 Oct 2026, 03:00 PM', pramanaHash: '0x77d1...9911', blockNumber: 89240, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Hardware TPM Knox attestation verified.' },
+                    ],
+                    testimonies: [
+                        { id: 'ZKP-901', zkpHash: '0x7f2a...81b9c2041a', summary: 'Attestation confirming physical breach alarm timestamp aligns with server logs.', timestamp: '13 Oct 2026, 02:20 PM', isUnlocked: false, unlockedIdentity: 'Dr. S. Raman (Lead System Administrator)', witnessRole: 'System Admin Witness', verificationNode: 'CertIn-Node-04' },
+                        { id: 'ZKP-902', zkpHash: '0x4d12...99e1a88b12', summary: 'Expert forensic opinion on IP routing origin and VPN node interception.', timestamp: '14 Oct 2026, 10:05 AM', isUnlocked: true, unlockedIdentity: 'Prof. M. Deshmukh (CERT-In Senior Analyst)', witnessRole: 'Forensic Expert', verificationNode: 'HighCourt-Validator-1' },
+                    ],
+                    custodyHistory: [
+                        { id: 'cust-1', title: 'Evidence Seized at Scene', actor: 'Officer R. Kulkarni (Badge #8902)', location: 'Sector 4 Data Center, Mumbai', timestamp: 'Oct 12, 2026 • 02:15 PM', status: 'Sealed in Tamper Bag #EV-9022', biometricVerified: true, gpsCoordinates: '18.9220° N, 72.8347° E' },
+                        { id: 'cust-2', title: 'Transferred to Zone 4 Police Vault', actor: 'Custodian S. Patil', location: 'Zone 4 Central Evidence Locker', timestamp: 'Oct 12, 2026 • 04:40 PM', status: 'RFID Logged & Vault Locked', biometricVerified: true, gpsCoordinates: '18.9311° N, 72.8290° E' },
+                        { id: 'cust-3', title: 'AI Forensic Hash Upload to PRAMANA Ledger', actor: 'Automated Ingestion Pipeline', location: 'High Court Cloud Node #1', timestamp: 'Oct 13, 2026 • 09:00 AM', status: 'Hash Mismatch Flagged', biometricVerified: true },
+                    ],
+                    orders: [
+                        { id: 'ORD-2026-904-01', title: 'Re-examination Order for CCTV Exhibit #4', issuedBy: 'Hon. Adv. A. Mehta (Bench 3)', timestamp: '14 Oct 2026 • 04:15 PM', summary: 'Ordered CFSL Director to inspect frame insertion anomaly between 02:14:10 and 02:14:15.', sealHash: '0x9920a...110bf', type: 'Evidentiary Direction' },
+                    ],
+                    notes: [
+                        { id: 'note-1', author: 'Adv. A. Mehta', timestamp: '14 Oct 2026, 04:30 PM', category: 'Judicial Directive', content: 'Ordered independent re-verification of CCTV Exhibit #4 frame 1400 by Central Forensic Science Laboratory.' },
+                        { id: 'note-2', author: 'Adv. V. S. Nambiar', timestamp: '15 Oct 2026, 11:00 AM', category: 'Evidence Note', content: 'State submits original server syslog dump corresponding to network switch #3.' },
+                    ],
+                    precedents: [
+                        { caseId: 'CR-2025-044', title: 'State vs. Sharma (Landmark CCTV Frame Tampering Guidelines)', court: 'Supreme Court of India', similarityScore: 94.2, relevantSections: ['Sec 65B Evidence Act', 'Sec 43A IT Act'], summary: 'Held that unverified video frame insertions render digital video evidence inadmissible without raw sensor cryptographic logs.' },
+                        { caseId: 'SC-2022-108', title: 'Union of India vs. Cyber-Net Labs', court: 'Supreme Court of India', similarityScore: 88.5, relevantSections: ['Sec 66 IT Act'], summary: 'Established multi-sig validator quorum as mandatory standard for cloud server audit logs in criminal trials.' },
+                    ],
+                    createdAt: '2026-10-12T10:00:00Z',
+                    updatedAt: new Date().toISOString(),
+                },
+                {
+                    id: 'FIR-2026-102',
+                    title: 'State vs. Malhotra Logistics (Customs Fraud & Tax Evasion)',
+                    caseType: 'Financial Fraud',
+                    filingDate: '01 Aug 2026',
+                    currentStage: 'Consensus Voting',
+                    status: 'Active',
+                    priority: 'HIGH',
+                    mayaBreakStatus: 'Pass',
+                    mayaBreakDetails: 'All 6 evidence items 100% verified by MAYA-BREAK',
+                    officerInCharge: 'ACP S. Verma',
+                    courtBench: 'Commercial Court Bench 1',
+                    prosecutor: 'Adv. R. K. Saxena',
+                    defenseCounsel: 'Adv. P. N. Merchant',
+                    statutorySections: ['Sec 132 Customs Act', 'Sec 420 IPC Cheating', 'Sec 65B Evidence Act'],
+                    evidenceTimeline: [
+                        { id: 'EXH-101', title: 'Digital Bill of Lading & Waybills Ledger', type: 'PDF Document', submittedBy: 'Customs Officer P. Nair', timestamp: '01 Aug 2026, 02:00 PM', pramanaHash: '0x1a99...33ef', blockNumber: 87102, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Cryptographically signed by Port Customs Terminal gateway.' },
+                        { id: 'EXH-102', title: 'Dual-Ledger Accounting Records (Seized)', type: 'Spreadsheet XLS', submittedBy: 'CA Audit Team', timestamp: '02 Aug 2026, 03:30 PM', pramanaHash: '0x2b88...77ac', blockNumber: 87210, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Enterprise accounting export, hash-verified against originating server.' },
+                    ],
+                    testimonies: [
+                        { id: 'ZKP-102', zkpHash: '0x88c1...12a4b901ce', summary: 'Whistleblower testimony detailing dual-ledger accounting practices.', timestamp: '02 Aug 2026, 11:30 AM', isUnlocked: false, unlockedIdentity: 'K. Patel (Senior Auditor)', witnessRole: 'Whistleblower' },
+                    ],
+                    custodyHistory: [],
+                    orders: [],
+                    notes: [],
+                    precedents: [],
+                    createdAt: '2026-08-01T09:00:00Z',
+                    updatedAt: new Date().toISOString(),
+                },
+                {
+                    id: 'MH-CR-8821',
+                    title: 'State vs. Kulkarni & Others (Land Registry Deed Tampering)',
+                    caseType: 'Document Forgery',
+                    filingDate: '28 Jul 2026',
+                    currentStage: 'Pre-Trial Hearing',
+                    status: 'Under Review',
+                    priority: 'HIGH',
+                    mayaBreakStatus: 'Pass',
+                    mayaBreakDetails: 'PRAMANA blockchain verification intact',
+                    officerInCharge: 'Insp. T. Patil',
+                    courtBench: 'Civil Sessions Bench 2',
+                    prosecutor: 'Adv. M. Joshi',
+                    defenseCounsel: 'Adv. G. Kulkarni',
+                    statutorySections: ['Sec 467 IPC Forgery', 'Sec 468 IPC', 'Sec 120B Conspiracy'],
+                    evidenceTimeline: [
+                        { id: 'EXH-201', title: 'Original Property Deed #1984-A (Digitized Scan)', type: 'High-Res TIFF', submittedBy: 'Sub-Registrar Office', timestamp: '28 Jul 2026, 10:00 AM', pramanaHash: '0x55d4...91c0', blockNumber: 86510, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Watermark seal verified via MAYA-BREAK optical analyzer.' },
+                        { id: 'EXH-202', title: 'Alleged Forged Deed (Accused Copy)', type: 'PDF Scan', submittedBy: 'Complainant Counsel', timestamp: '28 Jul 2026, 03:20 PM', pramanaHash: '0x88f2...0099', blockNumber: 86522, integrityStatus: 'Flagged', integrityScore: '71.3% Integrity (Font vector mismatch)', details: 'Pixel grid analysis shows non-contiguous ink density at stamp area.' },
+                    ],
+                    testimonies: [
+                        { id: 'ZKP-821', zkpHash: '0x9a11...88b201ca', summary: 'Sub-Registrar confirms original deed was never transferred after 1998.', timestamp: '30 Jul 2026, 09:00 AM', isUnlocked: true, unlockedIdentity: 'Mr. B. Nair (Sub-Registrar, Bandra)', witnessRole: 'Government Official' },
+                    ],
+                    custodyHistory: [
+                        { id: 'cust-21', title: 'Original Deed Seized from Registry Archive', actor: 'Insp. T. Patil', location: 'Bandra Sub-Registry Office', timestamp: 'Jul 28, 2026 • 10:00 AM', status: 'Sealed in RFID Evidence Bag #MH-1492', biometricVerified: true, gpsCoordinates: '19.0549° N, 72.8407° E' },
+                    ],
+                    orders: [],
+                    notes: [
+                        { id: 'note-821', author: 'Hon. Adv. A. Mehta', timestamp: '30 Jul 2026, 02:00 PM', category: 'Judicial Directive', content: 'Handwriting expert to compare signatures on both deeds and report within 10 working days.' },
+                    ],
+                    precedents: [
+                        { caseId: 'SC-2018-412', title: 'State vs. Parekh (Land Deed Stamp Act Tampering)', court: 'Bombay High Court', similarityScore: 91.8, relevantSections: ['Sec 467 IPC', 'Stamp Act 1899'], summary: 'Held that digitized deed copies must carry cryptographic provenance chain from originating authority to be admissible.' },
+                    ],
+                    createdAt: '2026-07-28T07:00:00Z',
+                    updatedAt: new Date().toISOString(),
+                },
+                {
+                    id: 'SHV-2291',
+                    title: 'State vs. Nexus Pharma (Substandard Drug Distribution)',
+                    caseType: 'Public Health',
+                    filingDate: '15 Jul 2026',
+                    currentStage: 'Consensus Voting',
+                    status: 'Active',
+                    priority: 'MEDIUM',
+                    mayaBreakStatus: 'Pass',
+                    mayaBreakDetails: 'Consensus vote pending for record update',
+                    officerInCharge: 'Drug Inspector R. Joshi',
+                    courtBench: 'High Court Bench 3',
+                    prosecutor: 'Adv. A. Roy',
+                    defenseCounsel: 'Adv. D. Sengupta',
+                    statutorySections: ['Sec 18 Drugs & Cosmetics Act', 'Sec 274 IPC Adulteration'],
+                    evidenceTimeline: [
+                        { id: 'EXH-301', title: 'Batch Analysis Lab Certificate #NP-2026-88', type: 'PDF Report', submittedBy: 'Govt Testing Lab', timestamp: '15 Jul 2026, 03:45 PM', pramanaHash: '0x99e2...0011', blockNumber: 85992, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Lab signature anchored on PRAMANA block.' },
+                        { id: 'EXH-302', title: 'FDA Inspection Report — Nexus Pharma Plant', type: 'PDF Report', submittedBy: 'FDA Inspector K. Murthy', timestamp: '16 Jul 2026, 11:00 AM', pramanaHash: '0xab11...cc82', blockNumber: 86001, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Official FDA seal verified via cryptographic timestamp service.' },
+                    ],
+                    testimonies: [],
+                    custodyHistory: [],
+                    orders: [],
+                    notes: [
+                        { id: 'note-22', author: 'Drug Inspector R. Joshi', timestamp: '17 Jul 2026, 09:00 AM', category: 'Evidence Note', content: 'Samples sent to Central Drug Testing Laboratory. Results expected in 21 days.' },
+                    ],
+                    precedents: [],
+                    createdAt: '2026-07-15T10:00:00Z',
+                    updatedAt: new Date().toISOString(),
+                },
+                {
+                    id: 'CR-2025-044',
+                    title: 'State vs. Sharma (Landmark Digital Contract Case)',
+                    caseType: 'Cyber Crime',
+                    filingDate: '10 Jan 2025',
+                    currentStage: 'Final Ruling Sealed',
+                    status: 'Sealed',
+                    priority: 'LOW',
+                    mayaBreakStatus: 'Pass',
+                    mayaBreakDetails: 'Case permanently sealed under judicial order',
+                    officerInCharge: 'ACP S. Verma',
+                    courtBench: 'Supreme Bench Precedent',
+                    prosecutor: 'State Attorney General Office',
+                    defenseCounsel: 'Senior Counsel K. Subramaniam',
+                    statutorySections: ['Sec 65B Evidence Act', 'Sec 10A IT Act'],
+                    evidenceTimeline: [
+                        { id: 'EXH-401', title: 'Smart Contract Execution Log #SC-44', type: 'EVM Log', submittedBy: 'Judicial Registrar', timestamp: '10 Jan 2025, 05:00 PM', pramanaHash: '0x44aa...99bb', blockNumber: 71000, integrityStatus: 'Pass', integrityScore: '100% Immutable', details: 'Sealed precedent record.' },
+                    ],
+                    testimonies: [
+                        { id: 'ZKP-044', zkpHash: '0x19ab...332c11de01', summary: 'Expert testimony affirming on-chain contract execution logs are admissible under Sec 65B.', timestamp: '08 Jan 2025, 10:00 AM', isUnlocked: true, unlockedIdentity: 'Prof. A. Krishnamurthy (IIT Bombay, Blockchain Expert)', witnessRole: 'Technical Expert' },
+                    ],
+                    custodyHistory: [
+                        { id: 'cust-44', title: 'Smart Contract Logs Extracted & Verified', actor: 'Judicial Registrar Office', location: 'Supreme Court Registry, New Delhi', timestamp: 'Jan 10, 2025 • 03:00 PM', status: 'Permanently Sealed — Block #71000', biometricVerified: true },
+                    ],
+                    orders: [
+                        { id: 'ORD-2025-044-FINAL', title: 'Final Judgment — Digital Contract Precedent', issuedBy: 'Hon. Chief Justice (3-Bench Coram)', timestamp: '15 Jan 2025 • 11:00 AM', summary: 'Smart contract logs held admissible as primary evidence. PRAMANA hash attestation mandatory standard for all future digital contract disputes.', sealHash: '0x7890a...001cc', type: 'Final Ruling' },
+                    ],
+                    notes: [
+                        { id: 'note-44', author: 'Supreme Court Registrar', timestamp: '15 Jan 2025, 12:00 PM', category: 'Ruling', content: 'Landmark ruling: This case establishes that PRAMANA-anchored smart contract logs are irrefutably admissible as primary evidence under Sec 10A IT Act.' },
+                    ],
+                    precedents: [],
+                    createdAt: '2025-01-10T07:00:00Z',
+                    updatedAt: new Date().toISOString(),
+                },
+            ];
+            richCaseSeed.forEach(rc => this.richCases.set(rc.id, rc));
+        }
         // Default Evidence
-        const defaultEvidence = [
-            { id: 'EV-8821', caseId: 'FIR-2026-001', title: 'CCTV Footage - Main Server Room', type: 'Video', date: 'Oct 12, 2026 14:30', hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', status: 'Sealed', custodian: 'Officer R. Kulkarni', incidentLocation: 'Sector 4 Municipal Data Center', confidentialityLevel: 'Top Secret', createdAt: '2026-10-12T14:30:00Z' },
-            { id: 'EV-8822', caseId: 'FIR-2026-001', title: 'Server Access Logs (Encrypted)', type: 'Document', date: 'Oct 12, 2026 15:45', hash: '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', status: 'Sealed', custodian: 'Officer R. Kulkarni', incidentLocation: 'Sector 4 Municipal Data Center', confidentialityLevel: 'Restricted', createdAt: '2026-10-12T15:45:00Z' },
-            { id: 'EV-8823', caseId: 'FIR-2026-001', title: 'Tampered Network Switch', type: 'Photo', date: 'Oct 13, 2026 09:15', hash: '4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5', status: 'Pending Chain Transfer', custodian: 'Forensics Specialist A. Roy', incidentLocation: 'Sector 4 Server Rack 12', confidentialityLevel: 'Restricted', createdAt: '2026-10-13T09:15:00Z' },
-            { id: 'EV-8824', caseId: 'FIR-2026-002', title: 'Forged Land Ownership Deed', type: 'Document', date: 'Oct 10, 2026 11:00', hash: '7c9e0134b2f159a4c803328e93214f09a13b4c1023948576d123450987654321', status: 'Verified', custodian: 'Inspector S. Patel', incidentLocation: 'Bandra Sub-Registry Office', confidentialityLevel: 'Confidential', createdAt: '2026-10-10T11:00:00Z' }
-        ];
+        const defaultEvidence = [];
         defaultEvidence.forEach(e => this.evidence.set(e.id, e));
-        // Consensus Requests - 100% dynamic starting empty
-        if (!this.consensusRequests)
-            this.consensusRequests = [];
-        // Default Forgery Reviews
-        this.forgeryReviews = [
-            {
-                id: 'FORG-8801',
-                exhibitId: 'EV-8823',
-                caseId: 'FIR-2026-001',
-                title: 'Tampered Network Switch Photograph',
-                type: 'Image File',
-                submittedBy: 'Forensics Specialist A. Roy',
-                timestamp: '2026-10-13 09:30',
-                spectralScore: 88.4,
-                metadataIntegrityScore: 42.1,
-                perceptualDiffScore: 79.8,
-                aiConfidence: 94.2,
-                flagReason: 'EXIF Timestamp anomaly & non-contiguous pixel quantization detected in high-contrast regions.',
-                status: 'Under Review'
-            },
-            {
-                id: 'FORG-8802',
-                exhibitId: 'EV-8824',
-                caseId: 'FIR-2026-002',
-                title: 'Land Ownership Deed PDF',
-                type: 'PDF Document',
-                submittedBy: 'Inspector S. Patel',
-                timestamp: '2026-10-10 11:15',
-                spectralScore: 92.0,
-                metadataIntegrityScore: 98.5,
-                perceptualDiffScore: 12.3,
-                aiConfidence: 99.1,
-                flagReason: 'Seal signature font vector mismatch against state archive baseline.',
-                status: 'Quarantined'
-            }
-        ];
-        // Default Identity Unlocks
-        this.identityUnlocks = [
-            {
-                id: 'UNLOCK-001',
-                caseId: 'FIR-2026-004',
-                caseTitle: 'Industrial Espionage - TechCorp',
-                witnessAlias: 'Whistleblower Alpha',
-                requestor: 'Prosecutor R. Sen',
-                reason: 'Judicial order issued for in-camera cross-examination during trial proceedings.',
-                thresholdRequired: 4,
-                thresholdGranted: 2,
-                status: 'Pending',
-                grantedBy: ['Judge V. Sharma', 'Chief Justice M. Kapoor'],
-                createdAt: '2026-09-28T14:00:00Z'
-            }
-        ];
-        // Default Precedent Flags
-        this.precedentFlags = [
-            {
-                id: 'PREC-701',
-                caseId: 'FIR-2026-001',
-                caseTitle: 'State vs. Unknown (Sector 4 Cyber Heist)',
-                precedentCitation: 'AIR 2021 SC 1420 (Electronic Evidence Admissibility under Sec 65B)',
-                conflictDescription: 'Secondary server log copy submitted without contemporaneous certificate of hash integrity.',
-                severity: 'High',
-                systemAction: 'Require Section 65B Cryptographic Attestation before Bench Review.',
-                status: 'Flagged'
-            }
-        ];
-<<<<<<< HEAD
         // Default Consensus Requests
         this.consensusRequests = [
             {
-                id: 'REQ-8831',
+                id: 'REQ-2026-901',
                 caseId: 'FIR-2026-001',
                 caseTitle: 'State vs. Unknown (Sector 4 Cyber Heist)',
-                category: 'Record Sealing',
-                requestAgency: 'Zone 1 North High Court Bench',
-                description: 'Request for multi-sig quorum sealing of EV-8821 CCTV payload.',
-                status: 'Approved',
-                validatorVoteStatus: 'Approved',
-                quorumTotal: 3,
-                quorumSigned: 3,
-                createdAt: '2026-08-06T16:30:00Z',
-                targetRecordHash: '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'
+                exhibitId: 'EV-8821',
+                exhibitTitle: 'CCTV Footage - Main Server Room',
+                submittedBy: 'Officer R. Kulkarni',
+                requiredVotes: 3,
+                currentVotes: 2,
+                status: 'Pending',
+                votes: [
+                    { validatorId: 'val_01', validatorName: 'Judge V. Sharma', vote: 'APPROVE', timestamp: '2026-10-12T16:00:00Z', note: 'Hash match verified on chain.' },
+                    { validatorId: 'val_02', validatorName: 'Validator Dr. S. Rao', vote: 'APPROVE', timestamp: '2026-10-12T16:30:00Z', note: 'Hardware WebAuthn key validated.' }
+                ],
+                createdAt: '2026-10-12T15:00:00Z'
             },
             {
-                id: 'REQ-8829',
+                id: 'REQ-2026-902',
                 caseId: 'FIR-2026-002',
                 caseTitle: 'State vs. Deshmukh (Property Fraud)',
-                category: 'Section 65B Re-hash',
-                requestAgency: 'Zone 4 West Special Tribunal',
-                description: 'Request for secondary hash re-verification without Section 65B attestation.',
-                status: 'Rejected',
-                validatorVoteStatus: 'Rejected',
-                quorumTotal: 3,
-                quorumSigned: 1,
-                createdAt: '2026-08-06T14:10:00Z',
-                targetRecordHash: '7c9e0134b2f159a4c803328e93214f09a13b4c1023948576d123450987654321'
+                exhibitId: 'EV-8824',
+                exhibitTitle: 'Forged Land Ownership Deed',
+                submittedBy: 'Inspector S. Patel',
+                requiredVotes: 3,
+                currentVotes: 3,
+                status: 'Approved',
+                votes: [
+                    { validatorId: 'val_01', validatorName: 'Judge V. Sharma', vote: 'APPROVE', timestamp: '2026-10-10T12:00:00Z' },
+                    { validatorId: 'val_02', validatorName: 'Validator Dr. S. Rao', vote: 'APPROVE', timestamp: '2026-10-10T12:15:00Z' },
+                    { validatorId: 'val_03', validatorName: 'Advocate M. Mehta', vote: 'APPROVE', timestamp: '2026-10-10T12:30:00Z' }
+                ],
+                createdAt: '2026-10-10T11:30:00Z'
             }
         ];
-        // Default Analytics Reports
-        this.analyticsReports = [
+        // Default Forgery Reviews
+        if (this.forgeryReviews.length === 0) {
+            this.forgeryReviews = [
+                {
+                    id: 'FORG-8801',
+                    exhibitId: 'EV-8823',
+                    caseId: 'FIR-2026-001',
+                    title: 'Tampered Network Switch Photograph',
+                    type: 'Image File',
+                    submittedBy: 'Forensics Specialist A. Roy',
+                    timestamp: '2026-10-13 09:30',
+                    spectralScore: 88.4,
+                    metadataIntegrityScore: 42.1,
+                    perceptualDiffScore: 79.8,
+                    aiConfidence: 94.2,
+                    flagReason: 'EXIF Timestamp anomaly & non-contiguous pixel quantization detected in high-contrast regions.',
+                    status: 'Under Review'
+                },
+                {
+                    id: 'FORG-8802',
+                    exhibitId: 'EV-8824',
+                    caseId: 'FIR-2026-002',
+                    title: 'Land Ownership Deed PDF',
+                    type: 'PDF Document',
+                    submittedBy: 'Inspector S. Patel',
+                    timestamp: '2026-10-10 11:15',
+                    spectralScore: 92.0,
+                    metadataIntegrityScore: 98.5,
+                    perceptualDiffScore: 12.3,
+                    aiConfidence: 99.1,
+                    flagReason: 'Seal signature font vector mismatch against state archive baseline.',
+                    status: 'Quarantined'
+                }
+            ];
+        }
+        // Seed Rich Forgery Queue Items
+        if (this.forgeryQueueItems.size === 0) {
+            const richForgerySeed = [
+                {
+                    id: 'FRG-2026-770',
+                    exhibitId: 'EXH-959',
+                    caseId: 'FIR-12345',
+                    caseTitle: 'State vs. Smith Case File',
+                    courtBench: 'High Court Bench 3',
+                    title: 'smith',
+                    submitter: 'Officer R. Kulkarni',
+                    submitterAgency: 'Zone 4 Field Operations',
+                    timestamp: 'Aug 8, 2026, 9:31 PM',
+                    status: 'Flagged',
+                    confidenceScore: 99.4,
+                    previewType: 'Image',
+                    metadataCheck: { status: 'Pass', score: 98, details: 'GPS Geofence (18.5204° N, 73.8567° E) & Seizure Bag SEZ-2026-73610 cryptographically signed.', technicalNote: 'EXIF tags match standard device profile.' },
+                    ganFingerprintCheck: { status: 'Pass', score: 99, details: 'No neural synthesis or deepfake artifacts detected.', technicalNote: 'Spectral energy distribution uniform.' },
+                    docForensicsCheck: { status: 'Pass', score: 98, details: 'EXIF metadata intact and signed with Officer TPM Key.', technicalNote: 'Metadata hash verification passed.' },
+                    originalHash: '0x78c7796e550fe3acb96a0ef11b33c44d55e66f77889900112233445566778899',
+                    submittedHash: '0x78c7796e550fe3acb96a0ef11b33c44d55e66f77889900112233445566778899',
+                    merkleRoot: '0x22a33b44c55d66e77f889900aa11bb22',
+                    blockNumber: 89350,
+                    anomalySummary: 'AI Analysis indicates high authenticity score, but flagged due to automated security rules.',
+                    diffDetails: { originalAspect: 'Direct device capture (Identical)', submittedAspect: 'Submitted copy (Identical)', impactLevel: 'Minor' },
+                    anomaliesList: [],
+                    custodyTrail: [
+                        { id: 'CUST-770-1', stage: 'Seizure', actor: 'Officer R. Kulkarni', role: 'Field Submitter', timestamp: '08 Aug 2026, 09:31 PM', location: 'Precinct 4', hashVerified: true, blockNumber: 89350 }
+                    ],
+                    precedents: [],
+                    directives: []
+                },
+                {
+                    id: 'FRG-2026-113',
+                    exhibitId: 'EXH-422',
+                    caseId: '12345',
+                    caseTitle: 'Case Entry #12345',
+                    courtBench: 'High Court Bench 3',
+                    title: 'asdfg',
+                    submitter: 'Officer R. Kulkarni',
+                    submitterAgency: 'Zone 4 Field Operations',
+                    timestamp: 'Aug 8, 2026, 9:26 PM',
+                    status: 'Flagged',
+                    confidenceScore: 99.4,
+                    previewType: 'Image',
+                    metadataCheck: { status: 'Pass', score: 98, details: 'GPS Geofence (18.5204° N, 73.8567° E) & Seizure Bag SEZ-2026-73610 cryptographically signed.', technicalNote: 'EXIF tags match standard device profile.' },
+                    ganFingerprintCheck: { status: 'Pass', score: 99, details: 'No neural synthesis or deepfake artifacts detected.', technicalNote: 'Spectral energy distribution uniform.' },
+                    docForensicsCheck: { status: 'Pass', score: 98, details: 'EXIF metadata intact and signed with Officer TPM Key.', technicalNote: 'Metadata hash verification passed.' },
+                    originalHash: '0x75a6ceb367c2192feef94c99c44d55e66f778899001122334455667788990011',
+                    submittedHash: '0x75a6ceb367c2192feef94c99c44d55e66f778899001122334455667788990011',
+                    merkleRoot: '0x33b44c55d66e77f889900aa11bb22cc3',
+                    blockNumber: 89348,
+                    anomalySummary: 'High integrity score. Seizure bag signature verified on chain.',
+                    diffDetails: { originalAspect: 'Direct device capture (Identical)', submittedAspect: 'Submitted copy (Identical)', impactLevel: 'Minor' },
+                    anomaliesList: [],
+                    custodyTrail: [
+                        { id: 'CUST-113-1', stage: 'Seizure', actor: 'Officer R. Kulkarni', role: 'Field Submitter', timestamp: '08 Aug 2026, 09:26 PM', location: 'Precinct 4', hashVerified: true, blockNumber: 89348 }
+                    ],
+                    precedents: [],
+                    directives: []
+                },
+                {
+                    id: 'FRG-2026-336',
+                    exhibitId: 'EXH-459',
+                    caseId: '1234567',
+                    caseTitle: 'Case Entry #1234567',
+                    courtBench: 'High Court Bench 3',
+                    title: 'wedrfh',
+                    submitter: 'Officer R. Kulkarni',
+                    submitterAgency: 'Zone 4 Field Operations',
+                    timestamp: 'Aug 8, 2026, 9:19 PM',
+                    status: 'Flagged',
+                    confidenceScore: 99.4,
+                    previewType: 'Image',
+                    metadataCheck: { status: 'Pass', score: 98, details: 'GPS Geofence (18.5204° N, 73.8567° E) & Seizure Bag SEZ-2026-94971 cryptographically signed.', technicalNote: 'EXIF tags match standard device profile.' },
+                    ganFingerprintCheck: { status: 'Pass', score: 99, details: 'No neural synthesis or deepfake artifacts detected.', technicalNote: 'Spectral energy distribution uniform.' },
+                    docForensicsCheck: { status: 'Pass', score: 98, details: 'EXIF metadata intact and signed with Officer TPM Key.', technicalNote: 'Metadata hash verification passed.' },
+                    originalHash: '0x0d7cc7ba6072ea3ca3bf2e99c44d55e66f77889900112233445566778899ccaa',
+                    submittedHash: '0x0d7cc7ba6072ea3ca3bf2e99c44d55e66f77889900112233445566778899ccaa',
+                    merkleRoot: '0x44c55d66e77f889900aa11bb22cc33dd',
+                    blockNumber: 89345,
+                    anomalySummary: 'Seized exhibit, hash-verified against originating server.',
+                    diffDetails: { originalAspect: 'Direct device capture (Identical)', submittedAspect: 'Submitted copy (Identical)', impactLevel: 'Minor' },
+                    anomaliesList: [],
+                    custodyTrail: [
+                        { id: 'CUST-336-1', stage: 'Seizure', actor: 'Officer R. Kulkarni', role: 'Field Submitter', timestamp: '08 Aug 2026, 09:19 PM', location: 'Precinct 4', hashVerified: true, blockNumber: 89345 }
+                    ],
+                    precedents: [],
+                    directives: []
+                },
+                {
+                    id: 'FRG-2026-774',
+                    exhibitId: 'EXH-904',
+                    caseId: '123456',
+                    caseTitle: 'Case Entry #123456',
+                    courtBench: 'High Court Bench 3',
+                    title: 'SDFGHJ',
+                    submitter: 'Officer R. Kulkarni',
+                    submitterAgency: 'Zone 4 Field Operations',
+                    timestamp: 'Aug 8, 2026, 9:13 PM',
+                    status: 'Flagged',
+                    confidenceScore: 99.4,
+                    previewType: 'Image',
+                    metadataCheck: { status: 'Pass', score: 98, details: 'GPS Geofence (18.5204° N, 73.8567° E) & Seizure Bag SEZ-2026-40887 cryptographically signed.', technicalNote: 'EXIF tags match standard device profile.' },
+                    ganFingerprintCheck: { status: 'Pass', score: 99, details: 'No neural synthesis or deepfake artifacts detected.', technicalNote: 'Spectral energy distribution uniform.' },
+                    docForensicsCheck: { status: 'Pass', score: 98, details: 'EXIF metadata intact and signed with Officer TPM Key.', technicalNote: 'Metadata hash verification passed.' },
+                    originalHash: '0x9bcb65fd946f4b9453246f99c44d55e66f77889900112233445566778899bbaa',
+                    submittedHash: '0x9bcb65fd946f4b9453246f99c44d55e66f77889900112233445566778899bbaa',
+                    merkleRoot: '0x55d66e77f889900aa11bb22cc33dd44e',
+                    blockNumber: 89340,
+                    anomalySummary: 'AI Forensics indicates all parameters within standard deviations.',
+                    diffDetails: { originalAspect: 'Direct device capture (Identical)', submittedAspect: 'Submitted copy (Identical)', impactLevel: 'Minor' },
+                    anomaliesList: [],
+                    custodyTrail: [
+                        { id: 'CUST-774-1', stage: 'Seizure', actor: 'Officer R. Kulkarni', role: 'Field Submitter', timestamp: '08 Aug 2026, 09:13 PM', location: 'Precinct 4', hashVerified: true, blockNumber: 89340 }
+                    ],
+                    precedents: [],
+                    directives: []
+                },
+                {
+                    id: 'FRG-2026-624',
+                    exhibitId: 'EXH-308',
+                    caseId: 'FIR-12345678',
+                    caseTitle: 'Case Entry #FIR-12345678',
+                    courtBench: 'High Court Bench 3',
+                    title: 'swdefrgthyjuki',
+                    submitter: 'Officer R. Kulkarni',
+                    submitterAgency: 'Zone 4 Field Operations',
+                    timestamp: 'Aug 8, 2026, 9:12 PM',
+                    status: 'Flagged',
+                    confidenceScore: 99.4,
+                    previewType: 'Image',
+                    metadataCheck: { status: 'Pass', score: 98, details: 'GPS Geofence (18.5204° N, 73.8567° E) & Seizure Bag SEZ-2026-40887 cryptographically signed.', technicalNote: 'EXIF tags match standard device profile.' },
+                    ganFingerprintCheck: { status: 'Pass', score: 99, details: 'No neural synthesis or deepfake artifacts detected.', technicalNote: 'Spectral energy distribution uniform.' },
+                    docForensicsCheck: { status: 'Pass', score: 98, details: 'EXIF metadata intact and signed with Officer TPM Key.', technicalNote: 'Metadata hash verification passed.' },
+                    originalHash: '0x5fd750794354d7f8d6ce4c99c44d55e66f77889900112233445566778899ffaa',
+                    submittedHash: '0x5fd750794354d7f8d6ce4c99c44d55e66f77889900112233445566778899ffaa',
+                    merkleRoot: '0x66e77f889900aa11bb22cc33dd44e55f',
+                    blockNumber: 89338,
+                    anomalySummary: 'Metadata signature verified on ledger.',
+                    diffDetails: { originalAspect: 'Direct device capture (Identical)', submittedAspect: 'Submitted copy (Identical)', impactLevel: 'Minor' },
+                    anomaliesList: [],
+                    custodyTrail: [
+                        { id: 'CUST-624-1', stage: 'Seizure', actor: 'Officer R. Kulkarni', role: 'Field Submitter', timestamp: '08 Aug 2026, 09:12 PM', location: 'Precinct 4', hashVerified: true, blockNumber: 89338 }
+                    ],
+                    precedents: [],
+                    directives: []
+                },
+                {
+                    id: 'FRG-2026-749',
+                    exhibitId: 'EXH-357',
+                    caseId: 'FIR-123456',
+                    caseTitle: 'Case Entry #FIR-123456',
+                    courtBench: 'High Court Bench 3',
+                    title: 'esdrtfgyhuji',
+                    submitter: 'Officer R. Kulkarni',
+                    submitterAgency: 'Zone 4 Field Operations',
+                    timestamp: 'Aug 8, 2026, 8:22 PM',
+                    status: 'Flagged',
+                    confidenceScore: 99.4,
+                    previewType: 'Image',
+                    metadataCheck: { status: 'Pass', score: 98, details: 'GPS Geofence (18.5204° N, 73.8567° E) & Seizure Bag SEZ-2026-16051 cryptographically signed.', technicalNote: 'EXIF tags match standard device profile.' },
+                    ganFingerprintCheck: { status: 'Pass', score: 99, details: 'No neural synthesis or deepfake artifacts detected.', technicalNote: 'Spectral energy distribution uniform.' },
+                    docForensicsCheck: { status: 'Pass', score: 98, details: 'EXIF metadata intact and signed with Officer TPM Key.', technicalNote: 'Metadata hash verification passed.' },
+                    originalHash: '0xaac018bcc17483a03ee29e99c44d55e66f77889900112233445566778899ddaa',
+                    submittedHash: '0xaac018bcc17483a03ee29e99c44d55e66f77889900112233445566778899ddaa',
+                    merkleRoot: '0x77f889900aa11bb22cc33dd44e55f66g',
+                    blockNumber: 89320,
+                    anomalySummary: 'Seizure bag signature matches Field Submitter public key.',
+                    diffDetails: { originalAspect: 'Direct device capture (Identical)', submittedAspect: 'Submitted copy (Identical)', impactLevel: 'Minor' },
+                    anomaliesList: [],
+                    custodyTrail: [
+                        { id: 'CUST-749-1', stage: 'Seizure', actor: 'Officer R. Kulkarni', role: 'Field Submitter', timestamp: '08 Aug 2026, 08:22 PM', location: 'Precinct 4', hashVerified: true, blockNumber: 89320 }
+                    ],
+                    precedents: [],
+                    directives: []
+                },
+                {
+                    id: 'FRG-2026-001',
+                    exhibitId: 'EXH-001',
+                    caseId: 'CR-2026-904',
+                    caseTitle: 'State vs. Sector 4 Cyber Heist Syndicate',
+                    courtBench: 'High Court Bench 3 (Presiding: Hon. Justice A. Mehta)',
+                    title: 'CCTV Camera 04 Footage - Sector 4 Server Room (1080p MP4)',
+                    submitter: 'Insp. V. Sharma',
+                    submitterAgency: 'Zone 4 Cyber Crime Directorate',
+                    timestamp: '12 Oct 2026, 09:30 AM',
+                    status: 'Flagged',
+                    confidenceScore: 32.4,
+                    previewType: 'Video',
+                    metadataCheck: { status: 'Fail', score: 25, details: 'EXIF timestamp offset (+04:00 hrs) inconsistent with NTP server logs.', technicalNote: 'MP4 container creation time header modified at offset 0x000000A4.' },
+                    ganFingerprintCheck: { status: 'Fail', score: 18, details: 'High-frequency generative artifacts detected in frames 1400-1450 (Deepfake insertion).', technicalNote: 'FFT spectral energy spikes at 120Hz spatial frequencies indicative of Diffusion-based frame blending.' },
+                    docForensicsCheck: { status: 'Pass', score: 88, details: 'Video codec quantization matrices uniform across non-edited keyframes.', technicalNote: 'H.264 macroblock allocation remains consistent outside temporal window 02:14:10-02:14:12.' },
+                    originalHash: '0x8f2a9910b2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f90123456789abcdef0123',
+                    submittedHash: '0x8f2a9910b2a3c4d5e6f7a8b9c0d1e2f4b5c6d7e8f90123456789abcdef0129',
+                    merkleRoot: '0x99a0b112c334d556e778f99011a22b33',
+                    blockNumber: 89201,
+                    anomalySummary: '50-frame generative Deepfake insertion detected around timestamp 02:14:10 showing unauthorized figure near server rack.',
+                    diffDetails: { originalAspect: 'Clean timeline at 02:14:10 with empty rack walkway (Hash: 0x8f2a...e2f3)', submittedAspect: '50-frame neural insertion depicting suspect in black jumpsuit (Hash: 0x8f2a...f0129)', impactLevel: 'Critical' },
+                    anomaliesList: [
+                        { frameOrPage: 'Frame #1412 (02:14:10.400)', timestampOffset: '+02:14:10.400', anomalyType: 'Generative AI Frame Insertion', confidenceScore: 94.8, description: 'Boundary blurring on face mesh and shadow mismatch on concrete floor tiles.', originalValue: 'Empty floor with ambient floor light reflection', alteredValue: 'Neural face model inserted with mismatched lighting vectors' },
+                        { frameOrPage: 'Frame #1435 (02:14:11.166)', timestampOffset: '+02:14:11.166', anomalyType: 'EXIF Timestamp Manipulation', confidenceScore: 91.2, description: 'PTS (Presentation Timestamp) delta jump of +120ms between adjacent B-frames.', originalValue: 'PTS: 80400 (Continuous 30fps)', alteredValue: 'PTS: 80520 (Discontinuous jitter)' }
+                    ],
+                    custodyTrail: [
+                        { id: 'CUST-904-01', stage: 'Seizure & Hashing at Scene', actor: 'SI S. Deshmukh', role: 'Investigating Officer', timestamp: '11 Oct 2026, 11:15 PM', location: 'Sector 4 Data Center Facility', hashVerified: true, blockNumber: 89180 },
+                        { id: 'CUST-904-02', stage: 'PRAMANA Blockchain Anchor Upload', actor: 'SysAdmin Node #04', role: 'High Court Gateway Node', timestamp: '12 Oct 2026, 02:00 AM', location: 'High Court Server Vault', hashVerified: true, blockNumber: 89190 },
+                        { id: 'CUST-904-03', stage: 'MAYA-BREAK Automated Forensic Scan', actor: 'MAYA-BREAK AI Engine', role: 'Automated Inspector', timestamp: '12 Oct 2026, 09:30 AM', location: 'Quarantine Buffer Node #01', hashVerified: false, blockNumber: 89201 }
+                    ],
+                    precedents: [
+                        { citation: '(2014) 10 SCC 473', title: 'Anvar P.V. vs. P.K. Basheer & Ors.', court: 'Supreme Court of India', relevanceScore: 98.2, principle: 'Electronic records are inadmissible without Section 65B Evidence Act certificate certifying tamper-proof hash continuity.' },
+                        { citation: '(2020) 3 SCC 637', title: 'Arjun Panditrao Khotkar vs. Kailash Kushanrao Gorantyal', court: 'Supreme Court of India', relevanceScore: 94.5, principle: 'Required strict primary evidence or secondary evidence backed by hash audit trails when video authenticity is challenged.' }
+                    ],
+                    directives: [
+                        { id: 'DIR-FRG-904-01', date: '12 Oct 2026, 11:00 AM', issuedBy: 'Hon. Justice A. Mehta', type: 'CFSL Forensic Subpoena', details: 'Court orders immediate seizure of original DVR hard disk drive from Sector 4 facility for physical bitstream analysis.', status: 'Active', sealHash: '0xSEAL_DIR_904_8819' }
+                    ]
+                },
+                {
+                    id: 'FRG-2026-002',
+                    exhibitId: 'EXH-201',
+                    caseId: 'MH-CR-8821',
+                    caseTitle: 'State vs. Land Registry Cartel (Deed Forgery)',
+                    courtBench: 'Civil & Criminal Sessions Bench 2',
+                    title: 'Digitized Land Registry Deed #1984-A High-Res Scan',
+                    submitter: 'Sub-Registrar Office',
+                    submitterAgency: 'Zone 1 Land Records Division',
+                    timestamp: '28 Jul 2026, 10:00 AM',
+                    status: 'Flagged',
+                    confidenceScore: 45.1,
+                    previewType: 'Document',
+                    metadataCheck: { status: 'Pass', score: 92, details: 'Digital signature matches Sub-Registrar hardware token.', technicalNote: 'X.509 PKI certificate chain verified against State Root CA.' },
+                    ganFingerprintCheck: { status: 'Pass', score: 89, details: 'No neural synthesis or GAN noise detected in document background.', technicalNote: 'Spatial spectrum clean across all RGB color channels.' },
+                    docForensicsCheck: { status: 'Fail', score: 22, details: 'Font optical misalignment on Paragraph 3 Line 4. Pixel error level analysis reveals clone stamp edit.', technicalNote: 'ELA (Error Level Analysis) anomaly detected around numeral "12,000 sq ft" layer.' },
+                    originalHash: '0x55d491c0e3f2a1b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0123456789abcdef0',
+                    submittedHash: '0x55d491c0e3f2a1b4c5d6e7f8a9b0c1d9e3f4a5b6c7d8e9f0123456789abcdef9',
+                    merkleRoot: '0x44d1a223b445c667d889e0011a22b33',
+                    blockNumber: 86510,
+                    anomalySummary: 'Boundary plot size fraudulently altered from 1,200 sq.ft to 12,000 sq.ft in Clause 3 paragraph.',
+                    diffDetails: { originalAspect: 'Clause 3 text: "Plot area measuring 1,200 sq ft, bounded by Survey No. 44"', submittedAspect: 'Clause 3 text: "Plot area measuring 12,000 sq ft, bounded by Survey No. 44"', impactLevel: 'Major' },
+                    anomaliesList: [
+                        { frameOrPage: 'Page #2, Clause 3', timestampOffset: 'N/A (Document Scan)', anomalyType: 'Font/Pixel Clone Stamp', confidenceScore: 96.1, description: 'Extra digit "0" inserted using pixel clone tool with duplicated paper grain background.', originalValue: 'Area: 1,200 sq ft', alteredValue: 'Area: 12,000 sq ft' }
+                    ],
+                    custodyTrail: [
+                        { id: 'CUST-8821-01', stage: 'Deed Digitization at Land Office', actor: 'Officer N. Patil', role: 'Deputy Registrar', timestamp: '27 Jul 2026, 04:30 PM', location: 'Zone 1 Sub-Registrar Office', hashVerified: true, blockNumber: 86490 },
+                        { id: 'CUST-8821-02', stage: 'MAYA-BREAK OCR & ELA Audit', actor: 'MAYA-BREAK AI Engine', role: 'Automated Inspector', timestamp: '28 Jul 2026, 10:00 AM', location: 'High Court Quarantine Node', hashVerified: false, blockNumber: 86510 }
+                    ],
+                    precedents: [
+                        { citation: 'AIR 1963 SC 1850', title: 'State of Bihar vs. Radha Krishna Singh', court: 'Supreme Court of India', relevanceScore: 91.0, principle: 'Public documents containing material alterations without authenticating officer signature are inadmissible in property disputes.' }
+                    ],
+                    directives: []
+                },
+                {
+                    id: 'FRG-2026-003',
+                    exhibitId: 'EXH-101',
+                    caseId: 'FIR-2026-102',
+                    caseTitle: 'State vs. Port Customs Smuggling Ring',
+                    courtBench: 'Commercial & Customs Special Bench 1',
+                    title: 'Digital Bill of Lading #BL-9092 Ledger Export (PDF/A)',
+                    submitter: 'Customs Officer P. Nair',
+                    submitterAgency: 'Customs Preventive Wing',
+                    timestamp: '01 Aug 2026, 02:00 PM',
+                    status: 'Cleared',
+                    confidenceScore: 99.1,
+                    previewType: 'Document',
+                    metadataCheck: { status: 'Pass', score: 99, details: 'Cryptographically anchored via Customs Port Gateway.', technicalNote: 'Full X.509 chain validated with HSM timestamp authority.' },
+                    ganFingerprintCheck: { status: 'Pass', score: 98, details: 'Clean spectral noise baseline.', technicalNote: 'No generative noise anomalies detected.' },
+                    docForensicsCheck: { status: 'Pass', score: 100, details: 'Vector text layers aligned without raster tampering.', technicalNote: 'All PDF streams pass cryptographic hash comparison.' },
+                    originalHash: '0x1a9933ef7b8a9c0d1e2f3a4b5c6d7e8f90123456789abcdef0123456789abcd',
+                    submittedHash: '0x1a9933ef7b8a9c0d1e2f3a4b5c6d7e8f90123456789abcdef0123456789abcd',
+                    merkleRoot: '0x11a22b33c44d55e66f77889900aa11bb',
+                    blockNumber: 87102,
+                    anomalySummary: 'All forensic checks passed 100%. Submitted hash matches PRAMANA ledger anchor exactly.',
+                    diffDetails: { originalAspect: 'PRAMANA Ledger Record #87102 (Identical)', submittedAspect: 'Submitted Exhibit #EXH-101 (Identical)', impactLevel: 'Minor' },
+                    anomaliesList: [],
+                    custodyTrail: [
+                        { id: 'CUST-102-01', stage: 'Customs Port Gateway Export', actor: 'Customs Admin Node', role: 'Port Terminal System', timestamp: '01 Aug 2026, 01:15 PM', location: 'J N Port Customs Gateway', hashVerified: true, blockNumber: 87095 },
+                        { id: 'CUST-102-02', stage: 'Judicial Record Admission', actor: 'Hon. Justice K. V. Subramanian', role: 'Presiding Judge', timestamp: '01 Aug 2026, 02:30 PM', location: 'Bench 1 Court Vault', hashVerified: true, blockNumber: 87102 }
+                    ],
+                    precedents: [],
+                    directives: []
+                },
+                {
+                    id: 'FRG-2026-004',
+                    exhibitId: 'EXH-301',
+                    caseId: 'SHV-2291',
+                    caseTitle: 'State vs. Nexus Pharma (Substandard Drug Distribution)',
+                    courtBench: 'High Court Public Health & Pharma Bench 3',
+                    title: 'Audio Recording - Phone Wiretap #QC-882 (WAV Format)',
+                    submitter: 'ACP R. S. Deshpande',
+                    submitterAgency: 'State Intelligence Bureau',
+                    timestamp: '04 Aug 2026, 03:15 PM',
+                    status: 'Pending Scan',
+                    confidenceScore: 58.0,
+                    previewType: 'Audio Log',
+                    metadataCheck: { status: 'Warning', score: 60, details: 'Audio header metadata shows non-standard sample rate conversion from 44.1kHz to 16kHz.', technicalNote: 'RIFF header wave format chunks contain non-aligned padding bytes.' },
+                    ganFingerprintCheck: { status: 'Fail', score: 40, details: 'Voice voiceprint formant frequency discontinuities detected between 01:12 - 01:18.', technicalNote: 'Neural voice synthesis spectral artifacts detected in pitch harmonics.' },
+                    docForensicsCheck: { status: 'Pass', score: 80, details: 'No missing audio packet drops in raw payload stream.', technicalNote: 'PCM payload integrity check passed.' },
+                    originalHash: '0x33b44c55d66e77f88a99b00c11d22e33f44a55b66c77d88e99f001122334455',
+                    submittedHash: '0x33b44c55d66e77f88a99b00c11d22e33f44a55b66c77d88e99f001122334499',
+                    merkleRoot: '0x3334445556667778889990001112223',
+                    blockNumber: 88104,
+                    anomalySummary: 'Possible AI Voice Cloning / Neural Pitch Synthesis detected in key 6-second segment.',
+                    diffDetails: { originalAspect: 'Telecom Gateway Encrypted Stream #88104', submittedAspect: 'Re-encoded WAV with voice cloning spectral anomalies', impactLevel: 'Critical' },
+                    anomaliesList: [
+                        { frameOrPage: 'Audio Window 01:12 - 01:18', timestampOffset: '01:12.000', anomalyType: 'Audio Pitch Synthesis', confidenceScore: 89.4, description: 'Unnatural formant transitions in speaker vocal tract signature.', originalValue: 'Original background room noise', alteredValue: 'Synthesized voice clone phrase' }
+                    ],
+                    custodyTrail: [
+                        { id: 'CUST-2291-01', stage: 'Wiretap Intercept Capture', actor: 'SIB Gateway Node', role: 'Telecom Monitoring Division', timestamp: '04 Aug 2026, 01:00 PM', location: 'State Cyber Cell Intercept Station', hashVerified: true, blockNumber: 88090 }
+                    ],
+                    precedents: [],
+                    directives: []
+                }
+            ];
+            richForgerySeed.forEach(item => this.forgeryQueueItems.set(item.id, item));
+        }
+        // Default Identity Unlocks Seed
+        if (this.identityUnlocks.length < 5) {
+            this.identityUnlocks = [
+                {
+                    id: 'REQ-UNK-2026-09',
+                    caseId: 'CR-2026-904',
+                    caseTitle: 'State vs. Sector 4 Cyber Heist Syndicate',
+                    courtBench: 'High Court Bench 3 (Presiding: Hon. Justice A. Mehta)',
+                    witnessAlias: 'Witness #904-B (Whistleblower Lead Systems Engineer)',
+                    witnessZkpHash: '0x3f7a91a288b3c4d5e6f7a8b9c0d1e2f3',
+                    zkpMerkleRoot: '0x8f2a...910b441a29c1',
+                    witnessRiskIndex: 92,
+                    threatAssessmentSummary: 'High probability of retaliatory coercion. Encrypted threats intercepted on darkweb communication nodes on July 29, 2026.',
+                    protectionCategory: 'Grade A (Extreme Risk - 24/7 Police Protection)',
+                    requestingParty: 'Adv. S. Ramanujam (Special Public Prosecutor)',
+                    requestingPartyRole: 'Special Prosecutor',
+                    counselBarId: 'BCI/MAH/2012/8904',
+                    counselAgency: 'State Special Cyber Crimes Directorate',
+                    statedLegalGrounds: 'Cross-examination necessity under Section 161 CrPC. Substantial forensic logs indicate witness witnessed key database decryption authorization code entry.',
+                    statutoryProvision: 'Judicial Evidence Act § 145 / Protection of Whistleblowers Order 2018',
+                    timestamp: '06 Aug 2026, 09:15 AM',
+                    urgency: 'Critical',
+                    status: 'Pending Judicial Review',
+                    validatorConsensus: '3 of 3 Nodes Verified (100% ZKP Integrity)',
+                    relatedExhibits: [
+                        { id: 'EXH-001', title: 'Encrypted Syslog Entry #890', type: 'Server Log', hash: '0x8f2a...910b' },
+                        { id: 'EXH-003', title: 'Hardware Security Module Audit Dump', type: 'Forensic Dump', hash: '0x77d1...9911' }
+                    ],
+                    statutoryChecklist: [
+                        { item: 'Section 161 CrPC Depositional Relevance', passed: true, note: 'Direct nexus established with server breach timestamp' },
+                        { item: 'Witness Protection Scheme 2018 Grade A Criteria', passed: true, note: 'Physical threat score 92/100 verified by Cyber Cell' }
+                    ],
+                    precedents: [
+                        { caseId: 'PREC-701', title: 'State vs. TechCorp Espionage case', court: 'High Court', relevanceScore: 89, rulingSummary: 'Section 161 CrPC deposition allows witness masking for technical experts.' }
+                    ],
+                    directives: []
+                },
+                {
+                    id: 'REQ-UNK-2026-11',
+                    caseId: 'MH-CR-8821',
+                    caseTitle: 'State vs. Land Registry Cartel (Deed Forgery)',
+                    courtBench: 'Civil & Criminal Sessions Bench 2',
+                    witnessAlias: 'Witness #8821-Alpha (Surrogate Deputy Registrar)',
+                    witnessZkpHash: '0x99a8b7c6d5e4f3a2b1c0e9f8a7b6c5d4',
+                    zkpMerkleRoot: '0x99a8...f3a2b1c09933',
+                    witnessRiskIndex: 68,
+                    threatAssessmentSummary: 'Moderate threat of institutional retaliation and job termination.',
+                    protectionCategory: 'Grade B (High Risk - Masked Credentials)',
+                    requestingParty: 'Adv. M. Deshmukh (Lead Defense Counsel)',
+                    requestingPartyRole: 'Defense Counsel',
+                    counselBarId: 'BCI/MAH/2008/1102',
+                    counselAgency: 'High Court Criminal Defense Bar',
+                    statedLegalGrounds: 'Alibi contradiction verification under Criminal Procedure Code § 243. Defense asserts witness was absent from land office on disputed date of June 14, 2026.',
+                    statutoryProvision: 'Criminal Procedure Code § 243 (Defense Right of Summons)',
+                    timestamp: '05 Aug 2026, 03:40 PM',
+                    urgency: 'High',
+                    status: 'Pending Judicial Review',
+                    validatorConsensus: '3 of 3 Nodes Verified (100% ZKP Integrity)',
+                    relatedExhibits: [],
+                    statutoryChecklist: [
+                        { item: 'Defense Right of Summons Necessity', passed: true, note: 'Material verification of office attendance record required' }
+                    ],
+                    precedents: [],
+                    directives: []
+                },
+                {
+                    id: 'REQ-UNK-2026-02',
+                    caseId: 'FIR-2026-102',
+                    caseTitle: 'State vs. Port Customs Smuggling Ring',
+                    courtBench: 'Commercial & Customs Special Bench 1',
+                    witnessAlias: 'Witness #102-Gamma (Port Logistics Auditor)',
+                    witnessZkpHash: '0x1234567890abcdef1234567890abcdef',
+                    zkpMerkleRoot: '0x1234...90abcdef10aa',
+                    witnessRiskIndex: 85,
+                    threatAssessmentSummary: 'Severe threats from customs cartel. Recommended for Grade A witness protection.',
+                    protectionCategory: 'Grade A (Extreme Risk - 24/7 Police Protection)',
+                    requestingParty: 'ACP V. Gaikwad (Crime Branch Special Wing)',
+                    requestingPartyRole: 'Investigating Officer',
+                    counselBarId: 'IPS/MH/2014/9912',
+                    counselAgency: 'Mumbai Police Crime Branch',
+                    statedLegalGrounds: 'Safety threat neutralization & formal enrollment into Witness Protection Scheme Grade A following SC 2018 guidelines.',
+                    statutoryProvision: 'Witness Protection Scheme (Supreme Court Landmark Order 2018)',
+                    timestamp: '01 Aug 2026, 11:00 AM',
+                    urgency: 'High',
+                    status: 'Approved & Unlocked',
+                    validatorConsensus: '3 of 3 Nodes Verified (100% ZKP Integrity)',
+                    relatedExhibits: [],
+                    statutoryChecklist: [],
+                    precedents: [],
+                    directives: [],
+                    unlockedDetails: {
+                        realName: 'Anil Kumar S. Sharma (Principal Systems Engineer)',
+                        aadhaarPanHash: '0x7782...A912 (Verified UIDAI Cryptographic Vault)',
+                        addressMasked: 'Plot 104, Tech Park Enclave, Sector 4, Navi Mumbai',
+                        phoneEncrypted: '+91 99*** **102 (Encrypted Channel #2)',
+                        emergencyContact: 'Commandant R. Kulkarni (State Special Cyber Cell)',
+                        unlockedAt: '01 Aug 2026, 11:45:02 AM',
+                        unlockedByJudge: 'Hon. Justice K. V. Subramanian',
+                        digitalSignature: '0xSIG_JUDGE_APP_99018274A1C8',
+                        accessDurationWindow: '48 Hours (In-Camera Cross Examination Window)'
+                    }
+                },
+                {
+                    id: 'REQ-UNK-2026-15',
+                    caseId: 'SHV-2291',
+                    caseTitle: 'State vs. Nexus Pharma (Substandard Drug Distribution)',
+                    courtBench: 'High Court Public Health & Pharma Bench 3',
+                    witnessAlias: 'Witness #2291-Beta (QC Senior Chemist)',
+                    witnessZkpHash: '0x88e1a2b3c4d5e6f7a8b9c0d1e2f3a4b5',
+                    zkpMerkleRoot: '0x88e1...d1e2f3a4b512',
+                    witnessRiskIndex: 78,
+                    threatAssessmentSummary: 'Targeted corporate intimidation detected. Security detail assigned.',
+                    protectionCategory: 'Grade B (High Risk - Masked Credentials)',
+                    requestingParty: 'Adv. A. Roy (State Special Prosecutor)',
+                    requestingPartyRole: 'Special Prosecutor',
+                    counselBarId: 'BCI/DEL/2010/4491',
+                    counselAgency: 'Directorate of Public Prosecutions',
+                    statedLegalGrounds: 'Authenticity verification of batch analysis report #NP-2026-88. Chemist signature required to confirm adulteration findings.',
+                    statutoryProvision: 'Drugs & Cosmetics Act § 25 / Evidence Act § 45',
+                    timestamp: '04 Aug 2026, 02:20 PM',
+                    urgency: 'High',
+                    status: 'Pending Judicial Review',
+                    validatorConsensus: '3 of 3 Nodes Verified (100% ZKP Integrity)',
+                    relatedExhibits: [],
+                    statutoryChecklist: [],
+                    precedents: [],
+                    directives: []
+                },
+                {
+                    id: 'REQ-UNK-2026-04',
+                    caseId: 'CR-2025-044',
+                    caseTitle: 'State vs. Sharma (Landmark Digital Contract Case)',
+                    courtBench: 'Supreme Court Precedent Division',
+                    witnessAlias: 'Witness #044-Epsilon (Smart Contract Auditor)',
+                    witnessZkpHash: '0x44aa55bb66cc77dd88ee99ff00112233',
+                    zkpMerkleRoot: '0x44aa...99bb00112233',
+                    witnessRiskIndex: 40,
+                    threatAssessmentSummary: 'Low physical risk score. Trial completed and sealed.',
+                    protectionCategory: 'Grade C (Standard Protection)',
+                    requestingParty: 'Adv. P. N. Merchant (Counsel)',
+                    requestingPartyRole: 'Defense Counsel',
+                    counselBarId: 'BCI/MAH/1999/0012',
+                    counselAgency: 'Supreme Court Bar Association',
+                    statedLegalGrounds: 'Retrial petition request based on contract code audit review.',
+                    statutoryProvision: 'Criminal Procedure Code § 397 (Revisionary Powers)',
+                    timestamp: '28 Jul 2026, 04:10 PM',
+                    urgency: 'Standard',
+                    status: 'Rejected',
+                    validatorConsensus: '3 of 3 Nodes Verified (100% ZKP Integrity)',
+                    relatedExhibits: [],
+                    statutoryChecklist: [
+                        { item: 'Statutory Necessity Test', passed: false, note: 'Failed: Case is permanently sealed under Supreme Court final order' }
+                    ],
+                    precedents: [],
+                    directives: []
+                }
+            ];
+        }
+        if (this.identityUnlockLogs.length === 0) {
+            this.identityUnlockLogs = [
+                {
+                    logId: 'LOG-UNLOCK-0082',
+                    requestId: 'REQ-UNK-2026-02',
+                    caseId: 'FIR-2026-102',
+                    witnessAlias: 'Witness #102-Gamma',
+                    judgeName: 'Hon. Justice K. V. Subramanian',
+                    judgeKeyId: 'BENCH-KEY-IND-004',
+                    decision: 'Approved',
+                    timestamp: '01 Aug 2026, 11:45:02 AM',
+                    blockNumber: 88120,
+                    digitalSignatureHash: '0xSIG_JUDGE_KV_SUB_99018274A1C8',
+                    legalJustificationSummary: 'Admitted under Witness Protection Scheme Grade A. Full judicial record sealed.'
+                },
+                {
+                    logId: 'LOG-UNLOCK-0081',
+                    requestId: 'REQ-UNK-2026-04',
+                    caseId: 'CR-2025-044',
+                    witnessAlias: 'Witness #044-Epsilon',
+                    judgeName: 'Hon. Justice Archana P. Sen',
+                    judgeKeyId: 'BENCH-KEY-IND-001',
+                    decision: 'Rejected',
+                    timestamp: '28 Jul 2026, 04:12:30 PM',
+                    blockNumber: 86900,
+                    digitalSignatureHash: '0xSIG_JUDGE_APS_33918200B912',
+                    legalJustificationSummary: 'Rejected due to insufficient statutory grounds. Defense failed to demonstrate material relevance in sealed precedent.'
+                }
+            ];
+        }
+        // Default Precedent Flags
+        const defaultFlags = [
             {
-                id: 'RPT-2026-001',
-                reportCode: 'FHE-AGG-2026-001',
-                title: 'Bench-Level Precedent Alignment Matrix',
-                courtScope: 'All 5 Court Districts',
-                benchScope: 'Division Bench 1 & 2',
-                cohortSize: 14820,
-                minCohortThreshold: 50,
-                differentialPrivacyEpsilon: 0.5,
-                isKAnonymityValid: true,
-                caseDurationAvgDays: 1.4,
-                caseDurationBaselineDays: 1.5,
-                precedentVarianceScore: 96.8,
-                anomalyScore: 3.2,
-                anomalySeverity: 'Low',
-                summaryDescription: 'Homomorphic vector similarity across court zones within normal 2-sigma variance.',
-                encryptionAlgorithm: 'CKKS Homomorphic Encryption',
-                escalationStatus: 'None',
-                createdAt: '2026-08-05T11:20:00Z'
+                id: 'PREC-701',
+                caseId: 'HC-BOMBAY-2025-1104',
+                caseTitle: 'State of Maharashtra vs. A. K. Financials',
+                precedentCitation: 'AIR 2021 SC 1420 (Electronic Evidence Admissibility under Sec 65B)',
+                conflictDescription: 'Absolute denial of interim bail; unconditional freeze on 14 corporate accounts prior to charge sheet filing.',
+                severity: 'Critical',
+                systemAction: 'Review severity vs. Sanjay Chandra 96.2% match cohort.',
+                status: 'Flagged'
             },
             {
-                id: 'RPT-2026-002',
-                reportCode: 'FHE-AGG-2026-002',
-                title: 'Layer 4 Homomorphic Case Duration & Drift Report',
-                courtScope: 'Zone 4 West Special Tribunal',
-                benchScope: 'Special Tribunal Bench 3',
-                cohortSize: 3810,
-                minCohortThreshold: 50,
-                differentialPrivacyEpsilon: 0.5,
-                isKAnonymityValid: true,
-                caseDurationAvgDays: 3.2,
-                caseDurationBaselineDays: 1.4,
-                precedentVarianceScore: 66.7,
-                anomalyScore: 33.3,
-                anomalySeverity: 'Critical',
-                summaryDescription: 'Statistically significant disposition rate spike (+128%) detected in Zone 4 West.',
-                encryptionAlgorithm: 'CKKS Homomorphic Encryption',
-                escalationStatus: 'Escalated',
-                escalationTicketId: 'ESC-2026-88412',
-                escalationDate: '2026-08-07T08:42:00Z',
-                escalationRationale: 'Disposition rate anomaly exceeds threshold for independent oversight inquiry.',
-                escalationCategory: 'Zone 4 West Special Tribunal',
-                createdAt: '2026-08-07T08:15:00Z'
-            }
-        ];
-        // Default Oversight Escalations
-        this.oversightEscalations = [
+                id: 'PREC-702',
+                caseId: 'SLA-2026-0412',
+                caseTitle: 'TechCorp Solutions vs. Municipal Procurement Cell',
+                precedentCitation: 'Indian Contract Act Section 74',
+                conflictDescription: 'Awarded 100% liquidated damages without requiring proof of actual pecuniary loss suffered by claimant.',
+                severity: 'High',
+                systemAction: 'Verify reasonableness index against Section 74 penalty standards.',
+                status: 'Flagged'
+            },
             {
-                id: 'ESC-2026-88412',
-                ticketId: 'ESC-2026-88412',
-                reportId: 'RPT-2026-002',
-                reportCode: 'FHE-AGG-2026-002',
-                title: 'Disposition Duration Anomaly Escalation',
-                category: 'Zone 4 West Special Tribunal',
-                rationale: 'Disposition duration spike +1.8 days in Zone 4 West Special Tribunal.',
-                validatorName: 'NODE-IND-VAL-04',
-                status: 'ROUTED_TO_OVERSIGHT_ENCLAVE',
-                createdAt: '2026-08-07T08:42:00Z'
+                id: 'PREC-703',
+                caseId: 'FIR-2025-0892',
+                caseTitle: 'Narcotics Control Bureau vs. R. V. Sharma',
+                precedentCitation: 'NDPS Act Section 50',
+                conflictDescription: 'Suppressed key seizure evidence due to 12-minute delay in logging Section 50 memo.',
+                severity: 'High',
+                systemAction: 'Check delay tolerability against Section 50 timing cohort.',
+                status: 'Flagged'
+            },
+            {
+                id: 'PREC-704',
+                caseId: 'HC-DELHI-2025-0988',
+                caseTitle: 'Pharma Global vs. BioGeneric India',
+                precedentCitation: 'Patents Act Section 108',
+                conflictDescription: 'Ex-parte interim injunction granted blocking drug distribution without security bond requirement.',
+                severity: 'Medium',
+                systemAction: 'Evaluate public health emergency criteria vs. ex-parte standards.',
+                status: 'Resolved',
+                resolvedBy: 'Hon. Justice M. G. Rao (Bench Quality Committee)',
+                resolvedAt: new Date('2025-08-22T11:00:00Z').toISOString()
             }
         ];
-=======
-        // Default Homomorphic Analytics Reports in Backend Store
-        if (!this.analyticsReports || this.analyticsReports.length === 0) {
+        defaultFlags.forEach(f => {
+            if (!this.precedentFlags.some(existing => existing.id === f.id)) {
+                this.precedentFlags.push(f);
+            }
+        });
+        // Consensus Requests — only seed if empty (real data from disk takes priority)
+        if (this.consensusRequests.length === 0) {
+            this.consensusRequests = [
+                {
+                    id: 'REQ-8831',
+                    caseId: 'FIR-2026-001',
+                    caseTitle: 'State vs. Unknown (Sector 4 Cyber Heist)',
+                    category: 'Record Sealing',
+                    requestAgency: 'Zone 1 North High Court Bench',
+                    description: 'Request for multi-sig quorum sealing of EV-8821 CCTV payload.',
+                    status: 'Approved',
+                    validatorVoteStatus: 'Approved',
+                    quorumTotal: 3,
+                    quorumSigned: 3,
+                    createdAt: '2026-08-06T16:30:00Z',
+                    targetRecordHash: '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'
+                },
+                {
+                    id: 'REQ-8829',
+                    caseId: 'FIR-2026-002',
+                    caseTitle: 'State vs. Deshmukh (Property Fraud)',
+                    category: 'Section 65B Re-hash',
+                    requestAgency: 'Zone 4 West Special Tribunal',
+                    description: 'Request for secondary hash re-verification without Section 65B attestation.',
+                    status: 'Rejected',
+                    validatorVoteStatus: 'Rejected',
+                    quorumTotal: 3,
+                    quorumSigned: 1,
+                    createdAt: '2026-08-06T14:10:00Z',
+                    targetRecordHash: '7c9e0134b2f159a4c803328e93214f09a13b4c1023948576d123450987654321'
+                }
+            ];
+        }
+        // Analytics Reports — only seed if empty (real data from disk takes priority)
+        if (this.analyticsReports.length === 0) {
             this.analyticsReports = [
                 {
-                    id: 'FHE-RPT-101',
+                    id: 'RPT-2026-001',
                     reportCode: 'FHE-AGG-2026-001',
-                    title: 'Case Duration Distribution & Disposition Velocity across Zones',
+                    title: 'Bench-Level Precedent Alignment Matrix',
                     courtScope: 'All 5 Court Districts',
-                    benchScope: 'All Active Benches',
+                    benchScope: 'Division Bench 1 & 2',
                     cohortSize: 14820,
                     minCohortThreshold: 50,
                     differentialPrivacyEpsilon: 0.5,
                     isKAnonymityValid: true,
                     caseDurationAvgDays: 1.4,
-                    caseDurationBaselineDays: 1.35,
-                    precedentVarianceScore: 3.2,
-                    anomalyScore: 0.04,
+                    caseDurationBaselineDays: 1.5,
+                    precedentVarianceScore: 96.8,
+                    anomalyScore: 3.2,
                     anomalySeverity: 'Low',
-                    summaryDescription: 'Homomorphically aggregated case duration times across 14,820 closed & active dockets. Mean duration remains steady at 1.4 days with zero statistical outliers detected.',
-                    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
+                    summaryDescription: 'Homomorphic vector similarity across court zones within normal 2-sigma variance.',
+                    encryptionAlgorithm: 'CKKS Homomorphic Encryption',
                     escalationStatus: 'None',
-                    createdAt: new Date().toISOString()
+                    createdAt: '2026-08-05T11:20:00Z'
                 },
                 {
-                    id: 'FHE-RPT-102',
+                    id: 'RPT-2026-002',
                     reportCode: 'FHE-AGG-2026-002',
-                    title: 'Zone 4 Special Tribunal - Duration Deviation & Re-hash Frequency Spike',
-                    courtScope: 'Zone 4 (West Special Tribunal)',
-                    benchScope: 'Division Bench 4',
-                    cohortSize: 312,
+                    title: 'Layer 4 Homomorphic Case Duration & Drift Report',
+                    courtScope: 'Zone 4 West Special Tribunal',
+                    benchScope: 'Special Tribunal Bench 3',
+                    cohortSize: 3810,
                     minCohortThreshold: 50,
                     differentialPrivacyEpsilon: 0.5,
                     isKAnonymityValid: true,
                     caseDurationAvgDays: 3.2,
                     caseDurationBaselineDays: 1.4,
-                    precedentVarianceScore: 18.6,
-                    anomalyScore: 8.4,
+                    precedentVarianceScore: 66.7,
+                    anomalyScore: 33.3,
                     anomalySeverity: 'Critical',
-                    summaryDescription: 'Homomorphic analysis detected a statistically significant 128% spike in average disposition days (+1.8 days over baseline) combined with an elevated Section 65B re-hash request rate in Zone 4.',
-                    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
-                    escalationStatus: 'None',
+                    summaryDescription: 'Statistically significant disposition rate spike (+128%) detected in Zone 4 West.',
+                    encryptionAlgorithm: 'CKKS Homomorphic Encryption',
+                    escalationStatus: 'Escalated',
+                    escalationTicketId: 'ESC-2026-88412',
+                    escalationDate: '2026-08-07T08:42:00Z',
+                    escalationRationale: 'Disposition rate anomaly exceeds threshold for independent oversight inquiry.',
+                    escalationCategory: 'Zone 4 West Special Tribunal',
+                    createdAt: '2026-08-07T08:15:00Z'
+                }
+            ];
+        }
+        // Notifications Seed
+        if (this.notifications.length === 0) {
+            this.notifications = [
+                {
+                    id: 'notif-duress-01',
+                    type: 'duress',
+                    title: 'CRITICAL: Duress-Alert Escalation Logged',
+                    message: 'Silent panic key entered at Zone 4 Field Terminal during evidence hashing.',
+                    timestamp: '10 minutes ago',
+                    isoDate: new Date().toISOString(),
+                    isRead: false,
+                    priority: 'critical',
+                    caseId: 'FIR-2026-001',
+                    sender: 'Oversight Security Sentinel',
+                    details: 'Terminal #04 detected a silent duress PIN sequence. Visual evidence feed and officer geolocation locked in high-security audit ledger. Instant judicial oversight review triggered under Rule 88-B.',
+                    actionUrlTab: 'Case Files',
+                    actionLabel: 'Inspect Escalation Payload',
+                    roleScope: 'all',
                     createdAt: new Date().toISOString()
                 },
                 {
-                    id: 'FHE-RPT-103',
-                    reportCode: 'FHE-AGG-2026-003',
-                    title: 'Bench-Level Precedent Alignment & Out-of-Band Sealing Distribution',
-                    courtScope: 'Zone 2 (South Commercial Bench)',
-                    benchScope: 'Division Bench 2',
-                    cohortSize: 890,
-                    minCohortThreshold: 50,
-                    differentialPrivacyEpsilon: 0.5,
-                    isKAnonymityValid: true,
-                    caseDurationAvgDays: 1.8,
-                    caseDurationBaselineDays: 1.7,
-                    precedentVarianceScore: 4.8,
-                    anomalyScore: 2.1,
-                    anomalySeverity: 'Medium',
-                    summaryDescription: 'Pattern comparison indicates minor variance in Section 144 sealing request distribution. Cohort size N=890 safely satisfies differential privacy limits.',
-                    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
-                    escalationStatus: 'None',
+                    id: 'notif-forgery-01',
+                    type: 'forgery',
+                    title: 'New Item in Forgery Review Queue',
+                    message: 'AI Anomaly Detector flagged probability of deepfake image tampering on exhibit EV-8825.',
+                    timestamp: '28 minutes ago',
+                    isoDate: new Date().toISOString(),
+                    isRead: false,
+                    priority: 'high',
+                    caseId: 'FIR-2026-006',
+                    sender: 'Forensic Neural Scanner v4.2',
+                    details: 'JPEG compression grid inconsistency detected. Hash comparison against raw sensor snapshot failed checksum verification. Judicial review required.',
+                    actionUrlTab: 'Chain of Custody',
+                    actionLabel: 'Open Forgery Queue',
+                    roleScope: 'all',
                     createdAt: new Date().toISOString()
                 },
                 {
-                    id: 'FHE-RPT-104',
-                    reportCode: 'FHE-AGG-2026-004',
-                    title: 'Cyber Precinct CCTV Exhibit Ingestion Homomorphic Variance',
-                    courtScope: 'Zone 3 (East Cyber Precinct)',
-                    benchScope: 'Division Bench 1',
-                    cohortSize: 3810,
-                    minCohortThreshold: 50,
-                    differentialPrivacyEpsilon: 0.5,
-                    isKAnonymityValid: true,
-                    caseDurationAvgDays: 1.2,
-                    caseDurationBaselineDays: 1.2,
-                    precedentVarianceScore: 1.1,
-                    anomalyScore: 0.1,
-                    anomalySeverity: 'Low',
-                    summaryDescription: 'High-density evidence ingestion velocity is consistent with regional fiber gateway logs. Zero identity leakage or cohort threshold warnings.',
-                    encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
-                    escalationStatus: 'None',
+                    id: 'notif-consensus-01',
+                    type: 'consensus',
+                    title: 'Consensus Vote Required for Evidence Seal',
+                    message: 'Multi-signature quorum pending (2/3 signatures) for high-value seizure log.',
+                    timestamp: '1 hour ago',
+                    isoDate: new Date().toISOString(),
+                    isRead: false,
+                    priority: 'high',
+                    caseId: 'FIR-2026-002',
+                    sender: 'High Court Quorum Engine',
+                    details: 'Your judicial key signature is required to finalize block immutability.',
+                    actionUrlTab: 'Chain of Custody',
+                    actionLabel: 'Cast Quorum Vote',
+                    roleScope: 'all',
                     createdAt: new Date().toISOString()
                 }
             ];
         }
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
+        // Oversight Escalations — only seed if empty (real data from disk takes priority)
+        if (this.oversightEscalations.length === 0) {
+            this.oversightEscalations = [
+                {
+                    id: 'ESC-2026-88412',
+                    ticketId: 'ESC-2026-88412',
+                    reportId: 'RPT-2026-002',
+                    reportCode: 'FHE-AGG-2026-002',
+                    title: 'Disposition Duration Anomaly Escalation',
+                    category: 'Zone 4 West Special Tribunal',
+                    rationale: 'Disposition duration spike +1.8 days in Zone 4 West Special Tribunal.',
+                    validatorName: 'NODE-IND-VAL-04',
+                    status: 'ROUTED_TO_OVERSIGHT_ENCLAVE',
+                    createdAt: '2026-08-07T08:42:00Z'
+                }
+            ];
+        }
+        // Seed Decoy Honeypot Datasets (Served ONLY during Duress Sessions)
+        const defaultDecoyCases = [
+            { id: 'FIR-DECOY-8801', title: 'State vs. Cyber Transport Syndicate (Decoy Docket)', status: 'Active', type: 'Cyber Crime', date: 'Oct 14, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 6, testimonyCount: 2, priority: 'High', description: 'Simulated traffic monitoring log analysis for Western precinct routing.', location: 'Western Suburb Precinct 9', jurisdictionCode: 'MH-MUM-DIST-01', createdAt: '2026-10-14T10:00:00Z', updatedAt: '2026-10-14T10:00:00Z' },
+            { id: 'FIR-DECOY-8802', title: 'Deshmukh Land Registry Audit (Decoy File)', status: 'Pending Review', type: 'Financial', date: 'Oct 11, 2026', officer: 'Inspector S. Patel', evidenceCount: 4, testimonyCount: 1, priority: 'Medium', description: 'Deed register verification for Municipal Ward 42.', location: 'Sub-Registry Ward 42', jurisdictionCode: 'MH-MUM-DIST-02', createdAt: '2026-10-11T11:30:00Z', updatedAt: '2026-10-11T11:30:00Z' }
+        ];
+        defaultDecoyCases.forEach(c => this.decoyCases.set(c.id, c));
+        const defaultDecoyEvidence = [
+            { id: 'EV-DECOY-9901', caseId: 'FIR-DECOY-8801', title: 'Traffic Packet Capture Log (Honeytoken)', type: 'Document', date: 'Oct 14, 2026 11:00', hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', status: 'Sealed', custodian: 'Officer R. Kulkarni', incidentLocation: 'Western Suburb Precinct 9', confidentialityLevel: 'Restricted', createdAt: '2026-10-14T11:00:00Z' }
+        ];
+        defaultDecoyEvidence.forEach(e => this.decoyEvidence.set(e.id, e));
+        this.decoyConsensusRequests = [
+            {
+                id: 'REQ-DECOY-901',
+                caseId: 'FIR-DECOY-8801',
+                caseTitle: 'State vs. Cyber Transport Syndicate (Decoy Docket)',
+                exhibitId: 'EV-DECOY-9901',
+                exhibitTitle: 'Traffic Packet Capture Log (Honeytoken)',
+                submittedBy: 'Officer R. Kulkarni',
+                requiredVotes: 3,
+                currentVotes: 1,
+                status: 'Pending',
+                votes: [
+                    { validatorId: 'val_01', validatorName: 'Judge V. Sharma', vote: 'APPROVE', timestamp: '2026-10-14T12:00:00Z', note: 'Decoy Hash verified.' }
+                ],
+                createdAt: '2026-10-14T11:30:00Z'
+            }
+        ];
+        this.decoyForgeryReviews = [
+            {
+                id: 'FORG-DECOY-801',
+                exhibitId: 'EV-DECOY-9901',
+                caseId: 'FIR-DECOY-8801',
+                title: 'Traffic Packet Capture Log (Honeytoken)',
+                type: 'Document File',
+                submittedBy: 'Forensics Specialist A. Roy',
+                timestamp: '2026-10-14 11:30',
+                spectralScore: 91.2,
+                metadataIntegrityScore: 89.5,
+                perceptualDiffScore: 14.1,
+                aiConfidence: 98.4,
+                flagReason: 'Honeytoken digital marker verified clean baseline.',
+                status: 'Under Review'
+            }
+        ];
     }
     async loadFromFirestore() {
         const db = getFirestore();
@@ -311,7 +1145,8 @@ class PrimaryDataStore {
             console.log('🔥 Synced data from Firebase Firestore');
         }
         catch (err) {
-            console.log('Firestore load info:', err);
+            console.log('ℹ️  Firestore DB API status:', err.message || err);
+            console.log('ℹ️  Operating with high-performance local store fallback.');
         }
     }
     loadFromDisk() {
@@ -334,6 +1169,9 @@ class PrimaryDataStore {
                 if (data.cases && Array.isArray(data.cases)) {
                     data.cases.forEach((c) => this.cases.set(c.id, c));
                 }
+                if (data.richCases && Array.isArray(data.richCases)) {
+                    data.richCases.forEach((rc) => this.richCases.set(rc.id, rc));
+                }
                 if (data.evidence && Array.isArray(data.evidence)) {
                     data.evidence.forEach((e) => this.evidence.set(e.id, e));
                 }
@@ -343,8 +1181,14 @@ class PrimaryDataStore {
                 if (data.forgeryReviews && Array.isArray(data.forgeryReviews)) {
                     this.forgeryReviews = data.forgeryReviews;
                 }
+                if (data.forgeryQueueItems && Array.isArray(data.forgeryQueueItems)) {
+                    data.forgeryQueueItems.forEach((fqi) => this.forgeryQueueItems.set(fqi.id, fqi));
+                }
                 if (data.identityUnlocks && Array.isArray(data.identityUnlocks)) {
                     this.identityUnlocks = data.identityUnlocks;
+                }
+                if (data.identityUnlockLogs && Array.isArray(data.identityUnlockLogs)) {
+                    this.identityUnlockLogs = data.identityUnlockLogs;
                 }
                 if (data.precedentFlags && Array.isArray(data.precedentFlags)) {
                     this.precedentFlags = data.precedentFlags;
@@ -352,43 +1196,28 @@ class PrimaryDataStore {
                 if (data.analyticsReports && Array.isArray(data.analyticsReports)) {
                     this.analyticsReports = data.analyticsReports;
                 }
+                if (data.oversightEscalations && Array.isArray(data.oversightEscalations)) {
+                    this.oversightEscalations = data.oversightEscalations;
+                }
                 if (data.validatorActivityLogs && Array.isArray(data.validatorActivityLogs)) {
                     this.validatorActivityLogs = data.validatorActivityLogs;
                 }
+                if (data.readNotificationIds && Array.isArray(data.readNotificationIds)) {
+                    this.readNotificationIds = new Set(data.readNotificationIds);
+                }
+                if (data.readNotificationTimestamps && typeof data.readNotificationTimestamps === 'object') {
+                    this.readNotificationTimestamps = new Map(Object.entries(data.readNotificationTimestamps));
+                }
+                if (data.attestedModules && Array.isArray(data.attestedModules)) {
+                    this.attestedModules = data.attestedModules;
+                }
+                // Seed only after disk data is loaded — so disk data takes priority
+                this.seedDefaults();
             }
-            this.seedDefaults();
         }
         catch (err) {
             console.log('Info: Disk store load status:', err);
         }
-    }
-    getAnalyticsReports() {
-        return [...this.analyticsReports];
-    }
-    getAnalyticsReportById(id) {
-        return this.analyticsReports.find(r => r.id === id || r.reportCode === id);
-    }
-    saveAnalyticsReport(report) {
-        const idx = this.analyticsReports.findIndex(r => r.id === report.id || r.reportCode === report.reportCode);
-        if (idx >= 0) {
-            this.analyticsReports[idx] = report;
-        }
-        else {
-            this.analyticsReports.unshift(report);
-        }
-        this.persistToDisk();
-        return report;
-    }
-    getOversightEscalations() {
-        return [...this.oversightEscalations];
-    }
-    saveOversightEscalation(record) {
-        this.oversightEscalations.unshift(record);
-        this.persistToDisk();
-        return record;
-    }
-    addAnalyticsReport(report) {
-        return this.saveAnalyticsReport(report);
     }
     persistToDisk() {
         try {
@@ -397,13 +1226,20 @@ class PrimaryDataStore {
                 duressAlerts: this.duressAlerts,
                 vettingQueue: this.vettingQueue,
                 cases: Array.from(this.cases.values()),
+                richCases: Array.from(this.richCases.values()),
                 evidence: Array.from(this.evidence.values()),
                 consensusRequests: this.consensusRequests,
                 forgeryReviews: this.forgeryReviews,
+                forgeryQueueItems: Array.from(this.forgeryQueueItems.values()),
                 identityUnlocks: this.identityUnlocks,
+                identityUnlockLogs: this.identityUnlockLogs,
                 precedentFlags: this.precedentFlags,
                 analyticsReports: this.analyticsReports,
-                validatorActivityLogs: this.validatorActivityLogs
+                oversightEscalations: this.oversightEscalations,
+                validatorActivityLogs: this.validatorActivityLogs,
+                readNotificationIds: Array.from(this.readNotificationIds),
+                readNotificationTimestamps: Object.fromEntries(this.readNotificationTimestamps.entries()),
+                attestedModules: this.attestedModules
             };
             fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
         }
@@ -417,9 +1253,14 @@ class PrimaryDataStore {
         this.usersByEmail.set(user.email.toLowerCase(), user);
         this.persistToDisk();
         // Real-time Firestore sync
-        const db = getFirestore();
-        if (db) {
-            db.collection('users').doc(user.id).set(user, { merge: true }).catch((err) => console.log('Firestore save user err:', err));
+        try {
+            const db = getFirestore();
+            if (db) {
+                db.collection('users').doc(user.id).set(user, { merge: true }).catch((err) => console.log('Firestore save user status:', err.message || err));
+            }
+        }
+        catch (e) {
+            console.log('Firestore write info:', e.message || e);
         }
         return user;
     }
@@ -436,92 +1277,26 @@ class PrimaryDataStore {
     addDuressAlert(alert) {
         const record = {
             ...alert,
+            locationInfo: alert.locationInfo || { lat: 19.0760, lng: 72.8777, jurisdiction: 'MH-MUM-DIST-01' },
             id: `alert_dur_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
             timestamp: new Date().toISOString(),
             status: 'UNACKNOWLEDGED'
         };
         this.duressAlerts.unshift(record);
         this.persistToDisk();
-        const db = getFirestore();
-        if (db) {
-            db.collection('duress_alerts').doc(record.id).set(record).catch((err) => console.log('Firestore duress alert err:', err));
+        try {
+            const db = getFirestore();
+            if (db) {
+                db.collection('duress_alerts').doc(record.id).set(record).catch((err) => console.log('Firestore alert status:', err.message || err));
+            }
+        }
+        catch (e) {
+            console.log('Firestore write info:', e.message || e);
         }
         return record;
     }
     getDuressAlerts() {
         return [...this.duressAlerts];
-    }
-    acknowledgeDuressAlert(alertId) {
-        let target = this.duressAlerts.find(a => alertId ? a.id === alertId : a.status === 'UNACKNOWLEDGED');
-        if (!target && this.duressAlerts.length > 0) {
-            target = this.duressAlerts[0];
-        }
-        if (target) {
-            target.status = 'ESCALATED';
-            this.persistToDisk();
-            const db = getFirestore();
-            if (db) {
-                db.collection('duress_alerts').doc(target.id).update({ status: 'ESCALATED' }).catch((err) => console.log('Firestore duress update err:', err));
-            }
-        }
-        return target;
-    }
-    // Consensus Requests for Independent Validator
-    getConsensusRequests() {
-        return [...this.consensusRequests];
-    }
-    getConsensusRequestById(id) {
-        return this.consensusRequests.find(r => r.id === id);
-    }
-    saveConsensusRequest(req) {
-        const idx = this.consensusRequests.findIndex(r => r.id === req.id);
-        if (idx >= 0) {
-            this.consensusRequests[idx] = req;
-        }
-        else {
-            this.consensusRequests.unshift(req);
-        }
-        this.persistToDisk();
-        return req;
-    }
-    // Analytics Reports
-    getAnalyticsReportsCount() {
-        return this.analyticsReports.length;
-    }
-    // Validator Activity Logs
-    getValidatorActivityLogs() {
-        return [...this.validatorActivityLogs];
-    }
-    addValidatorActivityLog(log) {
-        const newLog = {
-            ...log,
-            id: `log_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-            timestamp: new Date().toISOString()
-        };
-        this.validatorActivityLogs.unshift(newLog);
-        this.persistToDisk();
-        return newLog;
-    }
-    // SQL COUNT Query Equivalent for Validator Dashboard (Selects counts & ZK categories ONLY)
-    async getDashboardCounts() {
-        // SELECT COUNT(*) FROM consensus_requests WHERE quorum_signed < quorum_total;
-        const consensusAwaitingCount = this.consensusRequests.filter(r => (r.quorumSigned ?? 0) < (r.quorumTotal ?? 3)).length;
-        // SELECT COUNT(*) FROM analytics_reports;
-        const analyticsReportsCount = this.analyticsReports.length;
-        // SELECT COUNT(*) FROM duress_alerts WHERE status = 'UNACKNOWLEDGED';
-        const activeDuressCount = this.duressAlerts.filter(a => a.status === 'UNACKNOWLEDGED').length;
-        // Bottleneck info
-        const bottleneck = this.consensusRequests.find(r => r.urgency === 'URGENT BOTTLENECK');
-        return {
-            consensusAwaitingCount,
-            analyticsReportsCount,
-            activeDuressCount,
-            bottleneckInfo: bottleneck ? {
-                count: 1,
-                waitTimeFormatted: bottleneck.waitTimeFormatted,
-                blockId: bottleneck.id
-            } : { count: 0, waitTimeFormatted: '0h' }
-        };
     }
     // Vetting Queue for Validator
     addToVettingQueue(userId, consentGiven) {
@@ -533,9 +1308,14 @@ class PrimaryDataStore {
         };
         this.vettingQueue.push(item);
         this.persistToDisk();
-        const db = getFirestore();
-        if (db) {
-            db.collection('vetting_queue').doc(item.id).set(item).catch((err) => console.log('Firestore vetting queue err:', err));
+        try {
+            const db = getFirestore();
+            if (db) {
+                db.collection('vetting_queue').doc(item.id).set(item).catch((err) => console.log('Firestore vetting status:', err.message || err));
+            }
+        }
+        catch (e) {
+            console.log('Firestore write info:', e.message || e);
         }
         return item;
     }
@@ -543,21 +1323,59 @@ class PrimaryDataStore {
         return [...this.vettingQueue];
     }
     // --- CASES API ---
-    getCases() {
+    getCases(isDuressSession) {
+        if (isDuressSession) {
+            return Array.from(this.decoyCases.values());
+        }
         return Array.from(this.cases.values());
     }
-    getCaseById(id) {
+    getCaseById(id, isDuressSession) {
+        if (isDuressSession) {
+            return this.decoyCases.get(id);
+        }
         return this.cases.get(id);
     }
     saveCase(caseItem) {
         caseItem.updatedAt = new Date().toISOString();
         this.cases.set(caseItem.id, caseItem);
         this.persistToDisk();
+        try {
+            const db = getFirestore();
+            if (db) {
+                db.collection('cases').doc(caseItem.id).set(caseItem).catch((err) => console.log('Firestore case save status:', err.message || err));
+            }
+        }
+        catch (e) {
+            console.log('Firestore write info:', e.message || e);
+        }
+        return caseItem;
+    }
+    // --- RICH CASES API (Forensic Repositories) ---
+    getRichCases() {
+        return Array.from(this.richCases.values());
+    }
+    getRichCaseById(id) {
+        return this.richCases.get(id);
+    }
+    saveRichCase(caseItem) {
+        caseItem.updatedAt = new Date().toISOString();
+        this.richCases.set(caseItem.id, caseItem);
+        this.persistToDisk();
+        try {
+            const db = getFirestore();
+            if (db) {
+                db.collection('richCases').doc(caseItem.id).set(caseItem).catch((err) => console.log('Firestore richCase save status:', err.message || err));
+            }
+        }
+        catch (e) {
+            console.log('Firestore write info:', e.message || e);
+        }
         return caseItem;
     }
     // --- EVIDENCE API ---
-    getEvidence(caseId) {
-        const all = Array.from(this.evidence.values());
+    getEvidence(caseId, isDuressSession) {
+        const targetMap = isDuressSession ? this.decoyEvidence : this.evidence;
+        const all = Array.from(targetMap.values());
         if (caseId) {
             return all.filter(e => e.caseId === caseId);
         }
@@ -574,17 +1392,59 @@ class PrimaryDataStore {
             c.evidenceCount += 1;
             c.updatedAt = new Date().toISOString();
             this.cases.set(c.id, c);
+            try {
+                const db = getFirestore();
+                if (db) {
+                    db.collection('cases').doc(c.id).set(c).catch((err) => console.log('Firestore case update status:', err.message || err));
+                }
+            }
+            catch (e) {
+                console.log('Firestore write info:', e.message || e);
+            }
         }
         this.persistToDisk();
+        try {
+            const db = getFirestore();
+            if (db) {
+                db.collection('evidence').doc(item.id).set(item).catch((err) => console.log('Firestore evidence save status:', err.message || err));
+            }
+        }
+        catch (e) {
+            console.log('Firestore write info:', e.message || e);
+        }
         return item;
     }
     // --- CONSENSUS APPROVALS ---
+    getConsensusRequests(isDuressSession) {
+        if (isDuressSession) {
+            return [...this.decoyConsensusRequests];
+        }
+        return [...this.consensusRequests];
+    }
+    getConsensusRequestById(id, isDuressSession) {
+        if (isDuressSession) {
+            return this.decoyConsensusRequests.find(r => r.id === id);
+        }
+        return this.consensusRequests.find(r => r.id === id);
+    }
+    saveConsensusRequest(request) {
+        const idx = this.consensusRequests.findIndex(r => r.id === request.id);
+        if (idx >= 0) {
+            this.consensusRequests[idx] = request;
+        }
+        else {
+            this.consensusRequests.push(request);
+        }
+        this.persistToDisk();
+        return request;
+    }
     addConsensusVote(requestId, validatorId, validatorName, vote, note) {
         const req = this.consensusRequests.find(r => r.id === requestId);
         if (!req)
             return undefined;
         // Check if already voted
-        req.votes = req.votes || [];
+        if (!req.votes)
+            req.votes = [];
         const existing = req.votes.find(v => v.validatorId === validatorId);
         if (!existing) {
             req.votes.push({
@@ -602,8 +1462,245 @@ class PrimaryDataStore {
         }
         return req;
     }
+    // --- ANALYTICS REPORTS ---
+    addAnalyticsReport(report) {
+        this.analyticsReports.push(report);
+        this.persistToDisk();
+        return report;
+    }
+    getAnalyticsReports() {
+        return [...this.analyticsReports];
+    }
+    getAnalyticsReportById(id) {
+        return this.analyticsReports.find(r => r.id === id);
+    }
+    saveAnalyticsReport(report) {
+        const idx = this.analyticsReports.findIndex(r => r.id === report.id);
+        if (idx >= 0) {
+            this.analyticsReports[idx] = report;
+        }
+        else {
+            this.analyticsReports.push(report);
+        }
+        this.persistToDisk();
+        return report;
+    }
+    // --- OVERSIGHT ESCALATIONS ---
+    getOversightEscalations() {
+        return [...this.oversightEscalations];
+    }
+    saveOversightEscalation(escalation) {
+        const idx = this.oversightEscalations.findIndex(e => e.id === escalation.id);
+        if (idx >= 0) {
+            this.oversightEscalations[idx] = escalation;
+        }
+        else {
+            this.oversightEscalations.push(escalation);
+        }
+        this.persistToDisk();
+        return escalation;
+    }
+    // --- VALIDATOR ACTIVITY LOGS ---
+    getValidatorActivityLogs() {
+        return [...this.validatorActivityLogs];
+    }
+    addValidatorActivityLog(log) {
+        this.validatorActivityLogs.push(log);
+        this.persistToDisk();
+        return log;
+    }
+    acknowledgeDuressAlert(alertId, status = 'INVESTIGATING') {
+        const alert = this.duressAlerts.find(a => a.id === alertId);
+        if (alert) {
+            alert.status = status;
+            this.persistToDisk();
+        }
+        return alert;
+    }
+    // --- NOTIFICATIONS STORE & REAL-TIME DISPATCH ---
+    readNotificationIds = new Set();
+    readNotificationTimestamps = new Map();
+    customNotifications = [];
+    getNotifications(role) {
+        const realNotifs = [];
+        // 1. Real Duress Alerts from database
+        this.duressAlerts.forEach(a => {
+            const notifId = `notif-duress-${a.id}`;
+            const isRead = this.readNotificationIds.has(notifId);
+            realNotifs.push({
+                id: notifId,
+                type: 'duress',
+                title: `CRITICAL: Duress PIN Alert (${a.userName})`,
+                message: `Silent panic PIN executed by ${a.userName} (${a.role}) from IP ${a.ipAddress}.`,
+                timestamp: a.timestamp ? (a.timestamp.includes('T') ? new Date(a.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : a.timestamp) : 'Recently',
+                isoDate: a.timestamp || new Date().toISOString(),
+                isRead,
+                readAt: this.readNotificationTimestamps.get(notifId),
+                priority: 'critical',
+                caseId: a.refId || 'SYS-SECURITY',
+                sender: 'Oversight Security Sentinel',
+                details: `Location: ${a.locationInfo?.jurisdiction || 'Zone 4 Field Terminal'}. Status: ${a.status}. Visual evidence feed and officer geolocation locked in audit ledger under Rule 88-B.`,
+                actionUrlTab: 'Audit log',
+                actionLabel: 'Inspect Duress Payload',
+                roleScope: 'court_authority,independent_validator',
+                createdAt: a.timestamp || new Date().toISOString()
+            });
+        });
+        // 2. Real Evidence Submissions from database
+        Array.from(this.evidence.values()).forEach(e => {
+            const isTestimony = e.type === 'Document' && e.id.startsWith('TM-');
+            const notifId = `notif-ev-${e.id}`;
+            const isRead = this.readNotificationIds.has(notifId);
+            realNotifs.push({
+                id: notifId,
+                type: isTestimony ? 'system' : 'system',
+                title: isTestimony ? `Testimony ${e.id} Recorded & Cryptographically Signed` : `Evidence ${e.id} Ingested & SHA-256 Sealed`,
+                message: `${e.title} (${e.type}) was cryptographically sealed by ${e.custodian || 'Field Officer'}.`,
+                timestamp: e.date || (e.createdAt ? new Date(e.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'Recently'),
+                isoDate: e.createdAt || new Date().toISOString(),
+                isRead,
+                readAt: this.readNotificationTimestamps.get(notifId),
+                priority: isTestimony ? 'medium' : 'high',
+                caseId: e.caseId,
+                sender: 'SHA-256 HSM Sealing Engine',
+                details: `Hash: ${e.hash}. Status: ${e.status}. Custodian: ${e.custodian}. Location: ${e.incidentLocation || 'Zone 4 Field Terminal'}.`,
+                actionUrlTab: 'Chain of Custody',
+                actionLabel: 'View Evidence Ledger',
+                roleScope: 'field_submitter,court_authority',
+                createdAt: e.createdAt || new Date().toISOString()
+            });
+        });
+        // 3. Real Forgery Reviews from database
+        this.forgeryReviews.forEach(f => {
+            const notifId = `notif-forgery-${f.id}`;
+            const isRead = this.readNotificationIds.has(notifId);
+            realNotifs.push({
+                id: notifId,
+                type: 'forgery',
+                title: `Forgery Review Queue: ${f.title}`,
+                message: `AI Anomaly Detector flagged score ${f.aiConfidence}% on exhibit ${f.exhibitId}. Status: ${f.status}.`,
+                timestamp: f.timestamp || 'Recently',
+                isoDate: new Date().toISOString(),
+                isRead,
+                readAt: this.readNotificationTimestamps.get(notifId),
+                priority: 'high',
+                caseId: f.caseId,
+                sender: 'Forensic Neural Scanner v4.2',
+                details: `Flag Reason: ${f.flagReason}. Spectral Score: ${f.spectralScore}. Metadata Score: ${f.metadataIntegrityScore}.`,
+                actionUrlTab: 'Chain of Custody',
+                actionLabel: 'Open Forgery Queue',
+                roleScope: 'court_authority,independent_validator',
+                createdAt: new Date().toISOString()
+            });
+        });
+        // 4. Real Consensus Requests from database
+        this.consensusRequests.forEach(c => {
+            const notifId = `notif-consensus-${c.id}`;
+            const isRead = this.readNotificationIds.has(notifId);
+            realNotifs.push({
+                id: notifId,
+                type: 'consensus',
+                title: `Consensus Vote Required: ${c.exhibitTitle || c.caseTitle}`,
+                message: `Multi-signature quorum pending (${c.currentVotes || 0}/${c.requiredVotes || 3} signatures) for exhibit ${c.exhibitId}.`,
+                timestamp: c.createdAt ? new Date(c.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'Recently',
+                isoDate: c.createdAt || new Date().toISOString(),
+                isRead,
+                readAt: this.readNotificationTimestamps.get(notifId),
+                priority: 'high',
+                caseId: c.caseId,
+                sender: 'High Court Quorum Engine',
+                details: `Status: ${c.status}. Submitted by: ${c.submittedBy}. Required votes: ${c.requiredVotes}.`,
+                actionUrlTab: 'Chain of Custody',
+                actionLabel: 'Cast Quorum Vote',
+                roleScope: 'court_authority,independent_validator',
+                createdAt: c.createdAt || new Date().toISOString()
+            });
+        });
+        // 5. Custom notifications created at runtime
+        this.customNotifications.forEach(n => {
+            if (!realNotifs.some(existing => existing.id === n.id)) {
+                const isRead = this.readNotificationIds.has(n.id);
+                realNotifs.push({
+                    ...n,
+                    isRead,
+                    readAt: this.readNotificationTimestamps.get(n.id) || n.readAt
+                });
+            }
+        });
+        // Sort newest first
+        realNotifs.sort((a, b) => new Date(b.isoDate).getTime() - new Date(a.isoDate).getTime());
+        if (!role || role === 'all')
+            return realNotifs;
+        const userRoleRaw = role.toLowerCase();
+        let targetRoleKey = 'court_authority';
+        if (userRoleRaw.includes('field') || userRoleRaw.includes('submitter')) {
+            targetRoleKey = 'field_submitter';
+        }
+        else if (userRoleRaw.includes('validator') || userRoleRaw.includes('independent')) {
+            targetRoleKey = 'independent_validator';
+        }
+        else if (userRoleRaw.includes('court') || userRoleRaw.includes('authority')) {
+            targetRoleKey = 'court_authority';
+        }
+        return realNotifs.filter(n => {
+            if (!n.roleScope || n.roleScope === 'all')
+                return true;
+            const scopes = n.roleScope.split(',').map(s => s.trim().toLowerCase());
+            return scopes.includes(targetRoleKey);
+        });
+    }
+    saveNotification(notif) {
+        const existingIdx = this.customNotifications.findIndex(n => n.id === notif.id);
+        if (existingIdx >= 0) {
+            this.customNotifications[existingIdx] = notif;
+        }
+        else {
+            this.customNotifications.unshift(notif);
+        }
+        this.persistToDisk();
+        return notif;
+    }
+    markNotificationRead(id) {
+        this.readNotificationIds.add(id);
+        const nowStr = `Today at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        this.readNotificationTimestamps.set(id, nowStr);
+        this.persistToDisk();
+        const all = this.getNotifications();
+        return all.find(n => n.id === id) || null;
+    }
+    markAllNotificationsRead(role) {
+        const list = this.getNotifications(role);
+        const nowStr = `Today at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        list.forEach(n => {
+            this.readNotificationIds.add(n.id);
+            this.readNotificationTimestamps.set(n.id, nowStr);
+        });
+        this.persistToDisk();
+        return true;
+    }
+    registerDeviceToken(userId, token) {
+        this.fcmTokens.set(userId, token);
+    }
+    getDeviceToken(userId) {
+        return this.fcmTokens.get(userId);
+    }
+    getDashboardCounts() {
+        return {
+            pendingConsensus: this.consensusRequests.filter(r => r.status === 'Pending').length,
+            duressAlerts: this.duressAlerts.length,
+            flaggedAnomalies: this.forgeryReviews.filter(f => f.status === 'Quarantined').length,
+            activeCases: this.cases.size,
+            consensusAwaitingCount: this.consensusRequests.filter(r => r.status === 'Pending').length,
+            analyticsReportsCount: this.analyticsReports.length,
+            activeDuressCount: this.duressAlerts.filter(a => a.status !== 'RESOLVED').length,
+            bottleneckInfo: 'Zone 4 West Special Tribunal (SLA 12h)'
+        };
+    }
     // --- FORGERY REVIEWS ---
-    getForgeryReviews() {
+    getForgeryReviews(isDuressSession) {
+        if (isDuressSession) {
+            return [...this.decoyForgeryReviews];
+        }
         return [...this.forgeryReviews];
     }
     decideForgery(reviewId, decision, notes) {
@@ -616,22 +1713,124 @@ class PrimaryDataStore {
         this.persistToDisk();
         return item;
     }
+    // --- RICH FORGERY QUEUE ITEMS ---
+    getForgeryQueueItems() {
+        return Array.from(this.forgeryQueueItems.values());
+    }
+    getForgeryQueueItemById(id) {
+        return this.forgeryQueueItems.get(id);
+    }
+    saveForgeryQueueItem(item) {
+        this.forgeryQueueItems.set(item.id, item);
+        this.persistToDisk();
+        return item;
+    }
+    decideRichForgery(id, action, remarks, signatureHash) {
+        const item = this.forgeryQueueItems.get(id);
+        if (!item)
+            return undefined;
+        const newStatus = action === 'Accepted & Admitted'
+            ? 'Cleared'
+            : action === 'Rejected & Excluded'
+                ? 'Rejected'
+                : 'Escalated';
+        const timestampStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) +
+            ', ' +
+            new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        item.status = newStatus;
+        item.judicialDecision = {
+            action,
+            judgeName: 'Hon. Presiding Magistrate (Bench 3)',
+            benchKeyId: 'BENCH-KEY-IND-003',
+            timestamp: timestampStr,
+            justification: remarks || 'Judicial order issued following MAYA-BREAK forensic audit.',
+            digitalSignatureHash: signatureHash
+        };
+        this.persistToDisk();
+        return item;
+    }
+    addDirectiveToForgeryQueueItem(id, directive) {
+        const item = this.forgeryQueueItems.get(id);
+        if (!item)
+            return undefined;
+        item.directives.unshift(directive);
+        this.persistToDisk();
+        return item;
+    }
     // --- IDENTITY UNLOCKS ---
     getIdentityUnlocks() {
         return [...this.identityUnlocks];
     }
-    approveIdentityUnlock(unlockId, grantedByUserName) {
-        const req = this.identityUnlocks.find(u => u.id === unlockId);
+    getIdentityUnlockLogs() {
+        return [...this.identityUnlockLogs];
+    }
+    saveIdentityUnlockRequest(request) {
+        const idx = this.identityUnlocks.findIndex(u => u.id === request.id);
+        if (idx >= 0) {
+            this.identityUnlocks[idx] = request;
+        }
+        else {
+            this.identityUnlocks.push(request);
+        }
+        this.persistToDisk();
+        return request;
+    }
+    savePermanentUnlockLog(log) {
+        const idx = this.identityUnlockLogs.findIndex(l => l.logId === log.logId);
+        if (idx >= 0) {
+            this.identityUnlockLogs[idx] = log;
+        }
+        else {
+            this.identityUnlockLogs.unshift(log);
+        }
+        this.persistToDisk();
+        return log;
+    }
+    decideIdentityUnlockRequest(id, decision, remarks, signatureHash) {
+        const req = this.identityUnlocks.find(u => u.id === id);
         if (!req)
             return undefined;
-        if (!req.grantedBy.includes(grantedByUserName)) {
-            req.grantedBy.push(grantedByUserName);
-            req.thresholdGranted = req.grantedBy.length;
-            if (req.thresholdGranted >= req.thresholdRequired) {
-                req.status = 'Approved';
-            }
-            this.persistToDisk();
+        const timestampStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) +
+            ', ' +
+            new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        req.status = decision === 'Approved' ? 'Approved & Unlocked' : 'Rejected';
+        if (decision === 'Approved') {
+            req.unlockedDetails = {
+                realName: 'Anil Kumar S. Sharma (Principal Systems Engineer)',
+                aadhaarPanHash: '0x7782...A912 (Verified UIDAI Cryptographic Vault)',
+                addressMasked: 'Plot 104, Tech Park Enclave, Sector 4, Navi Mumbai',
+                phoneEncrypted: '+91 99*** **102 (Encrypted Channel #2)',
+                emergencyContact: 'Commandant R. Kulkarni (State Special Cyber Cell)',
+                unlockedAt: timestampStr,
+                unlockedByJudge: 'Hon. Presiding Magistrate (Bench 3)',
+                digitalSignature: signatureHash,
+                accessDurationWindow: '48 Hours (In-Camera Cross Examination Window)',
+            };
         }
+        // Append to Permanent Ledger Log
+        const newLog = {
+            logId: `LOG-UNLOCK-${String(this.identityUnlockLogs.length + 83).padStart(4, '0')}`,
+            requestId: req.id,
+            caseId: req.caseId,
+            witnessAlias: req.witnessAlias,
+            judgeName: 'Hon. Presiding Magistrate (Bench 3)',
+            judgeKeyId: 'BENCH-KEY-IND-003',
+            decision,
+            timestamp: timestampStr,
+            blockNumber: 89350 + this.identityUnlockLogs.length,
+            digitalSignatureHash: signatureHash,
+            legalJustificationSummary: remarks || req.statedLegalGrounds,
+        };
+        this.savePermanentUnlockLog(newLog);
+        this.persistToDisk();
+        return req;
+    }
+    addDirectiveToIdentityUnlockRequest(id, directive) {
+        const req = this.identityUnlocks.find(u => u.id === id);
+        if (!req)
+            return undefined;
+        req.directives.unshift(directive);
+        this.persistToDisk();
         return req;
     }
     // --- PRECEDENT FLAGS ---
@@ -648,7 +1847,15 @@ class PrimaryDataStore {
         this.persistToDisk();
         return flag;
     }
-<<<<<<< HEAD
+    attestModule(id) {
+        if (!this.attestedModules.includes(id)) {
+            this.attestedModules.push(id);
+            this.persistToDisk();
+        }
+    }
+    isModuleAttested(id) {
+        return this.attestedModules.includes(id);
+    }
     // --- LIVE AGGREGATE ANALYTICS COMPUTATION FROM DATABASE STORE ---
     getLiveZoneBenchmarkData() {
         const casesArr = Array.from(this.cases.values());
@@ -660,7 +1867,7 @@ class PrimaryDataStore {
             { key: 'Zone 4', name: 'Zone 4 (West Special Tribunal)', code: 'DIST-04' },
             { key: 'Zone 5', name: 'Zone 5 (Central Apex Appellate)', code: 'DIST-05' },
         ];
-        return zones.map((z, idx) => {
+        return zones.map((z) => {
             const zoneCases = casesArr.filter(c => c.jurisdictionCode?.includes(z.code) ||
                 c.location?.toLowerCase().includes(z.key.toLowerCase()) ||
                 (z.key === 'Zone 1' && (!c.jurisdictionCode || c.jurisdictionCode.includes('DIST-01'))));
@@ -671,14 +1878,16 @@ class PrimaryDataStore {
             zoneCases.forEach(c => {
                 const created = new Date(c.createdAt || c.date || Date.now()).getTime();
                 const updated = new Date(c.updatedAt || Date.now()).getTime();
-                const diffDays = Math.max(0.5, (updated - created) / (1000 * 60 * 60 * 24));
+                const diffDays = Math.max(0, (updated - created) / (1000 * 60 * 60 * 24));
                 totalDays += diffDays;
             });
-            const avgDays = incidents > 0 ? Number((totalDays / incidents).toFixed(1)) : Number((1.2 + idx * 0.2).toFixed(1));
-            const resolveRate = incidents > 0 ? Number(((resolvedCount / incidents) * 100).toFixed(1)) : Number((94.0 - idx * 1.5).toFixed(1));
+            const avgDays = incidents > 0 ? Number((totalDays / incidents).toFixed(1)) : 0;
+            const resolveRate = incidents > 0 ? Number(((resolvedCount / incidents) * 100).toFixed(1)) : 0;
             const zoneEvidence = evidenceArr.filter(e => zoneCases.some(c => c.id === e.caseId));
             const sealedEvidenceCount = zoneEvidence.filter(e => e.status === 'Sealed' || e.status === 'Verified').length;
-            const integrity = zoneEvidence.length > 0 ? Number(((sealedEvidenceCount / zoneEvidence.length) * 100).toFixed(2)) : Number((99.95 - idx * 0.03).toFixed(2));
+            const integrity = zoneEvidence.length > 0
+                ? Number(((sealedEvidenceCount / zoneEvidence.length) * 100).toFixed(2))
+                : (evidenceArr.length > 0 ? Number(((evidenceArr.filter(e => e.status === 'Sealed' || e.status === 'Verified').length / evidenceArr.length) * 100).toFixed(2)) : 100.0);
             return {
                 zone: z.name,
                 incidents,
@@ -708,13 +1917,13 @@ class PrimaryDataStore {
             benchCases.forEach(c => {
                 const created = new Date(c.createdAt || Date.now()).getTime();
                 const updated = new Date(c.updatedAt || Date.now()).getTime();
-                totalDays += Math.max(0.5, (updated - created) / (1000 * 60 * 60 * 24));
+                totalDays += Math.max(0, (updated - created) / (1000 * 60 * 60 * 24));
             });
-            const avgDispositionDays = benchCases.length > 0 ? Number((totalDays / benchCases.length).toFixed(1)) : 1.4;
+            const avgDispositionDays = benchCases.length > 0 ? Number((totalDays / benchCases.length).toFixed(1)) : 0;
             const resolved = benchCases.filter(c => c.status === 'Closed' || c.status === 'Sealed').length;
-            const efficiency = benchCases.length > 0 ? Number(((resolved / benchCases.length) * 100).toFixed(1)) : 95.1;
+            const efficiency = benchCases.length > 0 ? Number(((resolved / benchCases.length) * 100).toFixed(1)) : 0;
             const flaggedPrecedents = precedentArr.filter(p => benchCases.some(c => c.id === p.caseId) && p.status === 'Flagged').length;
-            const precedentAlign = benchCases.length > 0 ? Number((((benchCases.length - flaggedPrecedents) / benchCases.length) * 100).toFixed(1)) : 98.2;
+            const precedentAlign = benchCases.length > 0 ? Number((((benchCases.length - flaggedPrecedents) / benchCases.length) * 100).toFixed(1)) : 100.0;
             const assignedOfficer = benchCases.find(c => c.officer)?.officer || b.judge;
             return {
                 bench: b.name,
@@ -728,28 +1937,57 @@ class PrimaryDataStore {
     }
     getLiveDurationTrends() {
         const casesArr = Array.from(this.cases.values());
-        const periods = ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026'];
+        // Generate last 7 quarters dynamically from the current date
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentQuarter = Math.ceil((now.getMonth() + 1) / 3);
+        const periods = [];
+        for (let i = 6; i >= 0; i--) {
+            let q = currentQuarter - i;
+            let y = currentYear;
+            while (q <= 0) {
+                q += 4;
+                y -= 1;
+            }
+            periods.push(`Q${q} ${y}`);
+        }
         return periods.map((period, idx) => {
             const multiplier = 0.9 + (idx * 0.05);
             const z1 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-01')).length;
             const z2 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-02')).length;
             const z3 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-03')).length;
             const z4 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-04')).length;
+            // Compute per-case avg duration weighted by zone
+            const allAvgDays = casesArr.length > 0 ? (() => {
+                const total = casesArr.reduce((sum, c) => {
+                    const created = new Date(c.createdAt || c.date || Date.now()).getTime();
+                    const updated = new Date(c.updatedAt || Date.now()).getTime();
+                    return sum + Math.max(0.5, (updated - created) / (1000 * 60 * 60 * 24));
+                }, 0);
+                return total / casesArr.length;
+            })() : 1.4;
             return {
                 period,
-                zone1North: Number((Math.max(0.5, (z1 || 1) * 0.4 * multiplier)).toFixed(1)),
-                zone2South: Number((Math.max(0.6, (z2 || 1) * 0.5 * multiplier)).toFixed(1)),
-                zone3Cyber: Number((Math.max(0.4, (z3 || 1) * 0.3 * multiplier)).toFixed(1)),
-                zone4West: Number((Math.max(0.8, (z4 || 1) * 0.7 * multiplier)).toFixed(1)),
-                zone5Apex: Number((Math.max(0.3, 0.4 * multiplier)).toFixed(1)),
+                zone1North: Number((Math.max(0.5, (z1 > 0 ? allAvgDays * 0.85 : 1.2) * (0.9 + idx * 0.02))).toFixed(1)),
+                zone2South: Number((Math.max(0.6, (z2 > 0 ? allAvgDays * 1.1 : 1.7) * (0.9 + idx * 0.03))).toFixed(1)),
+                zone3Cyber: Number((Math.max(0.4, (z3 > 0 ? allAvgDays * 0.75 : 1.1) * (0.9 + idx * 0.01))).toFixed(1)),
+                zone4West: Number((Math.max(0.8, (z4 > 0 ? allAvgDays * 1.5 : 1.9) * (0.9 + idx * 0.08))).toFixed(1)),
+                zone5Apex: Number((Math.max(0.3, allAvgDays * 0.55 * (0.9 + idx * 0.01))).toFixed(1)),
             };
         });
     }
     getLiveAnomalyTrends() {
         const forgeryArr = this.forgeryReviews;
-        const months = ['May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026', 'Sep 2026', 'Oct 2026'];
+        const quarantinedCount = forgeryArr.filter(f => f.status === 'Quarantined' || f.status === 'Under Review').length;
+        // Generate last 6 months dynamically from current date
+        const now = new Date();
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const months = [];
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            months.push(`${monthNames[d.getMonth()]} ${d.getFullYear()}`);
+        }
         return months.map((month, idx) => {
-            const quarantinedCount = forgeryArr.filter(f => f.status === 'Quarantined' || f.status === 'Under Review').length;
             const baseAnomaly = 0.02 * (idx + 1);
             return {
                 month,
@@ -788,46 +2026,64 @@ class PrimaryDataStore {
     getLiveTimeSeriesVolume() {
         const evidenceArr = Array.from(this.evidence.values());
         const casesArr = Array.from(this.cases.values());
-        const dates = ['Mon, Oct 12', 'Tue, Oct 13', 'Wed, Oct 14', 'Thu, Oct 15', 'Fri, Oct 16', 'Sat, Oct 17', 'Sun, Oct 18'];
-        return dates.map((date, idx) => {
-            const dayEv = evidenceArr.filter(e => e.date?.includes(`Oct ${12 + idx}`)).length;
-            const dayCase = casesArr.filter(c => c.date?.includes(`Oct ${12 + idx}`)).length;
+        // Generate the last 7 actual days dynamically
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            days.push({
+                label: d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+                dateObj: d
+            });
+        }
+        return days.map(({ label, dateObj }) => {
+            // Count evidence submitted on this day
+            const dayEvidence = evidenceArr.filter(e => {
+                if (!e.date && !e.createdAt)
+                    return false;
+                const d = new Date(e.createdAt || e.date || '');
+                return d.toDateString() === dateObj.toDateString();
+            });
+            const dayTestimonies = dayEvidence.filter(e => e.type === 'Document' && e.id.startsWith('TM-')).length;
+            const dayDigital = dayEvidence.filter(e => !e.id.startsWith('TM-')).length;
+            const dayOrders = casesArr.filter(c => {
+                if (!c.createdAt && !c.date)
+                    return false;
+                const d = new Date(c.createdAt || c.date || '');
+                return d.toDateString() === dateObj.toDateString();
+            }).length;
             return {
-                date,
-                digitalEvidence: dayEv > 0 ? dayEv : 10 + idx * 5,
-                testimonies: dayCase > 0 ? dayCase * 2 : 5 + idx * 2,
-                judicialOrders: Math.max(1, dayCase),
-                integrityScore: 100.0 - (idx * 0.05)
+                date: label,
+                digitalEvidence: dayDigital,
+                testimonies: dayTestimonies,
+                judicialOrders: dayOrders,
+                integrityScore: 100.0
             };
         });
     }
     getLiveCaseCategories() {
         const casesArr = Array.from(this.cases.values());
         const total = casesArr.length || 1;
-        const categories = [
-            { name: 'Cyber Crime & Extortion', type: 'Cyber Crime', color: '#6366f1' },
-            { name: 'Financial & Corporate Fraud', type: 'Financial', color: '#3b82f6' },
-            { name: 'Narcotics & Contraband (NDPS)', type: 'Theft', color: '#10b981' },
-            { name: 'IPR & Commercial Contracts', type: 'Corporate', color: '#f59e0b' },
-            { name: 'Property & Land Disputes', type: 'Forgery', color: '#ec4899' },
-        ];
-        return categories.map(cat => {
-            const count = casesArr.filter(c => c.type === cat.type).length;
-            const value = Number(((count / total) * 100).toFixed(0));
-            return {
-                name: cat.name,
-                value: value > 0 ? value : 20,
-                count,
-                color: cat.color
-            };
+        // Dynamically generate categories from what's in the database
+        const typeCounts = {};
+        casesArr.forEach(c => {
+            const t = c.type || 'Other';
+            typeCounts[t] = (typeCounts[t] || 0) + 1;
         });
+        const colorPalette = ['#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444', '#14b8a6'];
+        return Object.entries(typeCounts).map(([type, count], idx) => ({
+            name: type,
+            value: Number(((count / total) * 100).toFixed(0)),
+            count,
+            color: colorPalette[idx % colorPalette.length]
+        }));
     }
     getLiveAnalyticalModules() {
         const casesArr = Array.from(this.cases.values());
         const evidenceArr = Array.from(this.evidence.values());
         const forgeryArr = this.forgeryReviews;
         const consensusArr = this.consensusRequests;
-        return [
+        const baseModules = [
             {
                 id: 'MOD-001',
                 title: 'Digital Evidence Ingestion & Sealing Velocity',
@@ -1024,8 +2280,19 @@ class PrimaryDataStore {
                 ]
             }
         ];
+        return baseModules.map(mod => {
+            const isAttested = this.isModuleAttested(mod.id);
+            if (isAttested) {
+                mod.statusBadge = 'Attested & Sealed on Ledger';
+                mod.badgeColor = 'bg-emerald-100 text-emerald-900 border-emerald-300';
+                mod.statutoryAuditLog.unshift({
+                    event: `Judicial Attestation Formally Signed & Block Sealed`,
+                    timestamp: 'Just now',
+                    hash: '0xSEAL_ATTEST_' + mod.id,
+                    status: 'Attested'
+                });
+            }
+        });
     }
-=======
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
 }
 export const primaryStore = new PrimaryDataStore();

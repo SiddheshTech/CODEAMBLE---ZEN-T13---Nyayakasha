@@ -17,7 +17,6 @@ analyticsRouter.get('/overview', (req, res) => {
     const forgery = primaryStore.getForgeryReviews();
     const duressAlerts = primaryStore.getDuressAlerts();
     const activeEscalationsCount = reports.filter(r => r.escalationStatus === 'Escalated').length;
-<<<<<<< HEAD
     const zoneBenchmarkData = primaryStore.getLiveZoneBenchmarkData();
     const courtBenchesVelocity = primaryStore.getLiveCourtBenchesVelocity();
     const durationTrends = primaryStore.getLiveDurationTrends();
@@ -34,8 +33,6 @@ analyticsRouter.get('/overview', (req, res) => {
     const smallestCohortN = cohortPrivacyAudit.length > 0 ? Math.min(...cohortPrivacyAudit.map(c => c.N)) : 50;
     const benchPatternMatch = evidence.length > 0 ? `${((evidence.filter(e => e.status === 'Sealed' || e.status === 'Verified').length / evidence.length) * 100).toFixed(1)}%` : '98.2%';
     const peakStatisticalDrift = `${forgery.length > 0 ? ((forgery.filter(f => f.status === 'Quarantined' || f.status === 'Under Review').length / Math.max(1, cases.length)) * 100).toFixed(1) : '0.0'}%`;
-=======
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
     return res.json({
         success: true,
         metrics: {
@@ -51,7 +48,6 @@ analyticsRouter.get('/overview', (req, res) => {
             networkLatencyMs: 18,
             ledgerIntegrity: auditLedger.verifyIntegrity() ? 'VERIFIED_VALID' : 'CORRUPTED',
             // Aggregate Analytics specific metrics
-<<<<<<< HEAD
             meanCaseDuration: `${avgDurationDays} Days`,
             cohortThresholdPassed: smallestCohortN >= 50,
             smallestCohortN,
@@ -69,17 +65,6 @@ analyticsRouter.get('/overview', (req, res) => {
         timeSeriesVolume,
         caseCategories,
         analyticalModules,
-=======
-            meanCaseDuration: '1.4 Days',
-            cohortThresholdPassed: true,
-            smallestCohortN: 312,
-            differentialPrivacyEpsilon: 0.5,
-            benchPatternMatch: '96.8%',
-            peakStatisticalDrift: '8.4%',
-            peakDriftZone: 'Zone 4 West Special Tribunal',
-            oversightEscalations: activeEscalationsCount
-        },
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
         reports
     });
 });
@@ -90,35 +75,41 @@ analyticsRouter.get('/overview', (req, res) => {
 analyticsRouter.get('/aggregate', (req, res) => {
     primaryStore.loadFromDisk();
     const reports = primaryStore.getAnalyticsReports();
+    const cases = primaryStore.getCases();
+    const evidence = primaryStore.getEvidence();
+    const consensus = primaryStore.getConsensusRequests();
+    const forgery = primaryStore.getForgeryReviews();
     const activeEscalationsCount = reports.filter(r => r.escalationStatus === 'Escalated').length;
-<<<<<<< HEAD
     const zoneBenchmarkData = primaryStore.getLiveZoneBenchmarkData();
     const courtBenchesVelocity = primaryStore.getLiveCourtBenchesVelocity();
     const durationTrends = primaryStore.getLiveDurationTrends();
     const anomalyTrends = primaryStore.getLiveAnomalyTrends();
     const cohortPrivacyAudit = primaryStore.getLiveCohortPrivacyAudit();
-=======
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
+    const avgDurationDays = cases.length > 0 ? (cases.reduce((sum, c) => {
+        const created = new Date(c.createdAt || c.date || Date.now()).getTime();
+        const updated = new Date(c.updatedAt || Date.now()).getTime();
+        return sum + Math.max(0, (updated - created) / (1000 * 60 * 60 * 24));
+    }, 0) / cases.length).toFixed(1) : '0.0';
+    const smallestCohortN = cohortPrivacyAudit.length > 0 ? Math.min(...cohortPrivacyAudit.map(c => c.N)) : 0;
+    const benchPatternMatch = evidence.length > 0 ? `${((evidence.filter(e => e.status === 'Sealed' || e.status === 'Verified').length / evidence.length) * 100).toFixed(1)}%` : '100.0%';
+    const peakStatisticalDrift = `${forgery.length > 0 ? ((forgery.filter(f => f.status === 'Quarantined' || f.status === 'Under Review').length / Math.max(1, cases.length)) * 100).toFixed(1) : '0.0'}%`;
     return res.json({
         success: true,
         metrics: {
-            meanCaseDuration: '1.4 Days',
-            cohortThresholdPassed: true,
-            smallestCohortN: 312,
+            meanCaseDuration: `${avgDurationDays} Days`,
+            cohortThresholdPassed: smallestCohortN >= 50,
+            smallestCohortN,
             differentialPrivacyEpsilon: 0.5,
-            benchPatternMatch: '96.8%',
-            peakStatisticalDrift: '8.4%',
-            peakDriftZone: 'Zone 4 West Special Tribunal',
+            benchPatternMatch,
+            peakStatisticalDrift,
+            peakDriftZone: forgery.length > 0 ? 'Zone 4 West Special Tribunal' : 'None',
             oversightEscalations: activeEscalationsCount
         },
-<<<<<<< HEAD
         zoneBenchmarkData,
         courtBenchesVelocity,
         durationTrends,
         anomalyTrends,
         cohortPrivacyAudit,
-=======
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
         reports
     });
 });
@@ -194,5 +185,35 @@ analyticsRouter.post('/reports/:id/escalate', (req, res) => {
         ticketId,
         message: `Formal Oversight Escalation Created: Ticket #${ticketId} routed to Independent Judicial Oversight Board`,
         report: updatedReport
+    });
+});
+/**
+ * POST /api/analytics/modules/attest
+ * Formally sign off on an aggregate analytics module as a Court Authority
+ */
+analyticsRouter.post('/modules/attest', (req, res) => {
+    const { moduleId, attestationNotes, judgePasskey } = req.body || {};
+    if (!moduleId || !judgePasskey) {
+        return res.status(400).json({
+            success: false,
+            message: 'Module ID and Judicial Private Signature Key Token are required.'
+        });
+    }
+    // Validate the bench key (simplified validation for MVP)
+    if (judgePasskey.trim() !== 'JUDGE-BENCH-KEY-2026-SECRET') {
+        return res.status(401).json({
+            success: false,
+            message: 'Invalid Cryptographic Key: The provided bench key could not be verified.'
+        });
+    }
+    // Record event to hash-chained audit ledger
+    auditLedger.recordEvent('JUDICIAL_ANALYTICS_ATTESTATION', 'Court Authority', {
+        moduleId,
+        attestationNotes: attestationNotes || 'No notes provided',
+        attestedBy: 'Hon. High Court Judge',
+    });
+    return res.json({
+        success: true,
+        message: `Judicial Aggregate Analytics Attestation officially signed & sealed to Judicial Ledger.`
     });
 });

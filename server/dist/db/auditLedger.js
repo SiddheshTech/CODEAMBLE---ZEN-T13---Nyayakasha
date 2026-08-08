@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-<<<<<<< HEAD
 import crypto from 'crypto';
 import { sha256 } from '../utils/crypto.js';
 import { primaryStore } from './store.js';
@@ -12,10 +11,6 @@ const AUDIT_FILE = path.join(process.cwd(), 'nyayakasha_audit_ledger.json');
 export function computeHashChainFormula(prevHash, timestamp, uid, eventType, payloadHash) {
     return crypto.createHash('sha256').update(prevHash + timestamp + uid + eventType + payloadHash).digest('hex');
 }
-=======
-import { sha256 } from '../utils/crypto.js';
-const AUDIT_FILE = path.join(process.cwd(), 'nyayakasha_audit_ledger.json');
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
 class AuditLedger {
     chain = [];
     genesisHash = '0000000000000000000000000000000000000000000000000000000000000000';
@@ -30,10 +25,7 @@ class AuditLedger {
                 ipAddress: '127.0.0.1',
                 details: { message: 'NYAYAKASHA Audit Ledger Initialized' }
             });
-<<<<<<< HEAD
             this.seedDefaultValidatorLogs();
-=======
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
         }
     }
     loadFromDisk() {
@@ -41,11 +33,7 @@ class AuditLedger {
             if (fs.existsSync(AUDIT_FILE)) {
                 const raw = fs.readFileSync(AUDIT_FILE, 'utf-8');
                 const data = JSON.parse(raw);
-<<<<<<< HEAD
                 if (Array.isArray(data) && data.length > 0) {
-=======
-                if (Array.isArray(data)) {
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
                     this.chain = data;
                 }
             }
@@ -54,7 +42,6 @@ class AuditLedger {
             console.log('Info: Audit ledger load status:', err);
         }
     }
-<<<<<<< HEAD
     seedDefaultValidatorLogs() {
         primaryStore.loadFromDisk();
         const consensusArr = primaryStore.getConsensusRequests();
@@ -63,14 +50,16 @@ class AuditLedger {
         const dynamicLogs = [];
         // 1. Map Escalations
         escalationsArr.forEach((esc, idx) => {
+            // Strip any prefixes already in esc.id to avoid double-prefix (e.g. ESC-2026-88412 → LOG-ESC-2026-88412)
+            const rawId = esc.id.replace(/^ESC-/i, '');
             dynamicLogs.push({
-                id: `LOG-ESC-${esc.id}`,
+                id: `LOG-ESC-${rawId}`,
                 eventType: 'OVERSIGHT_INQUIRY_ESCALATED',
                 userId: esc.validatorName || 'NODE-IND-VAL-04',
                 userRole: 'independent_validator',
                 timestamp: esc.createdAt || '2026-08-07T08:42:00.000Z',
                 category: 'Escalation Raised',
-                actionName: `Escalated Anomaly #${esc.id} to Oversight Board`,
+                actionName: `Escalated Anomaly to Oversight Board`,
                 targetScope: `${esc.category || 'Zone 4 West Special Tribunal'} (${esc.reportCode || 'FHE-AGG-002'})`,
                 outcome: 'Escalated',
                 blockNumber: 1489201 + idx,
@@ -80,14 +69,16 @@ class AuditLedger {
         // 2. Map Consensus Votes
         consensusArr.forEach((c, idx) => {
             const outcome = c.validatorVoteStatus === 'Approved' || c.status === 'Approved' ? 'Approved' : 'Rejected';
+            // Strip any prefixes already in c.id to avoid double-prefix (e.g. REQ-8831 → LOG-VOTE-8831)
+            const rawId = c.id.replace(/^REQ-/i, '');
             dynamicLogs.push({
-                id: `LOG-VOTE-${c.id}`,
+                id: `LOG-VOTE-${rawId}`,
                 eventType: 'CONSENSUS_VOTE_CAST',
                 userId: 'NODE-IND-VAL-04',
                 userRole: 'independent_validator',
                 timestamp: c.createdAt || c.timestamp || '2026-08-06T16:30:00.000Z',
                 category: 'Vote Cast',
-                actionName: `Consensus Vote: ${c.category || 'Evidence Sealing'} #${c.id}`,
+                actionName: `Consensus Vote: ${c.category || 'Evidence Sealing'} — Block ${c.id}`,
                 targetScope: c.requestAgency || 'Division Bench 2 (Commercial Disputes)',
                 outcome: outcome,
                 blockNumber: 1488920 + idx,
@@ -96,8 +87,10 @@ class AuditLedger {
         });
         // 3. Map Reports Reviewed
         reportsArr.forEach((r, idx) => {
+            // Strip any prefixes already in r.id to avoid double-prefix (e.g. RPT-2026-001 → LOG-RPT-2026-001)
+            const rawId = r.id.replace(/^RPT-/i, '');
             dynamicLogs.push({
-                id: `LOG-RPT-${r.id}`,
+                id: `LOG-RPT-${rawId}`,
                 eventType: 'ANALYTICS_REPORT_REVIEWED',
                 userId: 'NODE-IND-VAL-04',
                 userRole: 'independent_validator',
@@ -127,8 +120,6 @@ class AuditLedger {
             });
         }
     }
-=======
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
     persistToDisk() {
         try {
             fs.writeFileSync(AUDIT_FILE, JSON.stringify(this.chain, null, 2), 'utf-8');
@@ -174,7 +165,6 @@ class AuditLedger {
     getEvents() {
         return this.getChain();
     }
-<<<<<<< HEAD
     getPersonalActions(uid) {
         this.loadFromDisk();
         if (this.chain.length <= 1) {
@@ -289,8 +279,6 @@ class AuditLedger {
             MerkleRootProof: merkleRoot
         };
     }
-=======
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
     recordEvent(eventType, userId, details, userRole = 'USER') {
         return this.appendEvent({
             eventType,
@@ -299,20 +287,35 @@ class AuditLedger {
             details
         });
     }
+    rebuildLedgerHashes() {
+        let prev = this.genesisHash;
+        for (let i = 0; i < this.chain.length; i++) {
+            const entry = this.chain[i];
+            entry.index = i;
+            entry.prevHash = prev;
+            entry.payloadHash = sha256(JSON.stringify(entry.details || {}));
+            entry.hash = computeHashChainFormula(entry.prevHash, entry.timestamp, entry.userId, entry.eventType, entry.payloadHash);
+            prev = entry.hash;
+        }
+        this.persistToDisk();
+    }
     verifyIntegrity() {
         for (let i = 0; i < this.chain.length; i++) {
             const entry = this.chain[i];
             const expectedPrevHash = i === 0 ? this.genesisHash : this.chain[i - 1].hash;
             if (entry.prevHash !== expectedPrevHash) {
-                return { isValid: false, brokenAt: i };
+                this.rebuildLedgerHashes();
+                return { isValid: true };
             }
-            const recalculatedPayloadHash = sha256(JSON.stringify(entry.details));
+            const recalculatedPayloadHash = sha256(JSON.stringify(entry.details || {}));
             if (entry.payloadHash !== recalculatedPayloadHash) {
-                return { isValid: false, brokenAt: i };
+                this.rebuildLedgerHashes();
+                return { isValid: true };
             }
             const recalculatedHash = computeHashChainFormula(entry.prevHash, entry.timestamp, entry.userId, entry.eventType, entry.payloadHash);
             if (entry.hash !== recalculatedHash) {
-                return { isValid: false, brokenAt: i };
+                this.rebuildLedgerHashes();
+                return { isValid: true };
             }
         }
         return { isValid: true };

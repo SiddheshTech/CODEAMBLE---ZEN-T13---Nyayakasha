@@ -87,7 +87,7 @@ validatorRouter.get('/analytics/aggregate', async (req, res) => {
         const reports = primaryStore.getAnalyticsReports();
         // Minimum Cohort Guard: PostgreSQL HAVING COUNT(*) >= threshold simulation
         const minCohortThreshold = Number(req.query?.minCohort) || 50;
-        const smallestActiveCohortN = Math.min(...reports.map(r => r.cohortSize || 312));
+        const smallestActiveCohortN = Math.min(...reports.map((r) => r.cohortSize || 312));
         if (smallestActiveCohortN < minCohortThreshold) {
             return res.status(400).json({
                 success: false,
@@ -95,8 +95,7 @@ validatorRouter.get('/analytics/aggregate', async (req, res) => {
                 message: `Cohort size N (${smallestActiveCohortN}) is below minimum k >= ${minCohortThreshold} threshold. Homomorphic evaluation blocked to prevent privacy leakage.`
             });
         }
-        const activeEscalationsCount = reports.filter(r => r.escalationStatus === 'Escalated').length;
-<<<<<<< HEAD
+        const activeEscalationsCount = reports.filter((r) => r.escalationStatus === 'Escalated').length;
         const cases = primaryStore.getCases();
         const evidence = primaryStore.getEvidence();
         const forgery = primaryStore.getForgeryReviews();
@@ -122,17 +121,6 @@ validatorRouter.get('/analytics/aggregate', async (req, res) => {
                 differentialPrivacyEpsilon: 0.5,
                 benchPatternMatch,
                 peakStatisticalDrift,
-=======
-        return res.json({
-            success: true,
-            metrics: {
-                meanCaseDuration: '1.4 Days',
-                cohortThresholdPassed: true,
-                smallestCohortN: smallestActiveCohortN,
-                differentialPrivacyEpsilon: 0.5,
-                benchPatternMatch: '96.8%',
-                peakStatisticalDrift: '8.4%',
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
                 peakDriftZone: 'Zone 4 West Special Tribunal',
                 oversightEscalations: activeEscalationsCount
             },
@@ -150,14 +138,11 @@ validatorRouter.get('/analytics/aggregate', async (req, res) => {
                 shamirSchemeStatus: 'THRES_KEY_SHARE_HOLDING_VALID',
                 decryptionCapability: 'Homomorphic Ciphertext Evaluation Only (Plaintext Unmasked Access Prohibited)'
             },
-<<<<<<< HEAD
             zoneBenchmarkData,
             courtBenchesVelocity,
             durationTrends,
             anomalyTrends,
             cohortPrivacyAudit,
-=======
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
             reports
         });
     }

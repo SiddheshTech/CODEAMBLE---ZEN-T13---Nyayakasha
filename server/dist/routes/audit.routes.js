@@ -2,6 +2,24 @@ import { Router } from 'express';
 import { auditLedger } from '../db/auditLedger.js';
 export const auditRouter = Router();
 /**
+ * GET /api/audit-log
+ * Full tamper-proof audit log chain
+ */
+auditRouter.get('/', (req, res) => {
+    try {
+        const chain = auditLedger.getEvents();
+        return res.json({
+            success: true,
+            count: chain.length,
+            auditChain: chain,
+            ledgerIntegrity: auditLedger.verifyIntegrity()
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'SERVER_ERROR', message: error.message });
+    }
+});
+/**
  * GET /api/audit-log/mine
  * Personal actions filtered to validator UID (or all validator actions)
  */

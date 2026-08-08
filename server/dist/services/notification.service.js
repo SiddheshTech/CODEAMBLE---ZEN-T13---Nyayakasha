@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import nodemailer from 'nodemailer';
 import { auditLedger } from '../db/auditLedger.js';
 class NotificationService {
@@ -6,16 +8,17 @@ class NotificationService {
         this.initTransporter();
     }
     initTransporter() {
-        const user = process.env.GMAIL_USER || process.env.SMTP_USER || 'dummyacc8712@gmail.com';
-        const pass = process.env.GMAIL_APP_PASS || process.env.SMTP_PASS || 'fbeuiffqunadzyvq';
+        const user = process.env.SMTP_USER || process.env.GMAIL_USER || 'smirh2211@gmail.com';
+        const pass = process.env.SMTP_PASS || process.env.GMAIL_APP_PASS || 'dmnpyqkejgmxlgoy';
         const host = process.env.SMTP_HOST || 'smtp.gmail.com';
         const port = Number(process.env.SMTP_PORT) || 465;
         try {
             this.transporter = nodemailer.createTransport({
                 host,
                 port,
-                secure: true,
-                auth: { user, pass }
+                secure: port === 465,
+                auth: { user, pass },
+                tls: { rejectUnauthorized: false }
             });
             console.log(`📧 SMTP Transporter configured for ${user}`);
         }
@@ -33,16 +36,14 @@ class NotificationService {
             userRole: 'SYSTEM',
             details: { channel: 'EMAIL', recipient, subject }
         });
-        // Skip SMTP transmission for synthetic test domains to avoid Gmail bounce-back emails
-        const lowerRecipient = recipient.toLowerCase();
-        if (lowerRecipient.endsWith('@nyayakasha.gov.in') || lowerRecipient.endsWith('@example.com') || lowerRecipient.endsWith('@test.com')) {
-            console.log(`ℹ️  Simulated email dispatch for test domain: ${recipient}`);
-            return true;
+        if (!this.transporter) {
+            this.initTransporter();
         }
         if (this.transporter) {
             try {
                 const fromName = process.env.EMAIL_FROM_NAME || 'Nyayakasha Security System';
-                const fromAddr = process.env.SMTP_FROM || 'dummyacc8712@gmail.com';
+                const fromUser = process.env.SMTP_USER || process.env.GMAIL_USER || 'smirh2211@gmail.com';
+                const fromAddr = process.env.SMTP_FROM || fromUser;
                 await this.transporter.sendMail({
                     from: `"${fromName}" <${fromAddr}>`,
                     to: recipient,
@@ -58,10 +59,11 @@ class NotificationService {
                 return true;
             }
             catch (err) {
-                console.error('SMTP Email dispatch info:', err);
+                console.error(`⚠️ SMTP Email dispatch to ${recipient} failed:`, err?.message || err);
+                return false;
             }
         }
-        return true;
+        return false;
     }
     /**
      * Send SMS / OTP (Twilio)
@@ -78,13 +80,29 @@ class NotificationService {
     /**
      * Send FCM Push Notification (Firebase Cloud Messaging)
      */
-    async sendFCMPush(deviceToken, title, body) {
+    async sendFCMPush(deviceToken, title, body, data) {
         auditLedger.appendEvent({
             eventType: 'NOTIFICATION_DISPATCH',
             userId: 'DEVICE_TOKEN',
             userRole: 'SYSTEM',
             details: { channel: 'FCM_PUSH', deviceToken, title }
         });
+        try {
+            const { getMessaging } = await import('firebase-admin/messaging');
+            const { getApps } = await import('firebase-admin/app');
+            if (getApps().length > 0 && deviceToken) {
+                await getMessaging().send({
+                    token: deviceToken,
+                    notification: { title, body },
+                    data: data || {}
+                });
+                console.log(`🔥 Real Firebase FCM Push notification sent to token: ${deviceToken.slice(0, 10)}...`);
+                return true;
+            }
+        }
+        catch (err) {
+            console.log('Firebase FCM Push notification info:', err.message || err);
+        }
         return true;
     }
 }
