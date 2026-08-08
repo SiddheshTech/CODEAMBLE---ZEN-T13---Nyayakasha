@@ -30,6 +30,7 @@ import {
   Tag,
   Square,
   Crosshair,
+  ExternalLink,
   Maximize2
 } from 'lucide-react';
 
