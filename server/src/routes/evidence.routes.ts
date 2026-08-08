@@ -32,9 +32,10 @@ evidenceRouter.get('/:id/chain', (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Evidence exhibit not found' });
   }
 
-  // Generate audit chain from audit ledger
+  // Filter ONLY events directly linked to this specific exhibit ID
+  // We do NOT include all caseId events — that would bleed unrelated testimony/evidence into this chain
   const allEvents = auditLedger.getEvents();
-  const exhibitEvents = allEvents.filter(e => e.details?.exhibitId === item.id || e.details?.caseId === item.caseId);
+  const exhibitEvents = allEvents.filter(e => e.details?.exhibitId === item.id);
 
   return res.json({
     success: true,
@@ -372,6 +373,7 @@ evidenceRouter.post('/testimony/submit', async (req: Request, res: Response) => 
 
     // Record immutable audit event
     auditLedger.recordEvent('FIELD_TESTIMONY_SUBMITTED', 'FIELD_OFFICER', {
+      exhibitId: id,
       testimonyId: id,
       caseId,
       witnessAlias,
