@@ -20,6 +20,7 @@ import {
   Info,
   ShieldAlert
 } from 'lucide-react';
+import { api } from '../services/api';
 
 interface NotificationToggleState {
   consensus: { email: boolean; push: boolean };
@@ -78,53 +79,15 @@ export function SettingsTab({ role }: { role: string }) {
   };
 
   // 2. SESSION TIMEOUT & SECURITY
-  const [sessionTimeout] = useState<number>(15); // Fixed value
+  const [sessionTimeout, setSessionTimeout] = useState<number>(15);
 
   // Active Sessions Modal State
   const [showActiveSessionsModal, setShowActiveSessionsModal] = useState(false);
-  const [activeSessions, setActiveSessions] = useState<ActiveSession[]>([
-    {
-      id: 'sess-1',
-      deviceName: isValidator ? 'Validator Master Workstation (Oversight Enclave)' : 'High Court Bench Terminal (Main Chambers)',
-      deviceType: 'desktop',
-      ipAddress: '10.208.12.88',
-      location: 'Judicial Precinct, Mumbai',
-      lastActive: 'Active Now',
-      isCurrent: true,
-    },
-    {
-      id: 'sess-2',
-      deviceName: 'Chambers Secured Knox Tablet',
-      deviceType: 'tablet',
-      ipAddress: '192.168.1.104',
-      location: 'Judicial Chambers 402',
-      lastActive: '14 minutes ago',
-      isCurrent: false,
-    },
-    {
-      id: 'sess-3',
-      deviceName: 'Field Encrypted Mobile Terminal',
-      deviceType: 'mobile',
-      ipAddress: '172.16.44.88',
-      location: 'Zone 4 Cyber Precinct',
-      lastActive: '2 hours ago',
-      isCurrent: false,
-    },
-  ]);
-
-  const handleRevokeSession = (id: string) => {
-    setActiveSessions(prev => prev.filter(s => s.id !== id));
-    showToast('Session terminated and cryptographic token revoked.');
-  };
+  const [activeSessions, setActiveSessions] = useState<ActiveSession[]>([]);
 
   // Login History Modal State
   const [showLoginHistoryModal, setShowLoginHistoryModal] = useState(false);
-  const loginHistory: LoginRecord[] = [
-    { id: 'log-1', timestamp: 'Today, 09:15 AM', location: 'Fort, Mumbai', device: 'High Court Bench Terminal', ip: '10.202.4.12', status: 'Success' },
-    { id: 'log-2', timestamp: 'Yesterday, 04:30 PM', location: 'Chambers 402', device: 'Chambers Knox Tablet', ip: '192.168.1.104', status: 'Success' },
-    { id: 'log-3', timestamp: 'Aug 05, 2026, 08:12 PM', location: 'Unknown IP (Remote)', device: 'Unregistered Browser', ip: '182.72.102.11', status: 'Failed' },
-    { id: 'log-4', timestamp: 'Aug 04, 2026, 10:00 AM', location: 'Fort, Mumbai', device: 'High Court Bench Terminal', ip: '10.202.4.12', status: 'Success' },
-  ];
+  const [loginHistory, setLoginHistory] = useState<LoginRecord[]>([]);
 
   // 3. LANGUAGE & DISPLAY
   const [language, setLanguage] = useState<string>('en-IN');
@@ -133,18 +96,62 @@ export function SettingsTab({ role }: { role: string }) {
   // Bottom Save State
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const handleSaveChanges = () => {
+  // Fetch real settings, active sessions, and login history from backend database
+  React.useEffect(() => {
+    setIsLoadingSettings(true);
+    api.getSettings()
+      .then(data => {
+        if (data.success) {
+          if (data.settings) {
+            if (data.settings.notifications) setNotifications(data.settings.notifications);
+            if (data.settings.sessionTimeout) setSessionTimeout(data.settings.sessionTimeout);
+            if (data.settings.language) setLanguage(data.settings.language);
+            if (data.settings.themeMode) setThemeMode(data.settings.themeMode);
+          }
+          if (data.activeSessions) setActiveSessions(data.activeSessions);
+          if (data.loginHistory) setLoginHistory(data.loginHistory);
+        }
+      })
+      .catch(err => console.error('Error fetching settings:', err))
+      .finally(() => setIsLoadingSettings(false));
+  }, []);
+
+  const handleRevokeSession = async (id: string) => {
+    try {
+      await api.revokeSession(id);
+      setActiveSessions(prev => prev.filter(s => s.id !== id));
+      showToast('Session terminated and cryptographic token revoked.');
+    } catch (e: any) {
+      showToast('Failed to revoke session: ' + (e.message || 'Error'));
+    }
+  };
+
+  const handleSaveChanges = async () => {
     setIsSaving(true);
-    setTimeout(() => {
+    try {
+      const res = await api.updateSettings({
+        notifications,
+        sessionTimeout,
+        language,
+        themeMode
+      });
+      if (res.success) {
+        showToast('System settings and security preferences saved successfully.');
+      } else {
+        showToast(res.message || 'Failed to save settings');
+      }
+    } catch (err: any) {
+      showToast('Error saving settings: ' + (err.message || 'Error'));
+    } finally {
       setIsSaving(false);
-      showToast('System settings and security preferences saved successfully.');
-    }, 600);
+    }
   };
 
   return (
@@ -334,9 +341,17 @@ export function SettingsTab({ role }: { role: string }) {
                           Idle period before automatic session lock
                         </span>
                       </div>
-                      <div className="px-4 py-2 bg-slate-900 text-white rounded-xl font-mono font-bold text-xs shrink-0 flex items-center gap-2">
-                        <Lock className="w-3.5 h-3.5 text-amber-400" />
-                        <span>{sessionTimeout} Minutes</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <select
+                          value={sessionTimeout}
+                          onChange={(e) => setSessionTimeout(Number(e.target.value))}
+                          className="px-4 py-2 bg-slate-900 text-white rounded-xl font-mono font-bold text-xs outline-none focus:ring-2 focus:ring-amber-400 cursor-pointer"
+                        >
+                          <option value={15}>15 Minutes</option>
+                          <option value={30}>30 Minutes</option>
+                          <option value={60}>60 Minutes</option>
+                          <option value={120}>120 Minutes</option>
+                        </select>
                       </div>
                     </div>
 

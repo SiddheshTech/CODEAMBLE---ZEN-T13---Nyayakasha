@@ -20,6 +20,7 @@ import { auditRouter } from './routes/audit.routes.js';
 import { notificationsRouter } from './routes/notifications.routes.js';
 import { deviceRouter } from './routes/device.routes.js';
 import { profileRoutes } from './routes/profile.routes.js';
+import { settingsRoutes } from './routes/settings.routes.js';
 import { registerValidatorSocket } from './services/duress.service.js';
 
 const app = express();
@@ -52,6 +53,7 @@ app.use('/api/validator', validatorRouter);
 app.use('/api/audit-log', auditRouter);
 app.use('/api/notifications', notificationsRouter);
 app.use('/api/profile', profileRoutes);
+app.use('/api/settings', settingsRoutes);
 app.use('/api', healthRouter);
 
 // WebSocket Server for Silent Duress Event Bus to Independent Validator

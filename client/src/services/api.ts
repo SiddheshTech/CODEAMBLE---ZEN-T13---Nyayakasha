@@ -471,6 +471,25 @@ export const api = {
     });
   },
 
+  // --- INSTITUTIONAL SETTINGS ---
+  getSettings: async () => {
+    return fetchAPI('/settings', { method: 'GET' });
+  },
+
+  updateSettings: async (data: any) => {
+    return fetchAPI('/settings', {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+  },
+
+  revokeSession: async (sessionId: string) => {
+    return fetchAPI('/settings/revoke-session', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId })
+    });
+  },
+
   getHealth: async () => {
     return fetchAPI('/health', { method: 'GET' });
   }
