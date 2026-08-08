@@ -28,8 +28,8 @@ const server = http.createServer(app);
 // CORS setup
 app.use(cors({
   origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-latitude', 'x-longitude', 'x-jurisdiction-code', 'x-duress-session', 'X-Duress-Session', 'x-user-email']
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-latitude', 'x-longitude', 'x-jurisdiction-code', 'x-duress-session', 'X-Duress-Session', 'x-user-email', 'X-User-Email', 'x-user-role', 'X-User-Role', 'x-user-id', 'X-User-Id']
 }));
 
 app.use(express.json({ limit: '50mb' }));

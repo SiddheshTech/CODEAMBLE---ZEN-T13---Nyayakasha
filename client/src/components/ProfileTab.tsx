@@ -23,14 +23,14 @@ export function ProfileTab({ role }: { role: string }) {
     }
   })();
 
-  const officialName = profileData?.fullName || user?.fullName || user?.name || 'Authenticated User';
-  const officialEmail = profileData?.email || user?.email || 'user@nyayakasha.gov.in';
-
   // State
   const [profileData, setProfileData] = useState<any>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [copiedFingerprint, setCopiedFingerprint] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const officialName = profileData?.fullName || user?.fullName || user?.name || 'Authenticated User';
+  const officialEmail = profileData?.email || user?.email || 'user@nyayakasha.gov.in';
   
   // Request Change Modal State
   const [showRequestChangeModal, setShowRequestChangeModal] = useState(false);
