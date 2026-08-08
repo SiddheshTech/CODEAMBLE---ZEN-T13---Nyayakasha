@@ -61,6 +61,13 @@ const wss = new WebSocketServer({ server, path: '/ws/duress-bus' });
 wss.on('connection', (ws) => {
   registerValidatorSocket(ws);
 });
+wss.on('error', (err: any) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`ℹ️  WebSocket/HTTP Server port 5000 in use. Active instance running.`);
+  } else {
+    console.warn('WebSocket error:', err.message);
+  }
+});
 
 export function startServer(port = ENV.PORT) {
   if (!server.listening) {
@@ -71,13 +78,19 @@ export function startServer(port = ENV.PORT) {
         console.error('Server error:', err);
       }
     });
-    server.listen(port, () => {
-      console.log(`=======================================================`);
-      console.log(`🛡️  NYAYAKASHA Backend Authentication & Docket System Online`);
-      console.log(`🚀  HTTP API Server listening on port ${port}`);
-      console.log(`📡  WebSocket Duress Event Bus active at /ws/duress-bus`);
-      console.log(`=======================================================`);
-    });
+    try {
+      server.listen(port, () => {
+        console.log(`=======================================================`);
+        console.log(`🛡️  NYAYAKASHA Backend Authentication & Docket System Online`);
+        console.log(`🚀  HTTP API Server listening on port ${port}`);
+        console.log(`📡  WebSocket Duress Event Bus active at /ws/duress-bus`);
+        console.log(`=======================================================`);
+      });
+    } catch (err: any) {
+      if (err.code === 'EADDRINUSE') {
+        console.log(`ℹ️  Server port ${port} in use. Using active background instance.`);
+      }
+    }
   }
   return server;
 }
