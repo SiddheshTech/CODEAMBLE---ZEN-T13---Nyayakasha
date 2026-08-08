@@ -409,6 +409,10 @@ export const api = {
   },
 
   // --- AUDIT LOG & TAMPER-PROOF LEDGER ---
+  getAuditLog: async () => {
+    return fetchAPI('/audit-log', { method: 'GET' });
+  },
+
   getPersonalAuditLogs: async (uid?: string) => {
     const query = uid ? `?uid=${encodeURIComponent(uid)}` : '';
     return fetchAPI(`/audit-log/mine${query}`, { method: 'GET' });

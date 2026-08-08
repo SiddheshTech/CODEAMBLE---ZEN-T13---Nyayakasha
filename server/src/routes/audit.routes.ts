@@ -5,6 +5,24 @@ import { requireAuth, AuthenticatedRequest } from '../middleware/roleGuard.js';
 export const auditRouter = Router();
 
 /**
+ * GET /api/audit-log
+ * Full tamper-proof audit log chain
+ */
+auditRouter.get('/', (req: Request, res: Response) => {
+  try {
+    const chain = auditLedger.getEvents();
+    return res.json({
+      success: true,
+      count: chain.length,
+      auditChain: chain,
+      ledgerIntegrity: auditLedger.verifyIntegrity()
+    });
+  } catch (error: any) {
+    return res.status(500).json({ error: 'SERVER_ERROR', message: error.message });
+  }
+});
+
+/**
  * GET /api/audit-log/mine
  * Personal actions filtered to validator UID (or all validator actions)
  */

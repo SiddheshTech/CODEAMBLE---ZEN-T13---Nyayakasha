@@ -14,6 +14,18 @@ export function ProfileTab({ role }: { role: string }) {
   const isValidator = role === 'Independent Validator';
   const isCourtAuthority = role === 'Court Authority';
 
+  const user = (() => {
+    try {
+      const uStr = localStorage.getItem('nyayakasha_user');
+      return uStr ? JSON.parse(uStr) : null;
+    } catch (e) {
+      return null;
+    }
+  })();
+
+  const officialName = user?.fullName || user?.name || (isValidator ? 'Dr. Meera Vasudevan' : isCourtAuthority ? 'Hon. Justice Adv. A. Mehta' : 'Officer Rajesh Kulkarni');
+  const officialEmail = user?.email || (isValidator ? 'm.vasudevan@oversight.nyayakasha.gov.in' : isCourtAuthority ? 'a.mehta@highcourt.nyayakasha.gov.in' : 'r.kulkarni@nyayakasha.gov.in');
+
   // State
   const [profileData, setProfileData] = useState<any>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
@@ -66,11 +78,8 @@ export function ProfileTab({ role }: { role: string }) {
   };
 
   const handleDownloadCertificate = () => {
-    const certContent = `================================================================
-HIGH COURT JUDICIAL EVIDENCE & AUDIT NETWORK
-OFFICIAL INSTITUTIONAL VERIFICATION CERTIFICATE
+    const certContent = `NYAYAKASHA INSTITUTIONAL CREDENTIAL CERTIFICATE
 ================================================================
-
 CERTIFICATE ID: HC-CERT-2026-8891
 ISSUANCE DATE: ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
 SECURITY TIER: Tier-4 High-Value Evidence Access

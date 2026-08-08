@@ -34,22 +34,41 @@ export function AuditLogsTab({ role = 'Court Authority' }: { role?: string }) {
   const [anchorVerification, setAnchorVerification] = useState<any>(null);
 
   // Fetch Live Audit Log Chain & Validator Activity from Backend API
-  useEffect(() => {
+  const fetchAuditData = () => {
     api.getAuditLog()
       .then(res => {
         if (res.auditChain && Array.isArray(res.auditChain)) {
-          const mapped = res.auditChain.map((item: any) => ({
-            id: item.id || `LOG-${item.index}`,
-            action: item.eventType || 'System Event',
-            type: item.userRole === 'SYSTEM' ? 'system' : 'auth',
-            user: `${item.userId} (${item.userRole})`,
-            time: item.timestamp,
-            status: 'Success',
-            ip: item.ipAddress || '127.0.0.1',
-            hash: item.hash || '-',
-            details: JSON.stringify(item.details || {})
-          }));
-          setRealBackendLogs(mapped);
+          const mapped = res.auditChain.map((item: any) => {
+            const evt = item.eventType || 'System Event';
+            let categoryType = 'user';
+            if (item.userRole === 'SYSTEM' || evt.includes('SYSTEM') || evt.includes('INITIALIZATION')) {
+              categoryType = 'system';
+            } else if (evt.includes('AUTH') || evt.includes('LOGIN') || evt.includes('REGISTRATION') || evt.includes('MFA') || evt.includes('OTP')) {
+              categoryType = 'auth';
+            } else if (evt.includes('ACCESS') || evt.includes('CUSTODY') || evt.includes('TRANSFER') || evt.includes('VERIFY') || evt.includes('ANCHOR')) {
+              categoryType = 'access';
+            }
+
+            const formattedTime = item.timestamp ? (
+              item.timestamp.includes('T')
+                ? new Date(item.timestamp).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                : item.timestamp
+            ) : 'Recently';
+
+            return {
+              id: item.id || `LOG-${item.index}`,
+              action: evt.replace(/_/g, ' '),
+              type: categoryType,
+              user: `${item.userId || item.userRole || 'Officer'} (${item.userRole || 'User'})`,
+              time: formattedTime,
+              status: 'Success',
+              ip: item.ipAddress || '127.0.0.1',
+              hash: item.hash || '-',
+              details: typeof item.details === 'string' ? item.details : JSON.stringify(item.details || {}, null, 2)
+            };
+          });
+          // Reverse so most recent audit events appear at top
+          setRealBackendLogs(mapped.reverse());
         }
       })
       .catch(err => console.log('Audit log fetch info:', err.message));
@@ -81,6 +100,12 @@ export function AuditLogsTab({ role = 'Court Authority' }: { role?: string }) {
         }
       })
       .catch(err => console.log('System summary fetch info:', err.message));
+  };
+
+  useEffect(() => {
+    fetchAuditData();
+    const interval = setInterval(fetchAuditData, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // INDEPENDENT VALIDATOR STATE
