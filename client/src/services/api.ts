@@ -216,6 +216,13 @@ export const api = {
     return fetchAPI(`/evidence/${id}/chain`, { method: 'GET' });
   },
 
+  transferCustody: async (id: string, params: { targetCustodian: string; transferReason?: string; notes?: string; pin?: string }) => {
+    return fetchAPI(`/evidence/${id}/transfer`, {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  },
+
   submitEvidence: async (params: {
     caseId: string;
     title: string;

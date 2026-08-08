@@ -45,6 +45,74 @@ evidenceRouter.get('/:id/chain', (req: Request, res: Response) => {
   });
 });
 
+/**
+ * POST /api/evidence/:id/transfer
+ * Perform tamper-evident custody transfer of evidence exhibit with Polygon PoS blockchain anchoring
+ */
+evidenceRouter.post('/:id/transfer', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { targetCustodian, transferReason, notes, pin } = req.body;
+
+    const exhibit = primaryStore.getEvidenceById(id);
+    if (!exhibit) {
+      return res.status(404).json({ error: 'EVIDENCE_NOT_FOUND', message: 'Evidence exhibit not found.' });
+    }
+
+    if (!targetCustodian) {
+      return res.status(400).json({ error: 'MISSING_TARGET_CUSTODIAN', message: 'Target custodian is required.' });
+    }
+
+    // Update exhibit custodian & status in store
+    const previousCustodian = exhibit.custodian;
+    exhibit.custodian = targetCustodian;
+    exhibit.status = 'Transfer Pending';
+    exhibit.updatedAt = new Date().toISOString();
+    primaryStore.saveEvidence(exhibit);
+
+    // Anchor Custody Transfer Event on Polygon PoS Blockchain
+    const transferPayloadHash = crypto.createHash('sha256').update(`${id}:${previousCustodian}:${targetCustodian}:${Date.now()}`).digest('hex');
+    const anchorResult = await blockchainService.anchorEvidenceSubmission(
+      id,
+      transferPayloadHash,
+      exhibit.caseId,
+      targetCustodian,
+      {
+        title: `Custody Transfer - ${exhibit.title}`,
+        notes: `Transfer from ${previousCustodian} to ${targetCustodian}. Reason: ${transferReason || notes || 'Routine Forensics Handover'}`
+      }
+    );
+
+    // Record Immutable Audit Event
+    auditLedger.recordEvent('CUSTODY_TRANSFERRED', previousCustodian || 'FIELD_OFFICER', {
+      exhibitId: id,
+      caseId: exhibit.caseId,
+      previousCustodian,
+      newCustodian: targetCustodian,
+      reason: transferReason || notes || 'Routine Forensics Handover',
+      txHash: anchorResult.txHash,
+      blockNumber: anchorResult.blockNumber,
+      merkleRoot: anchorResult.merkleRoot,
+      immutabilityNotice: 'Custody transfer permanently recorded on Polygon PoS Blockchain.'
+    });
+
+    return res.status(200).json({
+      success: true,
+      exhibit,
+      previousCustodian,
+      newCustodian: targetCustodian,
+      blockchainAnchor: {
+        txHash: anchorResult.txHash,
+        blockNumber: anchorResult.blockNumber,
+        merkleRoot: anchorResult.merkleRoot,
+        status: 'CUSTODY_TRANSFER_ANCHORED_ON_POLYGON_POS'
+      }
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'TRANSFER_FAILED', message: err.message });
+  }
+});
+
 evidenceRouter.post('/submit', async (req: Request, res: Response) => {
   try {
     const {

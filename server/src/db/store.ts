@@ -76,10 +76,10 @@ export interface EvidenceRecord {
   id: string; // e.g. EV-8821
   caseId: string;
   title: string;
-  type: 'Video' | 'Document' | 'Photo' | 'Audio' | 'Digital Asset';
+  type: 'Video' | 'Document' | 'Photo' | 'Audio' | 'Digital Asset' | string;
   date: string;
   hash: string;
-  status: 'Sealed' | 'Pending Chain Transfer' | 'Verified' | 'Flagged';
+  status: 'Sealed' | 'Pending Chain Transfer' | 'Verified' | 'Flagged' | 'Transfer Pending' | 'In Transit' | string;
   fileUrl?: string;
   custodian?: string;
   incidentLocation?: string;
@@ -99,6 +99,7 @@ export interface EvidenceRecord {
   blockNumber?: number;
   merkleRoot?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface ConsensusVote {

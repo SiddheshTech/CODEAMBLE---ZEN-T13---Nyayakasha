@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, Filter, Link2, CheckCircle2, Camera, Shield, 
@@ -6,101 +6,106 @@ import {
   Lock, AlertTriangle, FileText, Download, QrCode,
   ChevronLeft, Fingerprint, Eye, X
 } from 'lucide-react';
-
-const MOCK_CUSTODY_ITEMS = [
-  {
-    id: 'EV-2026-8821',
-    caseId: 'FIR-2026-001',
-    title: 'CCTV Footage - Main Server Room',
-    type: 'Digital Asset',
-    currentCustodian: 'Officer R. Kulkarni',
-    status: 'In Transit',
-    lastUpdated: '10 mins ago',
-    hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
-  },
-  {
-    id: 'EV-2026-8822',
-    caseId: 'FIR-2026-001',
-    title: 'Server Access Logs (Encrypted)',
-    type: 'Document',
-    currentCustodian: 'Cyber Forensics Lab',
-    status: 'Secured',
-    lastUpdated: '2 hours ago',
-    hash: '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'
-  },
-  {
-    id: 'EV-2026-8823',
-    caseId: 'FIR-2026-003',
-    title: 'Tampered Network Switch',
-    type: 'Physical Evidence',
-    currentCustodian: 'Evidence Room A',
-    status: 'Archived',
-    lastUpdated: '1 day ago',
-    hash: '4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5'
-  },
-  {
-    id: 'EV-2026-8824',
-    caseId: 'FIR-2026-006',
-    title: 'Counterfeit Currency Batch',
-    type: 'Physical Evidence',
-    currentCustodian: 'Pending Acceptance',
-    status: 'Transfer Pending',
-    lastUpdated: 'Just now',
-    hash: '7d34dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1abc'
-  }
-];
-
-const MOCK_TIMELINE = [
-  {
-    time: "Oct 12, 2026 • 10:42 AM",
-    title: "Evidence Seized at Scene",
-    desc: "Digital asset acquired at Sector 4 Server Room. Initial hash generated and sealed on-device.",
-    actor: "Officer R. Kulkarni",
-    role: "Field Submitter",
-    icon: Camera,
-    status: "Verified",
-    hash: "e3b0c442...b855"
-  },
-  {
-    time: "Oct 12, 2026 • 11:15 AM",
-    title: "Transfer Initiated",
-    desc: "Officer R. Kulkarni requested transfer to Cyber Forensics Lab. Waiting for acceptance.",
-    actor: "Officer R. Kulkarni",
-    role: "Field Submitter",
-    icon: ArrowRight,
-    status: "Pending",
-    hash: "Signature Generated"
-  },
-  {
-    time: "Oct 12, 2026 • 11:30 AM",
-    title: "Handover Accepted via ZKP",
-    desc: "Dr. Mehta mathematically verified the asset hash and accepted custody. Ownership transferred.",
-    actor: "Dr. S. Mehta",
-    role: "Forensics Analyst",
-    icon: Link2,
-    status: "Verified",
-    hash: "ZKP Validated"
-  },
-  {
-    time: "Oct 12, 2026 • 02:30 PM",
-    title: "Analysis Completed & Logged",
-    desc: "Asset accessed for malware analysis. Read-only lock enforced during examination.",
-    actor: "Dr. S. Mehta",
-    role: "Forensics Analyst",
-    icon: CheckCircle2,
-    status: "Logged",
-    hash: "Audit ID: 9012"
-  }
-];
+import { api } from '../services/api';
 
 export function ChainOfCustodyTab() {
+  const [custodyItems, setCustodyItems] = useState<any[]>([]);
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [transferRecipient, setTransferRecipient] = useState('Dr. S. Mehta (Cyber Forensics)');
+  const [transferNotes, setTransferNotes] = useState('');
+  const [transferPin, setTransferPin] = useState('');
+  const [isTransferring, setIsTransferring] = useState(false);
+  const [timeline, setTimeline] = useState<any[]>([]);
 
-  const handleTransferSubmit = (e: React.FormEvent) => {
+  const fetchCustodyData = async () => {
+    try {
+      const res = await api.getEvidence();
+      if (res && res.evidence) {
+        setCustodyItems(res.evidence.map((e: any) => ({
+          id: e.id,
+          caseId: e.caseId || 'FIR-2026-001',
+          title: e.title,
+          type: e.type === 'Document' ? 'Document' : e.type === 'Video' ? 'Digital Asset' : 'Physical Evidence',
+          currentCustodian: e.custodian || 'Officer R. Kulkarni',
+          status: e.status === 'Sealed' ? 'Secured' : e.status || 'Secured',
+          lastUpdated: e.date || 'Recently',
+          hash: e.hash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+          txHash: e.txHash,
+          blockNumber: e.blockNumber,
+          merkleRoot: e.merkleRoot,
+          fileUrl: e.fileUrl,
+          dataUrl: e.dataUrl,
+          evidenceNotes: e.evidenceNotes,
+          witnessName: e.witnessName
+        })));
+      }
+    } catch (err) {
+      console.error("Custody API fetch error:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustodyData();
+  }, []);
+
+  useEffect(() => {
+    if (selectedItem) {
+      api.getEvidenceChain(selectedItem.id).then(res => {
+        if (res && res.chainOfCustody && res.chainOfCustody.length > 0) {
+          setTimeline(res.chainOfCustody.map((event: any) => ({
+            time: new Date(event.timestamp).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+            title: event.eventType.replace(/_/g, ' '),
+            desc: event.details?.immutabilityNotice || event.details?.notes || `Action executed by ${event.actorRole || 'Field Submitter'}`,
+            actor: event.actorRole || 'Officer R. Kulkarni',
+            role: 'Custodian / Officer',
+            icon: CheckCircle2,
+            status: 'Verified',
+            hash: event.blockHash ? event.blockHash.slice(0, 14) + '...' : 'Polygon PoS Block'
+          })));
+        } else {
+          setTimeline([
+            {
+              time: selectedItem.lastUpdated || "Oct 12, 2026 • 10:42 AM",
+              title: "Evidence Seized at Scene",
+              desc: selectedItem.evidenceNotes || "Digital asset acquired. Hash generated and immutably anchored on Polygon PoS Blockchain.",
+              actor: selectedItem.currentCustodian || "Officer R. Kulkarni",
+              role: "Field Submitter",
+              icon: Camera,
+              status: "Verified",
+              hash: selectedItem.hash ? selectedItem.hash.slice(0, 16) + '...' : '0xe3b0...b855'
+            }
+          ]);
+        }
+      }).catch(err => {
+        console.error("Chain fetch error:", err);
+      });
+    }
+  }, [selectedItem]);
+
+  const handleTransferSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsTransferModalOpen(false);
+    if (!selectedItem) return;
+    setIsTransferring(true);
+
+    try {
+      await api.transferCustody(selectedItem.id, {
+        targetCustodian: transferRecipient,
+        transferReason: transferNotes,
+        pin: transferPin
+      });
+
+      setIsTransferModalOpen(false);
+      setTransferNotes('');
+      setTransferPin('');
+      fetchCustodyData();
+      setSelectedItem((prev: any) => prev ? { ...prev, currentCustodian: transferRecipient, status: 'Transfer Pending' } : null);
+    } catch (err) {
+      console.error("Transfer error:", err);
+    } finally {
+      setIsTransferring(false);
+    }
   };
 
   if (selectedItem) {
@@ -191,10 +196,10 @@ export function ChainOfCustodyTab() {
               </div>
 
               <div className="relative pl-6 border-l-2 border-black/5 space-y-8">
-                {MOCK_TIMELINE.map((step, idx) => (
+                {timeline.map((step, idx) => (
                   <div key={idx} className="relative">
                     <div className="absolute -left-[35px] w-8 h-8 rounded-full bg-white border-2 border-black/10 flex items-center justify-center z-10">
-                      <step.icon className="w-4 h-4 text-black/60" />
+                      {step.icon ? <step.icon className="w-4 h-4 text-black/60" /> : <CheckCircle2 className="w-4 h-4 text-black/60" />}
                     </div>
                     <div className="bg-[#F5F5F5] rounded-2xl p-5 border border-black/5 hover:border-black/10 transition-colors">
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3 gap-2">
@@ -253,11 +258,16 @@ export function ChainOfCustodyTab() {
               <form onSubmit={handleTransferSubmit} className="p-6 space-y-6">
                 <div>
                   <label className="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2">Select Recipient</label>
-                  <select className="w-full px-4 py-3 bg-[#F5F5F5] border border-transparent rounded-xl text-sm font-medium outline-none focus:bg-white focus:border-purple-300 focus:ring-4 focus:ring-purple-50">
+                  <select 
+                    value={transferRecipient}
+                    onChange={(e) => setTransferRecipient(e.target.value)}
+                    className="w-full px-4 py-3 bg-[#F5F5F5] border border-transparent rounded-xl text-sm font-medium outline-none focus:bg-white focus:border-purple-300 focus:ring-4 focus:ring-purple-50"
+                  >
                     <option>Dr. S. Mehta (Cyber Forensics)</option>
                     <option>Inspector S. Patel (Homicide)</option>
                     <option>Evidence Room B (Sector 4)</option>
-                    <option>Central Archives</option>
+                    <option>Central Archives Locker</option>
+                    <option>High Court Vault</option>
                   </select>
                 </div>
 
@@ -265,6 +275,8 @@ export function ChainOfCustodyTab() {
                   <label className="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2">Transfer Reason / Remarks</label>
                   <textarea 
                     rows={3} 
+                    value={transferNotes}
+                    onChange={(e) => setTransferNotes(e.target.value)}
                     className="w-full px-4 py-3 bg-[#F5F5F5] border border-transparent rounded-xl text-sm font-medium outline-none focus:bg-white focus:border-purple-300 focus:ring-4 focus:ring-purple-50 resize-none"
                     placeholder="Provide context for this transfer..."
                   ></textarea>
@@ -282,9 +294,9 @@ export function ChainOfCustodyTab() {
                   <button type="button" onClick={() => setIsTransferModalOpen(false)} className="px-5 py-2.5 rounded-xl font-bold text-sm text-black hover:bg-black/5 transition-colors">
                     Cancel
                   </button>
-                  <button type="submit" className="px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-black hover:bg-black/80 shadow-lg flex items-center gap-2">
+                  <button type="submit" disabled={isTransferring} className="px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-black hover:bg-black/80 shadow-lg flex items-center gap-2 disabled:opacity-50">
                     <QrCode className="w-4 h-4" />
-                    Generate Handover QR
+                    {isTransferring ? 'Initiating Transfer...' : 'Generate Handover QR'}
                   </button>
                 </div>
               </form>
@@ -294,6 +306,12 @@ export function ChainOfCustodyTab() {
       </motion.div>
     );
   }
+
+  const filteredItems = custodyItems.filter(item => 
+    item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.currentCustodian.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <motion.div
@@ -332,19 +350,19 @@ export function ChainOfCustodyTab() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-black/5 p-4 rounded-2xl border border-black/5">
             <p className="text-[10px] uppercase font-bold text-black/50 mb-1">Total Active Tracking</p>
-            <p className="text-2xl font-bold text-black">142</p>
+            <p className="text-2xl font-bold text-black">{custodyItems.length}</p>
           </div>
           <div className="bg-purple-50 p-4 rounded-2xl border border-purple-100">
             <p className="text-[10px] uppercase font-bold text-purple-600/70 mb-1">In Transit</p>
-            <p className="text-2xl font-bold text-purple-700">8</p>
+            <p className="text-2xl font-bold text-purple-700">{custodyItems.filter(i => i.status === 'In Transit').length}</p>
           </div>
           <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100">
             <p className="text-[10px] uppercase font-bold text-amber-600/70 mb-1">Pending Transfer</p>
-            <p className="text-2xl font-bold text-amber-700">12</p>
+            <p className="text-2xl font-bold text-amber-700">{custodyItems.filter(i => i.status === 'Transfer Pending' || i.status === 'Pending Chain Transfer' || i.status === 'Pending').length}</p>
           </div>
           <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
             <p className="text-[10px] uppercase font-bold text-emerald-600/70 mb-1">Secured in Labs</p>
-            <p className="text-2xl font-bold text-emerald-700">122</p>
+            <p className="text-2xl font-bold text-emerald-700">{custodyItems.filter(i => i.status === 'Secured' || i.status === 'Sealed' || i.status === 'Verified' || i.status === 'Archived').length}</p>
           </div>
         </div>
 
@@ -361,7 +379,7 @@ export function ChainOfCustodyTab() {
               </tr>
             </thead>
             <tbody className="divide-y divide-black/5">
-              {MOCK_CUSTODY_ITEMS.map((item, idx) => (
+              {filteredItems.map((item, idx) => (
                 <tr key={idx} className="hover:bg-black/[0.02] transition-colors group cursor-pointer" onClick={() => setSelectedItem(item)}>
                   <td className="py-4 px-4">
                     <div className="font-bold text-sm text-black mb-0.5">{item.title}</div>
