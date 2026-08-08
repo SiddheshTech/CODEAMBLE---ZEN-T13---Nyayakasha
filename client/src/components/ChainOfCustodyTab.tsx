@@ -18,6 +18,8 @@ export function ChainOfCustodyTab() {
   const [transferPin, setTransferPin] = useState('');
   const [isTransferring, setIsTransferring] = useState(false);
   const [timeline, setTimeline] = useState<any[]>([]);
+  const userRole = localStorage.getItem('nyayakasha_user_role') || 'field_submitter';
+  const canViewRawPayload = userRole === 'court_authority' || userRole === 'independent_validator';
 
   const fetchCustodyData = async () => {
     try {
@@ -219,13 +221,23 @@ export function ChainOfCustodyTab() {
                 </div>
               </div>
 
-              {/* Raw Image Payload Preview if available */}
+              {/* Raw Image Payload — Access restricted by role */}
               {(selectedItem.fileUrl || selectedItem.dataUrl) && (
                 <div className="space-y-2 pt-3 border-t border-black/5">
                   <p className="text-[10px] uppercase tracking-wider text-black/50 font-bold">Captured Raw Payload</p>
-                  <div className="rounded-xl overflow-hidden border border-black/10 max-h-44 bg-black flex items-center justify-center">
-                    <img src={selectedItem.fileUrl || selectedItem.dataUrl} alt={selectedItem.title} className="max-h-44 object-contain w-full" />
-                  </div>
+                  {canViewRawPayload ? (
+                    <div className="rounded-xl overflow-hidden border border-black/10 max-h-44 bg-black flex items-center justify-center">
+                      <img src={selectedItem.fileUrl || selectedItem.dataUrl} alt={selectedItem.title} className="max-h-44 object-contain w-full" />
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-red-200 bg-red-50 p-4 flex flex-col items-center gap-2 text-center">
+                      <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                        <Lock className="w-5 h-5 text-red-600" />
+                      </div>
+                      <p className="text-xs font-bold text-red-700">Access Denied — Section 65B Sealed</p>
+                      <p className="text-[10px] text-red-500 leading-relaxed">Raw evidence payload is sealed under Section 65B of the Indian Evidence Act. Only Court Authority or Independent Validator may view raw media.</p>
+                    </div>
+                  )}
                 </div>
               )}
 
