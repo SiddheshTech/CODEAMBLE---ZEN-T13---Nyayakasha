@@ -790,7 +790,12 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
                   </div>
 
                   {/* Top Status Badges */}
-                  <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
+                  <div className="absolute top-4 inset-x-4 flex items-center justify-between pointer-events-none">
+                    <div className="px-3.5 py-1.5 rounded-xl bg-black/80 text-emerald-400 text-xs font-mono font-bold shadow-md flex items-center gap-2 backdrop-blur-md border border-white/20">
+                      <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                      <span>GPS: {gpsLocation.lat}, {gpsLocation.lng}</span>
+                    </div>
+
                     {isHashing ? (
                       <div className="px-3 py-1.5 rounded-lg bg-black/80 text-white text-xs font-bold shadow-md flex items-center gap-2 backdrop-blur-md border border-white/10">
                         <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -818,6 +823,48 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
                   )}
                 </div>
               )}
+
+              {/* Live Field Geolocation Tracked Banner */}
+              <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                    <MapPin className="w-5 h-5 animate-pulse" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Live Field Location (Tracked)</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 font-mono border border-emerald-500/30">
+                        {gpsLocation.accuracy}
+                      </span>
+                    </div>
+                    <p className="text-sm font-bold font-mono text-white mt-0.5">
+                      {gpsLocation.lat}, {gpsLocation.lng} • {gpsLocation.zone}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={fetchRealGPSLocation}
+                    disabled={isLocating}
+                    className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all flex items-center gap-1.5 border border-white/15 active:scale-95"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isLocating ? 'animate-spin' : ''}`} />
+                    <span>{isLocating ? 'Acquiring...' : 'Re-track GPS'}</span>
+                  </button>
+
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(gpsLocation.lat.replace(/[^0-9.]/g, '') + ',' + gpsLocation.lng.replace(/[^0-9.]/g, ''))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-purple-600/30"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Open Maps</span>
+                  </a>
+                </div>
+              </div>
             </div>
           )}
 
