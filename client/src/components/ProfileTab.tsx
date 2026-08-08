@@ -12,6 +12,18 @@ export function ProfileTab({ role }: { role: string }) {
   const isValidator = role === 'Independent Validator';
   const isCourtAuthority = role === 'Court Authority';
 
+  const user = (() => {
+    try {
+      const uStr = localStorage.getItem('nyayakasha_user');
+      return uStr ? JSON.parse(uStr) : null;
+    } catch (e) {
+      return null;
+    }
+  })();
+
+  const officialName = user?.fullName || user?.name || (isValidator ? 'Dr. Meera Vasudevan' : isCourtAuthority ? 'Hon. Justice Adv. A. Mehta' : 'Officer Rajesh Kulkarni');
+  const officialEmail = user?.email || (isValidator ? 'm.vasudevan@oversight.nyayakasha.gov.in' : isCourtAuthority ? 'a.mehta@highcourt.nyayakasha.gov.in' : 'r.kulkarni@nyayakasha.gov.in');
+
   // State
   const [copiedFingerprint, setCopiedFingerprint] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -48,23 +60,20 @@ export function ProfileTab({ role }: { role: string }) {
   };
 
   const handleDownloadCertificate = () => {
-    const certContent = `================================================================
-HIGH COURT JUDICIAL EVIDENCE & AUDIT NETWORK
-OFFICIAL INSTITUTIONAL VERIFICATION CERTIFICATE
+    const certContent = `NYAYAKASHA INSTITUTIONAL CREDENTIAL CERTIFICATE
 ================================================================
-
 CERTIFICATE ID: HC-CERT-2026-8891
 ISSUANCE DATE: ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
 SECURITY TIER: Tier-4 High-Value Evidence Access
 
 SUBJECT DETAILS:
 ----------------------------------------------------------------
-Official Name:    ${isValidator ? 'Dr. Meera Vasudevan' : isCourtAuthority ? 'Hon. Justice Adv. A. Mehta' : 'Officer Rajesh Kulkarni'}
+Official Name:    ${officialName}
 Institutional Role: ${role}
 Organization:     ${isValidator ? 'Independent Judicial Oversight Board' : isCourtAuthority ? 'Division Bench 3, High Court of Judicature' : 'Zone 4 Cyber Crime Division'}
 Identifier:       ${isValidator ? 'OVP-VAL-2026-004' : isCourtAuthority ? 'HC-JUD-2026-0892' : 'MH-POL-29384'}
 Bar Membership:   ${isValidator ? 'BCM-MH-2012/88421' : isCourtAuthority ? 'BCM-MH-1998/1042' : 'POL-MH-2015/4921'}
-Official Email:   ${isValidator ? 'm.vasudevan@oversight.nyayakasha.gov.in' : isCourtAuthority ? 'a.mehta@highcourt.nyayakasha.gov.in' : 'r.kulkarni@nyayakasha.gov.in'}
+Official Email:   ${officialEmail}
 
 CRYPTOGRAPHIC ATTESTATION:
 ----------------------------------------------------------------
@@ -155,7 +164,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                  {isValidator ? 'Dr. Meera Vasudevan' : isCourtAuthority ? 'Hon. Justice Adv. A. Mehta' : 'Officer Rajesh Kulkarni'}
+                  {officialName}
                 </h1>
                 <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Institutionally Verified
@@ -254,7 +263,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
             <div className="relative">
               <input 
                 type="text" 
-                value={isValidator ? 'Dr. Meera Vasudevan' : isCourtAuthority ? 'Hon. Justice Adv. A. Mehta' : 'Officer Rajesh Kulkarni'} 
+                value={officialName} 
                 disabled
                 className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl text-slate-900 text-xs font-bold cursor-not-allowed"
               />
@@ -270,7 +279,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
             <div className="relative">
               <input 
                 type="text" 
-                value={isValidator ? 'm.vasudevan@oversight.nyayakasha.gov.in' : isCourtAuthority ? 'a.mehta@highcourt.nyayakasha.gov.in' : 'r.kulkarni@nyayakasha.gov.in'} 
+                value={officialEmail} 
                 disabled
                 className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl text-slate-900 text-xs font-bold cursor-not-allowed"
               />

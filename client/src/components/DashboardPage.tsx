@@ -274,7 +274,10 @@ export function DashboardPage({
     duration = 3000
   ) => {
     const id = Math.random().toString(36).substring(2, 9);
-    setToasts((prev) => [...prev, { id, message, type }]);
+    setToasts((prev) => {
+      if (prev.some((t) => t.message === message)) return prev;
+      return [{ id, message, type }];
+    });
 
     if (duration > 0) {
       setTimeout(() => {
@@ -314,10 +317,6 @@ export function DashboardPage({
   };
 
   useEffect(() => {
-    const userTitle = role === 'Independent Validator' ? 'Adv. S. Sen (Independent Validator • Strict 15m Timeout)' :
-                      role === 'Court Authority' ? 'Hon. Justice Mehta (Court Authority • 15m Timeout)' :
-                      'Officer R. Kulkarni (Field Submitter • 30m Timeout)';
-    addToast(`Signed in as ${userTitle}`, 'info');
     resetTimers();
 
     const events = [
