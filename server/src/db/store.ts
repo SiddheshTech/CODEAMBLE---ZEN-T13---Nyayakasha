@@ -55,15 +55,6 @@ export interface DuressAlert {
 }
 
 
-
-export interface AnalyticsReportRecord {
-  id: string;
-  title: string;
-  privacyType: string;
-  status: string;
-  createdAt: string;
-}
-
 export interface ValidatorActivityLogRecord {
   id: string;
   action: string;
@@ -122,18 +113,63 @@ export interface ConsensusVote {
 
 export interface ConsensusRequest {
   id: string;
-  // Case Consensus fields
+  caseRef?: string;
   caseId?: string;
   caseTitle?: string;
+  title?: string;
+  category?: 'Metadata Correction' | 'Record Sealing' | 'Evidence Deletion' | 'Section 65B Re-hash' | 'Custody Handover';
+  changeTypeLabel?: string;
+  requestedBy?: string;
+  requestAgency?: string;
+  timestamp?: string;
+  status?: 'Awaiting your vote' | 'Awaiting validator' | 'Flagged suspicious' | 'Approved' | 'Rejected' | 'Pending' | 'Flagged Forgery';
+  
+  courtAuthorityVoteStatus?: 'Approved' | 'Pending' | 'Rejected';
+  validatorVoteStatus?: 'Approved' | 'Pending' | 'Rejected';
+  reasonForRequest?: string;
+
+  systemFlagIndicator?: {
+    isFlagged: boolean;
+    flagType: string;
+    title: string;
+    description: string;
+  } | null;
+
+  thresholdRequired?: '2 of 2' | '2 of 3';
+  currentApprovalCount?: number;
+  totalRequiredCount?: number;
+
+  yourVote?: 'pending' | 'approved' | 'rejected';
+  validatorVote?: 'pending' | 'approved' | 'rejected';
+  auditorVote?: 'pending' | 'approved' | 'rejected' | 'n/a';
+
+  riskScore?: number;
+  description?: string;
+  impactSummary?: string;
+
+  targetRecordHash?: string;
+  proposedRecordHash?: string;
+  previousBlockHash?: string;
+  merkleRoot?: string;
+  blockNumber?: number;
+
+  nodeVotes?: any[];
+  fieldDiffs?: any[];
+  custodyLogs?: any[];
+  precedents?: any[];
+  directives?: any[];
+
+  judicialDecision?: any;
+  validatorJustificationNote?: string;
+
+  // Case & Block fields
   exhibitId?: string;
   exhibitTitle?: string;
   submittedBy?: string;
   requiredVotes?: number;
   currentVotes?: number;
-  status?: 'Pending' | 'Approved' | 'Rejected' | 'Flagged Forgery';
   votes?: ConsensusVote[];
 
-  // Validator Block Consensus fields
   queue?: string;
   waitTimeHours?: number;
   waitTimeFormatted?: string;
@@ -143,13 +179,11 @@ export interface ConsensusRequest {
   badgeColor?: string;
   quorumSigned?: number;
   quorumTotal?: number;
-  merkleRoot?: string;
   zkProofType?: string;
   entropyScore?: string;
   cryptographicDetails?: string;
   signedBy?: Record<string, string>;
   txHash?: string;
-  blockNumber?: number;
 
   createdAt: string;
 }
@@ -198,6 +232,46 @@ export interface PrecedentFlagItem {
   resolvedAt?: string;
 }
 
+export interface AnalyticsReportRecord {
+  id: string;
+  reportCode?: string;
+  title: string;
+  courtScope?: string;
+  benchScope?: string;
+  cohortSize?: number;
+  minCohortThreshold?: number;
+  differentialPrivacyEpsilon?: number;
+  isKAnonymityValid?: boolean;
+  caseDurationAvgDays?: number;
+  caseDurationBaselineDays?: number;
+  precedentVarianceScore?: number;
+  anomalyScore?: number;
+  anomalySeverity?: 'Low' | 'Medium' | 'Critical';
+  summaryDescription?: string;
+  encryptionAlgorithm?: string;
+  escalationStatus?: 'None' | 'Escalated';
+  escalationTicketId?: string;
+  escalationDate?: string;
+  escalationRationale?: string;
+  escalationCategory?: string;
+  status?: string;
+  privacyType?: string;
+  createdAt: string;
+}
+
+export interface OversightEscalationRecord {
+  id: string;
+  ticketId: string;
+  reportId: string;
+  reportCode: string;
+  title: string;
+  category: string;
+  rationale: string;
+  validatorName: string;
+  status: 'ROUTED_TO_OVERSIGHT_ENCLAVE' | 'UNDER_ENCLAVE_INSPECTION' | 'RESOLVED';
+  createdAt: string;
+}
+
 import fs from 'fs';
 import path from 'path';
 import { getFirestore } from './firebase.js';
@@ -216,6 +290,7 @@ class PrimaryDataStore {
   private identityUnlocks: IdentityUnlockRequest[] = [];
   private precedentFlags: PrecedentFlagItem[] = [];
   private analyticsReports: AnalyticsReportRecord[] = [];
+  private oversightEscalations: OversightEscalationRecord[] = [];
   private validatorActivityLogs: ValidatorActivityLogRecord[] = [];
 
   constructor() {
@@ -245,42 +320,8 @@ class PrimaryDataStore {
     ];
     defaultEvidence.forEach(e => this.evidence.set(e.id, e));
 
-    // Default Consensus Requests
-    this.consensusRequests = [
-      {
-        id: 'REQ-2026-901',
-        caseId: 'FIR-2026-001',
-        caseTitle: 'State vs. Unknown (Sector 4 Cyber Heist)',
-        exhibitId: 'EV-8821',
-        exhibitTitle: 'CCTV Footage - Main Server Room',
-        submittedBy: 'Officer R. Kulkarni',
-        requiredVotes: 3,
-        currentVotes: 2,
-        status: 'Pending',
-        votes: [
-          { validatorId: 'val_01', validatorName: 'Judge V. Sharma', vote: 'APPROVE', timestamp: '2026-10-12T16:00:00Z', note: 'Hash match verified on chain.' },
-          { validatorId: 'val_02', validatorName: 'Validator Dr. S. Rao', vote: 'APPROVE', timestamp: '2026-10-12T16:30:00Z', note: 'Hardware WebAuthn key validated.' }
-        ],
-        createdAt: '2026-10-12T15:00:00Z'
-      },
-      {
-        id: 'REQ-2026-902',
-        caseId: 'FIR-2026-002',
-        caseTitle: 'State vs. Deshmukh (Property Fraud)',
-        exhibitId: 'EV-8824',
-        exhibitTitle: 'Forged Land Ownership Deed',
-        submittedBy: 'Inspector S. Patel',
-        requiredVotes: 3,
-        currentVotes: 3,
-        status: 'Approved',
-        votes: [
-          { validatorId: 'val_01', validatorName: 'Judge V. Sharma', vote: 'APPROVE', timestamp: '2026-10-10T12:00:00Z' },
-          { validatorId: 'val_02', validatorName: 'Validator Dr. S. Rao', vote: 'APPROVE', timestamp: '2026-10-10T12:15:00Z' },
-          { validatorId: 'val_03', validatorName: 'Advocate M. Mehta', vote: 'APPROVE', timestamp: '2026-10-10T12:30:00Z' }
-        ],
-        createdAt: '2026-10-10T11:30:00Z'
-      }
-    ];
+    // Consensus Requests - 100% dynamic starting empty
+    if (!this.consensusRequests) this.consensusRequests = [];
 
     // Default Forgery Reviews
     this.forgeryReviews = [
@@ -346,6 +387,92 @@ class PrimaryDataStore {
         status: 'Flagged'
       }
     ];
+
+    // Default Homomorphic Analytics Reports in Backend Store
+    if (!this.analyticsReports || this.analyticsReports.length === 0) {
+      this.analyticsReports = [
+        {
+          id: 'FHE-RPT-101',
+          reportCode: 'FHE-AGG-2026-001',
+          title: 'Case Duration Distribution & Disposition Velocity across Zones',
+          courtScope: 'All 5 Court Districts',
+          benchScope: 'All Active Benches',
+          cohortSize: 14820,
+          minCohortThreshold: 50,
+          differentialPrivacyEpsilon: 0.5,
+          isKAnonymityValid: true,
+          caseDurationAvgDays: 1.4,
+          caseDurationBaselineDays: 1.35,
+          precedentVarianceScore: 3.2,
+          anomalyScore: 0.04,
+          anomalySeverity: 'Low',
+          summaryDescription: 'Homomorphically aggregated case duration times across 14,820 closed & active dockets. Mean duration remains steady at 1.4 days with zero statistical outliers detected.',
+          encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
+          escalationStatus: 'None',
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'FHE-RPT-102',
+          reportCode: 'FHE-AGG-2026-002',
+          title: 'Zone 4 Special Tribunal - Duration Deviation & Re-hash Frequency Spike',
+          courtScope: 'Zone 4 (West Special Tribunal)',
+          benchScope: 'Division Bench 4',
+          cohortSize: 312,
+          minCohortThreshold: 50,
+          differentialPrivacyEpsilon: 0.5,
+          isKAnonymityValid: true,
+          caseDurationAvgDays: 3.2,
+          caseDurationBaselineDays: 1.4,
+          precedentVarianceScore: 18.6,
+          anomalyScore: 8.4,
+          anomalySeverity: 'Critical',
+          summaryDescription: 'Homomorphic analysis detected a statistically significant 128% spike in average disposition days (+1.8 days over baseline) combined with an elevated Section 65B re-hash request rate in Zone 4.',
+          encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
+          escalationStatus: 'None',
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'FHE-RPT-103',
+          reportCode: 'FHE-AGG-2026-003',
+          title: 'Bench-Level Precedent Alignment & Out-of-Band Sealing Distribution',
+          courtScope: 'Zone 2 (South Commercial Bench)',
+          benchScope: 'Division Bench 2',
+          cohortSize: 890,
+          minCohortThreshold: 50,
+          differentialPrivacyEpsilon: 0.5,
+          isKAnonymityValid: true,
+          caseDurationAvgDays: 1.8,
+          caseDurationBaselineDays: 1.7,
+          precedentVarianceScore: 4.8,
+          anomalyScore: 2.1,
+          anomalySeverity: 'Medium',
+          summaryDescription: 'Pattern comparison indicates minor variance in Section 144 sealing request distribution. Cohort size N=890 safely satisfies differential privacy limits.',
+          encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
+          escalationStatus: 'None',
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 'FHE-RPT-104',
+          reportCode: 'FHE-AGG-2026-004',
+          title: 'Cyber Precinct CCTV Exhibit Ingestion Homomorphic Variance',
+          courtScope: 'Zone 3 (East Cyber Precinct)',
+          benchScope: 'Division Bench 1',
+          cohortSize: 3810,
+          minCohortThreshold: 50,
+          differentialPrivacyEpsilon: 0.5,
+          isKAnonymityValid: true,
+          caseDurationAvgDays: 1.2,
+          caseDurationBaselineDays: 1.2,
+          precedentVarianceScore: 1.1,
+          anomalyScore: 0.1,
+          anomalySeverity: 'Low',
+          summaryDescription: 'High-density evidence ingestion velocity is consistent with regional fiber gateway logs. Zero identity leakage or cohort threshold warnings.',
+          encryptionAlgorithm: 'FHE-CKKS + Differential Privacy Noise (ε=0.5)',
+          escalationStatus: 'None',
+          createdAt: new Date().toISOString()
+        }
+      ];
+    }
   }
 
   private async loadFromFirestore() {
@@ -375,7 +502,7 @@ class PrimaryDataStore {
     }
   }
 
-  private loadFromDisk() {
+  public loadFromDisk() {
     try {
       if (fs.existsSync(DATA_FILE)) {
         const raw = fs.readFileSync(DATA_FILE, 'utf-8');
@@ -423,10 +550,37 @@ class PrimaryDataStore {
     }
   }
 
-  public addAnalyticsReport(report: AnalyticsReportRecord): AnalyticsReportRecord {
-    this.analyticsReports.unshift(report);
+  public getAnalyticsReports(): AnalyticsReportRecord[] {
+    return [...this.analyticsReports];
+  }
+
+  public getAnalyticsReportById(id: string): AnalyticsReportRecord | undefined {
+    return this.analyticsReports.find(r => r.id === id || r.reportCode === id);
+  }
+
+  public saveAnalyticsReport(report: AnalyticsReportRecord): AnalyticsReportRecord {
+    const idx = this.analyticsReports.findIndex(r => r.id === report.id || r.reportCode === report.reportCode);
+    if (idx >= 0) {
+      this.analyticsReports[idx] = report;
+    } else {
+      this.analyticsReports.unshift(report);
+    }
     this.persistToDisk();
     return report;
+  }
+
+  public getOversightEscalations(): OversightEscalationRecord[] {
+    return [...this.oversightEscalations];
+  }
+
+  public saveOversightEscalation(record: OversightEscalationRecord): OversightEscalationRecord {
+    this.oversightEscalations.unshift(record);
+    this.persistToDisk();
+    return record;
+  }
+
+  public addAnalyticsReport(report: AnalyticsReportRecord): AnalyticsReportRecord {
+    return this.saveAnalyticsReport(report);
   }
 
 
@@ -649,6 +803,8 @@ class PrimaryDataStore {
   }
 
   // --- CONSENSUS APPROVALS ---
+
+
   public addConsensusVote(requestId: string, validatorId: string, validatorName: string, vote: 'APPROVE' | 'REJECT' | 'FLAG_FORGERY', note?: string): ConsensusRequest | undefined {
     const req = this.consensusRequests.find(r => r.id === requestId);
     if (!req) return undefined;

@@ -225,14 +225,29 @@ export const api = {
   },
 
   // --- CONSENSUS & FORGERY ---
+  getPendingConsensus: async () => {
+    return fetchAPI('/consensus/pending', { method: 'GET' });
+  },
+
+  getConsensusById: async (id: string) => {
+    return fetchAPI(`/consensus/${id}`, { method: 'GET' });
+  },
+
   getConsensusApprovals: async () => {
-    return fetchAPI('/consensus/approvals', { method: 'GET' });
+    return fetchAPI('/consensus/pending', { method: 'GET' });
+  },
+
+  castConsensusVote: async (id: string, decision: 'Approved' | 'Rejected' | 'Flagged Forgery', justificationNote: string, validatorName?: string) => {
+    return fetchAPI(`/consensus/${id}/vote`, {
+      method: 'POST',
+      body: JSON.stringify({ decision, justificationNote, note: justificationNote, validatorName })
+    });
   },
 
   voteConsensus: async (requestId: string, vote: 'APPROVE' | 'REJECT' | 'FLAG_FORGERY', note?: string, validatorName?: string) => {
-    return fetchAPI('/consensus/vote', {
+    return fetchAPI(`/consensus/${requestId}/vote`, {
       method: 'POST',
-      body: JSON.stringify({ requestId, vote, note, validatorName })
+      body: JSON.stringify({ requestId, decision: vote === 'APPROVE' ? 'Approved' : 'Rejected', vote, justificationNote: note, note, validatorName })
     });
   },
 
@@ -330,6 +345,19 @@ export const api = {
 
   getValidatorActivityLogs: async () => {
     return fetchAPI('/validator/activity-log', { method: 'GET' });
+  },
+
+  // --- AGGREGATE ANALYTICS & DIFFERENTIAL PRIVACY ---
+
+  getAnalyticsReportById: async (id: string) => {
+    return fetchAPI(`/analytics/reports/${id}`, { method: 'GET' });
+  },
+
+  escalateAnalyticsReport: async (id: string, rationale: string, category?: string) => {
+    return fetchAPI(`/analytics/reports/${id}/escalate`, {
+      method: 'POST',
+      body: JSON.stringify({ rationale, category })
+    });
   },
 
   getHealth: async () => {

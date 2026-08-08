@@ -4297,5 +4297,185 @@
     "payloadHash": "545a0d20e86a21444a25459e528cb11c803d5ba5413bc1ca8343866336853291",
     "prevHash": "5cbb18ae070133224d3305456f8bb551915358e2e1ecf8d670463271e69d29c9",
     "hash": "ded64052bf3b60c3ffce9f3d14496f1e02aece41448c965769f00d2c3b79f4b1"
+  },
+  {
+    "id": "audit_1786203491073_262",
+    "index": 262,
+    "timestamp": "2026-08-08T15:38:11.073Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_independent_validator_1786195975776",
+    "userRole": "independent_validator",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786203491072_2ry48a",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "4e18d1c846258b8931fe720b20b383ac8cfdf0c3f81db0eba22fdcc32b87f6eb",
+    "prevHash": "ded64052bf3b60c3ffce9f3d14496f1e02aece41448c965769f00d2c3b79f4b1",
+    "hash": "c3b7c2c895f7fdd3269e7fb49e0526e9c63c685d138c7c13a3415b19cc400e2e"
+  },
+  {
+    "id": "audit_1786203491084_263",
+    "index": 263,
+    "timestamp": "2026-08-08T15:38:11.084Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "smithkadam24@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "smithkadam24@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "23666f9d3167b67102af117ebdba9fa14b2c450c1a979b13f32ff3629251b7f6",
+    "prevHash": "c3b7c2c895f7fdd3269e7fb49e0526e9c63c685d138c7c13a3415b19cc400e2e",
+    "hash": "67d61978eee012e623dd332a6c2aff15170fa4c18416de9962a69aa8b4037d0f"
+  },
+  {
+    "id": "audit_1786203493105_264",
+    "index": 264,
+    "timestamp": "2026-08-08T15:38:13.105Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "smithkadam24@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "67d61978eee012e623dd332a6c2aff15170fa4c18416de9962a69aa8b4037d0f",
+    "hash": "955e3efa4b7e16b46b263b8231e3d7d7eaafe053aa48868918e9324fce288312"
+  },
+  {
+    "id": "audit_1786204155016_265",
+    "index": 265,
+    "timestamp": "2026-08-08T15:49:15.016Z",
+    "eventType": "BLOCKCHAIN_ANCHOR_SUCCESS",
+    "userId": "VAL-KEY-IND-002",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "txHash": "0x6bddd592a2135f45e19ac4eb4d33a3452731c22abb3a4ca3e027f7b3a88f0c28",
+      "blockNumber": 15054808,
+      "eventHash": "e5c64d46452e39120e60d0a3e2e887100db850065d0c041f18f82c56c695cab7",
+      "state": "CONSENSUS_QUORUM_FINALIZED_CNS-2026-102"
+    },
+    "payloadHash": "6c7c5aaab4e20af4a16b21b98836ff6fc5c931a09697fa171bc50c700f979700",
+    "prevHash": "955e3efa4b7e16b46b263b8231e3d7d7eaafe053aa48868918e9324fce288312",
+    "hash": "d32f413bd7bdf51ef5496a040740e22224d5017995e4d39cbb42d8fb641cd4ef"
+  },
+  {
+    "id": "audit_1786204155017_266",
+    "index": 266,
+    "timestamp": "2026-08-08T15:49:15.017Z",
+    "eventType": "CONSENSUS_VOTE_QUORUM_FINALIZED",
+    "userId": "Independent Validator Node #02 (You)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "requestId": "CNS-2026-102",
+      "caseRef": "SHV-2150",
+      "changeHash": "e5c64d46452e39120e60d0a3e2e887100db850065d0c041f18f82c56c695cab7",
+      "txHash": "0x6bddd592a2135f45e19ac4eb4d33a3452731c22abb3a4ca3e027f7b3a88f0c28",
+      "justificationNote": "Verified Section 144 witness protection order under high court bench protocol."
+    },
+    "payloadHash": "7fd96ce741fa58b76479eab6a48e588c7b852703d986332d9671b880eabcd61a",
+    "prevHash": "d32f413bd7bdf51ef5496a040740e22224d5017995e4d39cbb42d8fb641cd4ef",
+    "hash": "c6b7396ee639974b314c0ceaf5cae22df596938b2319092f44086c230bc93f22"
+  },
+  {
+    "id": "audit_1786204155022_267",
+    "index": 267,
+    "timestamp": "2026-08-08T15:49:15.022Z",
+    "eventType": "CONSENSUS_VOTE_REJECTED",
+    "userId": "Independent Validator Node #02 (You)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "requestId": "CNS-2026-101",
+      "caseRef": "CR-2026-904",
+      "justificationNote": "Timestamp offset discrepancy exceeds acceptable NTP drift limits.",
+      "note": "Rejected request permanently remains un-anchored."
+    },
+    "payloadHash": "64e23b075dc51e8c03ae727f97ebcc35b5f5e39c6cc841db42a3d2583af0ba02",
+    "prevHash": "c6b7396ee639974b314c0ceaf5cae22df596938b2319092f44086c230bc93f22",
+    "hash": "e352d56a6a2d12c7451fcfe626a424919eedfe37230b4f3a941028c4e36b0e57"
+  },
+  {
+    "id": "audit_1786204425846_268",
+    "index": 268,
+    "timestamp": "2026-08-08T15:53:45.846Z",
+    "eventType": "BLOCKCHAIN_ANCHOR_SUCCESS",
+    "userId": "VAL-KEY-IND-002",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "txHash": "0xa8a2e2e0549fa10eb8f53ae9468f2aaf1a19e6f99ec679674681581ba3bf6ad9",
+      "blockNumber": 15048133,
+      "eventHash": "853f03b0c75c79b3a62be4fa70d2e608afc765bcd07ffb9c620c515e3615251e",
+      "state": "CONSENSUS_QUORUM_FINALIZED_CNS-2026-102"
+    },
+    "payloadHash": "b19cca3e353d39e032d04d4b0b6138795b1c5085abab6cbab23be2bb6f8086ab",
+    "prevHash": "e352d56a6a2d12c7451fcfe626a424919eedfe37230b4f3a941028c4e36b0e57",
+    "hash": "8f756307038018c9fb3d8b8784d50e0fe12b7801cdedbbfa7d672aa96393ab79"
+  },
+  {
+    "id": "audit_1786204425850_269",
+    "index": 269,
+    "timestamp": "2026-08-08T15:53:45.850Z",
+    "eventType": "CONSENSUS_VOTE_QUORUM_FINALIZED",
+    "userId": "Independent Validator Node #02 (You)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "requestId": "CNS-2026-102",
+      "caseRef": "SHV-2150",
+      "changeHash": "853f03b0c75c79b3a62be4fa70d2e608afc765bcd07ffb9c620c515e3615251e",
+      "txHash": "0xa8a2e2e0549fa10eb8f53ae9468f2aaf1a19e6f99ec679674681581ba3bf6ad9",
+      "justificationNote": "Verified Section 144 witness protection order under high court bench protocol."
+    },
+    "payloadHash": "fb5f953ed3cc7d3415a60eeb247d8c32414901ac69eb949ca7493245776eb913",
+    "prevHash": "8f756307038018c9fb3d8b8784d50e0fe12b7801cdedbbfa7d672aa96393ab79",
+    "hash": "6b3e36c1c0f6804f004fac35843b80cd714057ea9486eeb518d3927d362f3af5"
+  },
+  {
+    "id": "audit_1786204425858_270",
+    "index": 270,
+    "timestamp": "2026-08-08T15:53:45.858Z",
+    "eventType": "CONSENSUS_VOTE_REJECTED",
+    "userId": "Independent Validator Node #02 (You)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "requestId": "CNS-2026-101",
+      "caseRef": "CR-2026-904",
+      "justificationNote": "Timestamp offset discrepancy exceeds acceptable NTP drift limits.",
+      "note": "Rejected request permanently remains un-anchored."
+    },
+    "payloadHash": "64e23b075dc51e8c03ae727f97ebcc35b5f5e39c6cc841db42a3d2583af0ba02",
+    "prevHash": "6b3e36c1c0f6804f004fac35843b80cd714057ea9486eeb518d3927d362f3af5",
+    "hash": "eb1744305b06d41103d44eff5fd371fe47375d94d762091a632a9a6a4135807a"
+  },
+  {
+    "id": "audit_1786205377972_271",
+    "index": 271,
+    "timestamp": "2026-08-08T16:09:37.972Z",
+    "eventType": "OVERSIGHT_INQUIRY_ESCALATED",
+    "userId": "Adv. A. Mehta (Independent Validator)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "reportId": "FHE-RPT-102",
+      "reportCode": "FHE-AGG-2026-002",
+      "title": "Zone 4 Special Tribunal - Duration Deviation & Re-hash Frequency Spike",
+      "ticketId": "ESC-2026-77436",
+      "rationale": "Statistical duration deviation of +128% in Zone 4 West Special Tribunal exceeds homomorphic baseline limits; requires external enclave verification."
+    },
+    "payloadHash": "007143c5d639a7fe05a8abb210ceafb86d0aaa6851b83f7903b906bb957c9f32",
+    "prevHash": "eb1744305b06d41103d44eff5fd371fe47375d94d762091a632a9a6a4135807a",
+    "hash": "d7f914b2230ff4506ea8ae5e3d87877f9a3c6a9d7ede97cfc95757821573b72b"
   }
 ]
