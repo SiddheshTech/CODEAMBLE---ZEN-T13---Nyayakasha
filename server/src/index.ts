@@ -16,6 +16,7 @@ import { forgeryRouter } from './routes/forgery.routes.js';
 import { identityRouter } from './routes/identity.routes.js';
 import { precedentsRouter } from './routes/precedents.routes.js';
 import { analyticsRouter } from './routes/analytics.routes.js';
+import { auditRouter } from './routes/audit.routes.js';
 import { deviceRouter } from './routes/device.routes.js';
 import { registerValidatorSocket } from './services/duress.service.js';
 
@@ -46,6 +47,7 @@ app.use('/api/identity', identityRouter);
 app.use('/api/precedents', precedentsRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/validator', validatorRouter);
+app.use('/api/audit-log', auditRouter);
 app.use('/api', healthRouter);
 
 // WebSocket Server for Silent Duress Event Bus to Independent Validator

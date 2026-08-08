@@ -16,6 +16,10 @@ import { forgeryRouter } from './routes/forgery.routes.js';
 import { identityRouter } from './routes/identity.routes.js';
 import { precedentsRouter } from './routes/precedents.routes.js';
 import { analyticsRouter } from './routes/analytics.routes.js';
+<<<<<<< HEAD
+import { auditRouter } from './routes/audit.routes.js';
+=======
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
 import { deviceRouter } from './routes/device.routes.js';
 import { registerValidatorSocket } from './services/duress.service.js';
 const app = express();
@@ -42,6 +46,10 @@ app.use('/api/identity', identityRouter);
 app.use('/api/precedents', precedentsRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/validator', validatorRouter);
+<<<<<<< HEAD
+app.use('/api/audit-log', auditRouter);
+=======
+>>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
 app.use('/api', healthRouter);
 // WebSocket Server for Silent Duress Event Bus to Independent Validator
 const wss = new WebSocketServer({ server, path: '/ws/duress-bus' });

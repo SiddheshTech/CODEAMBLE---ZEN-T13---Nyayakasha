@@ -372,6 +372,20 @@ export const api = {
     });
   },
 
+  // --- AUDIT LOG & TAMPER-PROOF LEDGER ---
+  getPersonalAuditLogs: async (uid?: string) => {
+    const query = uid ? `?uid=${encodeURIComponent(uid)}` : '';
+    return fetchAPI(`/audit-log/mine${query}`, { method: 'GET' });
+  },
+
+  getSystemAuditSummary: async () => {
+    return fetchAPI('/audit-log/system-summary', { method: 'GET' });
+  },
+
+  verifyAnchorHash: async (hash: string) => {
+    return fetchAPI(`/audit-log/verify-anchor/${encodeURIComponent(hash)}`, { method: 'GET' });
+  },
+
   getHealth: async () => {
     return fetchAPI('/health', { method: 'GET' });
   }

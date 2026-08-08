@@ -362,6 +362,14 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
   const [selectedZone, setSelectedZone] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [backendMetrics, setBackendMetrics] = useState<any>(null);
+  const [zoneBenchmarkData, setZoneBenchmarkData] = useState<any[]>(ZONE_BENCHMARK_DATA);
+  const [courtBenchesVelocity, setCourtBenchesVelocity] = useState<any[]>(COURT_BENCHES_VELOCITY);
+  const [durationTrends, setDurationTrends] = useState<any[]>(FHE_DURATION_TRENDS);
+  const [anomalyTrends, setAnomalyTrends] = useState<any[]>(FHE_ANOMALY_TRENDS);
+  const [cohortPrivacyAudit, setCohortPrivacyAudit] = useState<any[]>(FHE_COHORT_PRIVACY_AUDIT);
+  const [timeSeriesVolume, setTimeSeriesVolume] = useState<any[]>(TIME_SERIES_VOLUME);
+  const [caseCategories, setCaseCategories] = useState<any[]>(CASE_CATEGORIES);
+  const [analyticalModules, setAnalyticalModules] = useState<AnalyticalModuleItem[]>(ANALYTICAL_MODULES);
 
   const fetchAnalyticsData = () => {
     api.getAnalyticsOverview()
@@ -369,7 +377,31 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
         if (res.metrics) {
           setBackendMetrics(res.metrics);
         }
-        if (res.reports && Array.isArray(res.reports) && res.reports.length > 0) {
+        if (res.zoneBenchmarkData && Array.isArray(res.zoneBenchmarkData)) {
+          setZoneBenchmarkData(res.zoneBenchmarkData);
+        }
+        if (res.courtBenchesVelocity && Array.isArray(res.courtBenchesVelocity)) {
+          setCourtBenchesVelocity(res.courtBenchesVelocity);
+        }
+        if (res.durationTrends && Array.isArray(res.durationTrends)) {
+          setDurationTrends(res.durationTrends);
+        }
+        if (res.anomalyTrends && Array.isArray(res.anomalyTrends)) {
+          setAnomalyTrends(res.anomalyTrends);
+        }
+        if (res.cohortPrivacyAudit && Array.isArray(res.cohortPrivacyAudit)) {
+          setCohortPrivacyAudit(res.cohortPrivacyAudit);
+        }
+        if (res.timeSeriesVolume && Array.isArray(res.timeSeriesVolume)) {
+          setTimeSeriesVolume(res.timeSeriesVolume);
+        }
+        if (res.caseCategories && Array.isArray(res.caseCategories)) {
+          setCaseCategories(res.caseCategories);
+        }
+        if (res.analyticalModules && Array.isArray(res.analyticalModules)) {
+          setAnalyticalModules(res.analyticalModules);
+        }
+        if (res.reports && Array.isArray(res.reports)) {
           setHomomorphicReports(res.reports);
         }
       })
@@ -476,9 +508,9 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  const selectedModule = ANALYTICAL_MODULES.find((m) => m.id === selectedModuleId);
+  const selectedModule = analyticalModules.find((m) => m.id === selectedModuleId);
 
-  const filteredModules = ANALYTICAL_MODULES.filter((mod) => {
+  const filteredModules = analyticalModules.filter((mod) => {
     const matchesSearch =
       mod.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       mod.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -806,7 +838,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                 k ≥ 50 Threshold MET
               </div>
               <p className="text-[11px] text-slate-300 font-medium">
-                Smallest active cohort: <strong className="text-white font-mono">N = 312</strong>
+                Smallest active cohort: <strong className="text-white font-mono">N = {backendMetrics?.smallestCohortN || 60}</strong>
                 <br />
                 Differential Privacy Noise: <strong className="text-indigo-300 font-mono">ε = 0.5</strong>
               </p>
@@ -943,26 +975,26 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Mean Case Duration</span>
-                    <span className="text-2xl font-extrabold font-mono text-slate-900">1.4 Days</span>
-                    <span className="text-[11px] text-emerald-600 block font-bold">Cohort N = 14,820 (k ≥ 50 PASS)</span>
+                    <span className="text-2xl font-extrabold font-mono text-slate-900">{backendMetrics?.meanCaseDuration || '0.5 Days'}</span>
+                    <span className="text-[11px] text-emerald-600 block font-bold">Cohort N = {(backendMetrics?.smallestCohortN || 60).toLocaleString()} (k ≥ 50 PASS)</span>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Bench Pattern Match</span>
-                    <span className="text-2xl font-extrabold font-mono text-indigo-900">96.8%</span>
+                    <span className="text-2xl font-extrabold font-mono text-indigo-900">{backendMetrics?.benchPatternMatch || '75.0%'}</span>
                     <span className="text-[11px] text-indigo-600 block font-bold">Homomorphic Vector Match</span>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Peak Statistical Drift</span>
-                    <span className="text-2xl font-extrabold font-mono text-rose-600">8.4%</span>
-                    <span className="text-[11px] text-rose-600 block font-bold">Zone 4 West Special Tribunal</span>
+                    <span className="text-2xl font-extrabold font-mono text-rose-600">{backendMetrics?.peakStatisticalDrift || '33.3%'}</span>
+                    <span className="text-[11px] text-rose-600 block font-bold">{backendMetrics?.peakDriftZone || 'Zone 4 West Special Tribunal'}</span>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Oversight Escalations</span>
                     <span className="text-2xl font-extrabold font-mono text-amber-600">
-                      {homomorphicReports.filter((r) => r.escalationStatus === 'Escalated').length} Active
+                      {backendMetrics?.oversightEscalations ?? homomorphicReports.filter((r) => r.escalationStatus === 'Escalated').length} Active
                     </span>
                     <span className="text-[11px] text-amber-700 block font-bold">External Audit Inquiries</span>
                   </div>
@@ -988,7 +1020,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                   <div className="h-64 w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       {chartType === 'bar' ? (
-                        <BarChart data={ZONE_BENCHMARK_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <BarChart data={zoneBenchmarkData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                           <XAxis dataKey="zone" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
                           <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
@@ -996,7 +1028,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                           <Bar dataKey="incidents" fill="#6366f1" name="Evidence Dockets Ingested" radius={[6, 6, 0, 0]} />
                         </BarChart>
                       ) : (
-                        <LineChart data={ZONE_BENCHMARK_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <LineChart data={zoneBenchmarkData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                           <XAxis dataKey="zone" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
                           <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
@@ -1189,7 +1221,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
 
                 {/* Institutions Comparison Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {ZONE_BENCHMARK_DATA.map((zone, idx) => (
+                  {zoneBenchmarkData.map((zone, idx) => (
                     <div key={idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                       <div className="flex items-center justify-between pb-2 border-b border-slate-200">
                         <span className="font-extrabold text-xs text-slate-900">{zone.zone}</span>
@@ -1238,7 +1270,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {COURT_BENCHES_VELOCITY.map((b, idx) => (
+                        {courtBenchesVelocity.map((b, idx) => (
                           <tr key={idx} className="hover:bg-slate-50">
                             <td className="p-3 font-bold text-slate-900">{b.bench}</td>
                             <td className="p-3 text-slate-600">{b.judge}</td>
@@ -1325,7 +1357,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                     <div className="h-72 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         {chartType === 'line' ? (
-                          <LineChart data={FHE_DURATION_TRENDS} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <LineChart data={durationTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                             <XAxis dataKey="period" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} dy={10} />
                             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} unit=" d" />
@@ -1337,7 +1369,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                             <Line type="monotone" dataKey="zone5Apex" stroke="#a855f7" strokeWidth={2.5} name="Zone 5 Apex" />
                           </LineChart>
                         ) : (
-                          <BarChart data={FHE_DURATION_TRENDS} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <BarChart data={durationTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                             <XAxis dataKey="period" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} dy={10} />
                             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} unit=" d" />
@@ -1370,7 +1402,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                     <div className="h-72 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         {chartType === 'bar' ? (
-                          <BarChart data={FHE_ANOMALY_TRENDS} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <BarChart data={anomalyTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                             <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} dy={10} />
                             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} unit="%" />
@@ -1382,7 +1414,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                             <Bar dataKey="bench5Apex" fill="#a855f7" name="Bench 5 Apex" radius={[4, 4, 0, 0]} />
                           </BarChart>
                         ) : (
-                          <LineChart data={FHE_ANOMALY_TRENDS} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <LineChart data={anomalyTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                             <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} dy={10} />
                             <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} unit="%" />
@@ -1414,13 +1446,13 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
 
                     <div className="h-72 w-full">
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={FHE_COHORT_PRIVACY_AUDIT} layout="vertical" margin={{ top: 10, right: 30, left: 100, bottom: 0 }}>
+                        <BarChart data={cohortPrivacyAudit} layout="vertical" margin={{ top: 10, right: 30, left: 100, bottom: 0 }}>
                           <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
                           <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748b' }} />
                           <YAxis type="category" dataKey="category" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#334155', fontWeight: 600 }} />
                           <RechartsTooltip contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0' }} />
                           <Bar dataKey="N" fill="#6366f1" name="Cohort Size N" radius={[0, 8, 8, 0]}>
-                            {FHE_COHORT_PRIVACY_AUDIT.map((entry, index) => (
+                            {cohortPrivacyAudit.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={entry.N < 500 ? '#f59e0b' : '#6366f1'} />
                             ))}
                           </Bar>
@@ -1519,8 +1551,8 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
                 <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider block">Total Evidence Assets</span>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-xl font-extrabold font-mono text-white">14,820</span>
-                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5"><TrendingUp className="w-3 h-3" /> +14.2%</span>
+                  <span className="text-xl font-extrabold font-mono text-white">{(backendMetrics?.sealedEvidence ?? 4).toLocaleString()}</span>
+                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5"><TrendingUp className="w-3 h-3" /> Live DB</span>
                 </div>
                 <span className="text-[10px] text-slate-400 block">100% Cryptographically Sealed</span>
               </div>
@@ -1528,28 +1560,28 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
                 <span className="text-[10px] font-bold text-emerald-300 uppercase tracking-wider block">System Integrity Score</span>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-xl font-extrabold font-mono text-emerald-400">99.85%</span>
-                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5"><ShieldCheck className="w-3 h-3" /> Zero Breaches</span>
+                  <span className="text-xl font-extrabold font-mono text-emerald-400">{backendMetrics?.benchPatternMatch || '99.8%'}</span>
+                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5"><ShieldCheck className="w-3 h-3" /> Verified</span>
                 </div>
-                <span className="text-[10px] text-slate-400 block">12 Forgery Flags Resolved</span>
+                <span className="text-[10px] text-slate-400 block">{backendMetrics?.flaggedForgeries ?? 0} Forgery Reviews</span>
               </div>
 
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
                 <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider block">Avg Disposition Velocity</span>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-xl font-extrabold font-mono text-amber-300">1.8 Days</span>
-                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5"><TrendingDown className="w-3 h-3" /> -34% Backlog</span>
+                  <span className="text-xl font-extrabold font-mono text-amber-300">{backendMetrics?.meanCaseDuration || '0.5 Days'}</span>
+                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5"><TrendingDown className="w-3 h-3" /> Live</span>
                 </div>
-                <span className="text-[10px] text-slate-400 block">482 Active Court Dockets</span>
+                <span className="text-[10px] text-slate-400 block">{backendMetrics?.totalCases ?? 6} Active Court Dockets</span>
               </div>
 
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
                 <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider block">Consensus Blocks</span>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-xl font-extrabold font-mono text-indigo-300">1,240 Seals</span>
-                  <span className="text-xs font-bold text-indigo-300 flex items-center gap-0.5"><Users className="w-3 h-3" /> 98.6% Quorum</span>
+                  <span className="text-xl font-extrabold font-mono text-indigo-300">{backendMetrics?.totalAuditBlocks ?? 7} Blocks</span>
+                  <span className="text-xs font-bold text-indigo-300 flex items-center gap-0.5"><Users className="w-3 h-3" /> 100% Quorum</span>
                 </div>
-                <span className="text-[10px] text-slate-400 block">Avg 3.8h Multi-Sig Latency</span>
+                <span className="text-[10px] text-slate-400 block">Height #{backendMetrics?.consensusBlockHeight || 148927}</span>
               </div>
             </div>
           </div>
@@ -1578,7 +1610,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
 
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={TIME_SERIES_VOLUME} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <AreaChart data={timeSeriesVolume} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorEvid" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
@@ -1621,7 +1653,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={CASE_CATEGORIES}
+                      data={caseCategories}
                       cx="50%"
                       cy="50%"
                       innerRadius={55}
@@ -1629,7 +1661,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                       paddingAngle={4}
                       dataKey="value"
                     >
-                      {CASE_CATEGORIES.map((entry, index) => (
+                      {caseCategories.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -1640,12 +1672,12 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                   <span className="text-xs text-slate-400 font-bold uppercase">Total Cases</span>
-                  <span className="text-xl font-extrabold text-slate-900 font-mono">14,820</span>
+                  <span className="text-xl font-extrabold text-slate-900 font-mono">{(backendMetrics?.totalCases ?? 6).toLocaleString()}</span>
                 </div>
               </div>
 
               <div className="space-y-2.5 pt-2 border-t border-slate-100">
-                {CASE_CATEGORIES.map((cat, idx) => (
+                {caseCategories.map((cat, idx) => (
                   <div key={idx} className="flex items-center justify-between text-xs font-semibold">
                     <div className="flex items-center gap-2">
                       <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: cat.color }} />
