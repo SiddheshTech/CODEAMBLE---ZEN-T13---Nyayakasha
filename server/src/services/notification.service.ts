@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import nodemailer from 'nodemailer';
 import { auditLedger } from '../db/auditLedger.js';
+import { primaryStore } from '../db/store.js';
 
 export interface NotificationPayload {
   recipient: string;
@@ -120,6 +121,41 @@ class NotificationService {
       console.log('Firebase FCM Push notification info:', err.message || err);
     }
     return true;
+  }
+
+  /**
+   * Dispatches email and push notifications respecting user's custom category toggles
+   */
+  public async notifyUserCategory(
+    userOrEmail: string,
+    category: 'consensus' | 'analytics' | 'escalation',
+    subject: string,
+    body: string,
+    fcmData?: Record<string, string>
+  ): Promise<{ emailSent: boolean; pushSent: boolean }> {
+    let emailSent = false;
+    let pushSent = false;
+
+    const user = (await primaryStore.getUserByEmail(userOrEmail)) || (await primaryStore.getUserById(userOrEmail));
+    const recipientEmail = user?.email || userOrEmail;
+
+    // Check user's category preference toggles (default to true if not set)
+    const emailEnabled = user?.settings?.notifications?.[category]?.email ?? true;
+    const pushEnabled = user?.settings?.notifications?.[category]?.push ?? true;
+
+    if (emailEnabled) {
+      emailSent = await this.sendEmail(recipientEmail, subject, body);
+    } else {
+      console.log(`ℹ️ [Notification Engine] Email dispatch for category '${category}' skipped for ${recipientEmail} (User Email Toggle is OFF)`);
+    }
+
+    if (pushEnabled) {
+      pushSent = await this.sendFCMPush(user?.id || recipientEmail, subject, body, fcmData);
+    } else {
+      console.log(`ℹ️ [Notification Engine] Push dispatch for category '${category}' skipped for ${recipientEmail} (User Push Toggle is OFF)`);
+    }
+
+    return { emailSent, pushSent };
   }
 }
 
