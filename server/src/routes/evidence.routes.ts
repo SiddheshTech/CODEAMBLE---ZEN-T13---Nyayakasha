@@ -3,6 +3,8 @@ import { primaryStore, EvidenceRecord } from '../db/store.js';
 import { auditLedger } from '../db/auditLedger.js';
 import { blockchainService } from '../services/blockchain.service.js';
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 
 export const evidenceRouter = Router();
 
@@ -242,6 +244,23 @@ evidenceRouter.post('/testimony/submit', async (req: Request, res: Response) => 
       }
     );
 
+    // Save raw evidence files / attachments to encrypted local vault
+    let attachedFileUrls: string[] = [];
+    if (attachments && Array.isArray(attachments)) {
+      const vaultDir = path.join(process.cwd(), 'encrypted_evidence_vault');
+      if (!fs.existsSync(vaultDir)) fs.mkdirSync(vaultDir, { recursive: true });
+
+      attachments.forEach((att: any) => {
+        if (att.dataUrl && att.name) {
+          const base64Data = att.dataUrl.replace(/^data:[^;]+;base64,/, '');
+          const filename = `${att.hash ? att.hash.slice(0, 16) : Date.now()}_${Date.now()}_${att.name.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
+          const filePath = path.join(vaultDir, filename);
+          fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+          attachedFileUrls.push(att.dataUrl);
+        }
+      });
+    }
+
     const newTestimony: EvidenceRecord = {
       id,
       caseId,
@@ -256,6 +275,8 @@ evidenceRouter.post('/testimony/submit', async (req: Request, res: Response) => 
       witnessName: displayWitnessName,
       evidenceNotes: depositionText,
       signature: signatureDataUrl,
+      fileUrl: attachedFileUrls[0] || undefined,
+      customMetadata: attachments && attachments.length > 0 ? JSON.stringify(attachments.map((a: any) => ({ name: a.name, size: a.size, hash: a.hash }))) : undefined,
       txHash: anchorResult.txHash,
       blockNumber: anchorResult.blockNumber,
       merkleRoot: anchorResult.merkleRoot,

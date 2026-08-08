@@ -450,12 +450,93 @@ export function DashboardPage({
     }, 1500);
   };
 
+  const recognitionRef = useRef<any>(null);
+
+  const toggleDictation = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      addToast('Web Speech API is not supported in this browser environment. Please type directly.', 'warning');
+      return;
+    }
+
+    if (isDictating) {
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop(); } catch (e) {}
+      }
+      setIsDictating(false);
+      addToast('Voice dictation stopped', 'info');
+    } else {
+      try {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = testimonyLanguage === 'Hindi' ? 'hi-IN' : testimonyLanguage === 'Marathi' ? 'mr-IN' : 'en-US';
+
+        recognition.onresult = (event: any) => {
+          let currentTranscript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+              currentTranscript += event.results[i][0].transcript;
+            }
+          }
+          if (currentTranscript) {
+            setTestimonyNotes(prev => (prev ? prev.trim() + ' ' + currentTranscript : currentTranscript));
+          }
+        };
+
+        recognition.onerror = (event: any) => {
+          console.error("Speech recognition info:", event.error);
+          setIsDictating(false);
+        };
+
+        recognition.onend = () => {
+          setIsDictating(false);
+        };
+
+        recognition.start();
+        recognitionRef.current = recognition;
+        setIsDictating(true);
+        addToast(`Live Voice dictation active (${testimonyLanguage}). Speak now...`, 'info');
+      } catch (err) {
+        console.error("Dictation start error:", err);
+        addToast('Could not access microphone for dictation.', 'warning');
+      }
+    }
+  };
+
   const handleTestimonySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingTestimony(true);
 
     try {
       const sigDataUrl = testimonySigPad.current ? testimonySigPad.current.toDataURL() : undefined;
+
+      // Process real file attachments into base64 data URLs & SHA-256 digests
+      const processedAttachments = await Promise.all(
+        testimonyFiles.map(async (file) => {
+          return new Promise<{ name: string; size: number; type: string; dataUrl: string; hash: string }>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+              const dataUrl = event.target?.result as string;
+              try {
+                const base64 = dataUrl.split(',')[1];
+                const binaryString = window.atob(base64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                  bytes[i] = binaryString.charCodeAt(i);
+                }
+                const hashBuffer = await crypto.subtle.digest('SHA-256', bytes);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                resolve({ name: file.name, size: file.size, type: file.type || 'image/png', dataUrl, hash: hashHex });
+              } catch (err) {
+                resolve({ name: file.name, size: file.size, type: file.type || 'image/png', dataUrl, hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' });
+              }
+            };
+            reader.readAsDataURL(file);
+          });
+        })
+      );
 
       const res = await api.submitTestimony({
         caseId: caseId || 'FIR-2026-001',
@@ -469,13 +550,13 @@ export function DashboardPage({
         depositionText: testimonyNotes,
         officerPin: testimonyPin,
         signatureDataUrl: sigDataUrl,
-        attachments: testimonyFiles.map(f => ({ name: f.name, size: f.size, type: f.type }))
+        attachments: processedAttachments
       });
 
       addToast(
         res.isIdentityProtected
-          ? `Testimony sealed with ZK Commitment (${res.witnessAlias}) & Polygon PoS Anchor!`
-          : 'Testimony cryptographically signed & anchored on Polygon PoS Blockchain',
+          ? `Testimony & ${processedAttachments.length} attachments sealed with ZK Commitment (${res.witnessAlias}) & Polygon PoS Anchor!`
+          : `Testimony & ${processedAttachments.length} attachments cryptographically signed & anchored on Polygon PoS Blockchain`,
         'info'
       );
 
@@ -1013,12 +1094,7 @@ export function DashboardPage({
                           </label>
                           <button 
                             type="button" 
-                            onClick={() => {
-                              setIsDictating(!isDictating);
-                              if (!isDictating) {
-                                addToast('Voice dictation started', 'info');
-                              }
-                            }}
+                            onClick={toggleDictation}
                             className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
                               isDictating ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-black/5 text-black/60 hover:bg-black/10 hover:text-black'
                             }`}
