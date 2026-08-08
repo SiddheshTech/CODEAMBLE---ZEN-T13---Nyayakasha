@@ -517,14 +517,27 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
         directives: []
       };
 
-      const signatureDataUrl = evidenceSigPad.current?.isEmpty() ? undefined : evidenceSigPad.current?.toDataURL();
+      const getCurrentUserCustodianName = () => {
+        try {
+          const userStr = localStorage.getItem('nyayakasha_user');
+          if (userStr) {
+            const u = JSON.parse(userStr);
+            if (u.fullName) {
+              return `${u.fullName} (${u.role === 'court_authority' ? 'High Court Division Bench' : u.role === 'independent_validator' ? 'Independent Oversight Node' : 'Zone 4 Field Operations'})`;
+            }
+          }
+        } catch (e) {}
+        return 'Officer R. Kulkarni (Zone 4 Field Operations)';
+      };
+
+      const activeCustodian = getCurrentUserCustodianName();
 
       api.submitEvidence({
         caseId: firNumber || 'FIR-2026-9041',
         title: evidenceTitle || 'Field Evidence Snapshot',
         type: evidenceCategory || 'Digital Photo Snapshot',
         hash: capturedImageHash || undefined,
-        custodian: 'Officer R. Kulkarni (Zone 4 Field Operations)',
+        custodian: activeCustodian,
         dataUrl: capturedImage || undefined,
         seizureBagId,
         seizureMethod,

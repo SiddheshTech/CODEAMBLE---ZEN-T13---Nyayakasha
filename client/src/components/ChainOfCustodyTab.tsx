@@ -91,7 +91,9 @@ export function ChainOfCustodyTab() {
         api.getEvidenceChain(selectedItem.id).then(res => {
           if (res && res.chainOfCustody && res.chainOfCustody.length > 0) {
             setTimeline(res.chainOfCustody.map((event: any) => {
-              const prev = event.details?.previousCustodian || event.userId || event.userRole || 'Officer R. Kulkarni (Zone 4 Field Operations)';
+              const userObj = (() => { try { return JSON.parse(localStorage.getItem('nyayakasha_user') || '{}'); } catch { return {}; } })();
+              const defaultName = userObj.fullName ? `${userObj.fullName} (Zone 4 Field Operations)` : 'Officer R. Kulkarni (Zone 4 Field Operations)';
+              const prev = event.details?.previousCustodian || event.userId || event.userRole || defaultName;
               const next = event.details?.newCustodian;
               const actorDisplay = next ? `${prev} -> ${next}` : (event.userId || event.userRole || event.actorRole || 'Field Officer');
               return {
