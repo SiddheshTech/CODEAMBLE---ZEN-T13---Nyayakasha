@@ -73,6 +73,9 @@ authRouter.post('/signup', async (req: Request, res: Response) => {
     // Hash Password with Argon2id
     const passwordHash = await hashPassword(password);
 
+    const userBadge = badgeId || barCouncilNumber;
+    const userApptRef = institutionId || userBadge;
+
     const newUser: UserRecord = {
       id: `usr_${role}_${Date.now()}`,
       email,
@@ -80,8 +83,9 @@ authRouter.post('/signup', async (req: Request, res: Response) => {
       role: role as UserRole,
       passwordHash,
       publicKeyPem, // Client-side generated public key stored on server
-      badgeId,
-      barCouncilNumber,
+      badgeId: userBadge,
+      barCouncilNumber: userBadge,
+      appointmentRef: userApptRef,
       institutionId,
       jurisdictionCode,
       approvalState: 'submitted',
