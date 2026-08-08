@@ -236,6 +236,26 @@ export const api = {
     });
   },
 
+  submitTestimony: async (params: {
+    caseId: string;
+    incidentDate?: string;
+    location?: string;
+    language?: string;
+    witnessName?: string;
+    protectIdentity?: boolean;
+    idType?: string;
+    testimonyType?: string;
+    depositionText: string;
+    officerPin?: string;
+    signatureDataUrl?: string;
+    attachments?: any[];
+  }) => {
+    return fetchAPI('/evidence/testimony/submit', {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  },
+
   // --- CONSENSUS & FORGERY ---
   getPendingConsensus: async () => {
     return fetchAPI('/consensus/pending', { method: 'GET' });

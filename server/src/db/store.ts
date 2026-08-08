@@ -984,6 +984,17 @@ class PrimaryDataStore {
     return [...this.identityUnlocks];
   }
 
+  public saveIdentityUnlockRequest(request: IdentityUnlockRequest): IdentityUnlockRequest {
+    const idx = this.identityUnlocks.findIndex(u => u.id === request.id);
+    if (idx >= 0) {
+      this.identityUnlocks[idx] = request;
+    } else {
+      this.identityUnlocks.push(request);
+    }
+    this.persistToDisk();
+    return request;
+  }
+
   public approveIdentityUnlock(unlockId: string, grantedByUserName: string): IdentityUnlockRequest | undefined {
     const req = this.identityUnlocks.find(u => u.id === unlockId);
     if (!req) return undefined;

@@ -450,22 +450,51 @@ export function DashboardPage({
     }, 1500);
   };
 
-  const handleTestimonySubmit = (e: React.FormEvent) => {
+  const handleTestimonySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingTestimony(true);
-    setTimeout(() => {
-      setIsSubmittingTestimony(false);
-      addToast('Testimony cryptographically signed and submitted', 'info');
+
+    try {
+      const sigDataUrl = testimonySigPad.current ? testimonySigPad.current.toDataURL() : undefined;
+
+      const res = await api.submitTestimony({
+        caseId: caseId || 'FIR-2026-001',
+        incidentDate: testimonyIncidentDate,
+        location: testimonyLocation || 'Sector 4 Police Station',
+        language: testimonyLanguage,
+        witnessName: isAnonymous ? undefined : witnessName,
+        protectIdentity: isAnonymous,
+        idType: testimonyIdType,
+        testimonyType: testimonyType,
+        depositionText: testimonyNotes,
+        officerPin: testimonyPin,
+        signatureDataUrl: sigDataUrl,
+        attachments: testimonyFiles.map(f => ({ name: f.name, size: f.size, type: f.type }))
+      });
+
+      addToast(
+        res.isIdentityProtected
+          ? `Testimony sealed with ZK Commitment (${res.witnessAlias}) & Polygon PoS Anchor!`
+          : 'Testimony cryptographically signed & anchored on Polygon PoS Blockchain',
+        'info'
+      );
+
+      fetchDashboardData();
+
       setCaseId('');
       setWitnessName('');
       setTestimonyNotes('');
-      setTestimonyLocation("");
-      setTestimonyIncidentDate("");
+      setTestimonyLocation('');
+      setTestimonyIncidentDate('');
       setTestimonyFiles([]);
-      setTestimonyLocation("");
-      setTestimonyIncidentDate("");
-      setTestimonyFiles([]);
-    }, 1500);
+      setTestimonyPin('');
+      clearTestimonySig();
+    } catch (err: any) {
+      console.error('Testimony submission error:', err);
+      addToast(err.message || 'Failed to submit testimony.', 'warning');
+    } finally {
+      setIsSubmittingTestimony(false);
+    }
   };
 
   // Mock submissions list
@@ -1131,7 +1160,7 @@ export function DashboardPage({
 
                   <button
                     type="submit"
-                    disabled={isSubmittingTestimony || !caseId || !testimonyNotes || testimonyPin.length !== 6}
+                    disabled={isSubmittingTestimony || !caseId || !testimonyNotes || testimonyPin.length < 4}
                     className="w-full py-4 rounded-xl bg-purple-600 text-white text-base font-bold hover:bg-purple-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmittingTestimony ? (

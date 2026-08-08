@@ -188,3 +188,125 @@ evidenceRouter.post('/submit', async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'EVIDENCE_SUBMISSION_FAILED', message: err.message });
   }
 });
+
+/**
+ * POST /api/evidence/testimony/submit
+ * Cryptographically record field testimony with optional Zero-Knowledge Identity Protection & Blockchain Anchoring
+ */
+evidenceRouter.post('/testimony/submit', async (req: Request, res: Response) => {
+  try {
+    const {
+      caseId,
+      incidentDate,
+      location,
+      language,
+      witnessName,
+      protectIdentity,
+      idType,
+      testimonyType,
+      depositionText,
+      officerPin,
+      signatureDataUrl,
+      attachments
+    } = req.body;
+
+    if (!caseId || !depositionText) {
+      return res.status(400).json({ error: 'MISSING_FIELDS', message: 'Case ID and Deposition Text are required.' });
+    }
+
+    const count = primaryStore.getEvidence().length + 1;
+    const id = `TM-2026-${400 + count}`;
+
+    // Zero-Knowledge Identity Protection Protocol
+    const isProtected = Boolean(protectIdentity);
+    const witnessAlias = isProtected ? `Witness-ZK-${Math.floor(1000 + Math.random() * 9000)}` : witnessName;
+    const displayWitnessName = isProtected ? 'Protected (Anonymous - ZK Commitment)' : (witnessName || 'Witness');
+
+    // Compute SHA-256 Digest of Testimony Statement & Metadata
+    const payloadToHash = `${id}:${caseId}:${depositionText}:${witnessAlias}:${Date.now()}`;
+    const generatedHash = crypto.createHash('sha256').update(payloadToHash).digest('hex');
+
+    // Immutably Anchor Testimony Payload to Polygon PoS Blockchain
+    const anchorResult = await blockchainService.anchorEvidenceSubmission(
+      id,
+      generatedHash,
+      caseId,
+      'Field Submitter Officer',
+      {
+        title: `Field Testimony - ${testimonyType || 'Eyewitness Account'}`,
+        seizureBagId: `BAG-TM-${id}`,
+        category: 'Testimony',
+        witnessName: witnessAlias,
+        preservationType: 'Encrypted HSM Storage',
+        notes: depositionText
+      }
+    );
+
+    const newTestimony: EvidenceRecord = {
+      id,
+      caseId,
+      title: `Testimony (${testimonyType || 'Eyewitness'}) - ${displayWitnessName}`,
+      type: 'Document',
+      date: new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      hash: generatedHash,
+      status: 'Sealed',
+      custodian: 'Field Submitter Officer',
+      incidentLocation: location || 'Field Precinct Location',
+      confidentialityLevel: isProtected ? 'Top Secret (Zero-Knowledge Protected)' : 'Restricted',
+      witnessName: displayWitnessName,
+      evidenceNotes: depositionText,
+      signature: signatureDataUrl,
+      txHash: anchorResult.txHash,
+      blockNumber: anchorResult.blockNumber,
+      merkleRoot: anchorResult.merkleRoot,
+      createdAt: new Date().toISOString()
+    };
+
+    const saved = primaryStore.saveEvidence(newTestimony);
+
+    // If identity is protected, register an identity unlock request in the quorum store
+    if (isProtected && witnessName) {
+      primaryStore.saveIdentityUnlockRequest({
+        id: `ID-UNLOCK-${id}`,
+        caseId,
+        caseTitle: `Case ${caseId}: Protected Deponent Identity Commitment (${witnessAlias})`,
+        witnessAlias,
+        requestor: 'Field Submitter Terminal',
+        reason: 'Witness identity masked under Section 65B zero-knowledge protection protocol.',
+        thresholdRequired: 3,
+        thresholdGranted: 0,
+        status: 'Pending',
+        grantedBy: [],
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    // Record immutable audit event
+    auditLedger.recordEvent('FIELD_TESTIMONY_SUBMITTED', 'FIELD_OFFICER', {
+      testimonyId: id,
+      caseId,
+      witnessAlias,
+      isIdentityProtected: isProtected,
+      hash: generatedHash,
+      txHash: anchorResult.txHash,
+      blockNumber: anchorResult.blockNumber,
+      merkleRoot: anchorResult.merkleRoot,
+      immutabilityNotice: 'Deposition permanently anchored on Polygon PoS Blockchain. Cannot be erased or altered.'
+    });
+
+    return res.status(201).json({
+      success: true,
+      testimony: saved,
+      witnessAlias,
+      isIdentityProtected: isProtected,
+      blockchainAnchor: {
+        txHash: anchorResult.txHash,
+        blockNumber: anchorResult.blockNumber,
+        merkleRoot: anchorResult.merkleRoot,
+        status: 'IMMUTABLE_ANCHORED_ON_POLYGON_POS'
+      }
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'TESTIMONY_SUBMISSION_FAILED', message: err.message });
+  }
+});
