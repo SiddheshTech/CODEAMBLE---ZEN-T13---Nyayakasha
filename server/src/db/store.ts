@@ -85,6 +85,16 @@ export interface EvidenceRecord {
   latitude?: number;
   longitude?: number;
   signature?: string;
+  seizureBagId?: string;
+  seizureMethod?: string;
+  priorityLevel?: string;
+  witnessName?: string;
+  preservationType?: string;
+  tags?: string[];
+  evidenceNotes?: string;
+  txHash?: string;
+  blockNumber?: number;
+  merkleRoot?: string;
   createdAt: string;
 }
 
@@ -550,6 +560,16 @@ class PrimaryDataStore {
     caseItem.updatedAt = new Date().toISOString();
     this.cases.set(caseItem.id, caseItem);
     this.persistToDisk();
+
+    try {
+      const db = getFirestore();
+      if (db) {
+        db.collection('cases').doc(caseItem.id).set(caseItem).catch((err: any) => console.log('Firestore case save status:', err.message || err));
+      }
+    } catch (e: any) {
+      console.log('Firestore write info:', e.message || e);
+    }
+
     return caseItem;
   }
 
@@ -575,8 +595,26 @@ class PrimaryDataStore {
       c.evidenceCount += 1;
       c.updatedAt = new Date().toISOString();
       this.cases.set(c.id, c);
+      try {
+        const db = getFirestore();
+        if (db) {
+          db.collection('cases').doc(c.id).set(c).catch((err: any) => console.log('Firestore case update status:', err.message || err));
+        }
+      } catch (e: any) {
+        console.log('Firestore write info:', e.message || e);
+      }
     }
     this.persistToDisk();
+
+    try {
+      const db = getFirestore();
+      if (db) {
+        db.collection('evidence').doc(item.id).set(item).catch((err: any) => console.log('Firestore evidence save status:', err.message || err));
+      }
+    } catch (e: any) {
+      console.log('Firestore write info:', e.message || e);
+    }
+
     return item;
   }
 
