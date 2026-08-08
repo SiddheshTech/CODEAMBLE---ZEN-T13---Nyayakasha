@@ -1188,18 +1188,40 @@ class PrimaryDataStore {
   public getLiveTimeSeriesVolume() {
     const evidenceArr = Array.from(this.evidence.values());
     const casesArr = Array.from(this.cases.values());
-    const dates = ['Mon, Oct 12', 'Tue, Oct 13', 'Wed, Oct 14', 'Thu, Oct 15', 'Fri, Oct 16', 'Sat, Oct 17', 'Sun, Oct 18'];
 
-    return dates.map((date, idx) => {
-      const dayEv = evidenceArr.filter(e => e.date?.includes(`Oct ${12 + idx}`)).length;
-      const dayCase = casesArr.filter(c => c.date?.includes(`Oct ${12 + idx}`)).length;
+    // Generate the last 7 actual days dynamically
+    const days: { label: string; dateObj: Date }[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      days.push({
+        label: d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+        dateObj: d
+      });
+    }
+
+    return days.map(({ label, dateObj }) => {
+      const dateKey = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+      // Count evidence submitted on this day
+      const dayEvidence = evidenceArr.filter(e => {
+        if (!e.date && !e.createdAt) return false;
+        const d = new Date(e.createdAt || e.date || '');
+        return d.toDateString() === dateObj.toDateString();
+      });
+      const dayTestimonies = dayEvidence.filter(e => e.type === 'Document' && e.id.startsWith('TM-')).length;
+      const dayDigital = dayEvidence.filter(e => !e.id.startsWith('TM-')).length;
+      const dayOrders = casesArr.filter(c => {
+        if (!c.createdAt && !c.date) return false;
+        const d = new Date(c.createdAt || c.date || '');
+        return d.toDateString() === dateObj.toDateString();
+      }).length;
 
       return {
-        date,
-        digitalEvidence: dayEv > 0 ? dayEv : 10 + idx * 5,
-        testimonies: dayCase > 0 ? dayCase * 2 : 5 + idx * 2,
-        judicialOrders: Math.max(1, dayCase),
-        integrityScore: 100.0 - (idx * 0.05)
+        date: label,
+        digitalEvidence: dayDigital,
+        testimonies: dayTestimonies,
+        judicialOrders: dayOrders,
+        integrityScore: 100.0
       };
     });
   }
@@ -1208,25 +1230,21 @@ class PrimaryDataStore {
     const casesArr = Array.from(this.cases.values());
     const total = casesArr.length || 1;
 
-    const categories = [
-      { name: 'Cyber Crime & Extortion', type: 'Cyber Crime', color: '#6366f1' },
-      { name: 'Financial & Corporate Fraud', type: 'Financial', color: '#3b82f6' },
-      { name: 'Narcotics & Contraband (NDPS)', type: 'Theft', color: '#10b981' },
-      { name: 'IPR & Commercial Contracts', type: 'Corporate', color: '#f59e0b' },
-      { name: 'Property & Land Disputes', type: 'Forgery', color: '#ec4899' },
-    ];
-
-    return categories.map(cat => {
-      const count = casesArr.filter(c => c.type === cat.type).length;
-      const value = Number(((count / total) * 100).toFixed(0));
-
-      return {
-        name: cat.name,
-        value: value > 0 ? value : 20,
-        count,
-        color: cat.color
-      };
+    // Dynamically generate categories from what's in the database
+    const typeCounts: Record<string, number> = {};
+    casesArr.forEach(c => {
+      const t = c.type || 'Other';
+      typeCounts[t] = (typeCounts[t] || 0) + 1;
     });
+
+    const colorPalette = ['#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444', '#14b8a6'];
+
+    return Object.entries(typeCounts).map(([type, count], idx) => ({
+      name: type,
+      value: Number(((count / total) * 100).toFixed(0)),
+      count,
+      color: colorPalette[idx % colorPalette.length]
+    }));
   }
 
   public getLiveAnalyticalModules(): any[] {

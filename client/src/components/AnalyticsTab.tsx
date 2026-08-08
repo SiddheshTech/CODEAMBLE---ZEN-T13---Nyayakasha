@@ -362,18 +362,20 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
   const [selectedZone, setSelectedZone] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [backendMetrics, setBackendMetrics] = useState<any>(null);
-  const [zoneBenchmarkData, setZoneBenchmarkData] = useState<any[]>(ZONE_BENCHMARK_DATA);
-  const [courtBenchesVelocity, setCourtBenchesVelocity] = useState<any[]>(COURT_BENCHES_VELOCITY);
-  const [durationTrends, setDurationTrends] = useState<any[]>(FHE_DURATION_TRENDS);
-  const [anomalyTrends, setAnomalyTrends] = useState<any[]>(FHE_ANOMALY_TRENDS);
-  const [cohortPrivacyAudit, setCohortPrivacyAudit] = useState<any[]>(FHE_COHORT_PRIVACY_AUDIT);
-  const [timeSeriesVolume, setTimeSeriesVolume] = useState<any[]>(TIME_SERIES_VOLUME);
-  const [caseCategories, setCaseCategories] = useState<any[]>(CASE_CATEGORIES);
-  const [analyticalModules, setAnalyticalModules] = useState<AnalyticalModuleItem[]>(ANALYTICAL_MODULES);
+  const [zoneBenchmarkData, setZoneBenchmarkData] = useState<any[]>([]);
+  const [courtBenchesVelocity, setCourtBenchesVelocity] = useState<any[]>([]);
+  const [durationTrends, setDurationTrends] = useState<any[]>([]);
+  const [anomalyTrends, setAnomalyTrends] = useState<any[]>([]);
+  const [cohortPrivacyAudit, setCohortPrivacyAudit] = useState<any[]>([]);
+  const [timeSeriesVolume, setTimeSeriesVolume] = useState<any[]>([]);
+  const [caseCategories, setCaseCategories] = useState<any[]>([]);
+  const [analyticalModules, setAnalyticalModules] = useState<AnalyticalModuleItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchAnalyticsData = () => {
     api.getAnalyticsOverview()
       .then(res => {
+        setIsLoading(false);
         if (res.metrics) {
           setBackendMetrics(res.metrics);
         }
@@ -405,11 +407,16 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
           setHomomorphicReports(res.reports);
         }
       })
-      .catch(err => console.log('Analytics backend overview info:', err.message));
+      .catch(err => {
+        setIsLoading(false);
+        console.log('Analytics backend overview info:', err.message);
+      });
   };
 
   useEffect(() => {
     fetchAnalyticsData();
+    const interval = setInterval(fetchAnalyticsData, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // INDEPENDENT VALIDATOR HOMOMORPHIC STATE
@@ -975,20 +982,20 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Mean Case Duration</span>
-                    <span className="text-2xl font-extrabold font-mono text-slate-900">{backendMetrics?.meanCaseDuration || '0.5 Days'}</span>
-                    <span className="text-[11px] text-emerald-600 block font-bold">Cohort N = {(backendMetrics?.smallestCohortN || 60).toLocaleString()} (k ≥ 50 PASS)</span>
+                    <span className="text-2xl font-extrabold font-mono text-slate-900">{backendMetrics?.meanCaseDuration ?? '—'}</span>
+                    <span className="text-[11px] text-emerald-600 block font-bold">Cohort N = {(backendMetrics?.smallestCohortN ?? '—')} (k ≥ 50 {backendMetrics?.cohortThresholdPassed ? 'PASS' : 'CHECK'})</span>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Bench Pattern Match</span>
-                    <span className="text-2xl font-extrabold font-mono text-indigo-900">{backendMetrics?.benchPatternMatch || '75.0%'}</span>
+                    <span className="text-2xl font-extrabold font-mono text-indigo-900">{backendMetrics?.benchPatternMatch ?? '—'}</span>
                     <span className="text-[11px] text-indigo-600 block font-bold">Homomorphic Vector Match</span>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Peak Statistical Drift</span>
-                    <span className="text-2xl font-extrabold font-mono text-rose-600">{backendMetrics?.peakStatisticalDrift || '33.3%'}</span>
-                    <span className="text-[11px] text-rose-600 block font-bold">{backendMetrics?.peakDriftZone || 'Zone 4 West Special Tribunal'}</span>
+                    <span className="text-2xl font-extrabold font-mono text-rose-600">{backendMetrics?.peakStatisticalDrift ?? '—'}</span>
+                    <span className="text-[11px] text-rose-600 block font-bold">{backendMetrics?.peakDriftZone ?? 'No drift detected'}</span>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
@@ -1121,7 +1128,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                                           </button>
                                         </div>
                                         <p className="mt-1">
-                                          Cohort size verified above minimum threshold (k=312 &gt; 50 limit), reassuring the validator no individual case could be reverse-identified.
+                                        Cohort size verified above minimum threshold (k={backendMetrics?.smallestCohortN ?? '?'} &gt; 50 limit), reassuring the validator no individual case could be reverse-identified.
                                         </p>
                                       </motion.div>
                                     )}
@@ -1350,7 +1357,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                         <span className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-purple-500" /> Zone 5 Apex</span>
                       </div>
                       <span className="text-[11px] font-mono text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full font-bold">
-                        k-Anonymity Verified (Cohort Min N = 312 &gt; 50)
+                        k-Anonymity Verified (Cohort Min N = {backendMetrics?.smallestCohortN ?? '?'} &gt; 50)
                       </span>
                     </div>
 
@@ -1560,7 +1567,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
                 <span className="text-[10px] font-bold text-emerald-300 uppercase tracking-wider block">System Integrity Score</span>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-xl font-extrabold font-mono text-emerald-400">{backendMetrics?.benchPatternMatch || '99.8%'}</span>
+                <span className="text-xl font-extrabold font-mono text-emerald-400">{backendMetrics?.benchPatternMatch ?? '—'}</span>
                   <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5"><ShieldCheck className="w-3 h-3" /> Verified</span>
                 </div>
                 <span className="text-[10px] text-slate-400 block">{backendMetrics?.flaggedForgeries ?? 0} Forgery Reviews</span>
@@ -1569,7 +1576,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
                 <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider block">Avg Disposition Velocity</span>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-xl font-extrabold font-mono text-amber-300">{backendMetrics?.meanCaseDuration || '0.5 Days'}</span>
+                <span className="text-xl font-extrabold font-mono text-amber-300">{backendMetrics?.meanCaseDuration ?? '—'}</span>
                   <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5"><TrendingDown className="w-3 h-3" /> Live</span>
                 </div>
                 <span className="text-[10px] text-slate-400 block">{backendMetrics?.totalCases ?? 6} Active Court Dockets</span>
@@ -1581,7 +1588,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                   <span className="text-xl font-extrabold font-mono text-indigo-300">{backendMetrics?.totalAuditBlocks ?? 7} Blocks</span>
                   <span className="text-xs font-bold text-indigo-300 flex items-center gap-0.5"><Users className="w-3 h-3" /> 100% Quorum</span>
                 </div>
-                <span className="text-[10px] text-slate-400 block">Height #{backendMetrics?.consensusBlockHeight || 148927}</span>
+                <span className="text-[10px] text-slate-400 block">Height #{backendMetrics?.consensusBlockHeight ?? '—'}</span>
               </div>
             </div>
           </div>
