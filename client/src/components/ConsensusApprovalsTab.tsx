@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import SignatureCanvas from 'react-signature-canvas';
+import { api } from '../services/api';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -166,405 +167,7 @@ export interface ConsensusItem {
   validatorJustificationNote?: string;
 }
 
-const INITIAL_CONSENSUS_QUEUE: ConsensusItem[] = [
-  {
-    id: 'CNS-2026-101',
-    caseRef: 'CR-2026-904',
-    caseTitle: 'State vs. Sector 4 Cyber Heist Syndicate',
-    title: 'Evidence Record Metadata Offset Realignment (CCTV #04)',
-    category: 'Metadata Correction',
-    changeTypeLabel: 'correct evidence entry',
-    requestedBy: 'Registry Clerk V. Deshmukh',
-    requestAgency: 'High Court Registry Wing 3',
-    timestamp: '12 Oct 2026, 10:14 AM',
-    status: 'Awaiting your vote',
-
-    courtAuthorityVoteStatus: 'Pending',
-    validatorVoteStatus: 'Approved',
-    reasonForRequest: 'Correction requested for timestamp offset (+04:00 hrs UTC drift) on CCTV dump container creation date to synchronize with municipal ISP gateway NTP logs.',
-    systemFlagIndicator: null,
-
-    thresholdRequired: '2 of 2',
-    currentApprovalCount: 1,
-    totalRequiredCount: 2,
-
-    yourVote: 'pending',
-    validatorVote: 'approved',
-    auditorVote: 'n/a',
-
-    riskScore: 28, // Low to moderate risk
-    description: 'Correction requested for timestamp offset (+04:00 hrs UTC drift) on CCTV mobile dump file #4 to align with ISP gateway network NTP logs.',
-    impactSummary: 'Re-aligns 50 video frame timestamps with verified ISP router packet logs without altering raw video payload hashes.',
-
-    targetRecordHash: '0x8f2a9910b2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f90123456789abcdef0123',
-    proposedRecordHash: '0x8f2a9910b2a3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f90123456789abcdef0188',
-    previousBlockHash: '0x3c1100984a890012bc889021a3345109',
-    merkleRoot: '0x99a0b112c334d556e778f99011a22b33',
-    blockNumber: 89201,
-
-    nodeVotes: [
-      {
-        nodeName: 'Independent Validator Node #02',
-        nodeRole: 'Certified Forensic Auditor',
-        keyId: 'VAL-KEY-IND-002',
-        status: 'Approved',
-        timestamp: '12 Oct 2026, 10:20 AM',
-        signatureHash: '0xSIG_VAL_APPROVED_8829100419283711',
-      },
-      {
-        nodeName: 'High Court Presiding Magistrate (You)',
-        nodeRole: 'Judicial Court Authority',
-        keyId: 'BENCH-KEY-IND-003',
-        status: 'Pending',
-        timestamp: 'Awaiting Sign-off',
-        signatureHash: '0xPENDING_JUDICIAL_SIGNATURE',
-      },
-    ],
-
-    fieldDiffs: [
-      {
-        fieldName: 'container_creation_timestamp',
-        originalValue: '2026-10-11T19:15:00.000Z (Uncalibrated UTC)',
-        proposedValue: '2026-10-11T23:15:00.000Z (+04:00 NTP Adjusted)',
-        impactLevel: 'Minor',
-        note: 'Header creation date adjusted to match physical clock sync.',
-      },
-      {
-        fieldName: 'timecode_track_reference',
-        originalValue: 'LTC_INTERNAL_01',
-        proposedValue: 'NTP_SERVER_MUNI_ZONE4',
-        impactLevel: 'Minor',
-        note: 'Timecode track linked to verified municipal NTP server authority.',
-      },
-    ],
-
-    custodyLogs: [
-      {
-        id: 'CUST-101-01',
-        stage: 'Metadata Correction Request Filed',
-        actor: 'Clerk V. Deshmukh',
-        role: 'Court Registry Clerk',
-        timestamp: '12 Oct 2026, 10:14 AM',
-        location: 'High Court Registry Office',
-        hashVerified: true,
-        blockNumber: 89195,
-      },
-      {
-        id: 'CUST-101-02',
-        stage: 'Independent Validator Signature Executed',
-        actor: 'Dr. M. Roy',
-        role: 'Independent Forensic Validator',
-        timestamp: '12 Oct 2026, 10:20 AM',
-        location: 'Node #02 Server Center',
-        hashVerified: true,
-        blockNumber: 89199,
-      },
-    ],
-
-    precedents: [
-      {
-        citation: '(2020) 3 SCC 637',
-        title: 'Arjun Panditrao Khotkar vs. Kailash Kushanrao Gorantyal',
-        court: 'Supreme Court of India',
-        relevanceScore: 96.4,
-        principle: 'Metadata adjustments must be verified by dual-key threshold signatures to maintain admissibility under Section 65B.',
-      },
-    ],
-
-    directives: [],
-  },
-  {
-    id: 'CNS-2026-102',
-    caseRef: 'SHV-2150',
-    caseTitle: 'State vs. Land Registry Cartel (Deed Forgery)',
-    title: 'Judicial Order under Section 144 to Seal Sensitive Witness Identity',
-    category: 'Record Sealing',
-    changeTypeLabel: 'seal judgment',
-    requestedBy: 'Hon. Justice A. Mehta',
-    requestAgency: 'Sessions Bench 2',
-    timestamp: '11 Oct 2026, 04:30 PM',
-    status: 'Awaiting validator',
-
-    courtAuthorityVoteStatus: 'Approved',
-    validatorVoteStatus: 'Pending',
-    reasonForRequest: 'Judicial order restricting public ledger access to sensitive witness Aadhaar and biometric hashes under Section 144 witness protection protocol.',
-    systemFlagIndicator: null,
-
-    thresholdRequired: '2 of 2',
-    currentApprovalCount: 1,
-    totalRequiredCount: 2,
-
-    yourVote: 'approved',
-    validatorVote: 'pending',
-    auditorVote: 'n/a',
-
-    riskScore: 15,
-    description: 'Judicial order restricting public ledger access to sensitive witness Aadhaar and biometric hashes under Section 144 witness protection protocol.',
-    impactSummary: 'Converts witness identity fields to Zero-Knowledge Proof (ZKP) hashes on public ledger while preserving full unmasked data in Judicial Vault.',
-
-    targetRecordHash: '0x4e9d110022f133a44b55c66d77e88f9900a11b22c33d44e55f66a77b88c99d00',
-    proposedRecordHash: '0x4e9d110022f133a44b55c66d77e88f9900a11b22c33d44e55f66a77b88c99d88',
-    previousBlockHash: '0x4e9d110022f133a44b55c66d77e88f90',
-    merkleRoot: '0x88b11c22d33e44f55a66b77c88d99e00',
-    blockNumber: 88910,
-
-    nodeVotes: [
-      {
-        nodeName: 'High Court Presiding Magistrate (You)',
-        nodeRole: 'Judicial Court Authority',
-        keyId: 'BENCH-KEY-IND-003',
-        status: 'Approved',
-        timestamp: '11 Oct 2026, 04:35 PM',
-        signatureHash: '0xSIG_BENCH_SEAL_9918230192837122',
-      },
-      {
-        nodeName: 'Independent Validator Node #02',
-        nodeRole: 'Certified Forensic Auditor',
-        keyId: 'VAL-KEY-IND-002',
-        status: 'Pending',
-        timestamp: 'Awaiting Sign-off',
-        signatureHash: '0xPENDING_VALIDATOR_SIGNATURE',
-      },
-    ],
-
-    fieldDiffs: [
-      {
-        fieldName: 'witness_identity_visibility',
-        originalValue: 'PUBLIC_LEDGER_UNMASKED',
-        proposedValue: 'ZKP_ENCRYPTED_VAULT_SEALED',
-        impactLevel: 'Major',
-        note: 'Protects witness identity from public scraping while retaining cryptographic verifiability.',
-      },
-    ],
-
-    custodyLogs: [
-      {
-        id: 'CUST-102-01',
-        stage: 'In-Camera Sealing Motion Order Issued',
-        actor: 'Hon. Justice A. Mehta',
-        role: 'Presiding Judge',
-        timestamp: '11 Oct 2026, 04:30 PM',
-        location: 'Bench 2 Chambers',
-        hashVerified: true,
-        blockNumber: 88900,
-      },
-    ],
-
-    precedents: [
-      {
-        citation: 'AIR 2017 SC 4161',
-        title: 'K.S. Puttaswamy vs. Union of India',
-        court: 'Supreme Court of India',
-        relevanceScore: 99.1,
-        principle: 'Judicial mandate to redact personal biometric identifiers from public court records to enforce Fundamental Right to Privacy.',
-      },
-    ],
-
-    directives: [],
-  },
-  {
-    id: 'CNS-2026-103',
-    caseRef: 'SHV-1987',
-    caseTitle: 'State vs. Port Customs Smuggling Ring',
-    title: 'Unauthorized Request to Delete Evidence Entry (CCTV #2)',
-    category: 'Evidence Deletion',
-    changeTypeLabel: 'delete entry — flagged',
-    requestedBy: 'Registry Assistant P. Nair',
-    requestAgency: 'Zone 1 Customs Bureau',
-    timestamp: '04 Aug 2026, 02:15 PM',
-    status: 'Flagged suspicious',
-
-    courtAuthorityVoteStatus: 'Pending',
-    validatorVoteStatus: 'Pending',
-    reasonForRequest: 'Requested deletion of primary CCTV exhibit video block #87110 citing corruption during customs transfer.',
-    systemFlagIndicator: {
-      isFlagged: true,
-      flagType: 'Deletion Request',
-      title: 'CRITICAL ANOMALY: Deletion Request Tied to Case with Prior Silent Duress Alert (#DURESS-SIG-04)',
-      description: 'Attempted expungement of video evidence without judicial clearance. System detected silent duress PIN event logged by field officer on same case 42 mins ago.',
-    },
-
-    thresholdRequired: '2 of 3',
-    currentApprovalCount: 0,
-    totalRequiredCount: 2,
-
-    yourVote: 'pending',
-    validatorVote: 'rejected',
-    auditorVote: 'rejected',
-
-    riskScore: 94, // Critical Risk
-    description: 'Deletion request for CCTV video segment #2 citing file corruption. Flagged as suspicious due to merkle hash chain mismatch.',
-    impactSummary: 'PREVENTED: Unilateral removal of key CCTV evidence without judicial authorization would violate chain-of-custody integrity.',
-
-    targetRecordHash: '0x99a1bb22cc33dd44ee55ff66aa77bb88cc99dd00ee11ff22aa33bb44cc55ff02',
-    proposedRecordHash: '0x000000000000000000000000000000000000000000000000000000000000NULL',
-    previousBlockHash: '0x99a1bb22cc33dd44ee55ff66aa77bb88',
-    merkleRoot: '0x11223344556677889900aabbccddeeff',
-    blockNumber: 87110,
-
-    nodeVotes: [
-      {
-        nodeName: 'Independent Validator Node #01',
-        nodeRole: 'Certified Forensic Auditor',
-        keyId: 'VAL-KEY-IND-001',
-        status: 'Rejected',
-        timestamp: '04 Aug 2026, 02:20 PM',
-        signatureHash: '0xSIG_VAL_REJECTED_CHAIN_MISMATCH_9921',
-      },
-      {
-        nodeName: 'State Cyber Security Auditor Node',
-        nodeRole: 'Cyber Crime Auditor',
-        keyId: 'AUDIT-NODE-CYBER-04',
-        status: 'Rejected',
-        timestamp: '04 Aug 2026, 02:25 PM',
-        signatureHash: '0xSIG_AUDIT_REJECTED_HASH_BREACH_0019',
-      },
-      {
-        nodeName: 'High Court Presiding Magistrate (You)',
-        nodeRole: 'Judicial Court Authority',
-        keyId: 'BENCH-KEY-IND-003',
-        status: 'Pending',
-        timestamp: 'Awaiting Sign-off',
-        signatureHash: '0xPENDING_JUDICIAL_SIGNATURE',
-      },
-    ],
-
-    fieldDiffs: [
-      {
-        fieldName: 'evidence_record_status',
-        originalValue: 'SEALED_IN_LEDGER_BLOCK_87110',
-        proposedValue: 'DELETED_EXPUNGED_FROM_CHAIN',
-        impactLevel: 'Critical',
-        note: 'Attempted expungement of primary CCTV video exhibit without Section 65B clearance.',
-      },
-    ],
-
-    custodyLogs: [
-      {
-        id: 'CUST-103-01',
-        stage: 'Deletion Motion Logged',
-        actor: 'Assistant P. Nair',
-        role: 'Customs Officer',
-        timestamp: '04 Aug 2026, 02:15 PM',
-        location: 'Customs Terminal Station',
-        hashVerified: false,
-        blockNumber: 87110,
-      },
-      {
-        id: 'CUST-103-02',
-        stage: 'Automated Quorum Anomaly Alert Triggered',
-        actor: 'MAYA-BREAK Consensus Shield',
-        role: 'Automated Inspector',
-        timestamp: '04 Aug 2026, 02:16 PM',
-        location: 'High Court Gateway Node',
-        hashVerified: false,
-        blockNumber: 87111,
-      },
-    ],
-
-    precedents: [
-      {
-        citation: '(2014) 10 SCC 473',
-        title: 'Anvar P.V. vs. P.K. Basheer & Ors.',
-        court: 'Supreme Court of India',
-        relevanceScore: 98.9,
-        principle: 'Spoliation or unauthorized deletion of electronic evidence creates adverse inference against the party in possession.',
-      },
-    ],
-
-    directives: [
-      {
-        id: 'DIR-CNS-103-01',
-        date: '04 Aug 2026, 03:00 PM',
-        issuedBy: 'Hon. Presiding Magistrate (Bench 3)',
-        type: 'CFSL Forensic Subpoena',
-        details: 'Issued immediate freeze order on Zone 1 Customs Terminal workstation and summoned Assistant P. Nair for in-camera hearing.',
-        status: 'Active',
-        sealHash: '0xSEAL_DIR_CNS_103_7719',
-      },
-    ],
-  },
-  {
-    id: 'CNS-2026-104',
-    caseRef: 'SHV-2291',
-    caseTitle: 'State vs. Nexus Pharma (Substandard Drug Distribution)',
-    title: 'Section 65B Certificate Re-Hash for Seizure Inventory Ledger',
-    category: 'Section 65B Re-hash',
-    changeTypeLabel: 'Section 65B re-hash',
-    requestedBy: 'Inspector S. Deshmukh',
-    requestAgency: 'Food & Drug Control Wing',
-    timestamp: '02 Aug 2026, 11:30 AM',
-    status: 'Approved',
-
-    courtAuthorityVoteStatus: 'Approved',
-    validatorVoteStatus: 'Approved',
-    reasonForRequest: 'Re-anchoring Section 65B certificate hash following updated batch testing laboratory analysis report.',
-    systemFlagIndicator: null,
-
-    thresholdRequired: '2 of 2',
-    currentApprovalCount: 2,
-    totalRequiredCount: 2,
-
-    yourVote: 'approved',
-    validatorVote: 'approved',
-    auditorVote: 'n/a',
-
-    riskScore: 8,
-    description: 'Re-anchoring Section 65B certificate hash following updated batch testing laboratory analysis report.',
-    impactSummary: 'Successfully verified and updated 65B hash chain with 100% consensus from Bench and Independent Validator.',
-
-    targetRecordHash: '0x33b44c55d66e77f88a99b00c11d22e33f44a55b66c77d88e99f001122334455',
-    proposedRecordHash: '0x33b44c55d66e77f88a99b00c11d22e33f44a55b66c77d88e99f001122334455',
-    previousBlockHash: '0x33b44c55d66e77f88a99b00c11d22e33',
-    merkleRoot: '0x3334445556667778889990001112223',
-    blockNumber: 88104,
-
-    nodeVotes: [
-      {
-        nodeName: 'High Court Presiding Magistrate (You)',
-        nodeRole: 'Judicial Court Authority',
-        keyId: 'BENCH-KEY-IND-003',
-        status: 'Approved',
-        timestamp: '02 Aug 2026, 11:40 AM',
-        signatureHash: '0xSIG_BENCH_65B_CONFIRMED_8810029',
-      },
-      {
-        nodeName: 'Independent Validator Node #02',
-        nodeRole: 'Certified Forensic Auditor',
-        keyId: 'VAL-KEY-IND-002',
-        status: 'Approved',
-        timestamp: '02 Aug 2026, 11:42 AM',
-        signatureHash: '0xSIG_VAL_65B_CONFIRMED_9918233',
-      },
-    ],
-
-    fieldDiffs: [
-      {
-        fieldName: 'section_65b_certificate_status',
-        originalValue: 'PROVISIONAL_HASH_SEAL',
-        proposedValue: 'FINAL_CERTIFIED_CFSL_SEAL',
-        impactLevel: 'Minor',
-        note: 'Upgraded provisional seal to permanent CFSL verified certificate.',
-      },
-    ],
-
-    custodyLogs: [
-      {
-        id: 'CUST-104-01',
-        stage: 'Re-hash Approval Completed',
-        actor: 'Hon. Justice A. Mehta',
-        role: 'Presiding Judge',
-        timestamp: '02 Aug 2026, 11:45 AM',
-        location: 'Bench 3 High Court',
-        hashVerified: true,
-        blockNumber: 88104,
-      },
-    ],
-
-    precedents: [],
-    directives: [],
-  },
-];
+const INITIAL_CONSENSUS_QUEUE: ConsensusItem[] = [];
 
 export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: string }) {
   const [items, setItems] = useState<ConsensusItem[]>(INITIAL_CONSENSUS_QUEUE);
@@ -574,6 +177,58 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
   const [statusFilter, setStatusFilter] = useState<'All' | 'Pending' | 'Approved' | 'Rejected' | 'Flagged'>('All');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [slideOverItemId, setSlideOverItemId] = useState<string | null>(null);
+
+  const [summaryMetrics, setSummaryMetrics] = useState<{ pendingCount: number; systemFlagsCount: number; votesCastCount: number }>({
+    pendingCount: 0,
+    systemFlagsCount: 0,
+    votesCastCount: 0
+  });
+
+  const fetchPendingConsensus = () => {
+    api.getPendingConsensus()
+      .then(res => {
+        if (res.pendingRequests && Array.isArray(res.pendingRequests)) {
+          setItems(res.pendingRequests.map((r: any) => ({
+            ...r,
+            nodeVotes: r.nodeVotes || [],
+            fieldDiffs: r.fieldDiffs || [],
+            custodyLogs: r.custodyLogs || [],
+            precedents: r.precedents || [],
+            directives: r.directives || []
+          })));
+        } else {
+          setItems([]);
+        }
+        if (res.summary) {
+          setSummaryMetrics(res.summary);
+        }
+      })
+      .catch(err => console.log('Pending consensus fetch status:', err.message));
+  };
+
+  useEffect(() => {
+    fetchPendingConsensus();
+  }, []);
+
+  useEffect(() => {
+    if (slideOverItemId) {
+      api.getConsensusById(slideOverItemId)
+        .then(res => {
+          if (res.request) {
+            setItems(prev => prev.map(i => i.id === slideOverItemId ? {
+              ...i,
+              ...res.request,
+              nodeVotes: res.request.nodeVotes || i.nodeVotes || [],
+              fieldDiffs: res.request.fieldDiffs || i.fieldDiffs || [],
+              custodyLogs: res.request.custodyLogs || i.custodyLogs || [],
+              precedents: res.request.precedents || i.precedents || [],
+              directives: res.request.directives || i.directives || []
+            } : i));
+          }
+        })
+        .catch(err => console.log('Consensus detail fetch notice:', err.message));
+    }
+  }, [slideOverItemId]);
 
   const [validatorJustifications, setValidatorJustifications] = useState<Record<string, string>>({
     'CNS-2026-101': 'Verified against ISP router NTP clock logs. Time offset realignment is cryptographically valid and preserves raw payload hashes.',
@@ -597,6 +252,10 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
     }
 
     setValidatorErrors((prev) => ({ ...prev, [itemId]: null }));
+
+    api.castConsensusVote(itemId, voteAction, note, 'Independent Validator Node #02 (You)')
+      .then(() => fetchPendingConsensus())
+      .catch(err => console.log('Backend vote consensus status:', err.message));
 
     const pin = (validatorPins[itemId] || '882091').trim();
     const now = new Date();
@@ -932,19 +591,19 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
               <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-center min-w-[100px]">
                 <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider block">Pending Votes</span>
                 <span className="text-xl font-bold text-amber-400 font-mono">
-                  {pendingItems.length}
+                  {summaryMetrics.pendingCount ?? pendingItems.length}
                 </span>
               </div>
               <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-center min-w-[100px]">
                 <span className="text-[10px] font-bold text-rose-300 uppercase tracking-wider block">System Flags</span>
                 <span className="text-xl font-bold text-rose-400 font-mono">
-                  {items.filter((i) => i.systemFlagIndicator?.isFlagged || i.status === 'Flagged suspicious').length}
+                  {summaryMetrics.systemFlagsCount ?? items.filter(i => i.systemFlagIndicator?.isFlagged || i.status === 'Flagged suspicious').length}
                 </span>
               </div>
               <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center min-w-[100px]">
                 <span className="text-[10px] font-bold text-emerald-300 uppercase tracking-wider block">Votes Cast</span>
                 <span className="text-xl font-bold text-emerald-400 font-mono">
-                  {historyItems.length}
+                  {summaryMetrics.votesCastCount ?? historyItems.length}
                 </span>
               </div>
             </div>

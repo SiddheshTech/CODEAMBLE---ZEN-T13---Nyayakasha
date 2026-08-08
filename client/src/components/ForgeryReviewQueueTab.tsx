@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { api } from '../services/api';
 import {
   AlertTriangle,
   ShieldCheck,
@@ -527,7 +528,25 @@ export function ForgeryReviewQueueTab() {
   const [items, setItems] = useState<ForgeryQueueItem[]>(INITIAL_QUEUE);
 
   // Load dynamically submitted evidence from Field Submitter
-  React.useEffect(() => {
+  useEffect(() => {
+    api.getForgeryQueue()
+      .then(res => {
+        if (res.reviews && res.reviews.length > 0) {
+          setItems(prev => {
+            const existingMap = new Map(prev.map(i => [i.id, i]));
+            res.reviews.forEach((r: any) => {
+              const item = existingMap.get(r.id);
+              if (item) {
+                item.status = r.status as any;
+                item.confidenceScore = r.aiConfidence || item.confidenceScore;
+              }
+            });
+            return Array.from(existingMap.values());
+          });
+        }
+      })
+      .catch(err => console.log('Backend forgery queue fetch info:', err.message));
+
     try {
       const stored = localStorage.getItem('nyayakasha_submitted_evidence');
       if (stored) {

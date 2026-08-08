@@ -10,6 +10,7 @@ import { verifyJurisdictionGeofence } from '../middleware/geofence.js';
 import { setDualPins, verifyPinAndHandleDuress } from '../services/duress.service.js';
 import { requireAuth } from '../middleware/roleGuard.js';
 import { crossCheckInstitutionalRegistry, queueValidatorVetting } from '../services/verification.service.js';
+import { notificationService } from '../services/notification.service.js';
 export const authRouter = Router();
 /**
  * POST /api/auth/signup
@@ -89,15 +90,43 @@ authRouter.post('/signup', async (req, res) => {
         if (role === 'independent_validator') {
             await queueValidatorVetting(newUser.id, Boolean(consentVetting));
         }
+        // Dispatch Real SMTP Email Notification
+        notificationService.sendEmail(newUser.email, 'Nyayakasha — Registration Confirmation', `<p>Hello <strong>${newUser.fullName}</strong>,</p>
+       <p>Your registration request for the role of <strong>${newUser.role}</strong> has been received by the Nyayakasha Platform.</p>
+       <p>Current Status: <strong>Institutional Verification Initiated</strong>.</p>`).catch(err => console.log('Email dispatch error:', err));
         auditLedger.appendEvent({
             eventType: 'USER_SIGNUP',
             userId: newUser.id,
             userRole: newUser.role,
             details: { email: newUser.email, approvalState: newUser.approvalState }
         });
+        // Create Server-Side Session in Redis Store for newly registered user
+        const clientIp = req.ip || req.socket.remoteAddress || '127.0.0.1';
+        const sessionId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+        const session = {
+            sessionId,
+            userId: newUser.id,
+            role: newUser.role,
+            createdAt: Date.now(),
+            lastAccessAt: Date.now(),
+            ipAddress: clientIp,
+            userAgent: req.headers['user-agent'] || 'unknown'
+        };
+        await sessionStore.setSession(session);
         return res.status(201).json({
             message: 'Signup successful. Institutional verification initiated.',
             userId: newUser.id,
+            sessionId,
+            user: {
+                id: newUser.id,
+                email: newUser.email,
+                fullName: newUser.fullName,
+                role: newUser.role,
+                approvalState: newUser.approvalState,
+                mfaEnrolled: newUser.mfaEnrolled,
+                mfaType: newUser.mfaType,
+                publicKeyPem: newUser.publicKeyPem
+            },
             approvalState: newUser.approvalState,
             institutionVerified: newUser.institutionVerified
         });

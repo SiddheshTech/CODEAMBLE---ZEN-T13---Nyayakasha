@@ -1287,9 +1287,9 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
                         password,
                         fullName,
                         role: backendRole,
-                        badgeId: officialId || 'POL-MH-99482',
-                        barCouncilNumber: officialId || 'MAH/1234/2010',
-                        institutionId: judicialApptId || officialId || 'HCJ-APPT-2018-0942',
+                        badgeId: officialId || (backendRole === 'field_submitter' ? `POL-MH-${Math.floor(10000 + Math.random() * 90000)}` : `BCM-MH-${Math.floor(10000 + Math.random() * 90000)}`),
+                        barCouncilNumber: officialId || (backendRole === 'field_submitter' ? `POL-MH-${Math.floor(10000 + Math.random() * 90000)}` : `BCM-MH-${Math.floor(10000 + Math.random() * 90000)}`),
+                        institutionId: judicialApptId || officialId || (backendRole === 'field_submitter' ? `POL-WRT-2026-${Math.floor(1000 + Math.random() * 9000)}` : `HC-REG-2026-${Math.floor(1000 + Math.random() * 9000)}`),
                         jurisdictionCode: 'MH-MUM-DIST-01',
                         consentVetting: vettingConsent
                       });
@@ -2063,7 +2063,11 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
                       </button>
                     ) : (
                       <button 
-                        onClick={() => onNavigate('dashboard')}
+                        onClick={() => {
+                          localStorage.setItem('nyayakasha_is_logged_in', 'true');
+                          localStorage.setItem('nyayakasha_current_page', 'dashboard');
+                          onNavigate('dashboard');
+                        }}
                         className="w-full rounded-xl py-4 bg-black text-white hover:bg-gray-800 shadow-lg shadow-black/10 hover:shadow-xl hover:-translate-y-0.5 transition-all text-base font-semibold flex items-center justify-center gap-2"
                       >
                         Go to my dashboard
@@ -2073,7 +2077,11 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
                  </div>
                  
                  <button 
-                    onClick={() => onNavigate('dashboard')}
+                    onClick={() => {
+                      localStorage.setItem('nyayakasha_is_logged_in', 'true');
+                      localStorage.setItem('nyayakasha_current_page', 'dashboard');
+                      onNavigate('dashboard');
+                    }}
                     className="w-full py-4 text-sm font-semibold text-black/40 hover:text-black transition-colors mt-2"
                   >
                     Skip

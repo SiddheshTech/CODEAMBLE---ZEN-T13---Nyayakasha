@@ -1,9 +1,18 @@
-import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Menu, X, LayoutDashboard } from 'lucide-react';
 import { LogoIcon } from './LogoIcon';
 
 export function Navbar({ onNavigate, currentPage = 'home' }: { onNavigate?: (page: string) => void, currentPage?: string }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const logged = localStorage.getItem('nyayakasha_is_logged_in') === 'true';
+    const role = localStorage.getItem('nyayakasha_user_role');
+    setIsLoggedIn(logged);
+    setUserRole(role);
+  }, [currentPage]);
 
   const navClass = (currentPage === 'contact' || currentPage === 'infrastructure' || currentPage === 'evidence' || currentPage === 'security' || currentPage === 'cnn') 
     ? "relative top-0 left-0 right-0 z-40 px-6 py-5 bg-[#F5F5F5]"
@@ -60,15 +69,25 @@ export function Navbar({ onNavigate, currentPage = 'home' }: { onNavigate?: (pag
           </div>
 
           <div className="flex items-center gap-4 relative z-50">
-            <button 
-              onClick={() => onNavigate?.('auth')}
-              className="hidden md:block bg-black text-white text-base font-medium px-7 py-2.5 rounded-full hover:bg-gray-800 transition-colors duration-200"
-            >
-              Access System
-            </button>
+            {isLoggedIn ? (
+              <button 
+                onClick={() => onNavigate?.('dashboard')}
+                className="hidden md:flex items-center gap-2 bg-black text-white text-base font-medium px-6 py-2.5 rounded-full hover:bg-gray-800 transition-colors duration-200 shadow-md cursor-pointer"
+              >
+                <LayoutDashboard className="w-4 h-4 text-emerald-400" />
+                <span>Dashboard {userRole ? `(${userRole})` : ''}</span>
+              </button>
+            ) : (
+              <button 
+                onClick={() => onNavigate?.('auth')}
+                className="hidden md:block bg-black text-white text-base font-medium px-7 py-2.5 rounded-full hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
+              >
+                Access System
+              </button>
+            )}
 
             <button 
-              className="md:hidden p-2 -mr-2 text-black"
+              className="md:hidden p-2 -mr-2 text-black cursor-pointer"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -92,12 +111,22 @@ export function Navbar({ onNavigate, currentPage = 'home' }: { onNavigate?: (pag
         </div>
         
         <div className="mt-auto pb-12">
-          <button 
-            onClick={() => handleNavigate('auth')}
-            className="w-full bg-black text-white text-lg font-medium px-7 py-4 rounded-full hover:bg-gray-800 transition-colors duration-200 shadow-lg"
-          >
-            Access System
-          </button>
+          {isLoggedIn ? (
+            <button 
+              onClick={() => handleNavigate('dashboard')}
+              className="w-full bg-black text-white text-lg font-medium px-7 py-4 rounded-full hover:bg-gray-800 transition-colors duration-200 shadow-lg flex items-center justify-center gap-2.5"
+            >
+              <LayoutDashboard className="w-5 h-5 text-emerald-400" />
+              <span>Go to Dashboard ({userRole || 'Logged In'})</span>
+            </button>
+          ) : (
+            <button 
+              onClick={() => handleNavigate('auth')}
+              className="w-full bg-black text-white text-lg font-medium px-7 py-4 rounded-full hover:bg-gray-800 transition-colors duration-200 shadow-lg"
+            >
+              Access System
+            </button>
+          )}
         </div>
       </div>
     </>

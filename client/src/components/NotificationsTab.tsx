@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { api } from '../services/api';
 import { 
   Bell, CheckCircle2, AlertTriangle, Clock, Filter, Settings, FileText, User, 
   ShieldAlert, Search, Check, X, Lock, Scale, Copy, ScanLine, Users, Radio, 
@@ -31,195 +32,53 @@ export interface AuditNotification {
   actionLabel?: string;
 }
 
-const INITIAL_NOTIFICATIONS: AuditNotification[] = [
-  {
-    id: 'notif-duress-01',
-    type: 'duress',
-    title: 'CRITICAL: Duress-Alert Escalation Logged',
-    message: 'Silent panic key entered by Officer R. Kulkarni at Zone 4 Field Terminal during evidence hashing.',
-    timestamp: '10 minutes ago',
-    isoDate: '2026-08-06T11:28:00Z',
-    isRead: false,
-    priority: 'critical',
-    caseId: 'FIR-2026-001',
-    sender: 'Oversight Security Sentinel',
-    details: 'Terminal #04 detected a silent duress PIN sequence. Visual evidence feed and officer geolocation locked in high-security audit ledger. Instant judicial oversight review triggered under Rule 88-B.',
-    actionUrlTab: 'Case Files',
-    actionLabel: 'Inspect Escalation Payload'
-  },
-  {
-    id: 'notif-forgery-01',
-    type: 'forgery',
-    title: 'New Item in Forgery Review Queue',
-    message: 'AI Anomaly Detector flagged 87% probability of deepfake image tampering on EV-2026-9902.',
-    timestamp: '28 minutes ago',
-    isoDate: '2026-08-06T11:10:00Z',
-    isRead: false,
-    priority: 'high',
-    caseId: 'FIR-2026-006',
-    sender: 'Forensic Neural Scanner v4.2',
-    details: 'JPEG compression grid inconsistency detected in region (X:340, Y:120). Hash comparison against raw sensor snapshot failed checksum verification. Judicial review required.',
-    actionUrlTab: 'Forgery review',
-    actionLabel: 'Open Forgery Queue'
-  },
-  {
-    id: 'notif-consensus-01',
-    type: 'consensus',
-    title: 'Consensus Vote Required for Evidence Seal',
-    message: 'Multi-signature quorum pending (2/3 signatures) for high-value seizure log EV-8822.',
-    timestamp: '1 hour ago',
-    isoDate: '2026-08-06T10:38:00Z',
-    isRead: false,
-    priority: 'high',
-    caseId: 'FIR-2026-002',
-    sender: 'High Court Quorum Engine',
-    details: 'Hon. Magistrate A. Roy and Senior Registrar P. Sharma have provided affirmative signatures. Your judicial key signature is required to finalize block immutability.',
-    actionUrlTab: 'Consensus votes',
-    actionLabel: 'Cast Quorum Vote'
-  },
-  {
-    id: 'notif-precedent-01',
-    type: 'precedent',
-    title: 'Precedent-Twin Flag Raised',
-    message: 'Legal Similarity AI identified 94% match between FIR-2026-001 and High Court Precedent SC-2021-88.',
-    timestamp: '2 hours ago',
-    isoDate: '2026-08-06T09:38:00Z',
-    isRead: false,
-    priority: 'medium',
-    caseId: 'FIR-2026-001',
-    sender: 'Judicial Precedent Engine',
-    details: 'Automated scan found identical legal precedent regarding the admissibility of encrypted server logs exfiltrated under cyber coercion. Review jurisprudence summary.',
-    actionUrlTab: 'Case Files',
-    actionLabel: 'Review Precedent'
-  },
-  {
-    id: 'notif-unlock-01',
-    type: 'identity_unlock',
-    title: 'Witness Identity Unlock Requested',
-    message: 'Defense counsel filed motion to reveal unmasked identity for Protected Witness W-772.',
-    timestamp: '4 hours ago',
-    isoDate: '2026-08-06T07:38:00Z',
-    isRead: true,
-    readAt: 'Today at 08:15 AM',
-    priority: 'high',
-    caseId: 'FIR-2026-001',
-    sender: 'Sessions Court Registry',
-    details: 'Requires Judge-tier cryptographic key split authorization to decrypt witness real-world identity from Zero-Knowledge vault.',
-    actionUrlTab: 'Identity unlock',
-    actionLabel: 'Review Unlock Request'
-  },
-  {
-    id: 'notif-system-01',
-    type: 'system',
-    title: 'Ledger Block #104,921 Immutable Sync',
-    message: 'Global evidence ledger synchronized across 12 judicial nodes with 0 orphan blocks.',
-    timestamp: '1 day ago',
-    isoDate: '2026-08-05T11:38:00Z',
-    isRead: true,
-    readAt: 'Yesterday at 04:30 PM',
-    priority: 'low',
-    sender: 'Hyperledger Node Monitor',
-    details: '142 evidence items indexed with SHA-256 block header 0x8f2a...c091. All validator signatures verified.'
-  }
-];
-
-const VALIDATOR_NOTIFICATIONS: AuditNotification[] = [
-  {
-    id: 'val-notif-01',
-    type: 'consensus',
-    title: 'New Consensus Vote Needing Attention: REQ-8831',
-    message: 'Evidence sealing request REQ-8831 (Division Bench 2) pending your validator signature to complete 2/3 multi-sig quorum.',
-    timestamp: '12 minutes ago',
-    isoDate: '2026-08-07T08:50:00Z',
-    isRead: false,
-    priority: 'high',
-    sender: 'High Court Quorum Engine',
-    details: 'Sealing request for commercial dispute evidence payload #EV-8822. Dual-custody signatures present from Judge M. Sharma and Registrar A. Roy. Your independent validator node vote is required.',
-    actionUrlTab: 'Consensus votes',
-    actionLabel: 'Cast Quorum Vote'
-  },
-  {
-    id: 'val-notif-02',
-    type: 'system',
-    title: 'New Analytics Report Ready: Zone 4 West Tribunal',
-    message: 'Layer 4 Homomorphic Q3 Case Duration & Anomaly Drift Report ready for review over encrypted ciphertexts.',
-    timestamp: '45 minutes ago',
-    isoDate: '2026-08-07T08:20:00Z',
-    isRead: false,
-    priority: 'medium',
-    sender: 'Layer 4 Homomorphic Engine',
-    details: 'Differential privacy noise ε=0.5 enforced. Minimum cohort threshold k=312 (>50 limit) verified. Statistical duration variance (+128%) detected.',
-    actionUrlTab: 'Aggregate analytics',
-    actionLabel: 'Open Aggregate Analytics'
-  },
-  {
-    id: 'val-notif-03',
-    type: 'duress',
-    title: 'Oversight Escalation Response: Ticket #ESC-2026-88412',
-    message: 'Independent Judicial Oversight Board acknowledged formal inquiry regarding Zone 4 statistical duration spike. Audit enclave inspection initiated.',
-    timestamp: '2 hours ago',
-    isoDate: '2026-08-07T07:00:00Z',
-    isRead: false,
-    priority: 'critical',
-    sender: 'Independent Judicial Oversight Board',
-    details: 'Inquiry ticket ESC-2026-88412 assigned to Oversight Master Panel. Confidential enclave verification underway. Zero raw party identities or case names exposed.',
-    actionUrlTab: 'Aggregate analytics',
-    actionLabel: 'View Escalation Status'
-  },
-  {
-    id: 'val-notif-04',
-    type: 'consensus',
-    title: 'Consensus Vote Required: Section 144 Emergency Sealing',
-    message: 'Emergency record sealing request #REQ-8812 in Division Bench 1 pending final validator node authorization.',
-    timestamp: '5 hours ago',
-    isoDate: '2026-08-07T04:00:00Z',
-    isRead: true,
-    readAt: 'Today at 08:30 AM',
-    priority: 'high',
-    sender: 'Apex Bench Quorum Dispatcher',
-    details: 'High-security emergency sealing requested under Section 144. Requires hardware key token signature from 2 independent validator nodes.',
-    actionUrlTab: 'Consensus votes',
-    actionLabel: 'Go to Consensus Votes'
-  },
-  {
-    id: 'val-notif-05',
-    type: 'system',
-    title: 'New Analytics Report: Bench Precedent Similarity Matrix',
-    message: 'System-wide homomorphic vector comparison report for all 5 court districts finalized.',
-    timestamp: '1 day ago',
-    isoDate: '2026-08-06T09:00:00Z',
-    isRead: true,
-    readAt: 'Yesterday at 03:15 PM',
-    priority: 'low',
-    sender: 'Layer 4 Homomorphic Engine',
-    details: 'Precedent similarity score calculated at 96.8% across 14,820 case files. All privacy noise thresholds satisfied.',
-    actionUrlTab: 'Aggregate analytics',
-    actionLabel: 'Open Aggregate Analytics'
-  },
-  {
-    id: 'val-notif-06',
-    type: 'system',
-    title: 'Validator Node Health & Ledger Sync Complete',
-    message: 'Validator Node NODE-IND-VAL-04 synchronized across 12 distributed ledger peers with 100% block consensus.',
-    timestamp: '2 days ago',
-    isoDate: '2026-08-05T10:00:00Z',
-    isRead: true,
-    readAt: 'Aug 05 at 10:00 AM',
-    priority: 'low',
-    sender: 'Hyperledger Peer Network',
-    details: 'Block height #1,489,201 verified. Cryptographic Merkle roots synchronized with zero orphan branches.'
-  }
-];
-
 export function NotificationsTab({ role = 'Court Authority', onSelectTab }: { role?: string; onSelectTab?: (tab: string) => void }) {
-  const initialData = role === 'Independent Validator' ? VALIDATOR_NOTIFICATIONS : INITIAL_NOTIFICATIONS;
-  const initialSelected = role === 'Independent Validator' ? 'val-notif-01' : 'notif-duress-01';
-
-  const [notifications, setNotifications] = useState<AuditNotification[]>(initialData);
+  const [notifications, setNotifications] = useState<AuditNotification[]>([]);
   const [filterType, setFilterType] = useState<NotificationType | 'all'>('all');
   const [readFilter, setReadFilter] = useState<'all' | 'unread'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedId, setSelectedId] = useState<string | null>(initialSelected);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const fetchLiveNotifications = () => {
+    api.getNotifications(role)
+      .then(res => {
+        if (res.notifications && Array.isArray(res.notifications)) {
+          const mapped: AuditNotification[] = res.notifications.map((n: any) => ({
+            id: n.id,
+            type: n.type || 'system',
+            title: n.title,
+            message: n.message,
+            timestamp: n.timestamp || 'Just now',
+            isoDate: n.isoDate || n.createdAt || new Date().toISOString(),
+            isRead: Boolean(n.isRead),
+            readAt: n.readAt,
+            priority: n.priority || 'medium',
+            caseId: n.caseId,
+            sender: n.sender || 'Nyayakasha System',
+            details: n.details || n.message,
+            actionUrlTab: n.actionUrlTab,
+            actionLabel: n.actionLabel
+          }));
+          setNotifications(mapped);
+          if (mapped.length > 0 && !selectedId) {
+            setSelectedId(mapped[0].id);
+          }
+        }
+      })
+      .catch(err => console.log('Notifications backend fetch info:', err.message));
+  };
+
+  useEffect(() => {
+    fetchLiveNotifications();
+    const interval = setInterval(fetchLiveNotifications, 3000);
+
+    // Request Web Push Notification Permission
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().catch(() => {});
+    }
+
+    return () => clearInterval(interval);
+  }, [role]);
 
   const unreadCount = useMemo(() => {
     return notifications.filter(n => !n.isRead).length;
@@ -242,23 +101,15 @@ export function NotificationsTab({ role = 'Court Authority', onSelectTab }: { ro
   }, [notifications, filterType, readFilter, searchQuery]);
 
   const activeNotification = useMemo(() => {
-    return notifications.find(n => n.id === selectedId) || null;
+    return notifications.find(n => n.id === selectedId) || notifications[0] || null;
   }, [notifications, selectedId]);
 
   const handleToggleRead = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    setNotifications(prev => prev.map(n => {
-      if (n.id === id) {
-        const newIsRead = !n.isRead;
-        return {
-          ...n,
-          isRead: newIsRead,
-          readAt: newIsRead ? `Today at ${now}` : undefined
-        };
-      }
-      return n;
-    }));
+    const target = notifications.find(n => n.id === id);
+    if (target && !target.isRead) {
+      handleMarkAsRead(id, e);
+    }
   };
 
   const handleMarkAsRead = (id: string, e?: React.MouseEvent) => {
@@ -270,6 +121,7 @@ export function NotificationsTab({ role = 'Court Authority', onSelectTab }: { ro
       }
       return n;
     }));
+    api.markNotificationRead(id).catch(err => console.log('Mark read error:', err.message));
   };
 
   const handleMarkAllRead = () => {
@@ -279,6 +131,7 @@ export function NotificationsTab({ role = 'Court Authority', onSelectTab }: { ro
       isRead: true,
       readAt: n.readAt || `Today at ${now}`
     })));
+    api.markAllNotificationsRead(role).catch(err => console.log('Mark all read error:', err.message));
   };
 
   const handleViewRoute = (notif: AuditNotification, e?: React.MouseEvent) => {

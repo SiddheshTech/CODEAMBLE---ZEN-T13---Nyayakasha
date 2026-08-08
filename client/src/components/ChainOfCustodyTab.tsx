@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, Filter, Link2, CheckCircle2, Camera, Shield, 
@@ -6,101 +6,156 @@ import {
   Lock, AlertTriangle, FileText, Download, QrCode,
   ChevronLeft, Fingerprint, Eye, X
 } from 'lucide-react';
-
-const MOCK_CUSTODY_ITEMS = [
-  {
-    id: 'EV-2026-8821',
-    caseId: 'FIR-2026-001',
-    title: 'CCTV Footage - Main Server Room',
-    type: 'Digital Asset',
-    currentCustodian: 'Officer R. Kulkarni',
-    status: 'In Transit',
-    lastUpdated: '10 mins ago',
-    hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
-  },
-  {
-    id: 'EV-2026-8822',
-    caseId: 'FIR-2026-001',
-    title: 'Server Access Logs (Encrypted)',
-    type: 'Document',
-    currentCustodian: 'Cyber Forensics Lab',
-    status: 'Secured',
-    lastUpdated: '2 hours ago',
-    hash: '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'
-  },
-  {
-    id: 'EV-2026-8823',
-    caseId: 'FIR-2026-003',
-    title: 'Tampered Network Switch',
-    type: 'Physical Evidence',
-    currentCustodian: 'Evidence Room A',
-    status: 'Archived',
-    lastUpdated: '1 day ago',
-    hash: '4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5'
-  },
-  {
-    id: 'EV-2026-8824',
-    caseId: 'FIR-2026-006',
-    title: 'Counterfeit Currency Batch',
-    type: 'Physical Evidence',
-    currentCustodian: 'Pending Acceptance',
-    status: 'Transfer Pending',
-    lastUpdated: 'Just now',
-    hash: '7d34dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1abc'
-  }
-];
-
-const MOCK_TIMELINE = [
-  {
-    time: "Oct 12, 2026 • 10:42 AM",
-    title: "Evidence Seized at Scene",
-    desc: "Digital asset acquired at Sector 4 Server Room. Initial hash generated and sealed on-device.",
-    actor: "Officer R. Kulkarni",
-    role: "Field Submitter",
-    icon: Camera,
-    status: "Verified",
-    hash: "e3b0c442...b855"
-  },
-  {
-    time: "Oct 12, 2026 • 11:15 AM",
-    title: "Transfer Initiated",
-    desc: "Officer R. Kulkarni requested transfer to Cyber Forensics Lab. Waiting for acceptance.",
-    actor: "Officer R. Kulkarni",
-    role: "Field Submitter",
-    icon: ArrowRight,
-    status: "Pending",
-    hash: "Signature Generated"
-  },
-  {
-    time: "Oct 12, 2026 • 11:30 AM",
-    title: "Handover Accepted via ZKP",
-    desc: "Dr. Mehta mathematically verified the asset hash and accepted custody. Ownership transferred.",
-    actor: "Dr. S. Mehta",
-    role: "Forensics Analyst",
-    icon: Link2,
-    status: "Verified",
-    hash: "ZKP Validated"
-  },
-  {
-    time: "Oct 12, 2026 • 02:30 PM",
-    title: "Analysis Completed & Logged",
-    desc: "Asset accessed for malware analysis. Read-only lock enforced during examination.",
-    actor: "Dr. S. Mehta",
-    role: "Forensics Analyst",
-    icon: CheckCircle2,
-    status: "Logged",
-    hash: "Audit ID: 9012"
-  }
-];
+import { api } from '../services/api';
 
 export function ChainOfCustodyTab() {
+  const [custodyItems, setCustodyItems] = useState<any[]>([]);
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [transferRecipient, setTransferRecipient] = useState('Dr. S. Mehta (Cyber Forensics)');
+  const [transferNotes, setTransferNotes] = useState('');
+  const [transferPin, setTransferPin] = useState('');
+  const [isTransferring, setIsTransferring] = useState(false);
+  const [timeline, setTimeline] = useState<any[]>([]);
+  const userRole = localStorage.getItem('nyayakasha_user_role') || 'field_submitter';
+  const canViewRawPayload = userRole === 'court_authority' || userRole === 'independent_validator';
 
-  const handleTransferSubmit = (e: React.FormEvent) => {
+  const fetchCustodyData = async () => {
+    try {
+      const res = await api.getEvidence();
+      if (res && res.evidence) {
+        setCustodyItems(res.evidence.map((e: any) => ({
+          id: e.id,
+          caseId: e.caseId || null,
+          title: e.title,
+          date: e.date,
+          type: e.type || 'Physical Evidence',
+          currentCustodian: e.custodian || null,
+          status: e.status === 'Sealed' ? 'Secured' : e.status || null,
+          lastUpdated: e.date ? new Date(e.date).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : null,
+          hash: e.hash || null,
+          txHash: e.txHash || null,
+          blockNumber: e.blockNumber || null,
+          merkleRoot: e.merkleRoot || null,
+          fileUrl: e.fileUrl || null,
+          dataUrl: e.dataUrl || null,
+          evidenceNotes: e.evidenceNotes || null,
+          witnessName: e.witnessName || null
+        })));
+      }
+    } catch (err) {
+      console.error("Custody API fetch error:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustodyData();
+  }, []);
+
+  const handleDownloadAuditReport = () => {
+    if (!selectedItem) return;
+    const reportContent = {
+      title: "NYAYAKASHA CRYPTOGRAPHIC CHAIN OF CUSTODY CERTIFICATE",
+      legalFramework: "Section 65B of Indian Evidence Act & Polygon PoS Consensus Protocol",
+      generatedAt: new Date().toISOString(),
+      evidenceMetadata: {
+        id: selectedItem.id,
+        caseId: selectedItem.caseId,
+        title: selectedItem.title,
+        type: selectedItem.type,
+        currentCustodian: selectedItem.currentCustodian,
+        status: selectedItem.status,
+        sha256Hash: selectedItem.hash || null,
+        txHash: selectedItem.txHash || null,
+        blockNumber: selectedItem.blockNumber || null,
+        merkleRoot: selectedItem.merkleRoot || null
+      },
+      chainOfCustodyTrail: timeline,
+      certificateVerification: "100% IMMUTABLE & VERIFIED ON POLYGON POS BLOCKCHAIN"
+    };
+
+    const blob = new Blob([JSON.stringify(reportContent, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `NYAYAKASHA_CUSTODY_CERTIFICATE_${selectedItem.id}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  useEffect(() => {
+    let intervalId: any;
+    const loadChain = () => {
+      if (selectedItem) {
+        api.getEvidenceChain(selectedItem.id).then(res => {
+          if (res && res.chainOfCustody && res.chainOfCustody.length > 0) {
+            setTimeline(res.chainOfCustody.map((event: any) => ({
+              time: new Date(event.timestamp).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+              title: event.eventType.replace(/_/g, ' '),
+              desc: event.details?.immutabilityNotice || (event.details?.reason ? `Reason: ${event.details.reason}` : null) || event.details?.notes || null,
+              actor: event.details?.newCustodian ? `${event.actorRole || event.actorId} -> ${event.details.newCustodian}` : (event.actorRole || event.actorId || null),
+              role: event.actorRole || 'Field Officer',
+              icon: CheckCircle2,
+              status: 'Verified',
+              hash: event.details?.txHash ? event.details.txHash.slice(0, 18) + '...' : (event.blockHash ? event.blockHash.slice(0, 18) + '...' : null)
+            })));
+          } else {
+            // No audit trail entries yet — show the sealed submission entry derived from evidence metadata
+            if (selectedItem.hash || selectedItem.txHash) {
+              setTimeline([
+                {
+                  time: selectedItem.date ? new Date(selectedItem.date).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : selectedItem.lastUpdated,
+                  title: "EVIDENCE BLOCKCHAIN ANCHORED",
+                  desc: selectedItem.evidenceNotes || "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+                  actor: selectedItem.currentCustodian,
+                  role: "Custodian / Officer",
+                  icon: Camera,
+                  status: "Verified",
+                  hash: selectedItem.txHash ? selectedItem.txHash.slice(0, 18) + '...' : (selectedItem.hash ? selectedItem.hash.slice(0, 16) + '...' : null)
+                }
+              ]);
+            } else {
+              setTimeline([]);
+            }
+          }
+        }).catch(err => {
+          console.error("Chain fetch error:", err);
+        });
+      }
+    };
+
+    loadChain();
+    if (selectedItem) {
+      intervalId = setInterval(loadChain, 3000);
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [selectedItem]);
+
+  const handleTransferSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsTransferModalOpen(false);
+    if (!selectedItem) return;
+    setIsTransferring(true);
+
+    try {
+      await api.transferCustody(selectedItem.id, {
+        targetCustodian: transferRecipient,
+        transferReason: transferNotes,
+        pin: transferPin
+      });
+
+      setIsTransferModalOpen(false);
+      setTransferNotes('');
+      setTransferPin('');
+      fetchCustodyData();
+      setSelectedItem((prev: any) => prev ? { ...prev, currentCustodian: transferRecipient, status: 'Transfer Pending' } : null);
+    } catch (err) {
+      console.error("Transfer error:", err);
+    } finally {
+      setIsTransferring(false);
+    }
   };
 
   if (selectedItem) {
@@ -166,6 +221,26 @@ export function ChainOfCustodyTab() {
                 </div>
               </div>
 
+              {/* Raw Image Payload — Access restricted by role */}
+              {(selectedItem.fileUrl || selectedItem.dataUrl) && (
+                <div className="space-y-2 pt-3 border-t border-black/5">
+                  <p className="text-[10px] uppercase tracking-wider text-black/50 font-bold">Captured Raw Payload</p>
+                  {canViewRawPayload ? (
+                    <div className="rounded-xl overflow-hidden border border-black/10 max-h-44 bg-black flex items-center justify-center">
+                      <img src={selectedItem.fileUrl || selectedItem.dataUrl} alt={selectedItem.title} className="max-h-44 object-contain w-full" />
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-red-200 bg-red-50 p-4 flex flex-col items-center gap-2 text-center">
+                      <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                        <Lock className="w-5 h-5 text-red-600" />
+                      </div>
+                      <p className="text-xs font-bold text-red-700">Access Denied — Section 65B Sealed</p>
+                      <p className="text-[10px] text-red-500 leading-relaxed">Raw evidence payload is sealed under Section 65B of the Indian Evidence Act. Only Court Authority or Independent Validator may view raw media.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="flex flex-col gap-3">
                 <button 
                   onClick={() => setIsTransferModalOpen(true)}
@@ -174,7 +249,10 @@ export function ChainOfCustodyTab() {
                   <ArrowRight className="w-4 h-4" />
                   Initiate Transfer
                 </button>
-                <button className="w-full py-3 bg-white border border-black/10 text-black rounded-xl text-sm font-bold hover:bg-black/5 transition-colors flex items-center justify-center gap-2">
+                <button 
+                  onClick={handleDownloadAuditReport}
+                  className="w-full py-3 bg-white border border-black/10 text-black rounded-xl text-sm font-bold hover:bg-black/5 transition-colors flex items-center justify-center gap-2"
+                >
                   <Download className="w-4 h-4" />
                   Download Audit Report
                 </button>
@@ -191,10 +269,10 @@ export function ChainOfCustodyTab() {
               </div>
 
               <div className="relative pl-6 border-l-2 border-black/5 space-y-8">
-                {MOCK_TIMELINE.map((step, idx) => (
+                {timeline.map((step, idx) => (
                   <div key={idx} className="relative">
                     <div className="absolute -left-[35px] w-8 h-8 rounded-full bg-white border-2 border-black/10 flex items-center justify-center z-10">
-                      <step.icon className="w-4 h-4 text-black/60" />
+                      {step.icon ? <step.icon className="w-4 h-4 text-black/60" /> : <CheckCircle2 className="w-4 h-4 text-black/60" />}
                     </div>
                     <div className="bg-[#F5F5F5] rounded-2xl p-5 border border-black/5 hover:border-black/10 transition-colors">
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3 gap-2">
@@ -207,22 +285,26 @@ export function ChainOfCustodyTab() {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-black">{step.status}</span>
                         </div>
                       </div>
-                      <p className="text-sm text-black/70 leading-relaxed mb-4">{step.desc}</p>
+                      {step.desc && <p className="text-sm text-black/70 leading-relaxed mb-4">{step.desc}</p>}
                       
                       <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-black/5">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center">
-                            <User className="w-3 h-3 text-black/60" />
+                        {step.actor && (
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-black/10 flex items-center justify-center">
+                              <User className="w-3 h-3 text-black/60" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-black leading-tight">{step.actor}</p>
+                              <p className="text-[10px] text-black/50">{step.role}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-xs font-bold text-black leading-tight">{step.actor}</p>
-                            <p className="text-[10px] text-black/50">{step.role}</p>
+                        )}
+                        {step.hash && (
+                          <div className="sm:ml-auto flex items-center gap-2 text-[10px] font-mono text-black/40 bg-white px-2 py-1 rounded border border-black/5">
+                            <Key className="w-3 h-3" />
+                            {step.hash}
                           </div>
-                        </div>
-                        <div className="sm:ml-auto flex items-center gap-2 text-[10px] font-mono text-black/40 bg-white px-2 py-1 rounded border border-black/5">
-                          <Key className="w-3 h-3" />
-                          {step.hash}
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -253,11 +335,16 @@ export function ChainOfCustodyTab() {
               <form onSubmit={handleTransferSubmit} className="p-6 space-y-6">
                 <div>
                   <label className="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2">Select Recipient</label>
-                  <select className="w-full px-4 py-3 bg-[#F5F5F5] border border-transparent rounded-xl text-sm font-medium outline-none focus:bg-white focus:border-purple-300 focus:ring-4 focus:ring-purple-50">
+                  <select 
+                    value={transferRecipient}
+                    onChange={(e) => setTransferRecipient(e.target.value)}
+                    className="w-full px-4 py-3 bg-[#F5F5F5] border border-transparent rounded-xl text-sm font-medium outline-none focus:bg-white focus:border-purple-300 focus:ring-4 focus:ring-purple-50"
+                  >
                     <option>Dr. S. Mehta (Cyber Forensics)</option>
                     <option>Inspector S. Patel (Homicide)</option>
                     <option>Evidence Room B (Sector 4)</option>
-                    <option>Central Archives</option>
+                    <option>Central Archives Locker</option>
+                    <option>High Court Vault</option>
                   </select>
                 </div>
 
@@ -265,6 +352,8 @@ export function ChainOfCustodyTab() {
                   <label className="block text-xs font-bold text-black/70 uppercase tracking-wider mb-2">Transfer Reason / Remarks</label>
                   <textarea 
                     rows={3} 
+                    value={transferNotes}
+                    onChange={(e) => setTransferNotes(e.target.value)}
                     className="w-full px-4 py-3 bg-[#F5F5F5] border border-transparent rounded-xl text-sm font-medium outline-none focus:bg-white focus:border-purple-300 focus:ring-4 focus:ring-purple-50 resize-none"
                     placeholder="Provide context for this transfer..."
                   ></textarea>
@@ -282,9 +371,9 @@ export function ChainOfCustodyTab() {
                   <button type="button" onClick={() => setIsTransferModalOpen(false)} className="px-5 py-2.5 rounded-xl font-bold text-sm text-black hover:bg-black/5 transition-colors">
                     Cancel
                   </button>
-                  <button type="submit" className="px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-black hover:bg-black/80 shadow-lg flex items-center gap-2">
+                  <button type="submit" disabled={isTransferring} className="px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-black hover:bg-black/80 shadow-lg flex items-center gap-2 disabled:opacity-50">
                     <QrCode className="w-4 h-4" />
-                    Generate Handover QR
+                    {isTransferring ? 'Initiating Transfer...' : 'Generate Handover QR'}
                   </button>
                 </div>
               </form>
@@ -294,6 +383,12 @@ export function ChainOfCustodyTab() {
       </motion.div>
     );
   }
+
+  const filteredItems = custodyItems.filter(item => 
+    item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.currentCustodian.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <motion.div
@@ -332,19 +427,19 @@ export function ChainOfCustodyTab() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-black/5 p-4 rounded-2xl border border-black/5">
             <p className="text-[10px] uppercase font-bold text-black/50 mb-1">Total Active Tracking</p>
-            <p className="text-2xl font-bold text-black">142</p>
+            <p className="text-2xl font-bold text-black">{custodyItems.length}</p>
           </div>
           <div className="bg-purple-50 p-4 rounded-2xl border border-purple-100">
             <p className="text-[10px] uppercase font-bold text-purple-600/70 mb-1">In Transit</p>
-            <p className="text-2xl font-bold text-purple-700">8</p>
+            <p className="text-2xl font-bold text-purple-700">{custodyItems.filter(i => i.status === 'In Transit').length}</p>
           </div>
           <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100">
             <p className="text-[10px] uppercase font-bold text-amber-600/70 mb-1">Pending Transfer</p>
-            <p className="text-2xl font-bold text-amber-700">12</p>
+            <p className="text-2xl font-bold text-amber-700">{custodyItems.filter(i => i.status === 'Transfer Pending' || i.status === 'Pending Chain Transfer' || i.status === 'Pending').length}</p>
           </div>
           <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
             <p className="text-[10px] uppercase font-bold text-emerald-600/70 mb-1">Secured in Labs</p>
-            <p className="text-2xl font-bold text-emerald-700">122</p>
+            <p className="text-2xl font-bold text-emerald-700">{custodyItems.filter(i => i.status === 'Secured' || i.status === 'Sealed' || i.status === 'Verified' || i.status === 'Archived').length}</p>
           </div>
         </div>
 
@@ -361,7 +456,7 @@ export function ChainOfCustodyTab() {
               </tr>
             </thead>
             <tbody className="divide-y divide-black/5">
-              {MOCK_CUSTODY_ITEMS.map((item, idx) => (
+              {filteredItems.map((item, idx) => (
                 <tr key={idx} className="hover:bg-black/[0.02] transition-colors group cursor-pointer" onClick={() => setSelectedItem(item)}>
                   <td className="py-4 px-4">
                     <div className="font-bold text-sm text-black mb-0.5">{item.title}</div>

@@ -8,17 +8,6 @@ import {
   Layers, RefreshCw, LockKeyhole, ExternalLink, Cpu, Hash, FileCheck, Award
 } from 'lucide-react';
 
-// ==================== DEFAULT GENERAL AUDIT LOGS ==================== //
-const MOCK_LOGS = [
-  { id: 'LOG-8829', action: "Evidence Sealed", type: "system", user: "Officer R. Kulkarni", time: "Oct 15, 2026 10:42 AM", status: "Success", ip: "192.168.1.104", hash: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", details: "Image evidence EV-8824 sealed and recorded on blockchain." },
-  { id: 'LOG-8828', action: "Login Attempt", type: "auth", user: "Unknown Device", time: "Oct 15, 2026 10:15 AM", status: "Blocked", ip: "45.22.19.11", hash: "-", details: "Failed login attempt. Incorrect credentials provided 3 times." },
-  { id: 'LOG-8827', action: "User Login", type: "auth", user: "Officer R. Kulkarni", time: "Oct 15, 2026 10:00 AM", status: "Success", ip: "192.168.1.104", hash: "-", details: "Successful biometric authentication." },
-  { id: 'LOG-8826', action: "Testimony Signed", type: "user", user: "Dr. Anjali Desai", time: "Oct 14, 2026 11:30 AM", status: "Success", ip: "10.0.4.55", hash: "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5", details: "Digital testimony digitally signed using hardware token." },
-  { id: 'LOG-8825', action: "Data Sync", type: "system", user: "System", time: "Oct 14, 2026 01:00 AM", status: "Success", ip: "localhost", hash: "-", details: "Automated daily ledger synchronization completed." },
-  { id: 'LOG-8824', action: "Case Accessed", type: "access", user: "Judge M. Sharma", time: "Oct 13, 2026 04:20 PM", status: "Success", ip: "10.0.1.22", hash: "-", details: "Viewed case file FIR-2026-001 details." },
-  { id: 'LOG-8823', action: "Evidence Decrypted", type: "system", user: "Validator Node 4", time: "Oct 13, 2026 02:15 PM", status: "Warning", ip: "10.0.5.10", hash: "-", details: "Evidence payload decrypted for independent validation." },
-];
-
 // ==================== INDEPENDENT VALIDATOR AUDIT DATASETS ==================== //
 
 export interface ValidatorActionLog {
@@ -34,171 +23,89 @@ export interface ValidatorActionLog {
   validatorNodeId: string;
 }
 
-const VALIDATOR_OWN_LOGS: ValidatorActionLog[] = [
-  {
-    id: 'VAL-LOG-901',
-    timestamp: 'Aug 07, 2026 08:42 AM',
-    category: 'Escalation Raised',
-    actionName: 'Escalated Statistical Anomaly to Oversight Board',
-    targetScope: 'Zone 4 West Special Tribunal (FHE-AGG-2026-002)',
-    outcome: 'Escalated',
-    txHash: '0x8f7d9e2a3b1c4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f',
-    blockNumber: 1489201,
-    details: 'Triggered formal inquiry escalation for 128% case duration spike in Zone 4. Routed ticket ESC-2026-88412 to Independent Judicial Oversight Board.',
-    validatorNodeId: 'NODE-IND-VAL-04 (MH-DISTRICT-LEGAL-VALIDATOR)',
-  },
-  {
-    id: 'VAL-LOG-902',
-    timestamp: 'Aug 07, 2026 08:15 AM',
-    category: 'Analytics Reviewed',
-    actionName: 'Reviewed Layer 4 Homomorphic Case Duration Report',
-    targetScope: 'Zone 3 East Cyber Precinct (FHE-AGG-2026-004)',
-    outcome: 'Reviewed',
-    txHash: '0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b',
-    blockNumber: 1489188,
-    details: 'Inspected k-anonymity compliance (N=3810 > 50) and differential privacy noise parameters (ε=0.5). Verified zero identity leakage.',
-    validatorNodeId: 'NODE-IND-VAL-04 (MH-DISTRICT-LEGAL-VALIDATOR)',
-  },
-  {
-    id: 'VAL-LOG-903',
-    timestamp: 'Aug 06, 2026 04:30 PM',
-    category: 'Vote Cast',
-    actionName: 'Consensus Vote: Evidence Sealing Request #REQ-8831',
-    targetScope: 'Division Bench 2 (Commercial Disputes)',
-    outcome: 'Approved',
-    txHash: '0x3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d',
-    blockNumber: 1488920,
-    details: 'Verified Merkle root integrity and dual-custody police signature prior to casting affirmative consensus vote.',
-    validatorNodeId: 'NODE-IND-VAL-04 (MH-DISTRICT-LEGAL-VALIDATOR)',
-  },
-  {
-    id: 'VAL-LOG-904',
-    timestamp: 'Aug 06, 2026 02:10 PM',
-    category: 'Vote Cast',
-    actionName: 'Consensus Vote: Unverified Re-hash Request #REQ-8829',
-    targetScope: 'Zone 4 West Special Tribunal',
-    outcome: 'Rejected',
-    txHash: '0x5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f',
-    blockNumber: 1488812,
-    details: 'Cast negative vote due to missing Section 65B hash certificate from primary submitting agency.',
-    validatorNodeId: 'NODE-IND-VAL-04 (MH-DISTRICT-LEGAL-VALIDATOR)',
-  },
-  {
-    id: 'VAL-LOG-905',
-    timestamp: 'Aug 05, 2026 11:20 AM',
-    category: 'Analytics Reviewed',
-    actionName: 'Inspected Bench-Level Precedent Alignment Matrix',
-    targetScope: 'All 5 Court Districts (FHE-AGG-2026-001)',
-    outcome: 'Reviewed',
-    txHash: '0x7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b',
-    blockNumber: 1488410,
-    details: 'Audited overall precedent similarity score (96.8%). Confirmed aggregate distribution within 2-sigma variance boundaries.',
-    validatorNodeId: 'NODE-IND-VAL-04 (MH-DISTRICT-LEGAL-VALIDATOR)',
-  },
-  {
-    id: 'VAL-LOG-906',
-    timestamp: 'Aug 04, 2026 09:45 AM',
-    category: 'Vote Cast',
-    actionName: 'Consensus Vote: Section 144 Emergency Sealing #REQ-8812',
-    targetScope: 'Division Bench 1 (Apex)',
-    outcome: 'Approved',
-    txHash: '0x9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c',
-    blockNumber: 1487950,
-    details: 'Validated high-security hardware token signature and cast affirmative vote for emergency record sealing.',
-    validatorNodeId: 'NODE-IND-VAL-04 (MH-DISTRICT-LEGAL-VALIDATOR)',
-  },
-];
-
-const SYSTEM_INTEGRITY_SUMMARY = [
-  {
-    id: 'SYS-CAT-01',
-    category: 'Consensus Protection',
-    metricTitle: 'Consensus Requests Blocked',
-    countThisMonth: 3,
-    periodLabel: 'This Month',
-    status: 'Normal Safeguard Activity',
-    description: '3 multi-party consensus requests were automatically blocked due to quorum non-fulfillment or invalid cryptographic proofs.',
-    bgTone: 'bg-amber-500/10 border-amber-500/30 text-amber-900',
-    iconColor: 'text-amber-600',
-    badgeTone: 'bg-amber-100 text-amber-900 border-amber-300',
-  },
-  {
-    id: 'SYS-CAT-02',
-    category: 'Security Protocol',
-    metricTitle: 'Duress & Panic Alerts Raised',
-    countThisMonth: 1,
-    periodLabel: 'This Month',
-    status: 'Investigated & Cleared',
-    description: '1 duress key sequence detected at terminal intake. Instantly triggered silent session isolation and audit escalation.',
-    bgTone: 'bg-rose-500/10 border-rose-500/30 text-rose-900',
-    iconColor: 'text-rose-600',
-    badgeTone: 'bg-rose-100 text-rose-900 border-rose-300',
-  },
-  {
-    id: 'SYS-CAT-03',
-    category: 'Evidence Protection',
-    metricTitle: 'Hash Mismatches Quarantined',
-    countThisMonth: 14,
-    periodLabel: 'This Month',
-    status: 'Quarantined at Ingestion',
-    description: '14 payload hashes failed Section 65B verification during edge node upload and were isolated before ledger commitment.',
-    bgTone: 'bg-purple-500/10 border-purple-500/30 text-purple-900',
-    iconColor: 'text-purple-600',
-    badgeTone: 'bg-purple-100 text-purple-900 border-purple-300',
-  },
-  {
-    id: 'SYS-CAT-04',
-    category: 'Immutable State Integrity',
-    metricTitle: 'Unauthorized Ledger Re-writes',
-    countThisMonth: 0,
-    periodLabel: 'This Month',
-    status: '100% Cryptographically Intact',
-    description: '0 tamper attempts or state divergence incidents detected across all 5 distributed validator nodes.',
-    bgTone: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-900',
-    iconColor: 'text-emerald-600',
-    badgeTone: 'bg-emerald-100 text-emerald-900 border-emerald-300',
-  },
-  {
-    id: 'SYS-CAT-05',
-    category: 'Anomaly Detection',
-    metricTitle: 'High-Velocity Docket Spikes Flagged',
-    countThisMonth: 12,
-    periodLabel: 'This Month',
-    status: 'Under Automated Monitoring',
-    description: '12 statistical rate spikes flagged by homomorphic analytics engine without exposing underlying case data or party names.',
-    bgTone: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-900',
-    iconColor: 'text-indigo-600',
-    badgeTone: 'bg-indigo-100 text-indigo-900 border-indigo-300',
-  },
-];
-
 export function AuditLogsTab({ role = 'Court Authority' }: { role?: string }) {
   // GENERAL AUDIT LOGS STATE
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
-  const [selectedLog, setSelectedLog] = useState<typeof MOCK_LOGS[0] | null>(null);
+  const [selectedLog, setSelectedLog] = useState<any | null>(null);
   const [realBackendLogs, setRealBackendLogs] = useState<any[]>([]);
+  const [personalLogs, setPersonalLogs] = useState<ValidatorActionLog[]>([]);
+  const [systemSummary, setSystemSummary] = useState<any>(null);
+  const [anchorVerification, setAnchorVerification] = useState<any>(null);
 
-  // Fetch Live Audit Log Chain from Real Backend API
-  useEffect(() => {
+  // Fetch Live Audit Log Chain & Validator Activity from Backend API
+  const fetchAuditData = () => {
     api.getAuditLog()
       .then(res => {
         if (res.auditChain && Array.isArray(res.auditChain)) {
-          const mapped = res.auditChain.map((item: any) => ({
-            id: item.id || `LOG-${item.index}`,
-            action: item.eventType || 'System Event',
-            type: item.userRole === 'SYSTEM' ? 'system' : 'auth',
-            user: `${item.userId} (${item.userRole})`,
-            time: item.timestamp,
-            status: 'Success',
-            ip: item.ipAddress || '127.0.0.1',
-            hash: item.hash || '-',
-            details: JSON.stringify(item.details || {})
-          }));
-          setRealBackendLogs(mapped);
+          const mapped = res.auditChain.map((item: any) => {
+            const evt = item.eventType || 'System Event';
+            let categoryType = 'user';
+            if (item.userRole === 'SYSTEM' || evt.includes('SYSTEM') || evt.includes('INITIALIZATION')) {
+              categoryType = 'system';
+            } else if (evt.includes('AUTH') || evt.includes('LOGIN') || evt.includes('REGISTRATION') || evt.includes('MFA') || evt.includes('OTP')) {
+              categoryType = 'auth';
+            } else if (evt.includes('ACCESS') || evt.includes('CUSTODY') || evt.includes('TRANSFER') || evt.includes('VERIFY') || evt.includes('ANCHOR')) {
+              categoryType = 'access';
+            }
+
+            const formattedTime = item.timestamp ? (
+              item.timestamp.includes('T')
+                ? new Date(item.timestamp).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                : item.timestamp
+            ) : 'Recently';
+
+            return {
+              id: item.id || `LOG-${item.index}`,
+              action: evt.replace(/_/g, ' '),
+              type: categoryType,
+              user: `${item.userId || item.userRole || 'Officer'} (${item.userRole || 'User'})`,
+              time: formattedTime,
+              status: 'Success',
+              ip: item.ipAddress || '127.0.0.1',
+              hash: item.hash || '-',
+              details: typeof item.details === 'string' ? item.details : JSON.stringify(item.details || {}, null, 2)
+            };
+          });
+          // Reverse so most recent audit events appear at top
+          setRealBackendLogs(mapped.reverse());
         }
       })
       .catch(err => console.log('Audit log fetch info:', err.message));
+
+    api.getPersonalAuditLogs('NODE-IND-VAL-04')
+      .then(res => {
+        if (res.logs && Array.isArray(res.logs)) {
+          const mapped: ValidatorActionLog[] = res.logs.map((item: any) => ({
+            id: item.id || `VAL-LOG-${item.index}`,
+            timestamp: item.timestamp.includes('T') ? new Date(item.timestamp).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) + ' ' + new Date(item.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : item.timestamp,
+            category: item.category || (item.eventType?.includes('VOTE') ? 'Vote Cast' : item.eventType?.includes('ESCALATED') ? 'Escalation Raised' : 'Analytics Reviewed'),
+            actionName: item.actionName || item.eventType || 'Validator Action Recorded',
+            targetScope: item.targetScope || 'All Active Benches',
+            outcome: item.outcome || 'Approved',
+            txHash: item.hash || item.payloadHash || '0x' + item.id,
+            blockNumber: item.blockNumber || 1489200,
+            details: typeof item.details === 'string' ? item.details : JSON.stringify(item.details || {}),
+            validatorNodeId: item.userId || 'NODE-IND-VAL-04'
+          }));
+          setPersonalLogs(mapped);
+        }
+      })
+      .catch(err => console.log('Personal audit logs fetch info:', err.message));
+
+    api.getSystemAuditSummary()
+      .then(res => {
+        if (res.success) {
+          setSystemSummary(res);
+        }
+      })
+      .catch(err => console.log('System summary fetch info:', err.message));
+  };
+
+  useEffect(() => {
+    fetchAuditData();
+    const interval = setInterval(fetchAuditData, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // INDEPENDENT VALIDATOR STATE
@@ -211,7 +118,7 @@ export function AuditLogsTab({ role = 'Court Authority' }: { role?: string }) {
 
   // INDEPENDENT VALIDATOR RENDER MODE
   if (role === 'Independent Validator') {
-    const filteredValidatorLogs = VALIDATOR_OWN_LOGS.filter((log) => {
+    const filteredValidatorLogs = personalLogs.filter((log) => {
       const matchesSearch =
         log.actionName.toLowerCase().includes(valSearchQuery.toLowerCase()) ||
         log.targetScope.toLowerCase().includes(valSearchQuery.toLowerCase()) ||
@@ -433,25 +340,25 @@ export function AuditLogsTab({ role = 'Court Authority' }: { role?: string }) {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/10">
             <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Validator Actions Logged</span>
-              <span className="text-xl font-extrabold font-mono text-white">6 Entries</span>
+              <span className="text-xl font-extrabold font-mono text-white">{systemSummary?.validatorActionsCount ?? personalLogs.length} Entries</span>
               <span className="text-[10px] text-emerald-400 block font-medium mt-0.5">Chronologically Anchored</span>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Consensus Votes Cast</span>
-              <span className="text-xl font-extrabold font-mono text-indigo-300">3 Votes</span>
+              <span className="text-xl font-extrabold font-mono text-indigo-300">{systemSummary?.votesCastCount ?? personalLogs.filter(l => l.category === 'Vote Cast').length} Votes</span>
               <span className="text-[10px] text-indigo-300 block font-medium mt-0.5">Dual-Custody Approvals</span>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Homomorphic Audits</span>
-              <span className="text-xl font-extrabold font-mono text-emerald-300">2 Reports</span>
+              <span className="text-xl font-extrabold font-mono text-emerald-300">{systemSummary?.reportsReviewedCount ?? personalLogs.filter(l => l.category === 'Analytics Reviewed').length} Reports</span>
               <span className="text-[10px] text-emerald-300 block font-medium mt-0.5">k-Anonymity Verified</span>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Formal Escalations</span>
-              <span className="text-xl font-extrabold font-mono text-rose-300">1 Inquiry</span>
+              <span className="text-xl font-extrabold font-mono text-rose-300">{systemSummary?.escalationsRaisedCount ?? personalLogs.filter(l => l.category === 'Escalation Raised').length} Inquiry</span>
               <span className="text-[10px] text-rose-300 block font-medium mt-0.5">Routed to Oversight Board</span>
             </div>
           </div>
@@ -696,7 +603,7 @@ export function AuditLogsTab({ role = 'Court Authority' }: { role?: string }) {
 
                 {/* SYSTEM INTEGRITY EVENT CARDS GRID */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {SYSTEM_INTEGRITY_SUMMARY.map((item) => (
+                  {(systemSummary?.categories || []).map((item: any) => (
                     <div
                       key={item.id}
                       className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-all space-y-4 flex flex-col justify-between"
@@ -763,7 +670,7 @@ export function AuditLogsTab({ role = 'Court Authority' }: { role?: string }) {
   }
 
   // GENERAL DEFAULT RENDER FOR OTHER ROLES
-  const logsToFilter = realBackendLogs.length > 0 ? [...realBackendLogs, ...MOCK_LOGS] : MOCK_LOGS;
+  const logsToFilter = realBackendLogs;
   const filteredLogs = logsToFilter.filter(log => {
     const matchesSearch = log.action.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           log.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
