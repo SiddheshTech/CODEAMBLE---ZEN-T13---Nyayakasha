@@ -13437,5 +13437,151 @@
     "prevHash": "3ffee0b82a882c9ced18057e4841f506fe385d906b64e9924625298f1ee95320",
     "hash": "3826e5873412ad45bcfa1f77eafdff6e5978118e6a1614532cbb0e8baa9498b6",
     "blockNumber": 1490010
+  },
+  {
+    "id": "audit_1786213647730_811",
+    "index": 811,
+    "timestamp": "2026-08-08T18:27:27.730Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786213647729_kekj1d",
+      "approvalState": "active"
+    },
+    "payloadHash": "856bc90e4990bd54e971938b4a0d744a20be2c72287c0148dd76b6a51aa0e5a7",
+    "prevHash": "3826e5873412ad45bcfa1f77eafdff6e5978118e6a1614532cbb0e8baa9498b6",
+    "hash": "da9549b83933e576c47ebfed21fb6b580e4a836611c550583e15b932570afb1a",
+    "blockNumber": 1490011
+  },
+  {
+    "id": "audit_1786213647743_812",
+    "index": 812,
+    "timestamp": "2026-08-08T18:27:27.743Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande8@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "e7e40ef7a1fa30b2457ea57a61fca28bc700d31697383c94575a00e391451050",
+    "prevHash": "da9549b83933e576c47ebfed21fb6b580e4a836611c550583e15b932570afb1a",
+    "hash": "754f47b9fde5997df9dffe533169c470029095dfc3b7cc8080e6bd380842f089",
+    "blockNumber": 1490012
+  },
+  {
+    "id": "audit_1786213649191_813",
+    "index": 813,
+    "timestamp": "2026-08-08T18:27:29.191Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "754f47b9fde5997df9dffe533169c470029095dfc3b7cc8080e6bd380842f089",
+    "hash": "fac4dcee9418900ea3d6689b115af15a43cdf16633458465de69727077cb76a5",
+    "blockNumber": 1490013
+  },
+  {
+    "id": "audit_1786213662075_814",
+    "index": 814,
+    "timestamp": "2026-08-08T18:27:42.075Z",
+    "eventType": "DURESS_PIN_ENROLLED",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "hasDuressPin": true,
+      "optInRole": "field_submitter"
+    },
+    "payloadHash": "939dfc956fb9eeabedcf864fbbbdb47031ed07ba6f0600288f93587c1ee20f36",
+    "prevHash": "fac4dcee9418900ea3d6689b115af15a43cdf16633458465de69727077cb76a5",
+    "hash": "bdf3d111fa9eb29bec7e1c45c25201658e00bf74bce07b13e1317416e5f99dc4",
+    "blockNumber": 1490014
+  },
+  {
+    "id": "audit_1786213700541_815",
+    "index": 815,
+    "timestamp": "2026-08-08T18:28:20.541Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer R. Kulkarni (Zone 4 Field Operations)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8825",
+      "evidenceHash": "0x8a4e73f65dbd6f8a187af74f8393d5e633c42921e6ab7a8d43314d6db258228b",
+      "caseId": "132asd13213",
+      "txHash": "0x27e048e7d6773ffa9fe69085d27a6de77a57ae644608f9ecd6f7b55ca8a241ac",
+      "merkleRoot": "0x486b2255988d134e6391f8692dcc1b958fb6c8e0e86ab974a25f47cdf1c3b77f",
+      "blockNumber": 15058125,
+      "fullPayload": {
+        "exhibitId": "EV-8825",
+        "caseId": "132asd13213",
+        "evidenceHash": "0x8a4e73f65dbd6f8a187af74f8393d5e633c42921e6ab7a8d43314d6db258228b",
+        "custodian": "Officer R. Kulkarni (Zone 4 Field Operations)",
+        "title": "dadad",
+        "seizureBagId": "SEZ-2026-70988",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "Witness at Scene (Sec 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [
+          "adadas"
+        ],
+        "notes": "FSfSFaf",
+        "gpsLocation": {
+          "lat": "18.5204° N",
+          "lng": "73.8567° E",
+          "accuracy": "± 2.1 meters",
+          "zone": "Zone 4 Geofenced Sector B",
+          "altitude": "560m ASL"
+        },
+        "signature": "ECDSA_SIGNED_SECP256K1",
+        "timestamp": "2026-08-08T18:28:20.540Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "07df58de64fb3ff8ba8544c32b311c4602239fe6e392a2928add83b9f3027992",
+    "prevHash": "bdf3d111fa9eb29bec7e1c45c25201658e00bf74bce07b13e1317416e5f99dc4",
+    "hash": "dcaa4b5465c98cb17d13945b9770bd89b3ee84838e12999bf83e0d7cdb213d40",
+    "blockNumber": 1490015
+  },
+  {
+    "id": "audit_1786213700620_816",
+    "index": 816,
+    "timestamp": "2026-08-08T18:28:20.620Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer R. Kulkarni (Zone 4 Field Operations)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8825",
+      "caseId": "132asd13213",
+      "hash": "0x8a4e73f65dbd6f8a187af74f8393d5e633c42921e6ab7a8d43314d6db258228b",
+      "title": "dadad",
+      "txHash": "0x27e048e7d6773ffa9fe69085d27a6de77a57ae644608f9ecd6f7b55ca8a241ac",
+      "blockNumber": 15058125,
+      "merkleRoot": "0x486b2255988d134e6391f8692dcc1b958fb6c8e0e86ab974a25f47cdf1c3b77f",
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 18.5204,
+        "lng": 73.8567
+      }
+    },
+    "payloadHash": "d9c8c98347375c772d1b2de58810d5db28c97c6b3c3bd6f20cc3c74228bcfab7",
+    "prevHash": "dcaa4b5465c98cb17d13945b9770bd89b3ee84838e12999bf83e0d7cdb213d40",
+    "hash": "5c32a0d219c3dd91385ee6d8a8aec4299e7302d7f2bb4bd5b1bc771bd46f1aea",
+    "blockNumber": 1490016
   }
 ]
