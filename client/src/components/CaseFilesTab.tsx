@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { api } from '../services/api';
 import {
   Search,
   Filter,
@@ -475,92 +476,52 @@ const getFallbackExhibitImage = (item: EvidenceItem): string => {
 };
 
 export function CaseFilesTab({ initialCaseId, onClearSelectedCase }: CaseFilesTabProps) {
-  const [cases, setCases] = useState<CaseRecord[]>(INITIAL_CASES);
+  const [cases, setCases] = useState<CaseRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Sync dynamically submitted evidence from Field Submitter / localStorage into Case Records
-  React.useEffect(() => {
+  const fetchCases = async () => {
     try {
-      const stored = localStorage.getItem('nyayakasha_submitted_evidence');
-      if (stored) {
-        const customItems = JSON.parse(stored);
-        if (Array.isArray(customItems) && customItems.length > 0) {
-          setCases((prevCases) => {
-            let updatedCases = [...prevCases];
-
-            customItems.forEach((ci: any) => {
-              const caseTargetId = ci.caseId || 'CR-2026-904';
-              const evidenceId = ci.exhibitId || ci.id || `EXH-${Math.floor(100 + Math.random() * 900)}`;
-              const evidenceItem: EvidenceItem = {
-                id: evidenceId,
-                title: ci.title || 'Field Captured Evidence Snapshot',
-                type: 'Image Snapshot (JPG)',
-                submittedBy: ci.submitter || 'Officer R. Kulkarni',
-                timestamp: ci.timestamp || new Date().toLocaleString(),
-                pramanaHash: ci.originalHash ? `${ci.originalHash.substring(0, 8)}...${ci.originalHash.substring(ci.originalHash.length - 4)}` : '0x8f2a...910b',
-                blockNumber: ci.blockNumber || 89205,
-                integrityStatus: 'Pass',
-                integrityScore: `${ci.confidenceScore || 99.4}% Authenticity Score`,
-                details: ci.anomalySummary || 'Uploaded on Field Submitter page, cryptographically verified & passed forgery scan.',
-                expectedHash: ci.originalHash,
-                actualHash: ci.originalHash,
-                previewImageDataUrl: ci.previewImageDataUrl
-              };
-
-              // Check if case exists in state
-              const existingCaseIndex = updatedCases.findIndex((c) => c.id === caseTargetId || c.id === 'CR-2026-904');
-              if (existingCaseIndex !== -1) {
-                const targetCase = updatedCases[existingCaseIndex];
-                const existsInTimeline = targetCase.evidenceTimeline.some((e) => e.id === evidenceItem.id || (e.title === evidenceItem.title && e.timestamp === evidenceItem.timestamp));
-                if (!existsInTimeline) {
-                  const newTimeline = [evidenceItem, ...targetCase.evidenceTimeline];
-                  updatedCases[existingCaseIndex] = {
-                    ...targetCase,
-                    evidenceTimeline: newTimeline
-                  };
-                }
-              } else {
-                // Create a case record for the new caseId
-                const newCase: CaseRecord = {
-                  id: caseTargetId,
-                  title: ci.caseTitle || `Case Entry ${caseTargetId}: Field Evidence Record`,
-                  caseType: 'Document Forgery',
-                  filingDate: '08 Aug 2026',
-                  currentStage: 'Judicial Review',
-                  status: 'Under Review',
-                  priority: 'HIGH',
-                  mayaBreakStatus: 'Pass',
-                  mayaBreakDetails: 'Field evidence hash verified on PRAMANA Ledger',
-                  officerInCharge: ci.submitter || 'Officer R. Kulkarni',
-                  courtBench: ci.courtBench || 'High Court Bench 3 (Presiding: Hon. Adv. A. Mehta)',
-                  prosecutor: 'Adv. V. S. Nambiar',
-                  defenseCounsel: 'Adv. S. Ramachandran',
-                  statutorySections: ['Sec 65B Evidence Act', 'Sec 43A IT Act', 'Sec 468 IPC'],
-                  evidenceTimeline: [evidenceItem],
-                  testimonies: [],
-                  custodyHistory: ci.custodyTrail ? ci.custodyTrail.map((ct: any) => ({
-                    id: ct.id,
-                    title: ct.stage,
-                    actor: `${ct.actor} (${ct.role})`,
-                    location: ct.location,
-                    timestamp: ct.timestamp,
-                    status: 'Hash Verified on Ledger',
-                    biometricVerified: true
-                  })) : [],
-                  orders: [],
-                  notes: [],
-                  precedents: []
-                };
-                updatedCases = [newCase, ...updatedCases];
-              }
-            });
-
-            return updatedCases;
-          });
-        }
+      setIsLoading(true);
+      const res = await api.getRichCases();
+      if (res && res.success) {
+        setCases(res.cases);
       }
     } catch (e) {
-      console.error("Error loading custom evidence into Case Files", e);
+      console.error('Error fetching rich cases:', e);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  // Sync dynamically submitted evidence from Field Submitter / localStorage into Backend Store
+  React.useEffect(() => {
+    const syncLocalStorageEvidence = async () => {
+      try {
+        const stored = localStorage.getItem('nyayakasha_submitted_evidence');
+        if (stored) {
+          const customItems = JSON.parse(stored);
+          if (Array.isArray(customItems) && customItems.length > 0) {
+            for (const ci of customItems) {
+              const caseTargetId = ci.caseId || 'CR-2026-904';
+              await api.addRichCaseEvidence(caseTargetId, {
+                title: ci.title || 'Field Captured Evidence Snapshot',
+                type: 'Image Snapshot (JPG)',
+                details: ci.anomalySummary || 'Uploaded on Field Submitter page, cryptographically verified & passed forgery scan.',
+                submittedBy: ci.submitter || 'Officer R. Kulkarni'
+              });
+            }
+            // Clear once synced to prevent duplicate submissions
+            localStorage.removeItem('nyayakasha_submitted_evidence');
+          }
+        }
+      } catch (e) {
+        console.error("Error syncing custom evidence to backend", e);
+      } finally {
+        fetchCases();
+      }
+    };
+
+    syncLocalStorageEvidence();
   }, []);
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(initialCaseId || null);
   const [statusFilter, setStatusFilter] = useState<string>('All');
@@ -645,196 +606,153 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase }: CaseFilesTa
     if (onClearSelectedCase) onClearSelectedCase();
   };
 
-  const handleAddEvidenceSubmit = (e: React.FormEvent) => {
+  const handleAddEvidenceSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedCaseId || !newExhibitTitle.trim()) return;
 
-    const randomHash = `0x${Math.random().toString(16).substring(2, 6)}...${Math.random().toString(16).substring(2, 6)}`;
-    const newEvidence: EvidenceItem = {
-      id: `EXH-${Math.floor(100 + Math.random() * 900)}`,
-      title: newExhibitTitle,
-      type: newExhibitType,
-      submittedBy: 'Court Authority (Formally Filed)',
-      timestamp: new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }),
-      pramanaHash: randomHash,
-      blockNumber: 89300 + Math.floor(Math.random() * 500),
-      integrityStatus: 'Pass',
-      integrityScore: '100% Original (Verified via MAYA-BREAK)',
-      details: newExhibitDetails || 'Exhibit formally admitted into court record after passing forgery review.',
-    };
-
-    setCases((prev) =>
-      prev.map((c) => {
-        if (c.id === selectedCaseId) {
-          return {
-            ...c,
-            evidenceTimeline: [newEvidence, ...c.evidenceTimeline],
-          };
-        }
-        return c;
-      })
-    );
-
-    setNewExhibitTitle('');
-    setNewExhibitDetails('');
-    setIsAddEvidenceModalOpen(false);
-    showToast('Exhibit Formally Filed & Anchored to PRAMANA Ledger');
+    try {
+      const res = await api.addRichCaseEvidence(selectedCaseId, {
+        title: newExhibitTitle,
+        type: newExhibitType,
+        details: newExhibitDetails
+      });
+      if (res && res.success) {
+        setCases((prev) =>
+          prev.map((c) => (c.id === selectedCaseId ? res.case : c))
+        );
+        setNewExhibitTitle('');
+        setNewExhibitDetails('');
+        setIsAddEvidenceModalOpen(false);
+        showToast('Exhibit Formally Filed & Anchored to PRAMANA Ledger');
+      } else {
+        showToast('Failed to file exhibit: ' + (res.error || 'unknown error'));
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error filing exhibit');
+    }
   };
 
-  const handleAddNote = () => {
+  const handleAddNote = async () => {
     if (!selectedCaseId || !newNoteContent.trim()) return;
 
-    const newNote: CaseNote = {
-      id: `note-${Date.now()}`,
-      author: 'Adv. A. Mehta (Bench 3)',
-      timestamp: new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }),
-      category: newNoteCategory,
-      content: newNoteContent,
-    };
-
-    setCases((prev) =>
-      prev.map((c) => {
-        if (c.id === selectedCaseId) {
-          return {
-            ...c,
-            notes: [newNote, ...c.notes],
-          };
-        }
-        return c;
-      })
-    );
-
-    setNewNoteContent('');
-    showToast('Judicial Note Added to Case Record');
+    try {
+      const res = await api.addRichCaseNote(selectedCaseId, {
+        content: newNoteContent,
+        category: newNoteCategory
+      });
+      if (res && res.success) {
+        setCases((prev) =>
+          prev.map((c) => (c.id === selectedCaseId ? res.case : c))
+        );
+        setNewNoteContent('');
+        showToast('Judicial Note Added to Case Record');
+      } else {
+        showToast('Failed to add note: ' + (res.error || 'unknown error'));
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error adding note');
+    }
   };
 
-  const handleCreateOrderSubmit = (e: React.FormEvent) => {
+  const handleCreateOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedCaseId || !newOrderTitle.trim()) return;
 
     setIsSigningOrder(true);
-    setTimeout(() => {
-      setIsSigningOrder(false);
-      const newOrder: CaseOrder = {
-        id: `ORD-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+    try {
+      const res = await api.addRichCaseOrder(selectedCaseId, {
         title: newOrderTitle,
-        issuedBy: 'Hon. Adv. A. Mehta (High Court Bench)',
-        timestamp: new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }),
-        summary: newOrderSummary || 'Court direction formally entered into judicial registry.',
-        sealHash: `0x${Math.random().toString(16).substring(2, 10)}...${Math.random().toString(16).substring(2, 6)}`,
         type: newOrderType,
-      };
-
-      setCases((prev) =>
-        prev.map((c) => {
-          if (c.id === selectedCaseId) {
-            return {
-              ...c,
-              orders: [newOrder, ...c.orders],
-            };
-          }
-          return c;
-        })
-      );
-
-      setNewOrderTitle('');
-      setNewOrderSummary('');
-      setIsDraftOrderModalOpen(false);
-      showToast(`Bench Direction Issued & Cryptographically Sealed`);
-    }, 1200);
-  };
-
-  const handleUnlockIdentitySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passkeyInput !== 'JUDGE-2026') {
-      setPasskeyError('Invalid Judicial Passkey. Use "JUDGE-2026" for demo.');
-      return;
+        summary: newOrderSummary
+      });
+      if (res && res.success) {
+        setCases((prev) =>
+          prev.map((c) => (c.id === selectedCaseId ? res.case : c))
+        );
+        setNewOrderTitle('');
+        setNewOrderSummary('');
+        setIsDraftOrderModalOpen(false);
+        showToast(`Bench Direction Issued & Cryptographically Sealed`);
+      } else {
+        showToast('Failed to sign order: ' + (res.error || 'unknown error'));
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error signing order');
+    } finally {
+      setIsSigningOrder(false);
     }
-
-    if (!selectedCaseId || !unlockModalTestimony) return;
-
-    setCases((prev) =>
-      prev.map((c) => {
-        if (c.id === selectedCaseId) {
-          return {
-            ...c,
-            testimonies: c.testimonies.map((t) =>
-              t.id === unlockModalTestimony.id ? { ...t, isUnlocked: true } : t
-            ),
-          };
-        }
-        return c;
-      })
-    );
-
-    setUnlockModalTestimony(null);
-    setPasskeyInput('');
-    setPasskeyError('');
-    showToast('Witness Identity Unlocked via Judicial Passkey Authentication');
   };
 
-  const handleTransferSubmit = (e: React.FormEvent) => {
+  const handleUnlockIdentitySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedCaseId) return;
+    if (!selectedCaseId || !unlockModalTestimony || !passkeyInput.trim()) return;
 
-    const newStep: CustodyStep = {
-      id: `cust-${Date.now()}`,
-      title: `Authorized Custody Transfer to ${transferRecipient}`,
-      actor: 'Court Bench Authorization',
-      location: transferRecipient,
-      timestamp: new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }),
-      status: 'Transfer Authorized (Sealed Bag)',
-      biometricVerified: true,
-      gpsCoordinates: '18.9322° N, 72.8310° E',
-    };
-
-    setCases((prev) =>
-      prev.map((c) => {
-        if (c.id === selectedCaseId) {
-          return {
-            ...c,
-            custodyHistory: [newStep, ...c.custodyHistory],
-          };
-        }
-        return c;
-      })
-    );
-
-    setIsTransferModalOpen(false);
-    setTransferReason('');
-    showToast(`Custody Transfer Authorized for ${transferRecipient}`);
+    try {
+      const res = await api.unlockRichCaseTestimony(selectedCaseId, unlockModalTestimony.id, passkeyInput);
+      if (res && res.success) {
+        setCases((prev) =>
+          prev.map((c) => (c.id === selectedCaseId ? res.case : c))
+        );
+        setUnlockModalTestimony(null);
+        setPasskeyInput('');
+        setPasskeyError('');
+        showToast('Witness Identity Unlocked via Judicial Passkey Authentication');
+      } else {
+        setPasskeyError(res.error || 'Invalid Judicial Passkey. Access Denied.');
+      }
+    } catch (err: any) {
+      console.error(err);
+      setPasskeyError('Error unlocking witness identity.');
+    }
   };
 
-  const handleStrikeOrAdmitExhibit = (decision: 'ADMIT' | 'STRIKE') => {
+  const handleTransferSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCaseId || !transferReason.trim()) return;
+
+    try {
+      const res = await api.authorizeRichCaseCustodyTransfer(selectedCaseId, {
+        recipient: transferRecipient,
+        reason: transferReason
+      });
+      if (res && res.success) {
+        setCases((prev) =>
+          prev.map((c) => (c.id === selectedCaseId ? res.case : c))
+        );
+        setIsTransferModalOpen(false);
+        setTransferReason('');
+        showToast(`Custody Transfer Authorized for ${transferRecipient}`);
+      } else {
+        showToast('Failed to authorize transfer: ' + (res.error || 'unknown error'));
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error authorizing transfer');
+    }
+  };
+
+  const handleStrikeOrAdmitExhibit = async (decision: 'ADMIT' | 'STRIKE') => {
     if (!selectedCaseId || !inspectingExhibit) return;
 
-    setCases((prev) =>
-      prev.map((c) => {
-        if (c.id === selectedCaseId) {
-          return {
-            ...c,
-            evidenceTimeline: c.evidenceTimeline.map((item) => {
-              if (item.id === inspectingExhibit.id) {
-                return {
-                  ...item,
-                  integrityStatus: decision === 'ADMIT' ? 'Pass' : 'Flagged',
-                  details:
-                    decision === 'ADMIT'
-                      ? 'Admitted into formal court record by Judicial Order.'
-                      : 'Struck from record due to unresolved forgery/tampering anomaly.',
-                };
-              }
-              return item;
-            }),
-          };
-        }
-        return c;
-      })
-    );
-
-    const msg = decision === 'ADMIT' ? 'Exhibit Admitted to Trial Record' : 'Exhibit Struck from Court Record';
-    setInspectingExhibit(null);
-    showToast(msg);
+    try {
+      const res = await api.updateRichCaseEvidenceStatus(selectedCaseId, inspectingExhibit.id, decision);
+      if (res && res.success) {
+        setCases((prev) =>
+          prev.map((c) => (c.id === selectedCaseId ? res.case : c))
+        );
+        const msg = decision === 'ADMIT' ? 'Exhibit Admitted to Trial Record' : 'Exhibit Struck from Court Record';
+        setInspectingExhibit(null);
+        showToast(msg);
+      } else {
+        showToast('Failed to update exhibit status: ' + (res.error || 'unknown error'));
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error updating exhibit status');
+    }
   };
 
   return (

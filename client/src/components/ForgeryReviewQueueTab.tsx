@@ -525,27 +525,22 @@ const INITIAL_QUEUE: ForgeryQueueItem[] = [
 ];
 
 export function ForgeryReviewQueueTab() {
-  const [items, setItems] = useState<ForgeryQueueItem[]>(INITIAL_QUEUE);
+  const [items, setItems] = useState<ForgeryQueueItem[]>([]);
 
   // Load dynamically submitted evidence from Field Submitter
   useEffect(() => {
-    api.getForgeryQueue()
-      .then(res => {
-        if (res.reviews && res.reviews.length > 0) {
-          setItems(prev => {
-            const existingMap = new Map(prev.map(i => [i.id, i]));
-            res.reviews.forEach((r: any) => {
-              const item = existingMap.get(r.id);
-              if (item) {
-                item.status = r.status as any;
-                item.confidenceScore = r.aiConfidence || item.confidenceScore;
-              }
-            });
-            return Array.from(existingMap.values());
-          });
+    const fetchQueue = async () => {
+      try {
+        const res = await api.getForgeryQueue();
+        if (res && res.success && res.reviews) {
+          setItems(res.reviews);
         }
-      })
-      .catch(err => console.log('Backend forgery queue fetch info:', err.message));
+      } catch (err) {
+        console.error('Error fetching forgery queue:', err);
+      }
+    };
+
+    fetchQueue();
 
     try {
       const stored = localStorage.getItem('nyayakasha_submitted_evidence');
@@ -628,7 +623,7 @@ export function ForgeryReviewQueueTab() {
     setAgreedToOath(false);
   };
 
-  const handleJudicialDecision = (action: 'Accepted & Admitted' | 'Rejected & Excluded' | 'Escalated to CFSL') => {
+  const handleJudicialDecision = async (action: 'Accepted & Admitted' | 'Rejected & Excluded' | 'Escalated to CFSL') => {
     if (!selectedItem) return;
     if (!agreedToOath) {
       showToast('Mandatory Judicial Statutory Oath acknowledgment is required before signing.');
@@ -640,83 +635,49 @@ export function ForgeryReviewQueueTab() {
     }
 
     setIsSigning(true);
-
-    setTimeout(() => {
-      const now = new Date();
-      const timestampStr =
-        now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) +
-        ', ' +
-        now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-      const sigHash = `0xSIG_BENCH_${action.startsWith('Accepted') ? 'ADM' : action.startsWith('Rejected') ? 'REJ' : 'ESC'}_${Math.floor(
-        Math.random() * 899999 + 100000
-      )}`;
-
-      const newStatus: ForgeryQueueItem['status'] =
-        action === 'Accepted & Admitted'
-          ? 'Cleared'
-          : action === 'Rejected & Excluded'
-          ? 'Rejected'
-          : 'Escalated';
-
-      setItems((prev) =>
-        prev.map((i) => {
-          if (i.id === selectedItem.id) {
-            return {
-              ...i,
-              status: newStatus,
-              judicialDecision: {
-                action,
-                judgeName: 'Hon. Presiding Magistrate (Bench 3)',
-                benchKeyId: 'BENCH-KEY-IND-003',
-                timestamp: timestampStr,
-                justification: judgeRemarks || 'Judicial order issued following MAYA-BREAK forensic audit.',
-                digitalSignatureHash: sigHash,
-              },
-            };
-          }
-          return i;
-        })
-      );
-
+    try {
+      const res = await api.decideForgery(selectedItem.id, action, judgeRemarks);
+      if (res && res.success) {
+        setItems((prev) =>
+          prev.map((i) => (i.id === selectedItem.id ? res.review : i))
+        );
+        const sigHash = res.review.judicialDecision?.digitalSignatureHash || '0xSIG_BENCH_ADM';
+        showToast(
+          `Exhibit ${selectedItem.exhibitId} (${selectedItem.caseId}) ${action.toUpperCase()}. Bench Signature: ${sigHash.substring(
+            0,
+            18
+          )}...`
+        );
+      } else {
+        showToast('Failed to sign judicial decision: ' + (res.error || 'unknown error'));
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error signing judicial decision');
+    } finally {
       setIsSigning(false);
-      showToast(
-        `Exhibit ${selectedItem.exhibitId} (${selectedItem.caseId}) ${action.toUpperCase()}. Bench Signature: ${sigHash.substring(
-          0,
-          18
-        )}...`
-      );
-    }, 700);
+    }
   };
 
-  const handleAddDirective = (e: React.FormEvent) => {
+  const handleAddDirective = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedItemId || !newDirectiveDetails.trim()) return;
 
-    const newDir: BenchDirective = {
-      id: `DIR-FRG-${Math.floor(100 + Math.random() * 900)}-${Date.now().toString().slice(-3)}`,
-      date: new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }),
-      issuedBy: 'Hon. Presiding Magistrate (Bench 3)',
-      type: newDirectiveType,
-      details: newDirectiveDetails,
-      status: 'Active',
-      sealHash: `0xSEAL_DIR_${Math.floor(Math.random() * 8999 + 1000)}`,
-    };
-
-    setItems((prev) =>
-      prev.map((i) => {
-        if (i.id === selectedItemId) {
-          return {
-            ...i,
-            directives: [newDir, ...i.directives],
-          };
-        }
-        return i;
-      })
-    );
-
-    setNewDirectiveDetails('');
-    showToast('Bench Directive Executed & Sealed to Case Diary.');
+    try {
+      const res = await api.addBenchDirective(selectedItemId, newDirectiveType, newDirectiveDetails);
+      if (res && res.success) {
+        setItems((prev) =>
+          prev.map((i) => (i.id === selectedItemId ? res.review : i))
+        );
+        setNewDirectiveDetails('');
+        showToast('Bench Directive Executed & Sealed to Case Diary.');
+      } else {
+        showToast('Failed to add directive: ' + (res.error || 'unknown error'));
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error executing directive');
+    }
   };
 
   return (

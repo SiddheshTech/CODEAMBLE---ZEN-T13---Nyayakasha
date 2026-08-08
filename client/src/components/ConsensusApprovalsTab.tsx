@@ -1412,7 +1412,7 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100">
                       <p className="text-[11px] text-slate-500 flex items-center gap-1.5 font-mono">
                         <Fingerprint className="w-3.5 h-3.5 text-blue-600" />
-                        Target Record: {item.targetRecordHash.substring(0, 24)}...
+                        Target Record: {(item.targetRecordHash || '').substring(0, 24)}...
                       </p>
 
                       <div className="flex items-center gap-2">
@@ -1620,7 +1620,7 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
                           </div>
                           <p className="text-xs text-slate-600 font-medium">{node.nodeRole}</p>
                           <p className="text-[11px] font-mono text-slate-500">
-                            Sig Hash: {node.signatureHash.substring(0, 28)}...
+                            Sig Hash: {(node.signatureHash || '').substring(0, 28)}...
                           </p>
                         </div>
 
@@ -1780,11 +1780,11 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
                     </div>
                     <div className="flex justify-between text-slate-400">
                       <span>Target Record Leaf Hash:</span>
-                      <span className="text-white font-bold">{selectedItem.targetRecordHash.substring(0, 28)}...</span>
+                      <span className="text-white font-bold">{(selectedItem.targetRecordHash || '').substring(0, 28)}...</span>
                     </div>
                     <div className="flex justify-between text-slate-400">
                       <span>Proposed Record Leaf Hash:</span>
-                      <span className="text-blue-400 font-bold">{selectedItem.proposedRecordHash.substring(0, 28)}...</span>
+                      <span className="text-blue-400 font-bold">{(selectedItem.proposedRecordHash || '').substring(0, 28)}...</span>
                     </div>
                   </div>
                 </div>

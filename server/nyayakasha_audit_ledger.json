@@ -21349,5 +21349,256 @@
     "prevHash": "f220f069d461b6679a3e81911c9a3a748330d031190f3f1b4124cb31a6fc242e",
     "hash": "eaf617f0430f826226329974b23f9176b7ea0143ac4a02b001568b326a75aea1",
     "blockNumber": 1490449
+  },
+  {
+    "id": "audit_1786224562185_1250",
+    "index": 1250,
+    "timestamp": "2026-08-08T21:29:22.185Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786224562175",
+    "userRole": "independent_validator",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786224562185_fz57s3",
+      "approvalState": "active"
+    },
+    "payloadHash": "16b43cfe112352b62e6031a2b72121bce514579bd7544fe83133c34d65a21925",
+    "prevHash": "eaf617f0430f826226329974b23f9176b7ea0143ac4a02b001568b326a75aea1",
+    "hash": "18115dcbfedc798e457d6ed9afb75642ac8062edbf6fd7401a873ec1a0388289",
+    "blockNumber": 1490450
+  },
+  {
+    "id": "audit_1786224562206_1251",
+    "index": 1251,
+    "timestamp": "2026-08-08T21:29:22.206Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "submitter@nyayakasha.gov.in",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "submitter@nyayakasha.gov.in",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "ed16bdd35258a4ff37384ddc26838775ecd3ba292e58d7bebb44835464e18fde",
+    "prevHash": "18115dcbfedc798e457d6ed9afb75642ac8062edbf6fd7401a873ec1a0388289",
+    "hash": "cfc4497420175654434f0c82048de98280f632e4f52f5f731bdfcd58c97bc17c",
+    "blockNumber": 1490451
+  },
+  {
+    "id": "audit_1786224564218_1252",
+    "index": 1252,
+    "timestamp": "2026-08-08T21:29:24.218Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "submitter@nyayakasha.gov.in",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "cfc4497420175654434f0c82048de98280f632e4f52f5f731bdfcd58c97bc17c",
+    "hash": "233842fdba3edd05362fa67f0a1d8a55dc9cab14c5ad82df651f3c55e962215c",
+    "blockNumber": 1490452
+  },
+  {
+    "id": "audit_1786225491569_1253",
+    "index": 1253,
+    "timestamp": "2026-08-08T21:44:51.569Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786224562175",
+    "userRole": "independent_validator",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786225491568_rok8z9",
+      "approvalState": "active"
+    },
+    "payloadHash": "8fb8689f6bb59d7ff1395401f09fd476c7cb65b7396f0ec296f4f3ffad870c07",
+    "prevHash": "233842fdba3edd05362fa67f0a1d8a55dc9cab14c5ad82df651f3c55e962215c",
+    "hash": "ae1b4db38394e42fb9f2478e9a0a3bb55395a49ee1889d58fcf1c7c505cfa9fc",
+    "blockNumber": 1490453
+  },
+  {
+    "id": "audit_1786225491618_1254",
+    "index": 1254,
+    "timestamp": "2026-08-08T21:44:51.618Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "submitter@nyayakasha.gov.in",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "submitter@nyayakasha.gov.in",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "ed16bdd35258a4ff37384ddc26838775ecd3ba292e58d7bebb44835464e18fde",
+    "prevHash": "ae1b4db38394e42fb9f2478e9a0a3bb55395a49ee1889d58fcf1c7c505cfa9fc",
+    "hash": "e75a5f39bce69e6629a705f55d215bf90ade60dc5d044dda678a70ccbc539656",
+    "blockNumber": 1490454
+  },
+  {
+    "id": "audit_1786225493663_1255",
+    "index": 1255,
+    "timestamp": "2026-08-08T21:44:53.663Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "submitter@nyayakasha.gov.in",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "e75a5f39bce69e6629a705f55d215bf90ade60dc5d044dda678a70ccbc539656",
+    "hash": "c8af4a486be04ba09566ec8d824f46cf8ec0e6a5158ad4005780f4176c0ad5d2",
+    "blockNumber": 1490455
+  },
+  {
+    "id": "audit_1786226982040_1256",
+    "index": 1256,
+    "timestamp": "2026-08-08T22:09:42.039Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786224562175",
+    "userRole": "independent_validator",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786226982039_1rzwce",
+      "approvalState": "active"
+    },
+    "payloadHash": "d16ba7467eb29475df5babadc717f5c18b988143d38ece6459f3b5a1db215ec6",
+    "prevHash": "c8af4a486be04ba09566ec8d824f46cf8ec0e6a5158ad4005780f4176c0ad5d2",
+    "hash": "17f4c66b5bcc4a519ad52af9365729bafd6acbe64ec7acb98312839eb4dd8938",
+    "blockNumber": 1490456
+  },
+  {
+    "id": "audit_1786226982056_1257",
+    "index": 1257,
+    "timestamp": "2026-08-08T22:09:42.056Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "submitter@nyayakasha.gov.in",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "submitter@nyayakasha.gov.in",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "ed16bdd35258a4ff37384ddc26838775ecd3ba292e58d7bebb44835464e18fde",
+    "prevHash": "17f4c66b5bcc4a519ad52af9365729bafd6acbe64ec7acb98312839eb4dd8938",
+    "hash": "510ee894760d7da2b2930ad6108a6118a4374d44890d96a888c92a1646b7c7cf",
+    "blockNumber": 1490457
+  },
+  {
+    "id": "audit_1786226983911_1258",
+    "index": 1258,
+    "timestamp": "2026-08-08T22:09:43.911Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "submitter@nyayakasha.gov.in",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "510ee894760d7da2b2930ad6108a6118a4374d44890d96a888c92a1646b7c7cf",
+    "hash": "b50f0fe7c42abdec820c6094c9662d8b745f9e8d80d8f021c72094eb7c9cd0e0",
+    "blockNumber": 1490458
+  },
+  {
+    "id": "audit_1786227508312_1259",
+    "index": 1259,
+    "timestamp": "2026-08-08T22:18:28.311Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786227508307",
+    "userRole": "court_authority",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786227508311_ujwaf0",
+      "approvalState": "active"
+    },
+    "payloadHash": "fb3eb435c44554c12c9bc0344e97a915ac1e7c555e37139dbfac3f1a07352613",
+    "prevHash": "b50f0fe7c42abdec820c6094c9662d8b745f9e8d80d8f021c72094eb7c9cd0e0",
+    "hash": "8f9e1eaa25185206356949dc9f4999e1fe26ac3ca6b931c61c656b382d46a21f",
+    "blockNumber": 1490459
+  },
+  {
+    "id": "audit_1786227508330_1260",
+    "index": 1260,
+    "timestamp": "2026-08-08T22:18:28.330Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "court@test.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "court@test.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "2f00353f333e043dd51995082981e2a59317ee973b5a8e52e643df9b87083a67",
+    "prevHash": "8f9e1eaa25185206356949dc9f4999e1fe26ac3ca6b931c61c656b382d46a21f",
+    "hash": "8c36e31a84d9157d9f23b5e018cb851e9720a35b2130f8439ffe6e2c9bc20426",
+    "blockNumber": 1490460
+  },
+  {
+    "id": "audit_1786227513695_1261",
+    "index": 1261,
+    "timestamp": "2026-08-08T22:18:33.695Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "court@test.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Chrome / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "dcb7fe4e54f2703c65a8f06bd3a9fa85b72232df39e054308e043bf166ef21ae",
+    "prevHash": "8c36e31a84d9157d9f23b5e018cb851e9720a35b2130f8439ffe6e2c9bc20426",
+    "hash": "fbcad241a706a5f62a054209e98ebda881edfeafc2583ebe803efe0f6c0b35bd",
+    "blockNumber": 1490461
+  },
+  {
+    "id": "audit_1786227532491_1262",
+    "index": 1262,
+    "timestamp": "2026-08-08T22:18:52.491Z",
+    "eventType": "DURESS_PIN_ENROLLED",
+    "userId": "usr_auto_1786227508307",
+    "userRole": "court_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "hasDuressPin": true,
+      "optInRole": "court_authority"
+    },
+    "payloadHash": "7066aa88384fb0c86eea5bcdc71c7f00303dbeb8a7d29347fa91f13583e9c087",
+    "prevHash": "fbcad241a706a5f62a054209e98ebda881edfeafc2583ebe803efe0f6c0b35bd",
+    "hash": "b76a1e89f1665d899e5c87b5b326d8b515df9571242e8faebc10678299b1fd05",
+    "blockNumber": 1490462
+  },
+  {
+    "id": "audit_1786228258356_1263",
+    "index": 1263,
+    "timestamp": "2026-08-08T22:30:58.356Z",
+    "eventType": "PRECEDENT_CONFLICT_RESOLVED",
+    "userId": "Hon. Presiding Magistrate (Bench Quality Committee)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "flagId": "PREC-703",
+      "citation": "NDPS Act Section 50",
+      "caseId": "FIR-2025-0892"
+    },
+    "payloadHash": "0af2ba9449ee2416064b0cdaadf47bd6bf6c83e15a4aa232014998dd5afbb78f",
+    "prevHash": "b76a1e89f1665d899e5c87b5b326d8b515df9571242e8faebc10678299b1fd05",
+    "hash": "421ed20f26bdc2622f29de770a13fe1cd08f14cd65f186d22161b5702e19ef71",
+    "blockNumber": 1490463
   }
 ]

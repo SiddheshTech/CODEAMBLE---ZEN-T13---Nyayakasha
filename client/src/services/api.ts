@@ -303,10 +303,17 @@ export const api = {
     return fetchAPI('/forgery/queue', { method: 'GET' });
   },
 
-  decideForgery: async (reviewId: string, decision: 'Quarantined' | 'Cleared' | 'Escalated to Bench', notes?: string) => {
+  decideForgery: async (reviewId: string, decision: string, notes?: string) => {
     return fetchAPI('/forgery/decide', {
       method: 'POST',
       body: JSON.stringify({ reviewId, decision, notes })
+    });
+  },
+
+  addBenchDirective: async (reviewId: string, type: string, details: string) => {
+    return fetchAPI('/forgery/directive', {
+      method: 'POST',
+      body: JSON.stringify({ reviewId, type, details })
     });
   },
 
@@ -315,10 +322,21 @@ export const api = {
     return fetchAPI('/identity/unlock-requests', { method: 'GET' });
   },
 
-  approveIdentityUnlock: async (unlockId: string, grantedBy?: string) => {
-    return fetchAPI('/identity/approve-unlock', {
+  getIdentityUnlockLogs: async () => {
+    return fetchAPI('/identity/logs', { method: 'GET' });
+  },
+
+  decideIdentityUnlock: async (requestId: string, decision: 'Approved' | 'Rejected', remarks: string) => {
+    return fetchAPI('/identity/decide', {
       method: 'POST',
-      body: JSON.stringify({ unlockId, grantedBy })
+      body: JSON.stringify({ requestId, decision, remarks })
+    });
+  },
+
+  addIdentityDirective: async (requestId: string, type: string, note: string) => {
+    return fetchAPI('/identity/directive', {
+      method: 'POST',
+      body: JSON.stringify({ requestId, type, note })
     });
   },
 
@@ -364,7 +382,7 @@ export const api = {
     });
   },
 
-  getAuditLog: async () => {
+  getSecurityAuditLog: async () => {
     return fetchAPI('/security/audit-log', { method: 'GET' });
   },
 
@@ -405,6 +423,13 @@ export const api = {
     return fetchAPI(`/analytics/reports/${id}/escalate`, {
       method: 'POST',
       body: JSON.stringify({ rationale, category })
+    });
+  },
+
+  attestAnalyticsModule: async (moduleId: string, attestationNotes: string, judgePasskey: string) => {
+    return fetchAPI('/analytics/modules/attest', {
+      method: 'POST',
+      body: JSON.stringify({ moduleId, attestationNotes, judgePasskey })
     });
   },
 
@@ -464,5 +489,88 @@ export const api = {
 
   getHealth: async () => {
     return fetchAPI('/health', { method: 'GET' });
-  }
+  },
+
+  // --- COURT AUTHORITY DASHBOARD (REAL-TIME) ---
+  getCourtAuthorityDashboard: async () => {
+    return fetchAPI('/court-authority/dashboard', { method: 'GET' });
+  },
+
+  getCourtAuthorityAttentionItems: async () => {
+    return fetchAPI('/court-authority/attention-items', { method: 'GET' });
+  },
+
+  getCourtAuthorityRecentActivity: async (limit = 10) => {
+    return fetchAPI(`/court-authority/recent-activity?limit=${limit}`, { method: 'GET' });
+  },
+
+  executeJudicialAction: async (params: {
+    decision: 'ADMIT' | 'STRIKE' | 'APPROVE_VOTE' | 'REJECT_VOTE' | 'AUTHORIZE_TRANSFER' | 'RESOLVE_PRECEDENT';
+    itemType: 'forgery' | 'vote' | 'custody' | 'precedent';
+    dbId: string;
+    caseId?: string;
+    judicialOrderText?: string;
+    judgeId?: string;
+    judgeName?: string;
+  }) => {
+    return fetchAPI('/court-authority/action', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    });
+  },
+
+  courtAuthoritySearch: async (query: string) => {
+    return fetchAPI(`/court-authority/case-search?q=${encodeURIComponent(query)}`, { method: 'GET' });
+  },
+
+  // --- COURT AUTHORITY CASE FILES REPOSITORY ---
+  getRichCases: async () => {
+    return fetchAPI('/cases/rich/all', { method: 'GET' });
+  },
+
+  getRichCaseById: async (id: string) => {
+    return fetchAPI(`/cases/rich/detail/${id}`, { method: 'GET' });
+  },
+
+  addRichCaseEvidence: async (id: string, data: { title: string; type: string; details?: string; submittedBy?: string }) => {
+    return fetchAPI(`/cases/rich/detail/${id}/evidence`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+
+  addRichCaseNote: async (id: string, data: { content: string; category?: string; author?: string }) => {
+    return fetchAPI(`/cases/rich/detail/${id}/notes`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+
+  addRichCaseOrder: async (id: string, data: { title: string; type: string; summary: string; issuedBy?: string }) => {
+    return fetchAPI(`/cases/rich/detail/${id}/orders`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+
+  unlockRichCaseTestimony: async (id: string, testimonyId: string, passkey: string) => {
+    return fetchAPI(`/cases/rich/detail/${id}/testimonies/${testimonyId}/unlock`, {
+      method: 'POST',
+      body: JSON.stringify({ passkey })
+    });
+  },
+
+  authorizeRichCaseCustodyTransfer: async (id: string, data: { recipient: string; reason: string; actor?: string; location?: string; biometricVerified?: boolean; gpsCoordinates?: string }) => {
+    return fetchAPI(`/cases/rich/detail/${id}/custody/transfer`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+
+  updateRichCaseEvidenceStatus: async (id: string, evidenceId: string, decision: 'ADMIT' | 'STRIKE') => {
+    return fetchAPI(`/cases/rich/detail/${id}/evidence/${evidenceId}/status`, {
+      method: 'POST',
+      body: JSON.stringify({ decision })
+    });
+  },
 };

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { api } from '../services/api';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Lock,
@@ -359,8 +360,27 @@ const INITIAL_PERMANENT_LOG: PermanentUnlockLogEntry[] = [
 ];
 
 export function IdentityUnlockTab() {
-  const [requests, setRequests] = useState<IdentityUnlockRequest[]>(INITIAL_REQUESTS);
-  const [logs, setLogs] = useState<PermanentUnlockLogEntry[]>(INITIAL_PERMANENT_LOG);
+  const [requests, setRequests] = useState<IdentityUnlockRequest[]>([]);
+  const [logs, setLogs] = useState<PermanentUnlockLogEntry[]>([]);
+
+  const fetchIdentityData = async () => {
+    try {
+      const reqsRes = await api.getIdentityUnlockRequests();
+      if (reqsRes && reqsRes.success && reqsRes.requests) {
+        setRequests(reqsRes.requests);
+      }
+      const logsRes = await api.getIdentityUnlockLogs();
+      if (logsRes && logsRes.success && logsRes.logs) {
+        setLogs(logsRes.logs);
+      }
+    } catch (err) {
+      console.error('Error fetching identity unlock requests or logs:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchIdentityData();
+  }, []);
 
   // VIEW SELECTION: null = Directory/List; Request ID = Deep Detailed Inner Pager View
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
@@ -421,7 +441,7 @@ export function IdentityUnlockTab() {
     setAgreedToLegalOath(false);
   };
 
-  const handleAuthorizeOrReject = (decision: 'Approved' | 'Rejected') => {
+  const handleAuthorizeOrReject = async (decision: 'Approved' | 'Rejected') => {
     if (!selectedRequest) return;
     if (!agreedToLegalOath) {
       showToast('Mandatory Legal Statutory Oath acknowledgment is required before signing.');
@@ -433,99 +453,53 @@ export function IdentityUnlockTab() {
     }
 
     setIsSigning(true);
+    try {
+      const res = await api.decideIdentityUnlock(selectedRequest.id, decision, judgeRemarks);
+      if (res && res.success) {
+        setRequests((prev) =>
+          prev.map((r) => (r.id === selectedRequest.id ? res.request : r))
+        );
+        if (res.logs) {
+          setLogs(res.logs);
+        }
+        const sigHash = res.request.unlockedDetails?.digitalSignature || '0xSIG_JUDGE_APP';
+        showToast(
+          `Identity Disclosure Request ${selectedRequest.id} ${decision.toUpperCase()}. Signed with hash ${sigHash.substring(0, 16)}...`
+        );
 
-    setTimeout(() => {
-      const now = new Date();
-      const timestampStr =
-        now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) +
-        ', ' +
-        now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-      const sigHash = `0xSIG_JUDGE_${decision === 'Approved' ? 'APP' : 'REJ'}_${Math.floor(
-        Math.random() * 899999 + 100000
-      )}`;
-
-      const updatedUnlockedDetails: UnlockedIdentityData = {
-        realName: 'Anil Kumar S. Sharma (Principal Systems Engineer)',
-        aadhaarPanHash: '0x7782...A912 (Verified UIDAI Cryptographic Vault)',
-        addressMasked: 'Plot 104, Tech Park Enclave, Sector 4, Navi Mumbai',
-        phoneEncrypted: '+91 99*** **102 (Encrypted Channel #2)',
-        emergencyContact: 'Commandant R. Kulkarni (State Special Cyber Cell)',
-        unlockedAt: timestampStr,
-        unlockedByJudge: 'Hon. Presiding Magistrate (Bench 3)',
-        digitalSignature: sigHash,
-        accessDurationWindow: '48 Hours (In-Camera Cross Examination Window)',
-      };
-
-      setRequests((prev) =>
-        prev.map((r) => {
-          if (r.id === selectedRequest.id) {
-            return {
-              ...r,
-              status: decision === 'Approved' ? 'Approved & Unlocked' : 'Rejected',
-              unlockedDetails: decision === 'Approved' ? updatedUnlockedDetails : undefined,
-            };
-          }
-          return r;
-        })
-      );
-
-      // Append to Permanent Ledger Log
-      const newLog: PermanentUnlockLogEntry = {
-        logId: `LOG-UNLOCK-${String(logs.length + 83).padStart(4, '0')}`,
-        requestId: selectedRequest.id,
-        caseId: selectedRequest.caseId,
-        witnessAlias: selectedRequest.witnessAlias,
-        judgeName: 'Hon. Presiding Magistrate (Bench 3)',
-        judgeKeyId: 'BENCH-KEY-IND-003',
-        decision,
-        timestamp: timestampStr,
-        blockNumber: 89350 + logs.length,
-        digitalSignatureHash: sigHash,
-        legalJustificationSummary: judgeRemarks || selectedRequest.statedLegalGrounds,
-      };
-
-      setLogs((prev) => [newLog, ...prev]);
-
-      setIsSigning(false);
-      showToast(
-        `Identity Disclosure Request ${selectedRequest.id} ${decision.toUpperCase()}. Signed with hash ${sigHash.substring(0, 16)}...`
-      );
-
-      // Automatically pivot to Decrypted Vault tab if approved
-      if (decision === 'Approved') {
-        setInnerSubTab('decrypted_vault');
+        if (decision === 'Approved') {
+          setInnerSubTab('decrypted_vault');
+        }
+      } else {
+        showToast('Failed to execute disclosure: ' + (res.error || 'unknown error'));
       }
-    }, 700);
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error executing disclosure decision');
+    } finally {
+      setIsSigning(false);
+    }
   };
 
-  const handleAddDirective = (e: React.FormEvent) => {
+  const handleAddDirective = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedRequestId || !newDirectiveNote.trim()) return;
 
-    const newDir: DirectiveEntry = {
-      id: `DIR-${Math.floor(100 + Math.random() * 900)}-${Date.now().toString().slice(-3)}`,
-      judgeName: 'Hon. Presiding Magistrate (Bench 3)',
-      date: new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }),
-      type: newDirectiveType,
-      note: newDirectiveNote,
-      hash: `0xDIR_SEAL_${Math.floor(Math.random() * 899 + 100)}`,
-    };
-
-    setRequests((prev) =>
-      prev.map((r) => {
-        if (r.id === selectedRequestId) {
-          return {
-            ...r,
-            directives: [newDir, ...r.directives],
-          };
-        }
-        return r;
-      })
-    );
-
-    setNewDirectiveNote('');
-    showToast('Judicial Directive Executed & Cryptographically Sealed');
+    try {
+      const res = await api.addIdentityDirective(selectedRequestId, newDirectiveType, newDirectiveNote);
+      if (res && res.success) {
+        setRequests((prev) =>
+          prev.map((r) => (r.id === selectedRequestId ? res.request : r))
+        );
+        setNewDirectiveNote('');
+        showToast('Judicial Directive Executed & Cryptographically Sealed');
+      } else {
+        showToast('Failed to append directive: ' + (res.error || 'unknown error'));
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error executing directive');
+    }
   };
 
   return (

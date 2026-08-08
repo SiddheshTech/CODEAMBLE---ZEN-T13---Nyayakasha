@@ -84,6 +84,15 @@ export function CourtAuthorityDashboard({
   const [isSigningKey, setIsSigningKey] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // ── COURT AUTHORITY REAL-TIME DASHBOARD STATE ─────────────────────────────
+  const [dashboardStats, setDashboardStats] = useState<any>(null);
+  const [isLoadingStats, setIsLoadingStats] = useState(false);
+  const [realAttentionItems, setRealAttentionItems] = useState<AttentionItem[]>([]);
+  const [isLoadingAttention, setIsLoadingAttention] = useState(false);
+  const [recentActivities, setRecentActivities] = useState<any[]>([]);
+  const [isLoadingActivity, setIsLoadingActivity] = useState(false);
+  // ──────────────────────────────────────────────────────────────────────────
+
   // INDEPENDENT VALIDATOR STATE & REAL BACKEND DATA
   const [validatorSignedVotes, setValidatorSignedVotes] = useState<Record<string, string>>({});
   const [duressEscalated, setDuressEscalated] = useState(false);
@@ -93,6 +102,53 @@ export function CourtAuthorityDashboard({
 
   const [validatorDashboardData, setValidatorDashboardData] = useState<any | null>(null);
   const [isLoadingValidatorDashboard, setIsLoadingValidatorDashboard] = useState<boolean>(false);
+
+  // ── COURT AUTHORITY DATA FETCHERS ────────────────────────────────────────
+  const fetchCourtDashboardStats = async () => {
+    setIsLoadingStats(true);
+    try {
+      const data = await api.getCourtAuthorityDashboard();
+      if (data?.stats) setDashboardStats(data.stats);
+    } catch (err: any) {
+      console.log('Court dashboard stats load:', err.message);
+    } finally {
+      setIsLoadingStats(false);
+    }
+  };
+
+  const fetchCourtAttentionItems = async () => {
+    setIsLoadingAttention(true);
+    try {
+      const data = await api.getCourtAuthorityAttentionItems();
+      if (data?.attentionItems) setRealAttentionItems(data.attentionItems as AttentionItem[]);
+    } catch (err: any) {
+      console.log('Attention items load:', err.message);
+    } finally {
+      setIsLoadingAttention(false);
+    }
+  };
+
+  const fetchRecentActivity = async () => {
+    setIsLoadingActivity(true);
+    try {
+      const data = await api.getCourtAuthorityRecentActivity(6);
+      if (data?.activities) {
+        setRecentActivities(data.activities.map((act: any) => ({
+          id: act.id,
+          action: act.action,
+          type: act.actionLabel,
+          timestamp: act.timestamp,
+          iconType: act.iconType,
+          outcome: act.outcome,
+        })));
+      }
+    } catch (err: any) {
+      console.log('Recent activity load:', err.message);
+    } finally {
+      setIsLoadingActivity(false);
+    }
+  };
+  // ──────────────────────────────────────────────────────────────────────────
 
   const fetchValidatorDashboard = async () => {
     setIsLoadingValidatorDashboard(true);
@@ -110,6 +166,21 @@ export function CourtAuthorityDashboard({
   };
 
   useEffect(() => {
+    if (role === 'Court Authority') {
+      // Fetch all real dashboard data on mount
+      fetchCourtDashboardStats();
+      fetchCourtAttentionItems();
+      fetchRecentActivity();
+
+      // Auto-refresh every 30 seconds
+      const interval = setInterval(() => {
+        fetchCourtDashboardStats();
+        fetchCourtAttentionItems();
+        fetchRecentActivity();
+      }, 30000);
+      return () => clearInterval(interval);
+    }
+
     if (role === 'Independent Validator') {
       fetchValidatorDashboard();
 
@@ -139,135 +210,58 @@ export function CourtAuthorityDashboard({
     }
   }, [role]);
 
-  // Attention Items
-  const attentionItems: AttentionItem[] = [
-    {
-      id: 'CR-2026-904',
-      type: 'forgery',
-      title: 'Digital Signature Mismatch on CCTV Exhibit #4',
-      queue: 'Forgery Detection Engine',
-      urgency: 'URGENT',
-      urgencyColor: 'bg-rose-100 text-rose-800 border-rose-200',
-      badgeColor: 'bg-rose-500',
-      timeLeft: '2 hours left',
-      details:
-        'SHA-256 hash mismatch detected between field upload and central ledger. Frames 1400-1450 show potential frame insertion tampering.',
-      courtNote: 'Requires judicial determination to admit or strike exhibit from trial record.',
-      actionLabel: 'Inspect & Determine',
-      caseRef: 'State of Maharashtra vs. R. K. Industries (Cyber Heist)',
-      judgeInstruction: 'Verify frame timestamps against municipal traffic server backup ledger before issuing evidentiary order.',
-    },
-    {
-      id: 'FIR-2026-102',
-      type: 'vote',
-      title: 'Forensic Hash Consensus Validation (Cyber Fraud)',
-      queue: 'Consensus Voting',
-      urgency: 'HIGH',
-      urgencyColor: 'bg-amber-100 text-amber-800 border-amber-200',
-      badgeColor: 'bg-amber-500',
-      timeLeft: '12 hours left',
-      details:
-        '2 of 3 independent validators have attested hash integrity. Your vote is required to seal consensus block #89201.',
-      courtNote: 'Awaiting your binding judicial validator signature to authorize evidence block sealing.',
-      actionLabel: 'Cast Validator Vote',
-      caseRef: 'Special Cyber Precinct vs. Unknown Network Actors',
-      judgeInstruction: 'Review ZK-Proof zero-knowledge certificate before applying judicial multi-sig hardware token.',
-    },
-    {
-      id: 'MH-CR-8821',
-      type: 'precedent',
-      title: 'Precedent-Twin: 94.2% Similarity with Landmark Case #2019-SC-44',
-      queue: 'Precedent Analysis',
-      urgency: 'HIGH',
-      urgencyColor: 'bg-blue-100 text-blue-800 border-blue-200',
-      badgeColor: 'bg-blue-500',
-      timeLeft: 'Today',
-      details:
-        'AI legal precedent matcher identified identical evidentiary structure and chain-of-custody pattern as State v. Sharma (2019).',
-      courtNote: 'Automated twin comparison ready for judicial review and precedent citation.',
-      actionLabel: 'Analyze Precedent Twin',
-      caseRef: 'TechCorp Solutions vs. Municipal Procurement Cell',
-      judgeInstruction: 'Check Section 43A IT Act compliance vectors against Supreme Court 2019 precedent guidelines.',
-    },
-    {
-      id: 'CR-2026-441',
-      type: 'custody',
-      title: 'Custody Transfer Approval to Special Forensic Unit',
-      queue: 'Chain of Custody',
-      urgency: 'MEDIUM',
-      urgencyColor: 'bg-purple-100 text-purple-800 border-purple-200',
-      badgeColor: 'bg-purple-500',
-      timeLeft: '1 day left',
-      details:
-        'Officer R. Kulkarni requested transfer of physical hard drives to Zone 4 Forensics Lab under sealed barcode #EV-9022.',
-      courtNote: 'Requires court authorization for physical evidence movement across precinct boundaries.',
-      actionLabel: 'Authorize Custody Transfer',
-      caseRef: 'Zone 4 Financial Fraud Task Force',
-      judgeInstruction: 'Confirm biometric sign-off from Receiving Forensic Director prior to dispatch order.',
-    },
-  ];
-
-  // Recent activity feed
-  const recentActivities = [
-    {
-      id: 'act-1',
-      action: 'Cast "Approve" vote on Consensus Case #FIR-2026-088',
-      type: 'Vote Cast',
-      timestamp: 'Today, 09:15 AM',
-      icon: CheckCircle2,
-      iconColor: 'text-emerald-600 bg-emerald-50',
-    },
-    {
-      id: 'act-2',
-      action: 'Dismissed Forgery Flag on CCTV Audio Track #2 (Case #CR-2026-880)',
-      type: 'Ruling Issued',
-      timestamp: 'Yesterday, 04:30 PM',
-      icon: Scale,
-      iconColor: 'text-purple-600 bg-purple-50',
-    },
-    {
-      id: 'act-3',
-      action: 'Signed Judicial Attestation for Case #CR-2026-310',
-      type: 'Attestation',
-      timestamp: '04 Aug 2026, 11:20 AM',
-      icon: ShieldCheck,
-      iconColor: 'text-blue-600 bg-blue-50',
-    },
-    {
-      id: 'act-4',
-      action: 'Approved Custody Transfer to Cyber Forensics Division',
-      type: 'Custody Transfer',
-      timestamp: '02 Aug 2026, 03:45 PM',
-      icon: FolderOpen,
-      iconColor: 'text-amber-600 bg-amber-50',
-    },
-  ];
-
-  const handleExecuteOrder = (decision: 'ADMIT' | 'STRIKE' | 'APPROVE_VOTE' | 'REJECT_VOTE' | 'AUTHORIZE_TRANSFER') => {
+  // ── REAL API-BACKED handleExecuteOrder ────────────────────────────────────
+  const handleExecuteOrder = async (decision: 'ADMIT' | 'STRIKE' | 'APPROVE_VOTE' | 'REJECT_VOTE' | 'AUTHORIZE_TRANSFER') => {
     if (!activeDetailItem) return;
 
     setIsSigningKey(true);
-    setTimeout(() => {
-      setIsSigningKey(false);
-      const decisionLabels: Record<string, string> = {
-        ADMIT: 'Exhibit Admitted to Trial Record',
-        STRIKE: 'Exhibit Struck & Flagged as Tampered',
-        APPROVE_VOTE: 'Judicial Affirmative Vote Recorded on Block #89201',
-        REJECT_VOTE: 'Judicial Dissent Vote Recorded on Block #89201',
-        AUTHORIZE_TRANSFER: 'Sealed Custody Transfer Authorized',
+    try {
+      // Map decision to itemType
+      const itemTypeMap: Record<string, 'forgery' | 'vote' | 'custody' | 'precedent'> = {
+        ADMIT: 'forgery',
+        STRIKE: 'forgery',
+        APPROVE_VOTE: 'vote',
+        REJECT_VOTE: 'vote',
+        AUTHORIZE_TRANSFER: 'custody',
       };
 
-      const msg = decisionLabels[decision] || 'Judicial Determination Saved';
+      // Get the stored user profile for judge identity
+      const storedUser = (() => { try { return JSON.parse(localStorage.getItem('nyayakasha_user') || '{}'); } catch { return {}; } })();
+
+      const result = await api.executeJudicialAction({
+        decision,
+        itemType: itemTypeMap[decision] || (activeDetailItem.type as any),
+        dbId: (activeDetailItem as any).dbId || activeDetailItem.id,
+        caseId: activeDetailItem.id,
+        judicialOrderText,
+        judgeId: storedUser.id || 'CA-KEY-BENCH-01',
+        judgeName: storedUser.fullName || 'Hon. Justice Adv. A. Mehta',
+      });
+
+      const msg = result.message || 'Judicial Determination Recorded';
       setOrderSubmitted(msg);
       setVotedItems(prev => ({ ...prev, [activeDetailItem.id]: msg }));
-      showToast(msg);
-    }, 1200);
+      showToast(`✓ ${msg} | Block #${result.blockNumber}`);
+
+      // Refresh data to reflect changes
+      await fetchCourtAttentionItems();
+      await fetchCourtDashboardStats();
+      await fetchRecentActivity();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to execute judicial order. Please try again.');
+    } finally {
+      setIsSigningKey(false);
+    }
   };
+  // ──────────────────────────────────────────────────────────────────────────
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
   };
+
+  // Use real attention items from API; fall back gracefully while loading
+  const attentionItems: AttentionItem[] = realAttentionItems;
 
   const filteredAttention = attentionItems.filter(
     (item) =>
@@ -994,7 +988,7 @@ export function CourtAuthorityDashboard({
 
                   return (
                     <div
-                      key={item.id}
+                      key={`${item.type || 'vote'}-${item.dbId || item.id}`}
                       className="p-5 rounded-2xl bg-slate-50 border border-slate-200/90 hover:border-blue-300 transition-all space-y-3"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1309,10 +1303,10 @@ export function CourtAuthorityDashboard({
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-3xl font-bold text-slate-900 tracking-tight">
-                14
+                {isLoadingStats ? <RefreshCw className="w-6 h-6 animate-spin text-slate-400" /> : (dashboardStats?.openCasesCount ?? dashboardStats?.totalCasesCount ?? '—')}
               </span>
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
-                +3 today
+                {dashboardStats?.todayCasesCount != null ? `+${dashboardStats.todayCasesCount} today` : 'loading...'}
               </span>
             </div>
             <p className="text-xs text-slate-500 flex items-center gap-1 group-hover:text-indigo-600 transition-colors">
@@ -1336,7 +1330,7 @@ export function CourtAuthorityDashboard({
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-3xl font-bold text-rose-950 tracking-tight">
-                3
+                {isLoadingStats ? <RefreshCw className="w-6 h-6 animate-spin text-rose-300" /> : (dashboardStats?.forgeryFlagsCount ?? '—')}
               </span>
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200 animate-pulse">
                 Action required
@@ -1363,7 +1357,7 @@ export function CourtAuthorityDashboard({
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-3xl font-bold text-amber-950 tracking-tight">
-                2
+                {isLoadingStats ? <RefreshCw className="w-6 h-6 animate-spin text-amber-300" /> : (dashboardStats?.consensusVotesCount ?? '—')}
               </span>
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
                 24h deadline
@@ -1390,7 +1384,7 @@ export function CourtAuthorityDashboard({
             </div>
             <div className="flex items-baseline justify-between">
               <span className="text-3xl font-bold text-indigo-950 tracking-tight">
-                3
+                {isLoadingStats ? <RefreshCw className="w-6 h-6 animate-spin text-indigo-300" /> : (dashboardStats?.precedentFlagsCount ?? '—')}
               </span>
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200">
                 Layer 6 Outliers
@@ -1416,8 +1410,11 @@ export function CourtAuthorityDashboard({
                     Needs Your Attention Today
                   </h3>
                   <span className="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 text-xs font-bold">
-                    {filteredAttention.length} Pending
+                    {isLoadingAttention && filteredAttention.length === 0 ? '...' : `${filteredAttention.length} Pending`}
                   </span>
+                  {isLoadingAttention && (
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-slate-400" />
+                  )}
                 </div>
                 <p className="text-xs text-slate-500 pt-0.5">
                   Top time-sensitive items across all queues. Click any action button to open full deep inner analysis.
@@ -1431,7 +1428,7 @@ export function CourtAuthorityDashboard({
 
                 return (
                   <div
-                    key={item.id}
+                    key={`${item.type}-${item.dbId || item.id}`}
                     className="p-5 rounded-2xl bg-slate-50 border border-slate-200/90 hover:border-indigo-300 transition-all space-y-3"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1525,34 +1522,62 @@ export function CourtAuthorityDashboard({
             </div>
 
             <div className="space-y-4">
-              {recentActivities.map((act) => {
-                const Icon = act.icon;
-                return (
-                  <div
-                    key={act.id}
-                    className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100/60 transition-colors"
-                  >
+              {isLoadingActivity && recentActivities.length === 0 ? (
+                <div className="p-6 text-center">
+                  <RefreshCw className="w-5 h-5 animate-spin text-slate-400 mx-auto" />
+                  <p className="text-xs text-slate-400 mt-2">Loading audit trail...</p>
+                </div>
+              ) : recentActivities.length === 0 ? (
+                <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200">
+                  <History className="w-6 h-6 text-slate-400 mx-auto" />
+                  <p className="text-xs text-slate-500 mt-2">No recent judicial activity recorded yet.</p>
+                </div>
+              ) : (
+                recentActivities.map((act: any) => {
+                  // Map iconType string to the corresponding Lucide component
+                  const iconMap: Record<string, any> = {
+                    check: CheckCircle2,
+                    scale: Scale,
+                    shield: ShieldCheck,
+                    folder: FolderOpen,
+                    file: FileText,
+                  };
+                  const iconColorMap: Record<string, string> = {
+                    check: 'text-emerald-600 bg-emerald-50',
+                    scale: 'text-purple-600 bg-purple-50',
+                    shield: 'text-blue-600 bg-blue-50',
+                    folder: 'text-amber-600 bg-amber-50',
+                    file: 'text-slate-600 bg-slate-50',
+                  };
+                  const Icon = iconMap[act.iconType] || CheckCircle2;
+                  const iconColor = iconColorMap[act.iconType] || 'text-slate-600 bg-slate-50';
+                  return (
                     <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${act.iconColor}`}
+                      key={act.id}
+                      className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100/60 transition-colors"
                     >
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-bold text-slate-900 leading-tight">
-                        {act.action}
-                      </p>
-                      <div className="flex items-center justify-between mt-1.5">
-                        <span className="text-[10px] font-semibold text-slate-500">
-                          {act.type}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-mono">
-                          {act.timestamp}
-                        </span>
+                      <div
+                        className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${iconColor}`}
+                      >
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold text-slate-900 leading-tight">
+                          {act.action}
+                        </p>
+                        <div className="flex items-center justify-between mt-1.5">
+                          <span className="text-[10px] font-semibold text-slate-500">
+                            {act.type}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            {act.timestamp}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
 
             <div className="pt-2 border-t border-slate-100 text-center">

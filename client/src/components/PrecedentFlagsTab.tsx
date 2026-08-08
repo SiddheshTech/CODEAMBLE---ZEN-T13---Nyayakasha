@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import SignatureCanvas from 'react-signature-canvas';
+import { api } from '../services/api';
 import {
   Scale,
   AlertCircle,
@@ -439,6 +440,36 @@ const INITIAL_FLAGS: PrecedentFlagItem[] = [
 export function PrecedentFlagsTab() {
   const [flags, setFlags] = useState<PrecedentFlagItem[]>(INITIAL_FLAGS);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const fetchFlags = () => {
+    api.getPrecedentFlags()
+      .then(res => {
+        if (res && res.success && res.flags) {
+          setFlags((prev) => {
+            return prev.map(mockFlag => {
+              const serverFlag = res.flags.find((f: any) => 
+                f.id === mockFlag.id || 
+                f.id.replace('PREC-70', 'FLAG-2026-00') === mockFlag.id
+              );
+              if (serverFlag) {
+                return {
+                  ...mockFlag,
+                  status: serverFlag.status === 'Resolved' || serverFlag.status === 'Reviewed' ? 'Reviewed' : 'Pending Review',
+                  reviewedBy: serverFlag.resolvedBy || mockFlag.reviewedBy,
+                  reviewedAt: serverFlag.resolvedAt ? new Date(serverFlag.resolvedAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : mockFlag.reviewedAt
+                };
+              }
+              return mockFlag;
+            });
+          });
+        }
+      })
+      .catch(err => console.error('Error fetching precedent flags:', err));
+  };
+
+  useEffect(() => {
+    fetchFlags();
+  }, []);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [statusFilter, setStatusFilter] = useState<'All' | 'Pending Review' | 'Reviewed'>('All');
 
@@ -515,39 +546,48 @@ export function PrecedentFlagsTab() {
 
     setIsSigning(true);
 
-    setTimeout(() => {
-      const now = new Date();
-      const dateStr = now.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+    const serverFlagId = selectedFlag.id.startsWith('FLAG-') ? selectedFlag.id.replace('FLAG-2026-00', 'PREC-70') : selectedFlag.id;
+    api.resolvePrecedentFlag(serverFlagId, 'Hon. Presiding Magistrate (Bench Quality Committee)')
+      .then(res => {
+        if (res && res.success) {
+          const now = new Date();
+          const dateStr = now.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
 
-      let actionDesc = '';
-      if (judicialActionChoice === 'Approved') {
-        actionDesc = judgeRemarks.trim() || 'Reviewed by Judicial Quality Panel. Outlier notice recorded into case administrative diary.';
-      } else if (judicialActionChoice === 'Escalated') {
-        actionDesc = judgeRemarks.trim() || 'Escalated to High Court Judicial Quality Review Panel for bench advisory evaluation.';
-      } else {
-        actionDesc = judgeRemarks.trim() || 'Outlier flag dismissed as false positive. Ruling justified by unique factual nuances.';
-      }
-
-      setFlags((prev) =>
-        prev.map((f) => {
-          if (f.id === selectedFlag.id) {
-            return {
-              ...f,
-              status: 'Reviewed',
-              reviewNote: actionDesc,
-              reviewedBy: 'Hon. Presiding Magistrate (Bench Quality Committee)',
-              reviewedAt: dateStr,
-            };
+          let actionDesc = '';
+          if (judicialActionChoice === 'Approved') {
+            actionDesc = judgeRemarks.trim() || 'Reviewed by Judicial Quality Panel. Outlier notice recorded into case administrative diary.';
+          } else if (judicialActionChoice === 'Escalated') {
+            actionDesc = judgeRemarks.trim() || 'Escalated to High Court Judicial Quality Review Panel for bench advisory evaluation.';
+          } else {
+            actionDesc = judgeRemarks.trim() || 'Outlier flag dismissed as false positive. Ruling justified by unique factual nuances.';
           }
-          return f;
-        })
-      );
 
-      setIsSigning(false);
-      showToast(
-        `Precedent Flag Review for ${selectedFlag.caseId} RECORDED: ${judicialActionChoice.toUpperCase()}. Rationale saved to Case Administrative Diary.`
-      );
-    }, 800);
+          setFlags((prev) =>
+            prev.map((f) => {
+              if (f.id === selectedFlag.id) {
+                return {
+                  ...f,
+                  status: 'Reviewed',
+                  reviewNote: actionDesc,
+                  reviewedBy: 'Hon. Presiding Magistrate (Bench Quality Committee)',
+                  reviewedAt: dateStr,
+                };
+              }
+              return f;
+            })
+          );
+          showToast(`Precedent Flag Review for ${selectedFlag.caseId} RECORDED: ${judicialActionChoice.toUpperCase()}. Rationale saved to Case Administrative Diary.`);
+        } else {
+          showToast('Failed to resolve flag: ' + (res.error || 'unknown error'));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showToast('Error resolving precedent flag');
+      })
+      .finally(() => {
+        setIsSigning(false);
+      });
   };
 
   const handleAddDirective = (e: React.FormEvent) => {
