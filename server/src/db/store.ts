@@ -18,6 +18,14 @@ export interface UserRecord {
   barCouncilNumber?: string;
   jurisdictionCode?: string; // e.g. "MH-MUM-DIST-01"
   uploadedDocumentUrl?: string;
+  contactExtension?: string;
+  chambersLocation?: string;
+  appointmentRef?: string;
+  authorityScope?: string;
+  keyShareFingerprint?: string;
+  hardwareTokenName?: string;
+  keyGenesisDate?: string;
+  mfaAttestationLevel?: string;
   documentBlurScore?: number;
   documentPassesQuality?: boolean;
 
@@ -300,6 +308,86 @@ class PrimaryDataStore {
   }
 
   private seedDefaults() {
+    // Seed default users so profile fetching always has rich data even on fresh start
+    if (this.users.size === 0) {
+      const defaultValidator: UserRecord = {
+        id: 'usr_seed_validator',
+        email: 'm.vasudevan@oversight.nyayakasha.gov.in',
+        fullName: 'DR. MEERA VASUDEVAN',
+        role: 'independent_validator',
+        passwordHash: 'seeded',
+        approvalState: 'active',
+        stateHistory: [{ state: 'active', timestamp: new Date().toISOString() }],
+        institutionVerified: true,
+        vettingApproved: true,
+        mfaEnrolled: true,
+        contactExtension: '+91 (022) 2288-1100 ext. 901',
+        chambersLocation: 'Chambers 901, Judicial Oversight Tower, Fort, Mumbai',
+        appointmentRef: 'HC-REG-2026-9902',
+        authorityScope: 'Division Bench Quorum (1-of-3 Threshold)',
+        barCouncilNumber: 'BCM-MH-2012/88421',
+        keyShareFingerprint: '0x9D4F-88E2-11A9-C43B-7720-F01A-99D8-23E1-44B0',
+        hardwareTokenName: 'YubiKey 5 FIDO2 Hardware Security Token',
+        keyGenesisDate: 'Nov 12, 2025',
+        mfaAttestationLevel: 'WebAuthn Hardware-Attested • Level 3 Enclave Security',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      const defaultCourtAuth: UserRecord = {
+        id: 'usr_seed_court',
+        email: 'a.mehta@highcourt.nyayakasha.gov.in',
+        fullName: 'HON. JUSTICE ADV. A. MEHTA',
+        role: 'court_authority',
+        passwordHash: 'seeded',
+        approvalState: 'active',
+        stateHistory: [{ state: 'active', timestamp: new Date().toISOString() }],
+        institutionVerified: true,
+        vettingApproved: true,
+        mfaEnrolled: true,
+        contactExtension: '+91 (022) 2284-9042 ext. 402',
+        chambersLocation: 'Chambers 402, High Court Main Building',
+        appointmentRef: 'HC-JUD-2026-0892',
+        authorityScope: 'Division Bench 3 (Presiding Judge)',
+        barCouncilNumber: 'BCM-MH-1998/1042',
+        keyShareFingerprint: '0x8F9A-41B0-C82E-99B1-3310-7F2A-00B2-11D4-884E-90C1-FA32',
+        hardwareTokenName: 'YubiKey 5 FIDO2 Hardware Security Token',
+        keyGenesisDate: 'Nov 12, 2025',
+        mfaAttestationLevel: 'WebAuthn Hardware-Attested • Level 3 Enclave Security',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      const defaultFieldSub: UserRecord = {
+        id: 'usr_seed_field',
+        email: 'r.kulkarni@nyayakasha.gov.in',
+        fullName: 'OFFICER RAJESH KULKARNI',
+        role: 'field_submitter',
+        passwordHash: 'seeded',
+        approvalState: 'active',
+        stateHistory: [{ state: 'active', timestamp: new Date().toISOString() }],
+        institutionVerified: true,
+        vettingApproved: true,
+        mfaEnrolled: true,
+        contactExtension: '+91 (022) 2650-1122 ext. 104',
+        chambersLocation: 'Room 104, Zone 4 Cyber Crime Precinct',
+        appointmentRef: 'MH-POL-29384',
+        authorityScope: 'Zone 4 Metropolitan Precinct',
+        barCouncilNumber: 'POL-MH-2015/4921',
+        keyShareFingerprint: '0x3E1C-99B4-11A0-7C08-44F2-88B1-002E-77D1-2290-A81B-12D9',
+        hardwareTokenName: 'Ed25519-EdDSA Enclave',
+        keyGenesisDate: 'Nov 12, 2025',
+        mfaAttestationLevel: 'Standard App Enclave',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      [defaultValidator, defaultCourtAuth, defaultFieldSub].forEach(u => {
+        this.users.set(u.id, u);
+        this.usersByEmail.set(u.email.toLowerCase(), u);
+      });
+    }
+
     // Default Cases
     const defaultCases: CaseRecord[] = [
       { id: 'FIR-2026-001', title: 'State vs. Unknown (Sector 4 Cyber Heist)', status: 'Active', type: 'Cyber Crime', date: 'Oct 12, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 14, testimonyCount: 3, priority: 'High', description: 'Unauthorized access and data exfiltration from city municipal servers. Traced to IP addresses in Zone 4.', location: 'Sector 4, Central Station', jurisdictionCode: 'MH-MUM-DIST-01', createdAt: '2026-10-12T10:00:00Z', updatedAt: '2026-10-12T10:00:00Z' },

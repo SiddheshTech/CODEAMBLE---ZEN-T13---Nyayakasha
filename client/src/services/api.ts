@@ -43,6 +43,7 @@ async function fetchAPI<T = any>(endpoint: string, options: RequestInit = {}): P
 }
 
 export const api = {
+  baseUrl: API_BASE,
   // --- AUTHENTICATION ---
   signup: async (params: {
     email: string;
@@ -236,6 +237,14 @@ export const api = {
     longitude?: number;
     signature?: string;
     dataUrl?: string;
+    seizureBagId?: string;
+    seizureMethod?: string;
+    priorityLevel?: string;
+    witnessName?: string;
+    preservationType?: string;
+    tags?: string[];
+    evidenceNotes?: string;
+    gpsLocation?: any;
   }) => {
     return fetchAPI('/evidence/submit', {
       method: 'POST',
@@ -411,6 +420,24 @@ export const api = {
 
   verifyAnchorHash: async (hash: string) => {
     return fetchAPI(`/audit-log/verify-anchor/${encodeURIComponent(hash)}`, { method: 'GET' });
+  },
+
+  // --- PROFILE API ---
+  getProfile: async () => {
+    const userEmail = localStorage.getItem('nyayakasha_user_email') || '';
+    return fetchAPI('/profile', { 
+      method: 'GET',
+      headers: userEmail ? { 'x-user-email': userEmail } : {}
+    });
+  },
+
+  updateProfile: async (data: any) => {
+    const userEmail = localStorage.getItem('nyayakasha_user_email') || '';
+    return fetchAPI('/profile', {
+      method: 'PATCH',
+      headers: userEmail ? { 'x-user-email': userEmail } : {},
+      body: JSON.stringify(data)
+    });
   },
 
   getHealth: async () => {

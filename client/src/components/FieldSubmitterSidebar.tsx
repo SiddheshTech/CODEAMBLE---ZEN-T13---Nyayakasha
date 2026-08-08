@@ -30,6 +30,7 @@ interface FieldSubmitterSidebarProps {
   onLogout?: () => void;
   notificationCount?: number;
   role?: string;
+  profileData?: any;
 }
 
 interface NavItem {
@@ -46,6 +47,7 @@ export function FieldSubmitterSidebar({
   onLogout = () => {},
   notificationCount = 2,
   role = 'Court Authority',
+  profileData = null,
 }: FieldSubmitterSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -131,8 +133,13 @@ export function FieldSubmitterSidebar({
     setIsMobileOpen(false);
   };
 
-  const userInitials = role === 'Field Submitter' ? 'RK' : 'AM';
-  const userName = role === 'Field Submitter' ? 'Officer R. Kulkarni' : 'Adv. A. Mehta';
+  const getInitials = (name: string) => {
+    if (!name) return '??';
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
+
+  const userInitials = profileData ? getInitials(profileData.fullName) : (role === 'Field Submitter' ? 'RK' : 'AM');
+  const userName = profileData ? profileData.fullName : (role === 'Field Submitter' ? 'Officer R. Kulkarni' : 'Adv. A. Mehta');
   const userSubtitle = role;
 
   const SidebarContent = ({ collapsed = false }: { collapsed?: boolean }) => (
