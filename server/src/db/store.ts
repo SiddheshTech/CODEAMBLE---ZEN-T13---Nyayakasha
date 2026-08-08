@@ -807,6 +807,12 @@ class PrimaryDataStore {
         if (data.validatorActivityLogs && Array.isArray(data.validatorActivityLogs)) {
           this.validatorActivityLogs = data.validatorActivityLogs;
         }
+        if (data.readNotificationIds && Array.isArray(data.readNotificationIds)) {
+          this.readNotificationIds = new Set(data.readNotificationIds);
+        }
+        if (data.readNotificationTimestamps && typeof data.readNotificationTimestamps === 'object') {
+          this.readNotificationTimestamps = new Map(Object.entries(data.readNotificationTimestamps));
+        }
         // Seed only after disk data is loaded — so disk data takes priority
         this.seedDefaults();
       }
@@ -829,7 +835,9 @@ class PrimaryDataStore {
         precedentFlags: this.precedentFlags,
         analyticsReports: this.analyticsReports,
         oversightEscalations: this.oversightEscalations,
-        validatorActivityLogs: this.validatorActivityLogs
+        validatorActivityLogs: this.validatorActivityLogs,
+        readNotificationIds: Array.from(this.readNotificationIds),
+        readNotificationTimestamps: Object.fromEntries(this.readNotificationTimestamps.entries())
       };
       fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
     } catch (err) {
@@ -1113,9 +1121,127 @@ class PrimaryDataStore {
   }
 
   // --- NOTIFICATIONS STORE & REAL-TIME DISPATCH ---
+  private readNotificationIds: Set<string> = new Set();
+  private readNotificationTimestamps: Map<string, string> = new Map();
+  private customNotifications: NotificationRecord[] = [];
+
   public getNotifications(role?: string): NotificationRecord[] {
-    if (!role || role === 'all') return [...this.notifications];
-    return this.notifications.filter(n => 
+    const realNotifs: NotificationRecord[] = [];
+
+    // 1. Real Duress Alerts from database
+    this.duressAlerts.forEach(a => {
+      const notifId = `notif-duress-${a.id}`;
+      const isRead = this.readNotificationIds.has(notifId);
+      realNotifs.push({
+        id: notifId,
+        type: 'duress',
+        title: `CRITICAL: Duress PIN Alert (${a.userName})`,
+        message: `Silent panic PIN executed by ${a.userName} (${a.role}) from IP ${a.ipAddress}.`,
+        timestamp: a.timestamp ? (a.timestamp.includes('T') ? new Date(a.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : a.timestamp) : 'Recently',
+        isoDate: a.timestamp || new Date().toISOString(),
+        isRead,
+        readAt: this.readNotificationTimestamps.get(notifId),
+        priority: 'critical',
+        caseId: a.refId || 'SYS-SECURITY',
+        sender: 'Oversight Security Sentinel',
+        details: `Location: ${a.locationInfo?.jurisdiction || 'Zone 4 Field Terminal'}. Status: ${a.status}. Visual evidence feed and officer geolocation locked in audit ledger under Rule 88-B.`,
+        actionUrlTab: 'Audit log',
+        actionLabel: 'Inspect Duress Payload',
+        roleScope: 'all',
+        createdAt: a.timestamp || new Date().toISOString()
+      });
+    });
+
+    // 2. Real Evidence Submissions from database
+    Array.from(this.evidence.values()).forEach(e => {
+      const isTestimony = e.type === 'Document' && e.id.startsWith('TM-');
+      const notifId = `notif-ev-${e.id}`;
+      const isRead = this.readNotificationIds.has(notifId);
+      realNotifs.push({
+        id: notifId,
+        type: isTestimony ? 'system' : 'system',
+        title: isTestimony ? `Testimony ${e.id} Recorded & Cryptographically Signed` : `Evidence ${e.id} Ingested & SHA-256 Sealed`,
+        message: `${e.title} (${e.type}) was cryptographically sealed by ${e.custodian || 'Field Officer'}.`,
+        timestamp: e.date || (e.createdAt ? new Date(e.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'Recently'),
+        isoDate: e.createdAt || new Date().toISOString(),
+        isRead,
+        readAt: this.readNotificationTimestamps.get(notifId),
+        priority: isTestimony ? 'medium' : 'high',
+        caseId: e.caseId,
+        sender: 'SHA-256 HSM Sealing Engine',
+        details: `Hash: ${e.hash}. Status: ${e.status}. Custodian: ${e.custodian}. Location: ${e.incidentLocation || 'Zone 4 Field Terminal'}.`,
+        actionUrlTab: 'Chain of Custody',
+        actionLabel: 'View Evidence Ledger',
+        roleScope: 'all',
+        createdAt: e.createdAt || new Date().toISOString()
+      });
+    });
+
+    // 3. Real Forgery Reviews from database
+    this.forgeryReviews.forEach(f => {
+      const notifId = `notif-forgery-${f.id}`;
+      const isRead = this.readNotificationIds.has(notifId);
+      realNotifs.push({
+        id: notifId,
+        type: 'forgery',
+        title: `Forgery Review Queue: ${f.title}`,
+        message: `AI Anomaly Detector flagged score ${f.aiConfidence}% on exhibit ${f.exhibitId}. Status: ${f.status}.`,
+        timestamp: f.timestamp || 'Recently',
+        isoDate: new Date().toISOString(),
+        isRead,
+        readAt: this.readNotificationTimestamps.get(notifId),
+        priority: 'high',
+        caseId: f.caseId,
+        sender: 'Forensic Neural Scanner v4.2',
+        details: `Flag Reason: ${f.flagReason}. Spectral Score: ${f.spectralScore}. Metadata Score: ${f.metadataIntegrityScore}.`,
+        actionUrlTab: 'Chain of Custody',
+        actionLabel: 'Open Forgery Queue',
+        roleScope: 'all',
+        createdAt: new Date().toISOString()
+      });
+    });
+
+    // 4. Real Consensus Requests from database
+    this.consensusRequests.forEach(c => {
+      const notifId = `notif-consensus-${c.id}`;
+      const isRead = this.readNotificationIds.has(notifId);
+      realNotifs.push({
+        id: notifId,
+        type: 'consensus',
+        title: `Consensus Vote Required: ${c.exhibitTitle || c.caseTitle}`,
+        message: `Multi-signature quorum pending (${c.currentVotes || 0}/${c.requiredVotes || 3} signatures) for exhibit ${c.exhibitId}.`,
+        timestamp: c.createdAt ? new Date(c.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'Recently',
+        isoDate: c.createdAt || new Date().toISOString(),
+        isRead,
+        readAt: this.readNotificationTimestamps.get(notifId),
+        priority: 'high',
+        caseId: c.caseId,
+        sender: 'High Court Quorum Engine',
+        details: `Status: ${c.status}. Submitted by: ${c.submittedBy}. Required votes: ${c.requiredVotes}.`,
+        actionUrlTab: 'Chain of Custody',
+        actionLabel: 'Cast Quorum Vote',
+        roleScope: 'all',
+        createdAt: c.createdAt || new Date().toISOString()
+      });
+    });
+
+    // 5. Custom notifications created at runtime
+    this.customNotifications.forEach(n => {
+      if (!realNotifs.some(existing => existing.id === n.id)) {
+        const isRead = this.readNotificationIds.has(n.id);
+        realNotifs.push({
+          ...n,
+          isRead,
+          readAt: this.readNotificationTimestamps.get(n.id) || n.readAt
+        });
+      }
+    });
+
+    // Sort newest first
+    realNotifs.sort((a, b) => new Date(b.isoDate).getTime() - new Date(a.isoDate).getTime());
+
+    if (!role || role === 'all') return realNotifs;
+    return realNotifs.filter(n => 
       !n.roleScope || 
       n.roleScope === 'all' || 
       n.roleScope === role || 
@@ -1124,40 +1250,35 @@ class PrimaryDataStore {
   }
 
   public saveNotification(notif: NotificationRecord): NotificationRecord {
-    const existingIdx = this.notifications.findIndex(n => n.id === notif.id);
+    const existingIdx = this.customNotifications.findIndex(n => n.id === notif.id);
     if (existingIdx >= 0) {
-      this.notifications[existingIdx] = notif;
+      this.customNotifications[existingIdx] = notif;
     } else {
-      this.notifications.unshift(notif);
+      this.customNotifications.unshift(notif);
     }
     this.persistToDisk();
     return notif;
   }
 
   public markNotificationRead(id: string): NotificationRecord | null {
-    const notif = this.notifications.find(n => n.id === id);
-    if (notif) {
-      notif.isRead = true;
-      notif.readAt = new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-      this.persistToDisk();
-      return notif;
-    }
-    return null;
+    this.readNotificationIds.add(id);
+    const nowStr = `Today at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    this.readNotificationTimestamps.set(id, nowStr);
+    this.persistToDisk();
+    
+    const all = this.getNotifications();
+    return all.find(n => n.id === id) || null;
   }
 
   public markAllNotificationsRead(role?: string): boolean {
-    let updated = false;
-    this.notifications.forEach(n => {
-      if (!role || !n.roleScope || n.roleScope === 'all' || n.roleScope === role) {
-        if (!n.isRead) {
-          n.isRead = true;
-          n.readAt = new Date().toLocaleString('en-US', { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-          updated = true;
-        }
-      }
+    const list = this.getNotifications(role);
+    const nowStr = `Today at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    list.forEach(n => {
+      this.readNotificationIds.add(n.id);
+      this.readNotificationTimestamps.set(n.id, nowStr);
     });
-    if (updated) this.persistToDisk();
-    return updated;
+    this.persistToDisk();
+    return true;
   }
 
   public registerDeviceToken(userId: string, token: string) {
