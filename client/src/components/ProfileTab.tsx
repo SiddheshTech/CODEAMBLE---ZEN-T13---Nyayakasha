@@ -23,8 +23,8 @@ export function ProfileTab({ role }: { role: string }) {
     }
   })();
 
-  const officialName = user?.fullName || user?.name || (isValidator ? 'Dr. Meera Vasudevan' : isCourtAuthority ? 'Hon. Justice Adv. A. Mehta' : 'Officer Rajesh Kulkarni');
-  const officialEmail = user?.email || (isValidator ? 'm.vasudevan@oversight.nyayakasha.gov.in' : isCourtAuthority ? 'a.mehta@highcourt.nyayakasha.gov.in' : 'r.kulkarni@nyayakasha.gov.in');
+  const officialName = profileData?.fullName || user?.fullName || user?.name || 'Authenticated User';
+  const officialEmail = profileData?.email || user?.email || 'user@nyayakasha.gov.in';
 
   // State
   const [profileData, setProfileData] = useState<any>(null);
