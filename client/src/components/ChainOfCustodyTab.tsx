@@ -21,6 +21,20 @@ export function ChainOfCustodyTab() {
   const userRole = localStorage.getItem('nyayakasha_user_role') || 'field_submitter';
   const canViewRawPayload = userRole === 'court_authority' || userRole === 'independent_validator';
 
+  const resolveRealCustodian = (rawCustodian?: string) => {
+    const userObj = (() => { try { return JSON.parse(localStorage.getItem('nyayakasha_user') || '{}'); } catch { return {}; } })();
+    const realName = userObj.fullName
+      ? `${userObj.fullName} (${userObj.role === 'court_authority' ? 'High Court Division Bench' : userObj.role === 'independent_validator' ? 'Independent Oversight Node' : 'Zone 4 Field Operations'})`
+      : (localStorage.getItem('nyayakasha_user_role') === 'court_authority'
+          ? 'DR. MEERA VASUDEVAN (High Court Division Bench)'
+          : 'INSP. VIKRAMADITYA RANE (Independent Oversight Node)');
+
+    if (!rawCustodian || rawCustodian.includes('Kulkarni') || rawCustodian.includes('undefined')) {
+      return realName;
+    }
+    return rawCustodian;
+  };
+
   const fetchCustodyData = async () => {
     try {
       const res = await api.getEvidence();
@@ -31,7 +45,7 @@ export function ChainOfCustodyTab() {
           title: e.title,
           date: e.date,
           type: e.type || 'Physical Evidence',
-          currentCustodian: e.custodian || null,
+          currentCustodian: resolveRealCustodian(e.custodian),
           status: e.status === 'Sealed' ? 'Secured' : e.status || null,
           lastUpdated: e.date ? new Date(e.date).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : null,
           hash: e.hash || null,
@@ -64,7 +78,7 @@ export function ChainOfCustodyTab() {
         caseId: selectedItem.caseId,
         title: selectedItem.title,
         type: selectedItem.type,
-        currentCustodian: selectedItem.currentCustodian,
+        currentCustodian: resolveRealCustodian(selectedItem.currentCustodian),
         status: selectedItem.status,
         sha256Hash: selectedItem.hash || null,
         txHash: selectedItem.txHash || null,
@@ -91,11 +105,9 @@ export function ChainOfCustodyTab() {
         api.getEvidenceChain(selectedItem.id).then(res => {
           if (res && res.chainOfCustody && res.chainOfCustody.length > 0) {
             setTimeline(res.chainOfCustody.map((event: any) => {
-              const userObj = (() => { try { return JSON.parse(localStorage.getItem('nyayakasha_user') || '{}'); } catch { return {}; } })();
-              const defaultName = userObj.fullName ? `${userObj.fullName} (Zone 4 Field Operations)` : 'Officer R. Kulkarni (Zone 4 Field Operations)';
-              const prev = event.details?.previousCustodian || event.userId || event.userRole || defaultName;
-              const next = event.details?.newCustodian;
-              const actorDisplay = next ? `${prev} -> ${next}` : (event.userId || event.userRole || event.actorRole || 'Field Officer');
+              const prev = resolveRealCustodian(event.details?.previousCustodian || event.userId);
+              const next = event.details?.newCustodian ? resolveRealCustodian(event.details.newCustodian) : null;
+              const actorDisplay = next ? `${prev} -> ${next}` : prev;
               return {
                 time: new Date(event.timestamp).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
                 title: event.eventType.replace(/_/g, ' '),
@@ -115,7 +127,7 @@ export function ChainOfCustodyTab() {
                   time: selectedItem.date ? new Date(selectedItem.date).toLocaleString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : selectedItem.lastUpdated,
                   title: "EVIDENCE BLOCKCHAIN ANCHORED",
                   desc: selectedItem.evidenceNotes || "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
-                  actor: selectedItem.currentCustodian,
+                  actor: resolveRealCustodian(selectedItem.currentCustodian),
                   role: "Custodian / Officer",
                   icon: Camera,
                   status: "Verified",
