@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import nodemailer from 'nodemailer';
 import { auditLedger } from '../db/auditLedger.js';
 
@@ -16,8 +18,8 @@ class NotificationService {
   }
 
   private initTransporter() {
-    const user = process.env.GMAIL_USER || process.env.SMTP_USER || 'dummyacc8712@gmail.com';
-    const pass = process.env.GMAIL_APP_PASS || process.env.SMTP_PASS || 'fbeuiffqunadzyvq';
+    const user = process.env.SMTP_USER || process.env.GMAIL_USER || 'smirh2211@gmail.com';
+    const pass = process.env.SMTP_PASS || process.env.GMAIL_APP_PASS || 'dmnpyqkejgmxlgoy';
     const host = process.env.SMTP_HOST || 'smtp.gmail.com';
     const port = Number(process.env.SMTP_PORT) || 465;
 
@@ -25,8 +27,9 @@ class NotificationService {
       this.transporter = nodemailer.createTransport({
         host,
         port,
-        secure: true,
-        auth: { user, pass }
+        secure: port === 465,
+        auth: { user, pass },
+        tls: { rejectUnauthorized: false }
       });
       console.log(`📧 SMTP Transporter configured for ${user}`);
     } catch (err) {
@@ -45,10 +48,16 @@ class NotificationService {
       details: { channel: 'EMAIL', recipient, subject }
     });
 
+    if (!this.transporter) {
+      this.initTransporter();
+    }
+
     if (this.transporter) {
       try {
         const fromName = process.env.EMAIL_FROM_NAME || 'Nyayakasha Security System';
-        const fromAddr = process.env.SMTP_FROM || 'dummyacc8712@gmail.com';
+        const fromUser = process.env.SMTP_USER || process.env.GMAIL_USER || 'smirh2211@gmail.com';
+        const fromAddr = process.env.SMTP_FROM || fromUser;
+        
         await this.transporter.sendMail({
           from: `"${fromName}" <${fromAddr}>`,
           to: recipient,
@@ -62,11 +71,12 @@ class NotificationService {
         });
         console.log(`📧 Real SMTP Email successfully sent to ${recipient}`);
         return true;
-      } catch (err) {
-        console.error('SMTP Email dispatch info:', err);
+      } catch (err: any) {
+        console.error(`⚠️ SMTP Email dispatch to ${recipient} failed:`, err?.message || err);
+        return false;
       }
     }
-    return true;
+    return false;
   }
 
   /**
