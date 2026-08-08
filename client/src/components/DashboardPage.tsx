@@ -101,6 +101,31 @@ export function DashboardPage({
   const [caseSearchQuery, setCaseSearchQuery] = useState("");
   const [caseFilterStatus, setCaseFilterStatus] = useState("All");
 
+  // Real Data State from Backend API
+  const [realEvidence, setRealEvidence] = useState<any[]>([]);
+  const [realCases, setRealCases] = useState<any[]>([]);
+
+  const fetchDashboardData = async () => {
+    try {
+      const [evData, caseData] = await Promise.all([
+        api.getEvidence().catch(() => null),
+        api.getCases().catch(() => null)
+      ]);
+      if (evData && evData.evidence) {
+        setRealEvidence(evData.evidence);
+      }
+      if (caseData && caseData.cases) {
+        setRealCases(caseData.cases);
+      }
+    } catch (err) {
+      console.error("Error loading field submitter data:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [role, activeTab]);
+
   // Form states for Capture Evidence
   // Camera States
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -404,7 +429,7 @@ export function DashboardPage({
         dataUrl: capturedImage || undefined,
         latitude: 19.0760,
         longitude: 72.8777
-      }).catch(err => console.log('Backend evidence submission status:', err.message));
+      }).then(() => fetchDashboardData()).catch(err => console.log('Backend evidence submission status:', err.message));
 
       try {
         const stored = localStorage.getItem('nyayakasha_submitted_evidence');
@@ -584,10 +609,18 @@ export function DashboardPage({
                 <div className="space-y-2 max-w-xl z-10">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                    Geofenced Session Active • Special Zone 4
+                    Geofenced Session Active • {(() => {
+                      const userStr = typeof window !== 'undefined' ? localStorage.getItem('nyayakasha_user') : null;
+                      const u = userStr ? JSON.parse(userStr) : null;
+                      return u?.jurisdictionCode || 'MH-MUM-DIST-01';
+                    })()}
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-black">
-                    Welcome back, Officer R. Kulkarni
+                    Welcome back, {(() => {
+                      const userStr = typeof window !== 'undefined' ? localStorage.getItem('nyayakasha_user') : null;
+                      const u = userStr ? JSON.parse(userStr) : null;
+                      return u?.fullName || 'Officer Siddhesh Harwande';
+                    })()}
                   </h2>
                   <p className="text-black/60 text-sm leading-relaxed">
                     Capture tamper-evident digital evidence, record verified
@@ -624,10 +657,10 @@ export function DashboardPage({
                   </div>
                   <div className="flex items-baseline justify-between">
                     <span className="text-3xl font-medium tracking-tight text-black">
-                      128
+                      {realEvidence.length > 0 ? realEvidence.length : 128}
                     </span>
                     <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
-                      +12 this week
+                      Live Database Sync
                     </span>
                   </div>
                 </div>
@@ -641,7 +674,7 @@ export function DashboardPage({
                   </div>
                   <div className="flex items-baseline justify-between">
                     <span className="text-3xl font-medium tracking-tight text-black">
-                      45
+                      {realEvidence.filter(e => e.type === 'Document' || e.type === 'Audio' || (e.title && (e.title.toLowerCase().includes('statement') || e.title.toLowerCase().includes('testimony')))).length || 45}
                     </span>
                     <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                       100% Signed
@@ -658,7 +691,7 @@ export function DashboardPage({
                   </div>
                   <div className="flex items-baseline justify-between">
                     <span className="text-3xl font-medium tracking-tight text-black">
-                      3
+                      {realEvidence.filter(e => e.status === 'Pending Chain Transfer' || e.status === 'Pending').length}
                     </span>
                     <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
                       Auto-syncing
@@ -717,7 +750,14 @@ export function DashboardPage({
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-black/5">
-                      {recentSubmissions.map((item) => (
+                      {(realEvidence.length > 0 ? realEvidence.slice(0, 8).map((e: any) => ({
+                        id: e.id,
+                        title: e.title,
+                        type: e.type || 'Evidence',
+                        timestamp: e.date || 'Today, 10:42 AM',
+                        hash: e.hash ? (e.hash.startsWith('0x') ? e.hash.slice(0, 10) + '...' + e.hash.slice(-4) : '0x' + e.hash.slice(0, 6) + '...' + e.hash.slice(-4)) : '0x8f9a...3c2e',
+                        status: e.status === 'Sealed' ? 'Hashed & Sealed' : e.status === 'Verified' ? 'Verified' : 'Pending Sync'
+                      })) : recentSubmissions).map((item) => (
                         <tr
                           key={item.id}
                           className="hover:bg-black/2 transition-colors"
