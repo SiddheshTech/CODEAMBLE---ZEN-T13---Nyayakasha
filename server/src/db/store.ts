@@ -182,6 +182,9 @@ class PrimaryDataStore {
   private forgeryReviews: ForgeryReviewItem[] = [];
   private identityUnlocks: IdentityUnlockRequest[] = [];
   private precedentFlags: PrecedentFlagItem[] = [];
+  private analyticsReports: any[] = [];
+  private oversightEscalations: any[] = [];
+  private validatorActivityLogs: any[] = [];
 
   // DECOY HONEYPOT DATASETS FOR DURESS SESSIONS
   private decoyCases = new Map<string, CaseRecord>();
@@ -318,7 +321,6 @@ class PrimaryDataStore {
       }
     ];
 
-<<<<<<< HEAD
     // Consensus Requests — only seed if empty (real data from disk takes priority)
     if (this.consensusRequests.length === 0) {
       this.consensusRequests = [
@@ -420,7 +422,7 @@ class PrimaryDataStore {
         }
       ];
     }
-=======
+
     // Seed Decoy Honeypot Datasets (Served ONLY during Duress Sessions)
     const defaultDecoyCases: CaseRecord[] = [
       { id: 'FIR-DECOY-8801', title: 'State vs. Cyber Transport Syndicate (Decoy Docket)', status: 'Active', type: 'Cyber Crime', date: 'Oct 14, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 6, testimonyCount: 2, priority: 'High', description: 'Simulated traffic monitoring log analysis for Western precinct routing.', location: 'Western Suburb Precinct 9', jurisdictionCode: 'MH-MUM-DIST-01', createdAt: '2026-10-14T10:00:00Z', updatedAt: '2026-10-14T10:00:00Z' },
@@ -468,7 +470,6 @@ class PrimaryDataStore {
         status: 'Under Review'
       }
     ];
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
   }
 
   private async loadFromFirestore() {
@@ -534,7 +535,6 @@ class PrimaryDataStore {
         if (data.precedentFlags && Array.isArray(data.precedentFlags)) {
           this.precedentFlags = data.precedentFlags;
         }
-<<<<<<< HEAD
         if (data.analyticsReports && Array.isArray(data.analyticsReports)) {
           this.analyticsReports = data.analyticsReports;
         }
@@ -546,8 +546,6 @@ class PrimaryDataStore {
         }
         // Seed only after disk data is loaded — so disk data takes priority
         this.seedDefaults();
-=======
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
       }
     } catch (err) {
       console.log('Info: Disk store load status:', err);
@@ -565,14 +563,10 @@ class PrimaryDataStore {
         consensusRequests: this.consensusRequests,
         forgeryReviews: this.forgeryReviews,
         identityUnlocks: this.identityUnlocks,
-<<<<<<< HEAD
         precedentFlags: this.precedentFlags,
         analyticsReports: this.analyticsReports,
         oversightEscalations: this.oversightEscalations,
         validatorActivityLogs: this.validatorActivityLogs
-=======
-        precedentFlags: this.precedentFlags
->>>>>>> bb49019e6c4f846fa19430871cd16b22061602d6
       };
       fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
     } catch (err) {
