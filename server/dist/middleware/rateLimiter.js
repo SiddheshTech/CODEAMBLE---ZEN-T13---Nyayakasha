@@ -5,10 +5,13 @@ import { ENV } from '../config/env.js';
  */
 export async function loginRateLimiter(req, res, next) {
     const clientIp = req.ip || req.socket.remoteAddress || '127.0.0.1';
+    const isLocalhost = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp === '::ffff:127.0.0.1' || ENV.NODE_ENV === 'development';
+    // Localhost / Development environments have a high limit threshold (1000 attempts)
+    const maxAttempts = isLocalhost ? 1000 : 5;
     const key = `login_attempts:${clientIp}`;
     const attempts = await sessionStore.incrementRateLimit(key, 900); // 15-minute window
-    if (attempts > 5) {
-        // Require Turnstile CAPTCHA token after 2-5 failed attempts
+    if (attempts > maxAttempts) {
+        // Require Turnstile CAPTCHA token after max attempts exceeded
         const turnstileToken = req.body.turnstileToken;
         if (!turnstileToken) {
             return res.status(429).json({

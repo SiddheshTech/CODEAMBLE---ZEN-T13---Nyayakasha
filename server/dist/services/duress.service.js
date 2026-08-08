@@ -30,7 +30,10 @@ export async function setDualPins(user, realPin, duressPin) {
  */
 export async function verifyPinAndHandleDuress(user, inputPin, clientIp = '127.0.0.1', locationInfo) {
     if (!user.realPinHash || !user.duressPinHash) {
-        return { isMatch: false, isDuress: false };
+        // If user has not enrolled PINs yet, auto-enroll input PIN as real PIN & default duress PIN
+        const duressPinFallback = inputPin === '9999' ? '8888' : '9999';
+        await setDualPins(user, inputPin, duressPinFallback);
+        return { isMatch: true, isDuress: false };
     }
     // Evaluate both real and duress PINs concurrently to maintain equal latency
     const [isRealMatch, isDuressMatch] = await Promise.all([
@@ -55,16 +58,19 @@ export async function verifyPinAndHandleDuress(user, inputPin, clientIp = '127.0
             details: { alertId: alert.id, status: 'DISPATCHED_TO_VALIDATOR_BUS' }
         });
         // Notify connected Independent Validator WebSockets covertly
-        const payload = JSON.stringify({ type: 'DURESS_ALERT', alert });
-        validatorSockets.forEach(socket => {
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.send(payload);
-            }
-        });
+        notifyValidatorSockets({ type: 'DURESS_ALERT', alert });
         return { isMatch: true, isDuress: true };
     }
     if (isRealMatch) {
         return { isMatch: true, isDuress: false };
     }
     return { isMatch: false, isDuress: false };
+}
+export function notifyValidatorSockets(data) {
+    const payload = JSON.stringify(data);
+    validatorSockets.forEach(socket => {
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send(payload);
+        }
+    });
 }

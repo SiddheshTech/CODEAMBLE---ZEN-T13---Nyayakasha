@@ -1,5 +1,5 @@
 process.env.TEST_ENV = 'true';
-import { startServer, server } from '../index.js';
+import { startServer } from '../index.js';
 import { auditLedger } from '../db/auditLedger.js';
 import { primaryStore } from '../db/store.js';
 import { evaluatePasswordStrength, checkHIBP } from '../utils/crypto.js';
@@ -29,12 +29,16 @@ async function runTests() {
     // 2. Audit Ledger Hash Chaining Integrity
     const initialIntegrity = auditLedger.verifyIntegrity();
     assert(initialIntegrity.isValid === true, 'Tamper-evident audit log ledger has valid initial SHA-256 hash chain');
-    // 3. User Sign Up for 3 Roles
+    // 3. User Sign Up for 3 Roles (using unique run timestamp)
+    const runTs = Date.now();
+    const fsEmail = `fs_test_${runTs}@nyayakasha.gov.in`;
+    const courtEmail = `court_test_${runTs}@nyayakasha.gov.in`;
+    const validatorEmail = `validator_test_${runTs}@nyayakasha.gov.in`;
     const submitterRes = await fetch('http://localhost:5000/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            email: 'fs_test@nyayakasha.gov.in',
+            email: fsEmail,
             password: 'StrongSecretPassword!2026',
             fullName: 'Officer Vikram Singh',
             role: 'field_submitter',
@@ -49,7 +53,7 @@ async function runTests() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            email: 'court_test@nyayakasha.gov.in',
+            email: courtEmail,
             password: 'StrongSecretPassword!2026',
             fullName: 'Judge Ananya Sharma',
             role: 'court_authority',
@@ -62,7 +66,7 @@ async function runTests() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            email: 'validator_test@nyayakasha.gov.in',
+            email: validatorEmail,
             password: 'StrongSecretPassword!2026',
             fullName: 'Dr. Ramesh Patel',
             role: 'independent_validator',
@@ -76,8 +80,9 @@ async function runTests() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            email: 'court_test@nyayakasha.gov.in',
-            password: 'StrongSecretPassword!2026'
+            email: courtEmail,
+            password: 'StrongSecretPassword!2026',
+            turnstileToken: 'mock_turnstile_token'
         })
     });
     const courtSignInData = await courtSignIn.json();
@@ -122,7 +127,7 @@ async function runTests() {
     const fsSignIn = await fetch('http://localhost:5000/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'fs_test@nyayakasha.gov.in', password: 'StrongSecretPassword!2026' })
+        body: JSON.stringify({ email: fsEmail, password: 'StrongSecretPassword!2026', turnstileToken: 'mock_turnstile_token' })
     });
     const fsSignInData = await fsSignIn.json();
     const fsToken = fsSignInData.sessionId;
@@ -185,9 +190,20 @@ async function runTests() {
     const maxGap = Math.max(Math.abs(avgRealLatency - avgDuressLatency), Math.abs(avgRealLatency - avgWrongLatency));
     console.log(` 📊 Duress Latency Sampling: Real PIN=${avgRealLatency.toFixed(2)}ms | Duress PIN=${avgDuressLatency.toFixed(2)}ms | Wrong PIN=${avgWrongLatency.toFixed(2)}ms (Max Delta=${maxGap.toFixed(2)}ms)`);
     assert(maxGap < 85.0, 'Constant-Time Verification: Statistical latency difference between Real PIN, Duress PIN, and Wrong PIN is strictly bounded (<85ms), closing timing side-channels');
-    // Verify Duress Alert Queue state
-    const alerts = primaryStore.getDuressAlerts();
-    assert(alerts.length > 0 && alerts[0].userId === submitterData.userId, 'Duress PIN execution covertly dispatched alert to Independent Validator queue');
+    // Verify Duress Alert Queue state via API / store
+    const valSignIn = await fetch('http://localhost:5000/api/auth/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: validatorEmail, password: 'StrongSecretPassword!2026', turnstileToken: 'mock_turnstile_token' })
+    });
+    const valSignInData = await valSignIn.json();
+    const valToken = valSignInData.sessionId;
+    const alertsRes = await fetch('http://localhost:5000/api/security/validator/duress-alerts', {
+        headers: { Authorization: `Bearer ${valToken}` }
+    });
+    const alertsData = await alertsRes.json();
+    const alerts = alertsData.alerts || primaryStore.getDuressAlerts();
+    assert(alerts.length > 0 && alerts.some((a) => a.userId === submitterData.userId), 'Duress PIN execution covertly dispatched alert to Independent Validator queue');
     // 11. Audit Chain Verification after All Operations
     const finalIntegrity = auditLedger.verifyIntegrity();
     assert(finalIntegrity.isValid === true, 'Tamper-evident audit ledger maintains 100% cryptographic integrity across all transactions');
@@ -198,17 +214,16 @@ async function runTests() {
         process.exit(1);
     }
 }
-// Start HTTP server for tests
-startServer(5000);
+// Start HTTP server for tests if not already running
 (async () => {
     try {
+        const isRunning = await fetch('http://localhost:5000/api/health').then(() => true).catch(() => false);
+        if (!isRunning) {
+            startServer(5000);
+        }
         await runTests();
     }
     catch (err) {
         console.error('Test execution error:', err);
-    }
-    finally {
-        server.close();
-        process.exit(0);
     }
 })();
