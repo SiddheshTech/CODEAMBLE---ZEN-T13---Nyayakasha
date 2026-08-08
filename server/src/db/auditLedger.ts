@@ -98,6 +98,19 @@ class AuditLedger {
     return [...this.chain];
   }
 
+  public getEvents(): AuditLogEntry[] {
+    return this.getChain();
+  }
+
+  public recordEvent(eventType: string, userId: string, details?: Record<string, any>, userRole: string = 'USER'): AuditLogEntry {
+    return this.appendEvent({
+      eventType,
+      userId,
+      userRole,
+      details
+    });
+  }
+
   public verifyIntegrity(): { isValid: boolean; brokenAt?: number } {
     for (let i = 0; i < this.chain.length; i++) {
       const entry = this.chain[i];

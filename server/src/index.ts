@@ -8,6 +8,14 @@ import { verificationRouter } from './routes/verification.routes.js';
 import { mfaRouter } from './routes/mfa.routes.js';
 import { securityRouter } from './routes/security.routes.js';
 import { healthRouter } from './routes/health.routes.js';
+import { casesRouter } from './routes/cases.routes.js';
+import { evidenceRouter } from './routes/evidence.routes.js';
+import { consensusRouter } from './routes/consensus.routes.js';
+import { forgeryRouter } from './routes/forgery.routes.js';
+import { identityRouter } from './routes/identity.routes.js';
+import { precedentsRouter } from './routes/precedents.routes.js';
+import { analyticsRouter } from './routes/analytics.routes.js';
+import { deviceRouter } from './routes/device.routes.js';
 import { registerValidatorSocket } from './services/duress.service.js';
 
 const app = express();
@@ -27,7 +35,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRouter);
 app.use('/api/verification', verificationRouter);
 app.use('/api/mfa', mfaRouter);
+app.use('/api/security/device', deviceRouter);
 app.use('/api/security', securityRouter);
+app.use('/api/cases', casesRouter);
+app.use('/api/evidence', evidenceRouter);
+app.use('/api/consensus', consensusRouter);
+app.use('/api/forgery', forgeryRouter);
+app.use('/api/identity', identityRouter);
+app.use('/api/precedents', precedentsRouter);
+app.use('/api/analytics', analyticsRouter);
 app.use('/api', healthRouter);
 
 // WebSocket Server for Silent Duress Event Bus to Independent Validator
@@ -47,7 +63,7 @@ export function startServer(port = ENV.PORT) {
     });
     server.listen(port, () => {
       console.log(`=======================================================`);
-      console.log(`🛡️  NYAYAKASHA Backend Authentication Stack Online`);
+      console.log(`🛡️  NYAYAKASHA Backend Authentication & Docket System Online`);
       console.log(`🚀  HTTP API Server listening on port ${port}`);
       console.log(`📡  WebSocket Duress Event Bus active at /ws/duress-bus`);
       console.log(`=======================================================`);

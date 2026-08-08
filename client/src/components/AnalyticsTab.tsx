@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import SignatureCanvas from 'react-signature-canvas';
+import { api } from '../services/api';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
   ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend
@@ -437,6 +438,17 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d' | '90d' | 'YTD'>('7d');
   const [selectedZone, setSelectedZone] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [backendMetrics, setBackendMetrics] = useState<any>(null);
+
+  useEffect(() => {
+    api.getAnalyticsOverview()
+      .then(res => {
+        if (res.metrics) {
+          setBackendMetrics(res.metrics);
+        }
+      })
+      .catch(err => console.log('Analytics backend overview info:', err.message));
+  }, []);
 
   // INDEPENDENT VALIDATOR HOMOMORPHIC STATE
   const [homomorphicReports, setHomomorphicReports] = useState<HomomorphicReportItem[]>(INITIAL_HOMOMORPHIC_REPORTS);

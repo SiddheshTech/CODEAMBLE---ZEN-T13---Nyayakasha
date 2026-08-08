@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import SignatureCanvas from 'react-signature-canvas';
+import { api } from '../services/api';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -597,6 +598,9 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
     }
 
     setValidatorErrors((prev) => ({ ...prev, [itemId]: null }));
+
+    api.voteConsensus(itemId, voteAction === 'Approved' ? 'APPROVE' : 'REJECT', note, 'Validator Node 04')
+      .catch(err => console.log('Backend vote consensus status:', err.message));
 
     const pin = (validatorPins[itemId] || '882091').trim();
     const now = new Date();

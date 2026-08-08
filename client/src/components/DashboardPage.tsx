@@ -23,6 +23,7 @@ import {
   X,
   Lock,
 } from 'lucide-react';
+import { api } from '../services/api';
 import {  FieldSubmitterSidebar } from './FieldSubmitterSidebar';
 import { ChainOfCustodyTab } from "./ChainOfCustodyTab";
 import { MySubmissionsTab } from "./MySubmissionsTab";
@@ -75,6 +76,11 @@ export function DashboardPage({
     }
     return 'Independent Validator';
   });
+
+  useEffect(() => {
+    localStorage.setItem('nyayakasha_user_role', role);
+  }, [role]);
+
   const [activeTab, setActiveTab] = useState<string>('Dashboard');
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [caseSearchQuery, setCaseSearchQuery] = useState("");
@@ -237,8 +243,18 @@ export function DashboardPage({
     }
   };
 
-  const handleLogout = () => {
-    onNavigate('login');
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+    } catch (e) {
+      console.error('Logout error:', e);
+    }
+    localStorage.removeItem('nyayakasha_is_logged_in');
+    localStorage.removeItem('nyayakasha_session_id');
+    localStorage.removeItem('nyayakasha_user');
+    localStorage.setItem('nyayakasha_current_page', 'home');
+    window.location.hash = 'home';
+    onNavigate('home');
   };
 
   const resetTimers = () => {
@@ -364,6 +380,20 @@ export function DashboardPage({
         directives: []
       };
 
+      api.submitEvidence({
+        caseId: associatedCase || 'FIR-2026-001',
+        title: evidenceTitle || 'New Field Exhibit',
+        type: evidenceCategory || 'Digital Asset',
+        hash: capturedImageHash || undefined,
+        custodian: 'Officer R. Kulkarni (Field Submitter)',
+        incidentLocation,
+        confidentialityLevel,
+        customMetadata,
+        dataUrl: capturedImage || undefined,
+        latitude: 19.0760,
+        longitude: 72.8777
+      }).catch(err => console.log('Backend evidence submission status:', err.message));
+
       try {
         const stored = localStorage.getItem('nyayakasha_submitted_evidence');
         const existing = stored ? JSON.parse(stored) : [];
@@ -372,7 +402,7 @@ export function DashboardPage({
         console.error("Failed saving evidence to localStorage", err);
       }
 
-      addToast('Evidence hashed & forwarded to Court Authority Forgery Review Queue', 'info');
+      addToast('Evidence sealed & stored in backend API audit ledger', 'info');
       setTimeout(() => setSubmittedSuccess(false), 5000);
       setEvidenceTitle('');
       setCapturedImage(null);

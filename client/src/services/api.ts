@@ -168,7 +168,128 @@ export const api = {
     });
   },
 
-  // --- SECURITY & DURESS ALERTS ---
+  // --- CASES & EVIDENCE API ---
+  getCases: async () => {
+    return fetchAPI('/cases', { method: 'GET' });
+  },
+
+  getCaseById: async (id: string) => {
+    return fetchAPI(`/cases/${id}`, { method: 'GET' });
+  },
+
+  createCase: async (params: {
+    title: string;
+    type?: string;
+    officer: string;
+    priority?: 'Critical' | 'High' | 'Medium' | 'Low';
+    description?: string;
+    location?: string;
+    jurisdictionCode?: string;
+  }) => {
+    return fetchAPI('/cases', {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  },
+
+  getEvidence: async (caseId?: string) => {
+    return fetchAPI('/evidence' + (caseId ? `?caseId=${encodeURIComponent(caseId)}` : ''), { method: 'GET' });
+  },
+
+  getEvidenceById: async (id: string) => {
+    return fetchAPI(`/evidence/${id}`, { method: 'GET' });
+  },
+
+  getEvidenceChain: async (id: string) => {
+    return fetchAPI(`/evidence/${id}/chain`, { method: 'GET' });
+  },
+
+  submitEvidence: async (params: {
+    caseId: string;
+    title: string;
+    type?: string;
+    hash?: string;
+    custodian?: string;
+    incidentLocation?: string;
+    confidentialityLevel?: string;
+    customMetadata?: string;
+    latitude?: number;
+    longitude?: number;
+    signature?: string;
+    dataUrl?: string;
+  }) => {
+    return fetchAPI('/evidence/submit', {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  },
+
+  // --- CONSENSUS & FORGERY ---
+  getConsensusApprovals: async () => {
+    return fetchAPI('/consensus/approvals', { method: 'GET' });
+  },
+
+  voteConsensus: async (requestId: string, vote: 'APPROVE' | 'REJECT' | 'FLAG_FORGERY', note?: string, validatorName?: string) => {
+    return fetchAPI('/consensus/vote', {
+      method: 'POST',
+      body: JSON.stringify({ requestId, vote, note, validatorName })
+    });
+  },
+
+  getForgeryQueue: async () => {
+    return fetchAPI('/forgery/queue', { method: 'GET' });
+  },
+
+  decideForgery: async (reviewId: string, decision: 'Quarantined' | 'Cleared' | 'Escalated to Bench', notes?: string) => {
+    return fetchAPI('/forgery/decide', {
+      method: 'POST',
+      body: JSON.stringify({ reviewId, decision, notes })
+    });
+  },
+
+  // --- IDENTITY & PRECEDENT ---
+  getIdentityUnlockRequests: async () => {
+    return fetchAPI('/identity/unlock-requests', { method: 'GET' });
+  },
+
+  approveIdentityUnlock: async (unlockId: string, grantedBy?: string) => {
+    return fetchAPI('/identity/approve-unlock', {
+      method: 'POST',
+      body: JSON.stringify({ unlockId, grantedBy })
+    });
+  },
+
+  getPrecedentFlags: async () => {
+    return fetchAPI('/precedents/flags', { method: 'GET' });
+  },
+
+  resolvePrecedentFlag: async (flagId: string, resolvedBy?: string) => {
+    return fetchAPI('/precedents/resolve', {
+      method: 'POST',
+      body: JSON.stringify({ flagId, resolvedBy })
+    });
+  },
+
+  // --- ANALYTICS ---
+  getAnalyticsOverview: async () => {
+    return fetchAPI('/analytics/overview', { method: 'GET' });
+  },
+
+  // --- SECURITY & DEVICE UNRECOGNIZED ALERT ---
+  verifyDevice: async (deviceId?: string, userEmail?: string, mfaCode?: string) => {
+    return fetchAPI('/security/device/verify', {
+      method: 'POST',
+      body: JSON.stringify({ deviceId, userEmail, mfaCode })
+    });
+  },
+
+  emergencyLockDevice: async (deviceId?: string, userEmail?: string, reason?: string) => {
+    return fetchAPI('/security/device/emergency-lock', {
+      method: 'POST',
+      body: JSON.stringify({ deviceId, userEmail, reason })
+    });
+  },
+
   getActiveSessions: async () => {
     return fetchAPI('/security/sessions', { method: 'GET' });
   },

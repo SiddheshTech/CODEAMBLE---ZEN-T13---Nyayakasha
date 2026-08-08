@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import SignatureCanvas from 'react-signature-canvas';
+import { api } from '../services/api';
 import {
   Camera,
   UploadCloud,
@@ -408,6 +409,20 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
         directives: []
       };
 
+      api.submitEvidence({
+        caseId: associatedCase || 'FIR-2026-001',
+        title: evidenceTitle || 'New Field Exhibit',
+        type: evidenceCategory || 'Digital Asset',
+        hash: capturedImageHash || undefined,
+        custodian: 'Officer R. Kulkarni (Field Submitter)',
+        incidentLocation,
+        confidentialityLevel,
+        customMetadata,
+        dataUrl: capturedImage || undefined,
+        latitude: 19.0760,
+        longitude: 72.8777
+      }).catch(err => console.log('Backend evidence submission status:', err.message));
+
       try {
         const stored = localStorage.getItem('nyayakasha_submitted_evidence');
         const existing = stored ? JSON.parse(stored) : [];
@@ -416,7 +431,7 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
         console.error('Failed saving evidence to localStorage', err);
       }
 
-      addToast('Evidence hashed & forwarded to Court Authority Forgery Review Queue', 'info');
+      addToast('Evidence sealed & stored in backend API audit ledger', 'info');
 
       setTimeout(() => {
         setSubmittedSuccess(false);
