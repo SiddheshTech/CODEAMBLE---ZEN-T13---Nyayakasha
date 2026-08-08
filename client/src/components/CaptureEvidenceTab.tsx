@@ -79,7 +79,7 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
         lat: latFormatted,
         lng: lngFormatted,
         accuracy: accFormatted,
-        zone: `Navi Mumbai Geofenced Sector (${lat.toFixed(4)}, ${lng.toFixed(4)})`,
+        zone: `Kharghar Sector 4 Precinct (${lat.toFixed(4)}, ${lng.toFixed(4)})`,
         altitude: altFormatted
       });
       setIsLocating(false);
@@ -88,7 +88,7 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          applyCoords(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.coords.altitude || undefined, 'Live Device GPS');
+          applyCoords(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.coords.altitude || undefined, 'Live Hardware GPS');
         },
         (err) => {
           console.warn('High accuracy GPS timeout/blocked, trying low accuracy...', err);
@@ -102,13 +102,13 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
                 .then(res => res.json())
                 .then(data => {
                   if (data && data.latitude && data.longitude) {
-                    applyCoords(data.latitude, data.longitude, 15.0, undefined, `${data.city || 'Navi Mumbai'} IP`);
+                    applyCoords(data.latitude, data.longitude, 15.0, undefined, `${data.city || 'Navi Mumbai'} Cell/IP`);
                   } else {
-                    applyCoords(19.0760, 72.8774, 3.5, 14, 'A.C. Patil College Sector');
+                    applyCoords(19.0330, 73.0297, 2.5, 14, 'A.C. Patil College, Kharghar Sector 4');
                   }
                 })
                 .catch(() => {
-                  applyCoords(19.0760, 72.8774, 3.5, 14, 'A.C. Patil College Sector');
+                  applyCoords(19.0330, 73.0297, 2.5, 14, 'A.C. Patil College, Kharghar Sector 4');
                 })
                 .finally(() => setIsLocating(false));
             },
@@ -118,12 +118,37 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
         { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
       );
     } else {
-      applyCoords(19.0760, 72.8774, 3.5, 14, 'A.C. Patil College Sector');
+      applyCoords(19.0330, 73.0297, 2.5, 14, 'A.C. Patil College, Kharghar Sector 4');
     }
   };
 
   useEffect(() => {
     fetchRealGPSLocation();
+
+    let watchId: number | null = null;
+    if ('geolocation' in navigator) {
+      watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          const latitude = pos.coords.latitude;
+          const longitude = pos.coords.longitude;
+          setGpsLocation({
+            lat: `${Math.abs(latitude).toFixed(4)}° ${latitude >= 0 ? 'N' : 'S'}`,
+            lng: `${Math.abs(longitude).toFixed(4)}° ${longitude >= 0 ? 'E' : 'W'}`,
+            accuracy: `± ${pos.coords.accuracy ? pos.coords.accuracy.toFixed(1) : '2.0'} meters (Live GPS)`,
+            zone: `Kharghar Sector 4 Precinct (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`,
+            altitude: pos.coords.altitude ? `${pos.coords.altitude.toFixed(0)}m ASL` : 'Sea Level'
+          });
+        },
+        () => {},
+        { enableHighAccuracy: true, maximumAge: 5000 }
+      );
+    }
+
+    return () => {
+      if (watchId !== null && 'geolocation' in navigator) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
   }, []);
 
   // Camera State
