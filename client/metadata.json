@@ -1,0 +1,6 @@
+{
+  "name": "Nyayakasha",
+  "description": "A blockchain justice-infrastructure making it cryptographically impossible to fabricate, coerce, or corrupt evidence, testimony, or judgments.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
