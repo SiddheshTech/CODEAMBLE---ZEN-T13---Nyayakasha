@@ -1,16 +1,44 @@
+import fs from 'fs';
+import path from 'path';
 import { sha256 } from '../utils/crypto.js';
+const AUDIT_FILE = path.join(process.cwd(), 'nyayakasha_audit_ledger.json');
 class AuditLedger {
     chain = [];
     genesisHash = '0000000000000000000000000000000000000000000000000000000000000000';
     constructor() {
-        // Record Genesis Entry
-        this.appendEvent({
-            eventType: 'SYSTEM_INITIALIZATION',
-            userId: 'SYSTEM',
-            userRole: 'SYSTEM',
-            ipAddress: '127.0.0.1',
-            details: { message: 'NYAYAKASHA Audit Ledger Initialized' }
-        });
+        this.loadFromDisk();
+        if (this.chain.length === 0) {
+            // Record Genesis Entry if brand new chain
+            this.appendEvent({
+                eventType: 'SYSTEM_INITIALIZATION',
+                userId: 'SYSTEM',
+                userRole: 'SYSTEM',
+                ipAddress: '127.0.0.1',
+                details: { message: 'NYAYAKASHA Audit Ledger Initialized' }
+            });
+        }
+    }
+    loadFromDisk() {
+        try {
+            if (fs.existsSync(AUDIT_FILE)) {
+                const raw = fs.readFileSync(AUDIT_FILE, 'utf-8');
+                const data = JSON.parse(raw);
+                if (Array.isArray(data)) {
+                    this.chain = data;
+                }
+            }
+        }
+        catch (err) {
+            console.log('Info: Audit ledger load status:', err);
+        }
+    }
+    persistToDisk() {
+        try {
+            fs.writeFileSync(AUDIT_FILE, JSON.stringify(this.chain, null, 2), 'utf-8');
+        }
+        catch (err) {
+            console.log('Error writing audit ledger to disk:', err);
+        }
     }
     appendEvent(params) {
         const index = this.chain.length;
@@ -35,10 +63,22 @@ class AuditLedger {
             hash
         };
         this.chain.push(entry);
+        this.persistToDisk();
         return entry;
     }
     getChain() {
         return [...this.chain];
+    }
+    getEvents() {
+        return this.getChain();
+    }
+    recordEvent(eventType, userId, details, userRole = 'USER') {
+        return this.appendEvent({
+            eventType,
+            userId,
+            userRole,
+            details
+        });
     }
     verifyIntegrity() {
         for (let i = 0; i < this.chain.length; i++) {
