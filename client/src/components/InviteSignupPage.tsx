@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Mail, User, Phone, BadgeInfo, CheckCircle2, ShieldCheck, Building2, ArrowRight, Lock, KeyRound, AlertTriangle, Check, UploadCloud, X, Loader2, Info, FileText, Edit2, Fingerprint, Smartphone, QrCode, ChevronDown, ChevronUp, Camera, Link, Users, Inbox } from 'lucide-react';
 import { LogoIcon } from './LogoIcon';
+import { api } from '../services/api';
 
 type Step = 'invite' | 'details' | 'password' | 'upload' | 'vetting' | 'review' | 'success' | 'approved' | 'mfa' | 'duress' | 'keys' | 'onboarding';
 
@@ -42,10 +43,11 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
   const [validatorSubtype, setValidatorSubtype] = useState<'bar_side' | 'citizen_side'>('bar_side');
   
   // Form State
-  const [fullName, setFullName] = useState('Adv. Meera Sen');
-  const [officialId, setOfficialId] = useState('BCM-MAH/8842/2018');
-  const [judicialApptId, setJudicialApptId] = useState('HCJ-APPT-2018-0942');
-  const [phone, setPhone] = useState('+91 98201 44821');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [officialId, setOfficialId] = useState('');
+  const [judicialApptId, setJudicialApptId] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isBreached, setIsBreached] = useState(false);
@@ -57,6 +59,8 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
   const [isDragging, setIsDragging] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [vettingConsent, setVettingConsent] = useState(false);
+  const [signupError, setSignupError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [mfaMethod, setMfaMethod] = useState<'select' | 'totp' | 'enrolling' | 'success'>('select');
   const [showPinInfo, setShowPinInfo] = useState(false);
@@ -67,7 +71,7 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
   const [keysGenerated, setKeysGenerated] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
 
-  // Dynamic institution and email based on role & subtype
+  // Dynamic institution based on role & subtype
   const institution = React.useMemo(() => {
     if (assignedRole === 'Independent Validator') {
       return validatorSubtype === 'bar_side' 
@@ -76,47 +80,17 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
     } else if (assignedRole === 'Court Authority') {
       return 'Bombay High Court — Appellate Bench 4';
     } else {
-      return 'Maharashtra Police Cyber Cell';
-    }
-  }, [assignedRole, validatorSubtype]);
-
-  const email = React.useMemo(() => {
-    if (assignedRole === 'Independent Validator') {
-      return validatorSubtype === 'bar_side' 
-        ? 'meera.sen@barcouncil-oversight.org' 
-        : 'ananya.roy@citizen-oversight.gov.in';
-    } else if (assignedRole === 'Court Authority') {
-      return 'bench.mehta@highcourt.gov.in';
-    } else {
-      return 'rahul.sharma@mahapolice.gov.in';
+      return 'State Police Department HR & Badge Registry';
     }
   }, [assignedRole, validatorSubtype]);
 
   // Handle Role Change
   const handleRoleChange = (role: 'Independent Validator' | 'Court Authority' | 'Field Submitter') => {
     setAssignedRole(role);
-    if (role === 'Independent Validator') {
-      setFullName(validatorSubtype === 'bar_side' ? 'Adv. Meera Sen' : 'Dr. Ananya Roy');
-      setOfficialId(validatorSubtype === 'bar_side' ? 'BCM-MAH/8842/2018' : 'COP-GOI/2026-VAL-092');
-    } else if (role === 'Court Authority') {
-      setFullName('Hon. Justice R. S. Mehta');
-      setOfficialId('MAH/1234/2010');
-      setJudicialApptId('HCJ-APPT-2018-0942');
-    } else {
-      setFullName('Rahul Sharma');
-      setOfficialId('MH-POL-29384');
-    }
   };
 
   const handleSubtypeChange = (subtype: 'bar_side' | 'citizen_side') => {
     setValidatorSubtype(subtype);
-    if (subtype === 'bar_side') {
-      setFullName('Adv. Meera Sen');
-      setOfficialId('BCM-MAH/8842/2018');
-    } else {
-      setFullName('Dr. Ananya Roy');
-      setOfficialId('COP-GOI/2026-VAL-092');
-    }
   };
 
   const onboardingCards = React.useMemo(() => {
@@ -184,10 +158,11 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
 
   // Validation
   const isNameValid = fullName.trim().length >= 3;
+  const isEmailValid = email.trim().length >= 5 && email.includes('@');
   const isIdValid = officialId.trim().length >= 5;
   const isPhoneValid = phone.trim().length >= 10;
   
-  const canContinueDetails = isNameValid && isIdValid && isPhoneValid;
+  const canContinueDetails = isNameValid && isEmailValid && isIdValid && isPhoneValid;
 
   // Password validation
   const hasMinLength = password.length >= 8;
@@ -672,21 +647,19 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-black/80 flex justify-between">
                     Official Email
-                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    {isEmailValid && <CheckCircle2 className="w-5 h-5 text-green-500" />}
                   </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-black/40">
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-black/40 group-focus-within:text-black transition-colors">
                       <Mail className="w-5 h-5" />
                     </div>
                     <input 
                       type="email" 
                       value={email}
-                      readOnly
-                      className="w-full pl-12 pr-4 py-3.5 bg-[#EAEAEA] text-black/60 border border-transparent rounded-xl focus:outline-none cursor-not-allowed text-base font-medium"
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="e.g. officer.name@police.gov.in"
+                      className="w-full pl-12 pr-4 py-3.5 bg-[#F5F5F5] border border-transparent rounded-xl focus:outline-none focus:bg-white focus:border-black/20 focus:ring-4 focus:ring-black/5 transition-all text-base font-medium text-black"
                     />
-                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                      <Lock className="w-4 h-4 text-black/30" />
-                    </div>
                   </div>
                 </div>
 
@@ -1278,18 +1251,69 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
                   </p>
                 </label>
 
+                {/* Error Alert Banner */}
+                {signupError && (
+                  <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium flex items-center justify-between">
+                    <span>{signupError}</span>
+                    <button type="button" onClick={() => setSignupError(null)} className="text-red-900 font-bold ml-2">✕</button>
+                  </div>
+                )}
+
                 <button 
-                  onClick={() => {
-                    setStep('success');
+                  onClick={async () => {
+                    setSignupError(null);
+                    setIsSubmitting(true);
+                    try {
+                      const backendRole = assignedRole === 'Field Submitter' 
+                        ? 'field_submitter' 
+                        : assignedRole === 'Court Authority' 
+                          ? 'court_authority' 
+                          : 'independent_validator';
+
+                      if (!email || !email.includes('@')) {
+                        throw new Error('Please enter a valid Official Email address.');
+                      }
+
+                      if (!password || password.length < 8) {
+                        throw new Error('Please enter a password with at least 8 characters (including uppercase, number, and symbol).');
+                      }
+
+                      if (!fullName || fullName.trim().length < 3) {
+                        throw new Error('Please enter your full name.');
+                      }
+
+                      await api.signup({
+                        email: email.trim().toLowerCase(),
+                        password,
+                        fullName,
+                        role: backendRole,
+                        badgeId: officialId || 'POL-MH-99482',
+                        barCouncilNumber: officialId || 'MAH/1234/2010',
+                        institutionId: judicialApptId || officialId || 'HCJ-APPT-2018-0942',
+                        jurisdictionCode: 'MH-MUM-DIST-01',
+                        consentVetting: vettingConsent
+                      });
+
+                      if (selectedImage) {
+                        await api.uploadDocument(selectedImage);
+                      }
+
+                      setStep('success');
+                    } catch (err: any) {
+                      console.error('Signup error:', err);
+                      setSignupError(err.message || 'Signup failed. Please verify your email and password.');
+                    } finally {
+                      setIsSubmitting(false);
+                    }
                   }}
-                  disabled={!acceptedTerms}
+                  disabled={!acceptedTerms || isSubmitting}
                   className={`w-full rounded-xl py-4 text-base font-semibold transition-all flex items-center justify-center gap-2 mt-2 ${
-                    acceptedTerms
+                    acceptedTerms && !isSubmitting
                       ? 'bg-black text-white hover:bg-gray-800 shadow-lg shadow-black/10 hover:shadow-xl hover:-translate-y-0.5 cursor-pointer' 
                       : 'bg-black/10 text-black/40 cursor-not-allowed'
                   }`}
                 >
-                  Submit for verification
+                  {isSubmitting ? 'Registering Account...' : 'Submit for verification'}
                   <ArrowRight className="w-5 h-5 ml-1" />
                 </button>
               </div>

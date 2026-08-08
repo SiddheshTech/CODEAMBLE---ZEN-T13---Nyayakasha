@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Mail, Lock, KeyRound, CheckCircle2, Eye, EyeOff, ShieldCheck, Grip, MonitorSmartphone, Fingerprint, AlertTriangle, Building2, UserCheck, Key, Shield } from 'lucide-react';
 
 import { LogoIcon } from './LogoIcon';
+import { api } from '../services/api';
 
 type AuthState = 'login' | 'forgot' | 'new_device' | 'mfa' | 'pin';
 type UserRole = 'Court Authority' | 'Field Submitter' | 'Independent Validator';
@@ -21,6 +22,12 @@ export function AuthPage({ onNavigate }: { onNavigate: (page: string) => void })
 
   const [judgeOptedInPin, setJudgeOptedInPin] = useState(false);
   const [courtBiometricStatus, setCourtBiometricStatus] = useState<'idle' | 'scanning' | 'success'>('idle');
+
+  // Real API Form States
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Sync role to localStorage so Dashboard opens with the right role
   useEffect(() => {
@@ -49,12 +56,28 @@ export function AuthPage({ onNavigate }: { onNavigate: (page: string) => void })
     }, 3000);
   };
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (simulateNewDevice) {
-      setAuthState('new_device');
-    } else {
-      setAuthState('mfa');
+    setErrorMsg(null);
+    setIsLoading(true);
+    try {
+      const targetEmail = email.trim().toLowerCase();
+      // Connect to real Express backend endpoint: POST /api/auth/signin
+      const response = await api.signin(targetEmail, password);
+      console.log('Real Signin API Response:', response);
+
+      // Trigger Real Gmail SMTP OTP dispatch
+      api.sendEmailOtp(targetEmail).catch(err => console.log('OTP send info:', err.message));
+
+      if (simulateNewDevice) {
+        setAuthState('new_device');
+      } else {
+        setAuthState('mfa');
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Authentication failed. Invalid email or password.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -63,13 +86,7 @@ export function AuthPage({ onNavigate }: { onNavigate: (page: string) => void })
     setTimeout(() => {
       setCourtBiometricStatus('success');
       setTimeout(() => {
-        if (judgeOptedInPin) {
-          // If judge opted into a duress PIN at signup, go to Screen 3 (PIN Confirmation)
-          setAuthState('pin');
-        } else {
-          // Otherwise Screen 3 PIN is skipped entirely and flow goes straight to Dashboard!
-          onNavigate('dashboard');
-        }
+        setAuthState('pin');
       }, 1000);
     }, 1600);
   };
@@ -86,12 +103,18 @@ export function AuthPage({ onNavigate }: { onNavigate: (page: string) => void })
     }
     
     if (newCode.every(d => d !== '')) {
-       if (selectedRole === 'Independent Validator') {
-         // Independent Validator skips PIN
-         setTimeout(() => onNavigate('dashboard'), 500);
-       } else {
-         setTimeout(() => setAuthState('pin'), 500);
-       }
+       const fullCode = newCode.join('');
+       api.verifyEmailOtp(email.trim().toLowerCase(), fullCode)
+         .then(() => {
+           if (selectedRole === 'Independent Validator') {
+             onNavigate('dashboard');
+           } else {
+             setAuthState('pin');
+           }
+         })
+         .catch((err) => {
+           setErrorMsg(err.message || 'Invalid 2FA verification code.');
+         });
     }
   };
 
@@ -128,18 +151,31 @@ export function AuthPage({ onNavigate }: { onNavigate: (page: string) => void })
     setTimeout(() => {
       setWebAuthnStatus('success');
       setTimeout(() => {
-        // Independent Validator flow goes STRAIGHT from MFA to Dashboard — Screen 3 PIN is skipped entirely!
         onNavigate('dashboard');
       }, 1000);
     }, 1800);
   };
 
-  const handlePinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePinChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/\D/g, '').slice(0, 4);
     setPin(val);
     if (val.length === 4) {
-       console.log("PIN entered. Navigating to dashboard.");
-       setTimeout(() => onNavigate('dashboard'), 500);
+      setErrorMsg(null);
+      setIsLoading(true);
+      try {
+        // Connect to real backend API: POST /api/auth/verify-duress-pin
+        const response = await api.verifyDuressPin(val, {
+          lat: 19.0760,
+          lng: 72.8777,
+          jurisdictionCode: 'MH-MUM-DIST-01'
+        });
+        console.log('Real Duress/PIN Verification Response:', response);
+        setTimeout(() => onNavigate('dashboard'), 500);
+      } catch (err: any) {
+        setErrorMsg(err.message || 'PIN authorization failed.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -249,6 +285,13 @@ export function AuthPage({ onNavigate }: { onNavigate: (page: string) => void })
                   </div>
                 </div>
                 
+                {errorMsg && (
+                  <div className="mb-4 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
+                    <span>{errorMsg}</span>
+                  </div>
+                )}
+
                 <form className="flex flex-col gap-4 w-full" onSubmit={handleLoginSubmit}>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs font-bold uppercase tracking-wider text-black/70">Official Email</label>
@@ -259,11 +302,8 @@ export function AuthPage({ onNavigate }: { onNavigate: (page: string) => void })
                       <input 
                         type="email" 
                         required
-                        defaultValue={
-                          selectedRole === 'Independent Validator' ? 'validator.sen@barcouncil.org' :
-                          selectedRole === 'Court Authority' ? 'bench.mehta@highcourt.gov.in' :
-                          'officer.kulkarni@police.gov.in'
-                        }
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your registered email ID" 
                         className="w-full pl-10 pr-4 py-3 bg-[#F5F5F5] border border-black/5 rounded-xl focus:outline-none focus:bg-white focus:border-black/20 focus:ring-4 focus:ring-black/5 transition-all text-sm font-medium text-black"
                       />
@@ -278,7 +318,8 @@ export function AuthPage({ onNavigate }: { onNavigate: (page: string) => void })
                       </div>
                       <input 
                         type={showPassword ? 'text' : 'password'} 
-                        defaultValue="••••••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                         placeholder="Enter your password" 
                         className="w-full pl-10 pr-10 py-3 bg-[#F5F5F5] border border-black/5 rounded-xl focus:outline-none focus:bg-white focus:border-black/20 focus:ring-4 focus:ring-black/5 transition-all text-sm font-medium text-black"
@@ -302,9 +343,12 @@ export function AuthPage({ onNavigate }: { onNavigate: (page: string) => void })
                     </div>
                   </div>
                   
-                  <button className="w-full bg-black text-white rounded-xl py-3.5 font-semibold hover:bg-gray-800 transition-all mt-2 flex items-center justify-center gap-2 group text-sm shadow-lg shadow-black/10 cursor-pointer">
-                    Sign In as {selectedRole}
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <button 
+                    disabled={isLoading}
+                    className="w-full bg-black text-white rounded-xl py-3.5 font-semibold hover:bg-gray-800 transition-all mt-2 flex items-center justify-center gap-2 group text-sm shadow-lg shadow-black/10 cursor-pointer disabled:opacity-50"
+                  >
+                    {isLoading ? 'Authenticating with Backend...' : `Sign In as ${selectedRole}`}
+                    {!isLoading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
                   </button>
                   
                   <div className="flex flex-col items-center justify-center mt-3 gap-2">

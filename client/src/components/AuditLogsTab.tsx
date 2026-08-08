@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { api } from '../services/api';
 import { 
   Filter, Search, Download, Clock, ShieldAlert, User, 
   FileText, Activity, ShieldCheck, ChevronRight, X, Eye, Key, MapPin,
@@ -176,6 +177,29 @@ export function AuditLogsTab({ role = 'Court Authority' }: { role?: string }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [selectedLog, setSelectedLog] = useState<typeof MOCK_LOGS[0] | null>(null);
+  const [realBackendLogs, setRealBackendLogs] = useState<any[]>([]);
+
+  // Fetch Live Audit Log Chain from Real Backend API
+  useEffect(() => {
+    api.getAuditLog()
+      .then(res => {
+        if (res.auditChain && Array.isArray(res.auditChain)) {
+          const mapped = res.auditChain.map((item: any) => ({
+            id: item.id || `LOG-${item.index}`,
+            action: item.eventType || 'System Event',
+            type: item.userRole === 'SYSTEM' ? 'system' : 'auth',
+            user: `${item.userId} (${item.userRole})`,
+            time: item.timestamp,
+            status: 'Success',
+            ip: item.ipAddress || '127.0.0.1',
+            hash: item.hash || '-',
+            details: JSON.stringify(item.details || {})
+          }));
+          setRealBackendLogs(mapped);
+        }
+      })
+      .catch(err => console.log('Audit log fetch info:', err.message));
+  }, []);
 
   // INDEPENDENT VALIDATOR STATE
   const [validatorAuditTab, setValidatorAuditTab] = useState<'my_actions' | 'system_integrity'>('my_actions');
@@ -739,7 +763,8 @@ export function AuditLogsTab({ role = 'Court Authority' }: { role?: string }) {
   }
 
   // GENERAL DEFAULT RENDER FOR OTHER ROLES
-  const filteredLogs = MOCK_LOGS.filter(log => {
+  const logsToFilter = realBackendLogs.length > 0 ? [...realBackendLogs, ...MOCK_LOGS] : MOCK_LOGS;
+  const filteredLogs = logsToFilter.filter(log => {
     const matchesSearch = log.action.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           log.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           log.id.toLowerCase().includes(searchQuery.toLowerCase());
