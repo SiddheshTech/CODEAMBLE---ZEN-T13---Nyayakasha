@@ -104,18 +104,24 @@ export function DashboardPage({
   // Real Data State from Backend API
   const [realEvidence, setRealEvidence] = useState<any[]>([]);
   const [realCases, setRealCases] = useState<any[]>([]);
+  const [profileData, setProfileData] = useState<any>(null);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState<number>(0);
 
   const fetchDashboardData = async () => {
     try {
-      const [evData, caseData] = await Promise.all([
+      const [evData, caseData, profileResp] = await Promise.all([
         api.getEvidence().catch(() => null),
-        api.getCases().catch(() => null)
+        api.getCases().catch(() => null),
+        api.getProfile().catch(() => null)
       ]);
       if (evData && evData.evidence) {
         setRealEvidence(evData.evidence);
       }
       if (caseData && caseData.cases) {
         setRealCases(caseData.cases);
+      }
+      if (profileResp && profileResp.success && profileResp.profile) {
+        setProfileData(profileResp.profile);
       }
     } catch (err) {
       console.error("Error loading field submitter data:", err);
@@ -612,8 +618,9 @@ export function DashboardPage({
         activeItem={activeTab}
         onSelect={(tab) => setActiveTab(tab)}
         onLogout={handleLogout}
-        notificationCount={2}
+        notificationCount={unreadNotificationCount}
         role={role}
+        profileData={profileData}
       />
 
       {/* Main Content Area */}

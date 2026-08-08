@@ -8,6 +8,8 @@ import {
   X, Send, Fingerprint, HardDrive, HelpCircle
 } from 'lucide-react';
 
+import { api } from '../services/api';
+
 export function ProfileTab({ role }: { role: string }) {
   const isValidator = role === 'Independent Validator';
   const isCourtAuthority = role === 'Court Authority';
@@ -25,6 +27,8 @@ export function ProfileTab({ role }: { role: string }) {
   const officialEmail = user?.email || (isValidator ? 'm.vasudevan@oversight.nyayakasha.gov.in' : isCourtAuthority ? 'a.mehta@highcourt.nyayakasha.gov.in' : 'r.kulkarni@nyayakasha.gov.in');
 
   // State
+  const [profileData, setProfileData] = useState<any>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [copiedFingerprint, setCopiedFingerprint] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   
@@ -41,11 +45,25 @@ export function ProfileTab({ role }: { role: string }) {
     timestamp: string;
   }>>([]);
 
-  const publicKeyFingerprint = isValidator
-    ? '0x9D4F-88E2-11A9-C43B-7720-F01A-99D8-23E1-44B0'
-    : isCourtAuthority
-    ? '0x8F9A-41B0-C82E-99B1-3310-7F2A-00B2-11D4-884E-90C1-FA32'
-    : '0x3E1C-99B4-11A0-7C08-44F2-88B1-002E-77D1-2290-A81B-12D9';
+  React.useEffect(() => {
+    setIsLoadingProfile(true);
+    api.getProfile()
+      .then(data => {
+        if (data.success && data.profile) {
+          setProfileData(data.profile);
+        }
+      })
+      .catch(err => console.error('Failed to load profile:', err))
+      .finally(() => setIsLoadingProfile(false));
+  }, []);
+
+  const publicKeyFingerprint = profileData?.keyShareFingerprint || (
+    isValidator
+      ? '0x9D4F-88E2-11A9-C43B-7720-F01A-99D8-23E1-44B0'
+      : isCourtAuthority
+      ? '0x8F9A-41B0-C82E-99B1-3310-7F2A-00B2-11D4-884E-90C1-FA32'
+      : '0x3E1C-99B4-11A0-7C08-44F2-88B1-002E-77D1-2290-A81B-12D9'
+  );
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -68,18 +86,18 @@ SECURITY TIER: Tier-4 High-Value Evidence Access
 
 SUBJECT DETAILS:
 ----------------------------------------------------------------
-Official Name:    ${officialName}
+Official Name:    ${profileData.fullName}
 Institutional Role: ${role}
-Organization:     ${isValidator ? 'Independent Judicial Oversight Board' : isCourtAuthority ? 'Division Bench 3, High Court of Judicature' : 'Zone 4 Cyber Crime Division'}
-Identifier:       ${isValidator ? 'OVP-VAL-2026-004' : isCourtAuthority ? 'HC-JUD-2026-0892' : 'MH-POL-29384'}
-Bar Membership:   ${isValidator ? 'BCM-MH-2012/88421' : isCourtAuthority ? 'BCM-MH-1998/1042' : 'POL-MH-2015/4921'}
-Official Email:   ${officialEmail}
+Organization:     ${profileData.authorityScope}
+Identifier:       ${profileData.appointmentRef}
+Bar Membership:   ${profileData.barCouncilNumber}
+Official Email:   ${profileData.email}
 
 CRYPTOGRAPHIC ATTESTATION:
 ----------------------------------------------------------------
 Public Key Share: ${publicKeyFingerprint}
-MFA Standard:     Hardware-Attested FIDO2 / WebAuthn Enclave
-Ledger Genesis:   Nov 12, 2025
+MFA Standard:     ${profileData.mfaAttestationLevel}
+Ledger Genesis:   ${profileData.keyGenesisDate}
 Status:           Verified Active & Authorized
 
 ISSUING AUTHORITY:
@@ -102,9 +120,25 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
     showToast('Verification Certificate downloaded successfully');
   };
 
-  const handleSubmitChangeRequest = (e: React.FormEvent) => {
+  const handleSubmitChangeRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!requestedNewValue.trim() || !requestJustification.trim()) return;
+
+    if (requestedField === 'contact') {
+      try {
+        const data = await api.updateProfile({ contactExtension: requestedNewValue.trim() });
+        if (data.success && data.profile) {
+           setProfileData(data.profile);
+           showToast('Contact updated successfully via API PATCH');
+           setShowRequestChangeModal(false);
+           setRequestedNewValue('');
+           setRequestJustification('');
+           return;
+        }
+      } catch (err) {
+        console.error('Update failed', err);
+      }
+    }
 
     const fieldNames: Record<string, string> = {
       name: 'Full Official Name',
@@ -127,6 +161,25 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
     setRequestJustification('');
     showToast(`Change request for ${newReq.field} submitted to Provisioning Admin`);
   };
+
+  if (isLoadingProfile) {
+    return (
+      <div className="space-y-8 max-w-6xl mx-auto font-sans pb-16 relative">
+        <div className="h-64 bg-slate-900 rounded-[2rem] border border-white/10 shadow-xl animate-pulse"></div>
+        <div className="h-96 bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs animate-pulse"></div>
+      </div>
+    );
+  }
+
+  if (!profileData) {
+    return (
+      <div className="space-y-8 max-w-6xl mx-auto font-sans pb-16 relative flex items-center justify-center min-h-[400px]">
+        <div className="p-6 bg-red-50 text-red-900 rounded-2xl border border-red-200">
+          Profile data could not be loaded.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto font-sans pb-16 relative">
@@ -154,7 +207,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="relative shrink-0">
               <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-4 border-white/20">
-                {isValidator ? 'MV' : isCourtAuthority ? 'AM' : 'RK'}
+                {profileData.fullName.split(' ').map((n: string) => n[0]).join('').substring(0,2).toUpperCase()}
               </div>
               <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-500 rounded-full border-4 border-slate-900 flex items-center justify-center shadow-sm" title="Institutional Identity Verified">
                 <ShieldCheck className="w-4 h-4 text-white" />
@@ -164,7 +217,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                  {officialName}
+                  {profileData.fullName}
                 </h1>
                 <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Institutionally Verified
@@ -175,10 +228,10 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
               </p>
               <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
                 <div className="flex items-center gap-1.5 font-medium">
-                  <Briefcase className="w-3.5 h-3.5 text-amber-400" /> ID: {isValidator ? 'OVP-VAL-2026-004' : isCourtAuthority ? 'HC-JUD-2026-0892' : 'MH-POL-29384'}
+                  <Briefcase className="w-3.5 h-3.5 text-amber-400" /> ID: {profileData.appointmentRef}
                 </div>
                 <div className="flex items-center gap-1.5 font-medium">
-                  <Building className="w-3.5 h-3.5 text-indigo-400" /> {isValidator ? 'Independent Judicial Oversight Board (Appointment #IJOP-2025-04)' : isCourtAuthority ? 'Division Bench 3 (Special Cyber & High-Value Evidence)' : 'Zone 4 Metropolitan Precinct'}
+                  <Building className="w-3.5 h-3.5 text-indigo-400" /> {profileData.authorityScope}
                 </div>
               </div>
             </div>
@@ -263,7 +316,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
             <div className="relative">
               <input 
                 type="text" 
-                value={officialName} 
+                value={profileData.fullName} 
                 disabled
                 className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl text-slate-900 text-xs font-bold cursor-not-allowed"
               />
@@ -279,7 +332,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
             <div className="relative">
               <input 
                 type="text" 
-                value={officialEmail} 
+                value={profileData.email} 
                 disabled
                 className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl text-slate-900 text-xs font-bold cursor-not-allowed"
               />
@@ -295,7 +348,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
             <div className="relative">
               <input 
                 type="text" 
-                value={isValidator ? '+91 (022) 2288-1100 ext. 901' : isCourtAuthority ? '+91 (022) 2284-9042 ext. 402' : '+91 (022) 2650-1122 ext. 104'} 
+                value={profileData.contactExtension} 
                 disabled
                 className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl text-slate-900 text-xs font-bold cursor-not-allowed"
               />
@@ -311,7 +364,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
             <div className="relative">
               <input 
                 type="text" 
-                value={isValidator ? 'Chambers 901, Judicial Oversight Tower, Fort, Mumbai' : isCourtAuthority ? 'Chambers 402, High Court Main Building' : 'Room 104, Zone 4 Cyber Crime Precinct'} 
+                value={profileData.chambersLocation} 
                 disabled
                 className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl text-slate-900 text-xs font-bold cursor-not-allowed"
               />
@@ -349,7 +402,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Bar Council / Badge No.</span>
             <span className="font-mono text-sm font-extrabold text-slate-900 block">
-              {isValidator ? 'BCM-MH-2012/88421' : isCourtAuthority ? 'BCM-MH-1998/1042' : 'POL-MH-2015/4921'}
+              {profileData.barCouncilNumber}
             </span>
             <span className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1 pt-1">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" /> High Court Registered
@@ -359,7 +412,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Appointment Ref &amp; Seal</span>
             <span className="font-mono text-sm font-extrabold text-slate-900 block">
-              HC-REG-2026-9902
+              {profileData.appointmentRef}
             </span>
             <span className="text-[11px] text-slate-500 font-medium pt-1 block">
               Attested by High Court Registrar
@@ -369,7 +422,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Authority &amp; Quorum Scope</span>
             <span className="font-extrabold text-slate-900 text-xs block">
-              {isValidator ? 'Division Bench Quorum (1-of-3 Threshold)' : 'Division Bench 3 (Presiding Judge)'}
+              {profileData.authorityScope}
             </span>
             <span className="text-[11px] text-indigo-700 font-semibold flex items-center gap-1 pt-1">
               <ShieldCheck className="w-3 h-3 text-indigo-600" /> Full Signature Rights
@@ -460,7 +513,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
             </div>
             <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-0.5">
               <span className="text-slate-400 block font-semibold text-[10px] uppercase">Key Genesis Date</span>
-              <span className="font-extrabold text-slate-800 block">Nov 12, 2025</span>
+              <span className="font-extrabold text-slate-800 block">{profileData.keyGenesisDate}</span>
             </div>
             <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-0.5">
               <span className="text-slate-400 block font-semibold text-[10px] uppercase">Hardware Status</span>
@@ -482,8 +535,8 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
                 <Key className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">YubiKey 5 FIDO2 Hardware Security Token</h4>
-                <p className="text-[11px] text-slate-500 font-medium">WebAuthn Hardware-Attested • Level 3 Enclave Security</p>
+                <h4 className="text-xs font-bold text-slate-900">{profileData.hardwareTokenName}</h4>
+                <p className="text-[11px] text-slate-500 font-medium">{profileData.mfaAttestationLevel}</p>
               </div>
             </div>
             <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-extrabold border border-emerald-300">

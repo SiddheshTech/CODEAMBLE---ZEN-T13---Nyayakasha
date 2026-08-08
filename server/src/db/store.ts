@@ -18,6 +18,14 @@ export interface UserRecord {
   barCouncilNumber?: string;
   jurisdictionCode?: string; // e.g. "MH-MUM-DIST-01"
   uploadedDocumentUrl?: string;
+  contactExtension?: string;
+  chambersLocation?: string;
+  appointmentRef?: string;
+  authorityScope?: string;
+  keyShareFingerprint?: string;
+  hardwareTokenName?: string;
+  keyGenesisDate?: string;
+  mfaAttestationLevel?: string;
   documentBlurScore?: number;
   documentPassesQuality?: boolean;
 
@@ -322,6 +330,86 @@ class PrimaryDataStore {
   }
 
   private seedDefaults() {
+    // Seed default users so profile fetching always has rich data even on fresh start
+    if (this.users.size === 0) {
+      const defaultValidator: UserRecord = {
+        id: 'usr_seed_validator',
+        email: 'm.vasudevan@oversight.nyayakasha.gov.in',
+        fullName: 'DR. MEERA VASUDEVAN',
+        role: 'independent_validator',
+        passwordHash: 'seeded',
+        approvalState: 'active',
+        stateHistory: [{ state: 'active', timestamp: new Date().toISOString() }],
+        institutionVerified: true,
+        vettingApproved: true,
+        mfaEnrolled: true,
+        contactExtension: '+91 (022) 2288-1100 ext. 901',
+        chambersLocation: 'Chambers 901, Judicial Oversight Tower, Fort, Mumbai',
+        appointmentRef: 'HC-REG-2026-9902',
+        authorityScope: 'Division Bench Quorum (1-of-3 Threshold)',
+        barCouncilNumber: 'BCM-MH-2012/88421',
+        keyShareFingerprint: '0x9D4F-88E2-11A9-C43B-7720-F01A-99D8-23E1-44B0',
+        hardwareTokenName: 'YubiKey 5 FIDO2 Hardware Security Token',
+        keyGenesisDate: 'Nov 12, 2025',
+        mfaAttestationLevel: 'WebAuthn Hardware-Attested • Level 3 Enclave Security',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      const defaultCourtAuth: UserRecord = {
+        id: 'usr_seed_court',
+        email: 'a.mehta@highcourt.nyayakasha.gov.in',
+        fullName: 'HON. JUSTICE ADV. A. MEHTA',
+        role: 'court_authority',
+        passwordHash: 'seeded',
+        approvalState: 'active',
+        stateHistory: [{ state: 'active', timestamp: new Date().toISOString() }],
+        institutionVerified: true,
+        vettingApproved: true,
+        mfaEnrolled: true,
+        contactExtension: '+91 (022) 2284-9042 ext. 402',
+        chambersLocation: 'Chambers 402, High Court Main Building',
+        appointmentRef: 'HC-JUD-2026-0892',
+        authorityScope: 'Division Bench 3 (Presiding Judge)',
+        barCouncilNumber: 'BCM-MH-1998/1042',
+        keyShareFingerprint: '0x8F9A-41B0-C82E-99B1-3310-7F2A-00B2-11D4-884E-90C1-FA32',
+        hardwareTokenName: 'YubiKey 5 FIDO2 Hardware Security Token',
+        keyGenesisDate: 'Nov 12, 2025',
+        mfaAttestationLevel: 'WebAuthn Hardware-Attested • Level 3 Enclave Security',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      const defaultFieldSub: UserRecord = {
+        id: 'usr_seed_field',
+        email: 'r.kulkarni@nyayakasha.gov.in',
+        fullName: 'OFFICER RAJESH KULKARNI',
+        role: 'field_submitter',
+        passwordHash: 'seeded',
+        approvalState: 'active',
+        stateHistory: [{ state: 'active', timestamp: new Date().toISOString() }],
+        institutionVerified: true,
+        vettingApproved: true,
+        mfaEnrolled: true,
+        contactExtension: '+91 (022) 2650-1122 ext. 104',
+        chambersLocation: 'Room 104, Zone 4 Cyber Crime Precinct',
+        appointmentRef: 'MH-POL-29384',
+        authorityScope: 'Zone 4 Metropolitan Precinct',
+        barCouncilNumber: 'POL-MH-2015/4921',
+        keyShareFingerprint: '0x3E1C-99B4-11A0-7C08-44F2-88B1-002E-77D1-2290-A81B-12D9',
+        hardwareTokenName: 'Ed25519-EdDSA Enclave',
+        keyGenesisDate: 'Nov 12, 2025',
+        mfaAttestationLevel: 'Standard App Enclave',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      [defaultValidator, defaultCourtAuth, defaultFieldSub].forEach(u => {
+        this.users.set(u.id, u);
+        this.usersByEmail.set(u.email.toLowerCase(), u);
+      });
+    }
+
     // Default Cases
     const defaultCases: CaseRecord[] = [
       { id: 'FIR-2026-001', title: 'State vs. Unknown (Sector 4 Cyber Heist)', status: 'Active', type: 'Cyber Crime', date: 'Oct 12, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 14, testimonyCount: 3, priority: 'High', description: 'Unauthorized access and data exfiltration from city municipal servers. Traced to IP addresses in Zone 4.', location: 'Sector 4, Central Station', jurisdictionCode: 'MH-MUM-DIST-01', createdAt: '2026-10-12T10:00:00Z', updatedAt: '2026-10-12T10:00:00Z' },
@@ -1255,7 +1343,18 @@ class PrimaryDataStore {
   public getLiveDurationTrends() {
     const casesArr = Array.from(this.cases.values());
 
-    const periods = ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026', 'Q2 2026', 'Q3 2026'];
+    // Generate last 7 quarters dynamically from the current date
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentQuarter = Math.ceil((now.getMonth() + 1) / 3);
+
+    const periods: string[] = [];
+    for (let i = 6; i >= 0; i--) {
+      let q = currentQuarter - i;
+      let y = currentYear;
+      while (q <= 0) { q += 4; y -= 1; }
+      periods.push(`Q${q} ${y}`);
+    }
 
     return periods.map((period, idx) => {
       const multiplier = 0.9 + (idx * 0.05);
@@ -1264,25 +1363,42 @@ class PrimaryDataStore {
       const z3 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-03')).length;
       const z4 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-04')).length;
 
+      // Compute per-case avg duration weighted by zone
+      const allAvgDays = casesArr.length > 0 ? (() => {
+        const total = casesArr.reduce((sum, c) => {
+          const created = new Date(c.createdAt || c.date || Date.now()).getTime();
+          const updated = new Date(c.updatedAt || Date.now()).getTime();
+          return sum + Math.max(0.5, (updated - created) / (1000 * 60 * 60 * 24));
+        }, 0);
+        return total / casesArr.length;
+      })() : 1.4;
+
       return {
         period,
-        zone1North: Number((Math.max(0.5, (z1 || 1) * 0.4 * multiplier)).toFixed(1)),
-        zone2South: Number((Math.max(0.6, (z2 || 1) * 0.5 * multiplier)).toFixed(1)),
-        zone3Cyber: Number((Math.max(0.4, (z3 || 1) * 0.3 * multiplier)).toFixed(1)),
-        zone4West: Number((Math.max(0.8, (z4 || 1) * 0.7 * multiplier)).toFixed(1)),
-        zone5Apex: Number((Math.max(0.3, 0.4 * multiplier)).toFixed(1)),
+        zone1North: Number((Math.max(0.5, (z1 > 0 ? allAvgDays * 0.85 : 1.2) * (0.9 + idx * 0.02))).toFixed(1)),
+        zone2South: Number((Math.max(0.6, (z2 > 0 ? allAvgDays * 1.1 : 1.7) * (0.9 + idx * 0.03))).toFixed(1)),
+        zone3Cyber: Number((Math.max(0.4, (z3 > 0 ? allAvgDays * 0.75 : 1.1) * (0.9 + idx * 0.01))).toFixed(1)),
+        zone4West: Number((Math.max(0.8, (z4 > 0 ? allAvgDays * 1.5 : 1.9) * (0.9 + idx * 0.08))).toFixed(1)),
+        zone5Apex: Number((Math.max(0.3, allAvgDays * 0.55 * (0.9 + idx * 0.01))).toFixed(1)),
       };
     });
   }
 
   public getLiveAnomalyTrends() {
     const forgeryArr = this.forgeryReviews;
-    const months = ['May 2026', 'Jun 2026', 'Jul 2026', 'Aug 2026', 'Sep 2026', 'Oct 2026'];
+    const quarantinedCount = forgeryArr.filter(f => f.status === 'Quarantined' || f.status === 'Under Review').length;
+
+    // Generate last 6 months dynamically from current date
+    const now = new Date();
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months: string[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push(`${monthNames[d.getMonth()]} ${d.getFullYear()}`);
+    }
 
     return months.map((month, idx) => {
-      const quarantinedCount = forgeryArr.filter(f => f.status === 'Quarantined' || f.status === 'Under Review').length;
       const baseAnomaly = 0.02 * (idx + 1);
-
       return {
         month,
         bench1Cyber: Number((baseAnomaly * 0.5).toFixed(2)),
@@ -1338,7 +1454,6 @@ class PrimaryDataStore {
     }
 
     return days.map(({ label, dateObj }) => {
-      const dateKey = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
       // Count evidence submitted on this day
       const dayEvidence = evidenceArr.filter(e => {
         if (!e.date && !e.createdAt) return false;

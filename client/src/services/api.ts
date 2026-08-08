@@ -43,6 +43,7 @@ async function fetchAPI<T = any>(endpoint: string, options: RequestInit = {}): P
 }
 
 export const api = {
+  baseUrl: API_BASE,
   // --- AUTHENTICATION ---
   signup: async (params: {
     email: string;
@@ -236,6 +237,14 @@ export const api = {
     longitude?: number;
     signature?: string;
     dataUrl?: string;
+    seizureBagId?: string;
+    seizureMethod?: string;
+    priorityLevel?: string;
+    witnessName?: string;
+    preservationType?: string;
+    tags?: string[];
+    evidenceNotes?: string;
+    gpsLocation?: any;
   }) => {
     return fetchAPI('/evidence/submit', {
       method: 'POST',

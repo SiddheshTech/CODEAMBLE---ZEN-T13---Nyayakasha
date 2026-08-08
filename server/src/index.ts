@@ -19,6 +19,7 @@ import { analyticsRouter } from './routes/analytics.routes.js';
 import { auditRouter } from './routes/audit.routes.js';
 import { notificationsRouter } from './routes/notifications.routes.js';
 import { deviceRouter } from './routes/device.routes.js';
+import { profileRoutes } from './routes/profile.routes.js';
 import { registerValidatorSocket } from './services/duress.service.js';
 
 const app = express();
@@ -28,7 +29,7 @@ const server = http.createServer(app);
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-latitude', 'x-longitude', 'x-jurisdiction-code', 'x-duress-session', 'X-Duress-Session']
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-latitude', 'x-longitude', 'x-jurisdiction-code', 'x-duress-session', 'X-Duress-Session', 'x-user-email']
 }));
 
 app.use(express.json({ limit: '50mb' }));

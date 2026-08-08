@@ -333,6 +333,7 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
   const [selectedZone, setSelectedZone] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [backendMetrics, setBackendMetrics] = useState<any>(null);
+  const [isLoadingAnalytics, setIsLoadingAnalytics] = useState<boolean>(true);
   const [zoneBenchmarkData, setZoneBenchmarkData] = useState<any[]>([]);
   const [courtBenchesVelocity, setCourtBenchesVelocity] = useState<any[]>([]);
   const [durationTrends, setDurationTrends] = useState<any[]>([]);
@@ -341,12 +342,12 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
   const [timeSeriesVolume, setTimeSeriesVolume] = useState<any[]>([]);
   const [caseCategories, setCaseCategories] = useState<any[]>([]);
   const [analyticalModules, setAnalyticalModules] = useState<AnalyticalModuleItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+
 
   const fetchAnalyticsData = () => {
+    setIsLoadingAnalytics(true);
     api.getAnalyticsOverview()
       .then(res => {
-        setIsLoading(false);
         if (res.metrics) {
           setBackendMetrics(res.metrics);
         }
@@ -379,9 +380,9 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
         }
       })
       .catch(err => {
-        setIsLoading(false);
         console.log('Analytics backend overview info:', err.message);
-      });
+      })
+      .finally(() => setIsLoadingAnalytics(false));
   };
 
   useEffect(() => {
@@ -697,7 +698,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                       {selectedReportDetail.reportCode}
                     </span>
                     <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300">
-                      Cohort N = {selectedReportDetail.cohortSize.toLocaleString()} (k ≥ {selectedReportDetail.minCohortThreshold} SAFE)
+                      Cohort N = {selectedReportDetail.cohortSize?.toLocaleString() ?? 'N/A'} (k ≥ {selectedReportDetail.minCohortThreshold} SAFE)
                     </span>
                     <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-900 border border-indigo-200">
                       DP ε = {selectedReportDetail.differentialPrivacyEpsilon}
@@ -816,7 +817,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                 k ≥ 50 Threshold MET
               </div>
               <p className="text-[11px] text-slate-300 font-medium">
-                Smallest active cohort: <strong className="text-white font-mono">N = {backendMetrics?.smallestCohortN || 60}</strong>
+                Smallest active cohort: <strong className="text-white font-mono">N = {backendMetrics?.smallestCohortN?.toLocaleString() ?? 60}</strong>
                 <br />
                 Differential Privacy Noise: <strong className="text-indigo-300 font-mono">ε = 0.5</strong>
               </p>
@@ -894,6 +895,16 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
               </div>
             </div>
 
+            {/* Refresh Live Data Button */}
+            <button
+              onClick={fetchAnalyticsData}
+              disabled={isLoadingAnalytics}
+              className="px-4 py-2 rounded-2xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition-all flex items-center gap-2 border border-white/20 shrink-0 disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 text-indigo-200 ${isLoadingAnalytics ? 'animate-spin' : ''}`} />
+              <span>{isLoadingAnalytics ? 'Refreshing…' : 'Refresh Live Data'}</span>
+            </button>
+
             {/* Export Summary Button */}
             <button
               onClick={handleExportSummaryPDF}
@@ -906,7 +917,24 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
         </div>
 
         {/* INNER PAGES / TABS NAVIGATION */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden">
+        {isLoadingAnalytics && (
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden p-12 flex flex-col items-center justify-center gap-4 min-h-[320px]">
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 rounded-full border-4 border-indigo-100"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-indigo-600 animate-spin"></div>
+            </div>
+            <div className="text-center space-y-1">
+              <p className="text-sm font-bold text-slate-900">Loading Live Analytics Data</p>
+              <p className="text-xs text-slate-500">Fetching real-time aggregates from the judicial ledger…</p>
+            </div>
+            <div className="flex gap-3 mt-2">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="w-28 h-16 rounded-2xl bg-slate-100 animate-pulse" style={{ animationDelay: `${i * 150}ms` }}></div>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className={`bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden ${isLoadingAnalytics ? 'hidden' : ''}`}>
           <div className="flex border-b border-slate-200 bg-slate-50/80 px-6 pt-4 gap-2">
             <button
               onClick={() => setValidatorMainTab('overview')}
@@ -954,7 +982,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Mean Case Duration</span>
                     <span className="text-2xl font-extrabold font-mono text-slate-900">{backendMetrics?.meanCaseDuration ?? '—'}</span>
-                    <span className="text-[11px] text-emerald-600 block font-bold">Cohort N = {(backendMetrics?.smallestCohortN ?? '—')} (k ≥ 50 {backendMetrics?.cohortThresholdPassed ? 'PASS' : 'CHECK'})</span>
+                    <span className="text-[11px] text-emerald-600 block font-bold">Cohort N = {(backendMetrics?.smallestCohortN?.toLocaleString() ?? '—')} (k ≥ 50 {backendMetrics?.cohortThresholdPassed ? 'PASS' : 'CHECK'})</span>
                   </div>
 
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
@@ -1072,7 +1100,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                                 <div className="relative inline-flex items-center">
                                   <span className="text-xs font-mono font-bold px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center gap-1.5">
                                     <Users className="w-3.5 h-3.5 text-emerald-700" />
-                                    Cohort N = {report.cohortSize.toLocaleString()} (k ≥ {report.minCohortThreshold})
+                                    Cohort N = {report.cohortSize?.toLocaleString() ?? 'N/A'} (k = {report.minCohortThreshold})
                                     <button
                                       type="button"
                                       onClick={() => setActiveInfoTooltipId(showInfoTooltip ? null : report.id)}
@@ -1219,7 +1247,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                         </div>
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block">Active Dockets</span>
-                          <span className="font-mono font-bold text-slate-900">{zone.incidents.toLocaleString()}</span>
+                          <span className="font-mono font-bold text-slate-900">{zone.incidents?.toLocaleString() ?? 0}</span>
                         </div>
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block">Backlog</span>
@@ -1529,7 +1557,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
                 <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider block">Total Evidence Assets</span>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-xl font-extrabold font-mono text-white">{(backendMetrics?.sealedEvidence ?? 4).toLocaleString()}</span>
+                  <span className="text-xl font-extrabold font-mono text-white">{(backendMetrics?.sealedEvidence?.toLocaleString() ?? 4)}</span>
                   <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5"><TrendingUp className="w-3 h-3" /> Live DB</span>
                 </div>
                 <span className="text-[10px] text-slate-400 block">100% Cryptographically Sealed</span>
@@ -1658,10 +1686,10 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                 {caseCategories.map((cat, idx) => (
                   <div key={idx} className="flex items-center justify-between text-xs font-semibold">
                     <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: cat.color }} />
+                      <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: cat.color }} />
                       <span className="text-slate-700 truncate max-w-[170px]">{cat.name}</span>
                     </div>
-                    <span className="font-mono text-slate-900 font-bold">{cat.value}% ({cat.count.toLocaleString()})</span>
+                    <span className="font-mono text-slate-900 font-bold">{cat.value}% ({cat.count?.toLocaleString() ?? 0})</span>
                   </div>
                 ))}
               </div>
@@ -1701,7 +1729,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="p-2.5 rounded-xl bg-white border border-slate-100">
                       <span className="text-[10px] text-slate-400 font-bold block uppercase">Active Exhibits</span>
-                      <span className="text-sm font-extrabold font-mono text-slate-900">{zone.incidents.toLocaleString()}</span>
+                      <span className="text-sm font-extrabold font-mono text-slate-900">{zone.incidents?.toLocaleString() ?? 0}</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-white border border-slate-100">
                       <span className="text-[10px] text-slate-400 font-bold block uppercase">Avg Disposition</span>
