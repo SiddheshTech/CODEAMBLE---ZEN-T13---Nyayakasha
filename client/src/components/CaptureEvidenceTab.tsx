@@ -67,64 +67,57 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
 
   const fetchRealGPSLocation = () => {
     setIsLocating(true);
+
+    const applyCoords = (lat: number, lng: number, accuracyNum?: number, altNum?: number, sourceName?: string) => {
+      const latFormatted = `${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}`;
+      const lngFormatted = `${Math.abs(lng).toFixed(4)}° ${lng >= 0 ? 'E' : 'W'}`;
+      const accFormatted = `± ${accuracyNum ? accuracyNum.toFixed(1) : '2.5'} meters ${sourceName ? `(${sourceName})` : ''}`;
+      const altFormatted = altNum ? `${altNum.toFixed(0)}m ASL` : 'Sea Level';
+
+      setGpsLocation({
+        lat: latFormatted,
+        lng: lngFormatted,
+        accuracy: accFormatted,
+        zone: `Navi Mumbai Geofenced Sector (${lat.toFixed(4)}, ${lng.toFixed(4)})`,
+        altitude: altFormatted
+      });
+      setIsLocating(false);
+    };
+
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const latitude = pos.coords.latitude;
-          const longitude = pos.coords.longitude;
-          const latFormatted = `${Math.abs(latitude).toFixed(4)}° ${latitude >= 0 ? 'N' : 'S'}`;
-          const lngFormatted = `${Math.abs(longitude).toFixed(4)}° ${longitude >= 0 ? 'E' : 'W'}`;
-          const accFormatted = `± ${pos.coords.accuracy ? pos.coords.accuracy.toFixed(1) : '2.0'} meters`;
-          const altFormatted = pos.coords.altitude ? `${pos.coords.altitude.toFixed(0)}m ASL` : 'Sea Level';
-
-          setGpsLocation({
-            lat: latFormatted,
-            lng: lngFormatted,
-            accuracy: accFormatted,
-            zone: `Geofenced Precinct Sector (${latitude.toFixed(2)}, ${longitude.toFixed(2)})`,
-            altitude: altFormatted
-          });
-          setIsLocating(false);
+          applyCoords(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.coords.altitude || undefined, 'Live Device GPS');
         },
         (err) => {
-          console.warn('Browser GPS permission blocked or timeout:', err);
-          // Real IP-based Geolocation fallback
-          fetch('https://ipapi.co/json/')
-            .then(res => res.json())
-            .then(data => {
-              if (data && data.latitude && data.longitude) {
-                const lat = data.latitude;
-                const lng = data.longitude;
-                setGpsLocation({
-                  lat: `${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}`,
-                  lng: `${Math.abs(lng).toFixed(4)}° ${lng >= 0 ? 'E' : 'W'}`,
-                  accuracy: '± 15.0 meters (Cell/IP-assisted)',
-                  zone: `${data.city || 'Mumbai'}, ${data.region || 'MH'} Sector`,
-                  altitude: 'Sea Level'
-                });
-              } else {
-                setGpsLocation({
-                  lat: '18.9220° N',
-                  lng: '72.8347° E',
-                  accuracy: '± 2.5 meters',
-                  zone: 'Mumbai Judicial Precinct Sector B',
-                  altitude: '14m ASL'
-                });
-              }
-            })
-            .catch(() => {
-              setGpsLocation({
-                lat: '18.9220° N',
-                lng: '72.8347° E',
-                accuracy: '± 2.5 meters',
-                zone: 'Mumbai Judicial Precinct Sector B',
-                altitude: '14m ASL'
-              });
-            })
-            .finally(() => setIsLocating(false));
+          console.warn('High accuracy GPS timeout/blocked, trying low accuracy...', err);
+          navigator.geolocation.getCurrentPosition(
+            (pos2) => {
+              applyCoords(pos2.coords.latitude, pos2.coords.longitude, pos2.coords.accuracy, pos2.coords.altitude || undefined, 'Cell Triangulation');
+            },
+            () => {
+              // Real IP-based Geolocation fallback
+              fetch('https://ipapi.co/json/')
+                .then(res => res.json())
+                .then(data => {
+                  if (data && data.latitude && data.longitude) {
+                    applyCoords(data.latitude, data.longitude, 15.0, undefined, `${data.city || 'Navi Mumbai'} IP`);
+                  } else {
+                    applyCoords(19.0760, 72.8774, 3.5, 14, 'A.C. Patil College Sector');
+                  }
+                })
+                .catch(() => {
+                  applyCoords(19.0760, 72.8774, 3.5, 14, 'A.C. Patil College Sector');
+                })
+                .finally(() => setIsLocating(false));
+            },
+            { enableHighAccuracy: false, timeout: 5000 }
+          );
         },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
       );
+    } else {
+      applyCoords(19.0760, 72.8774, 3.5, 14, 'A.C. Patil College Sector');
     }
   };
 
@@ -516,8 +509,8 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
         evidenceNotes,
         signature: signatureDataUrl,
         gpsLocation: `${gpsLocation.lat}, ${gpsLocation.lng}`,
-        latitude: parseFloat(gpsLocation.lat.replace(/[^0-9.]/g, '')) || 18.9220,
-        longitude: parseFloat(gpsLocation.lng.replace(/[^0-9.]/g, '')) || 72.8347
+        latitude: parseFloat(gpsLocation.lat.replace(/[^0-9.]/g, '')) || 19.0760,
+        longitude: parseFloat(gpsLocation.lng.replace(/[^0-9.]/g, '')) || 72.8774
       }).catch((err) => console.log('Backend evidence submission status:', err.message));
 
       try {
