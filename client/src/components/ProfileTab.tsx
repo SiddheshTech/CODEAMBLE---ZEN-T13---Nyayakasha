@@ -23,14 +23,14 @@ export function ProfileTab({ role }: { role: string }) {
     }
   })();
 
-  const officialName = user?.fullName || user?.name || (isValidator ? 'Dr. Meera Vasudevan' : isCourtAuthority ? 'Hon. Justice Adv. A. Mehta' : 'Officer Rajesh Kulkarni');
-  const officialEmail = user?.email || (isValidator ? 'm.vasudevan@oversight.nyayakasha.gov.in' : isCourtAuthority ? 'a.mehta@highcourt.nyayakasha.gov.in' : 'r.kulkarni@nyayakasha.gov.in');
-
   // State
   const [profileData, setProfileData] = useState<any>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [copiedFingerprint, setCopiedFingerprint] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const officialName = profileData?.fullName || user?.fullName || user?.name || 'Authenticated User';
+  const officialEmail = profileData?.email || user?.email || 'user@nyayakasha.gov.in';
   
   // Request Change Modal State
   const [showRequestChangeModal, setShowRequestChangeModal] = useState(false);
@@ -224,7 +224,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
                 </span>
               </div>
               <p className="text-sm sm:text-base text-slate-300 font-medium">
-                {isValidator ? 'Independent Oversight Master & Validator • Judicial Oversight Board' : isCourtAuthority ? 'Presiding Judge • High Court Division Bench' : 'Senior Investigating Officer • Cyber Crime Cell'}
+                {profileData.roleTitle || (isValidator ? 'Independent Oversight Master & Validator Node' : isCourtAuthority ? 'Presiding Judicial Magistrate • High Court Division Bench' : 'Field Operations Submitter • Zone 4 Precinct')}
               </p>
               <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
                 <div className="flex items-center gap-1.5 font-medium">
@@ -327,7 +327,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
               <span>Official Email Address</span>
-              <span className="text-[10px] text-slate-400 font-normal">High Court Domain</span>
+              <span className="text-[10px] text-slate-400 font-normal">{profileData.role === 'field_submitter' ? 'Field Operations Domain' : profileData.role === 'independent_validator' ? 'Oversight Board Domain' : 'High Court Domain'}</span>
             </label>
             <div className="relative">
               <input 
@@ -358,8 +358,8 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
-              <span>Chambers / Office Location</span>
-              <span className="text-[10px] text-slate-400 font-normal">Judicial Premises</span>
+              <span>{profileData.role === 'field_submitter' ? 'Field Station / Office Location' : profileData.role === 'independent_validator' ? 'Enclave Node / Operations Center' : 'Chambers / Office Location'}</span>
+              <span className="text-[10px] text-slate-400 font-normal">{profileData.role === 'field_submitter' ? 'Precinct Premises' : profileData.role === 'independent_validator' ? 'Audit Enclave' : 'Judicial Premises'}</span>
             </label>
             <div className="relative">
               <input 
@@ -385,7 +385,7 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
               Credentials &amp; Institutional Accreditation
             </h2>
             <p className="text-xs text-slate-500 font-medium">
-              Bar council accreditation, judicial appointment numbers, and signed verification documents for institutional recordkeeping.
+              Accreditation, appointment numbers, and signed verification documents for institutional recordkeeping.
             </p>
           </div>
 
@@ -400,22 +400,27 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Bar Council / Badge No.</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+              {profileData.role === 'field_submitter' ? 'Police Badge / Submitter ID' : profileData.role === 'independent_validator' ? 'Validator Node ID / Audit Ref' : 'Bar Council / Badge No.'}
+            </span>
             <span className="font-mono text-sm font-extrabold text-slate-900 block">
               {profileData.barCouncilNumber}
             </span>
             <span className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1 pt-1">
-              <CheckCircle2 className="w-3 h-3 text-emerald-600" /> High Court Registered
+              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+              {profileData.role === 'field_submitter' ? 'Zone 4 Precinct Verified' : profileData.role === 'independent_validator' ? 'Zero-Knowledge Audit Node Active' : 'High Court Registered'}
             </span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Appointment Ref &amp; Seal</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+              {profileData.role === 'field_submitter' ? 'Field Warrant / Station Ref' : profileData.role === 'independent_validator' ? 'Node Provisioning Ref & Enclave Seal' : 'Appointment Ref & Seal'}
+            </span>
             <span className="font-mono text-sm font-extrabold text-slate-900 block">
               {profileData.appointmentRef}
             </span>
             <span className="text-[11px] text-slate-500 font-medium pt-1 block">
-              Attested by High Court Registrar
+              {profileData.role === 'field_submitter' ? 'Attested by Zone 4 Superintendent' : profileData.role === 'independent_validator' ? 'Attested by Independent Oversight Board' : 'Attested by High Court Registrar'}
             </span>
           </div>
 

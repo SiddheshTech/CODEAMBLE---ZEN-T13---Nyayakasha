@@ -72,7 +72,7 @@ class BlockchainAnchorService {
         preservationType: fullPayload?.preservationType || 'Tamper-Evident Sealed Bag',
         tags: fullPayload?.tags || [],
         notes: fullPayload?.notes || '',
-        gpsLocation: fullPayload?.gpsLocation || { lat: '18.5204° N', lng: '73.8567° E', zone: 'Zone 4 Geofenced Sector B' },
+        gpsLocation: fullPayload?.gpsLocation || 'GPS Location Attached',
         signature: fullPayload?.signature ? 'ECDSA_SIGNED_SECP256K1' : 'NONE',
         timestamp: new Date().toISOString()
       };

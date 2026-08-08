@@ -18,6 +18,7 @@ import { SecurityPage } from './components/SecurityPage';
 import { AuthPage } from './components/AuthPage';
 import { InviteSignupPage } from './components/InviteSignupPage';
 import { DashboardPage } from './components/DashboardPage';
+import { CNNPage } from './components/CNNPage';
 
 const VALID_PAGES = ['home', 'contact', 'infrastructure', 'evidence', 'security', 'auth', 'invite', 'dashboard'];
 
@@ -108,6 +109,11 @@ export default function App() {
         <InviteSignupPage onNavigate={handleNavigate} />
       ) : currentPage === 'dashboard' ? (
         <DashboardPage onNavigate={handleNavigate} />
+      ) : currentPage === 'cnn' ? (
+        <>
+          <Navbar onNavigate={handleNavigate} currentPage={currentPage} />
+          <CNNPage />
+        </>
       ) : null}
       {currentPage !== 'auth' && currentPage !== 'invite' && currentPage !== 'dashboard' && (
         <FooterSection 

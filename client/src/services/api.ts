@@ -24,6 +24,15 @@ async function fetchAPI<T = any>(endpoint: string, options: RequestInit = {}): P
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  try {
+    const userStr = localStorage.getItem('nyayakasha_user');
+    if (userStr) {
+      const u = JSON.parse(userStr);
+      if (u.email) headers['X-User-Email'] = u.email;
+      if (u.role) headers['X-User-Role'] = u.role;
+    }
+  } catch (e) {}
+
   if (localStorage.getItem('nyayakasha_is_duress_session') === 'true') {
     headers['X-Duress-Session'] = 'true';
   }
@@ -484,6 +493,25 @@ export const api = {
     return fetchAPI('/profile', {
       method: 'PATCH',
       body: JSON.stringify(data)
+    });
+  },
+
+  // --- INSTITUTIONAL SETTINGS ---
+  getSettings: async () => {
+    return fetchAPI('/settings', { method: 'GET' });
+  },
+
+  updateSettings: async (data: any) => {
+    return fetchAPI('/settings', {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+  },
+
+  revokeSession: async (sessionId: string) => {
+    return fetchAPI('/settings/revoke-session', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId })
     });
   },
 

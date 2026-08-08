@@ -1287,9 +1287,9 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
                         password,
                         fullName,
                         role: backendRole,
-                        badgeId: officialId || 'POL-MH-99482',
-                        barCouncilNumber: officialId || 'MAH/1234/2010',
-                        institutionId: judicialApptId || officialId || 'HCJ-APPT-2018-0942',
+                        badgeId: officialId || (backendRole === 'field_submitter' ? `POL-MH-${Math.floor(10000 + Math.random() * 90000)}` : `BCM-MH-${Math.floor(10000 + Math.random() * 90000)}`),
+                        barCouncilNumber: officialId || (backendRole === 'field_submitter' ? `POL-MH-${Math.floor(10000 + Math.random() * 90000)}` : `BCM-MH-${Math.floor(10000 + Math.random() * 90000)}`),
+                        institutionId: judicialApptId || officialId || (backendRole === 'field_submitter' ? `POL-WRT-2026-${Math.floor(1000 + Math.random() * 9000)}` : `HC-REG-2026-${Math.floor(1000 + Math.random() * 9000)}`),
                         jurisdictionCode: 'MH-MUM-DIST-01',
                         consentVetting: vettingConsent
                       });

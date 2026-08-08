@@ -21,6 +21,7 @@ import { notificationsRouter } from './routes/notifications.routes.js';
 import { deviceRouter } from './routes/device.routes.js';
 import { profileRoutes } from './routes/profile.routes.js';
 import { courtAuthorityRouter } from './routes/courtAuthority.routes.js';
+import { settingsRoutes } from './routes/settings.routes.js';
 import { registerValidatorSocket } from './services/duress.service.js';
 
 const app = express();
@@ -29,8 +30,8 @@ const server = http.createServer(app);
 // CORS setup
 app.use(cors({
   origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-latitude', 'x-longitude', 'x-jurisdiction-code', 'x-duress-session', 'X-Duress-Session', 'x-user-email']
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-latitude', 'x-longitude', 'x-jurisdiction-code', 'x-duress-session', 'X-Duress-Session', 'x-user-email', 'X-User-Email', 'x-user-role', 'X-User-Role', 'x-user-id', 'X-User-Id']
 }));
 
 app.use(express.json({ limit: '50mb' }));
@@ -54,6 +55,7 @@ app.use('/api/audit-log', auditRouter);
 app.use('/api/notifications', notificationsRouter);
 app.use('/api/profile', profileRoutes);
 app.use('/api/court-authority', courtAuthorityRouter);
+app.use('/api/settings', settingsRoutes);
 app.use('/api', healthRouter);
 
 // WebSocket Server for Silent Duress Event Bus to Independent Validator

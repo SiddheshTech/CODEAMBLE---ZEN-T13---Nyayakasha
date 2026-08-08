@@ -2,6 +2,17 @@ export type UserRole = 'field_submitter' | 'court_authority' | 'independent_vali
 
 export type ApprovalState = 'submitted' | 'institution_review' | 'dual_check' | 'vetting' | 'mfa_pending' | 'active' | 'rejected';
 
+export interface UserSettings {
+  notifications: {
+    consensus: { email: boolean; push: boolean };
+    analytics: { email: boolean; push: boolean };
+    escalation: { email: boolean; push: boolean };
+  };
+  sessionTimeout: number;
+  language: string;
+  themeMode: string;
+}
+
 export interface UserRecord {
   id: string;
   email: string;
@@ -28,6 +39,7 @@ export interface UserRecord {
   mfaAttestationLevel?: string;
   documentBlurScore?: number;
   documentPassesQuality?: boolean;
+  settings?: UserSettings;
 
   // Approval State Machine
   approvalState: ApprovalState;
