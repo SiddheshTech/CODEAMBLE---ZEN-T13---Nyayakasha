@@ -60,6 +60,36 @@ profileRoutes.get('/', async (req: Request, res: Response) => {
       calculatedFingerprint = '0x9D4F-88E2-11A9-C43B-7720-F01A-99D8-23E1-44B0';
     }
 
+    const userRoleKey = (user.role || 'court_authority').toLowerCase().replace(/\s+/g, '_');
+    const isFieldSubmitter = userRoleKey.includes('field') || userRoleKey.includes('submitter');
+    const isValidator = userRoleKey.includes('validator') || userRoleKey.includes('independent');
+
+    let roleTitle = 'Presiding Judicial Magistrate • High Court Division Bench';
+    let defaultAuthScope = 'Division Bench Quorum (1-of-3 Threshold)';
+    let defaultApptRef = `HC-REG-2026-${user.id.slice(-4).toUpperCase()}`;
+    let defaultBadge = `BCM-MH-2012/${user.id.slice(-5).toUpperCase()}`;
+    let defaultChambers = 'Chambers 901, Judicial Oversight Tower, Fort, Mumbai';
+    let defaultContact = '+91 (022) 2288-1100 ext. 901';
+    let defaultHardware = 'YubiKey 5 FIDO2 Hardware Security Token';
+
+    if (isFieldSubmitter) {
+      roleTitle = 'Field Operations Submitter • Zone 4 Precinct';
+      defaultAuthScope = 'Zone 4 Field Operations & Digital Evidence Sealing';
+      defaultApptRef = `POL-WRT-2026-${user.id.slice(-4).toUpperCase()}`;
+      defaultBadge = user.badgeId || `POL-MH-${user.id.slice(-5).toUpperCase()}`;
+      defaultChambers = user.jurisdictionCode ? `Zone Precinct ${user.jurisdictionCode}, Sector 9, Mumbai` : 'Zone 4 Field Operations Precinct, Sector 9, Mumbai';
+      defaultContact = '+91 (022) 2288-1104 ext. 402';
+      defaultHardware = 'Hardware TPM 2.0 Field Security Token';
+    } else if (isValidator) {
+      roleTitle = 'Independent Oversight Master & Validator Node';
+      defaultAuthScope = 'Layer 4 Zero-Knowledge Consensus & Anomaly Enclave';
+      defaultApptRef = `VAL-APPT-2026-${user.id.slice(-2).toUpperCase()}`;
+      defaultBadge = user.badgeId || `VAL-NODE-${user.id.slice(-4).toUpperCase()}`;
+      defaultChambers = 'Secure Audit Enclave Node #04, Cyber Security Complex';
+      defaultContact = '+91 (022) 2288-1199 ext. 990';
+      defaultHardware = 'Hardware Security Module (HSM Level-4 Enclave)';
+    }
+
     return res.json({
       success: true,
       profile: {
@@ -67,13 +97,14 @@ profileRoutes.get('/', async (req: Request, res: Response) => {
         fullName: user.fullName || user.email.split('@')[0],
         email: user.email,
         role: user.role,
-        contactExtension: user.contactExtension || '+91 (022) 2288-1100 ext. 901',
-        chambersLocation: user.chambersLocation || (user.jurisdictionCode ? `Judicial Complex ${user.jurisdictionCode}` : 'Chambers 901, Judicial Oversight Tower, Fort, Mumbai'),
-        appointmentRef: user.appointmentRef || (user.badgeId ? user.badgeId : `HC-REG-2026-${user.id.slice(-4).toUpperCase()}`),
-        authorityScope: user.authorityScope || (user.role === 'field_submitter' ? 'Zone 4 Field Submitter & Evidence Sealing Unit' : user.role === 'independent_validator' ? 'Layer 4 Zero-Knowledge Consensus Node' : 'Division Bench Quorum (1-of-3 Threshold)'),
-        barCouncilNumber: user.barCouncilNumber || user.badgeId || `BCM-MH-2012/${user.id.slice(-5).toUpperCase()}`,
+        roleTitle,
+        contactExtension: user.contactExtension || defaultContact,
+        chambersLocation: user.chambersLocation || defaultChambers,
+        appointmentRef: user.appointmentRef || defaultApptRef,
+        authorityScope: user.authorityScope || defaultAuthScope,
+        barCouncilNumber: user.barCouncilNumber || user.badgeId || defaultBadge,
         keyShareFingerprint: calculatedFingerprint,
-        hardwareTokenName: user.hardwareTokenName || (user.role === 'independent_validator' ? 'YubiKey 5 FIDO2 Hardware Security Token' : 'YubiKey 5 Series (Hardware Attested)'),
+        hardwareTokenName: user.hardwareTokenName || defaultHardware,
         keyGenesisDate: formattedGenesisDate,
         mfaAttestationLevel: user.mfaAttestationLevel || 'Level 3 Hardware Enclave Security',
         mfaEnrolled: Boolean(user.mfaEnrolled),
