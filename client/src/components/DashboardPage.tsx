@@ -1295,13 +1295,31 @@ export function DashboardPage({
 
           {activeTab === 'Chain of Custody' && <ChainOfCustodyTab />}
 
-          {/* Independent Validator dedicated workspace tab */}
-          {(activeTab === 'Validator Workspace' || activeTab === 'Consensus Requests' || activeTab === 'Duress Alerts') && role === 'Independent Validator' && (
-            <ValidatorWorkspace
-              userFullName={profileData?.fullName || (() => {
-                try { return JSON.parse(localStorage.getItem('nyayakasha_user') || '{}').fullName; } catch { return undefined; }
-              })()}
-            />
+          {/* Independent Validator dedicated workspace routing */}
+          {role === 'Independent Validator' && (
+            <>
+              {activeTab === 'Validator Workspace' && (
+                <ValidatorWorkspace
+                  viewMode="all"
+                  userFullName={profileData?.fullName || (() => {
+                    try { return JSON.parse(localStorage.getItem('nyayakasha_user') || '{}').fullName; } catch { return undefined; }
+                  })()}
+                />
+              )}
+
+              {(activeTab === 'Consensus Requests' || activeTab === 'Consensus votes') && (
+                <ConsensusApprovalsTab role={role} />
+              )}
+
+              {activeTab === 'Duress Alerts' && (
+                <ValidatorWorkspace
+                  viewMode="duress"
+                  userFullName={profileData?.fullName || (() => {
+                    try { return JSON.parse(localStorage.getItem('nyayakasha_user') || '{}').fullName; } catch { return undefined; }
+                  })()}
+                />
+              )}
+            </>
           )}
 
           {(activeTab === 'Analytics' || activeTab === 'Aggregate analytics' || activeTab === 'Aggregate Analytics' || activeTab === 'Aggregate analytics page' || activeTab === 'Court Analytics') && (

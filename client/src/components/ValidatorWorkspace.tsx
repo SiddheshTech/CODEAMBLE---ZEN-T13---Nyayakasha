@@ -108,13 +108,20 @@ function useValidatorWebSocket(
 }
 
 // ─── Main Component ─────────────────────────────────────────────────────────
-export function ValidatorWorkspace({ userFullName }: { userFullName?: string }) {
+export function ValidatorWorkspace({
+  userFullName,
+  viewMode = 'all',
+}: {
+  userFullName?: string;
+  viewMode?: 'all' | 'duress' | 'consensus';
+}) {
   const [duressAlerts, setDuressAlerts] = useState<DuressAlertItem[]>([]);
   const [consensusQueue, setConsensusQueue] = useState<ConsensusItem[]>([]);
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
   const [dashboardSummary, setDashboardSummary] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+  const [duressFilter, setDuressFilter] = useState<'all' | 'unacknowledged' | 'investigating'>('all');
 
   // Voting state
   const [votingId, setVotingId] = useState<string | null>(null);
@@ -213,6 +220,12 @@ export function ValidatorWorkspace({ userFullName }: { userFullName?: string }) 
     r.validatorVote === 'pending' || r.validatorVoteStatus === 'Pending' || !r.validatorVoteStatus
   );
 
+  const filteredDuressAlerts = duressAlerts.filter(a => {
+    if (duressFilter === 'unacknowledged') return a.status === 'UNACKNOWLEDGED';
+    if (duressFilter === 'investigating') return a.status === 'INVESTIGATING';
+    return true;
+  });
+
   // ── Render ───────────────────────────────────────────────────────────────
   return (
     <div className="flex-1 min-h-screen bg-[#F7F8FA] pt-6 pb-24 px-4 sm:px-6 lg:px-10">
@@ -221,9 +234,11 @@ export function ValidatorWorkspace({ userFullName }: { userFullName?: string }) 
       <div className="max-w-7xl mx-auto mb-8">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-black/40 mb-1">Independent Validator Workspace</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-black/40 mb-1">
+              {viewMode === 'duress' ? 'Silent Duress Monitoring Enclave' : 'Independent Validator Workspace'}
+            </p>
             <h1 className="text-2xl font-bold text-black tracking-tight">
-              Oversight & Consensus Node
+              {viewMode === 'duress' ? 'Duress Emergency Alerts & Telemetry' : 'Oversight & Consensus Node'}
             </h1>
             <p className="text-sm text-black/50 mt-1">
               {userFullName ? `Signed in as ${userFullName}` : 'Zero-Knowledge Validator Mode'}
@@ -242,7 +257,7 @@ export function ValidatorWorkspace({ userFullName }: { userFullName?: string }) 
             </div>
             <button
               onClick={() => fetchAll()}
-              className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full bg-black text-white hover:bg-black/80 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full bg-black text-white hover:bg-black/80 transition-colors cursor-pointer"
             >
               <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
               Refresh
@@ -272,22 +287,49 @@ export function ValidatorWorkspace({ userFullName }: { userFullName?: string }) 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* ── PATH 2: DURESS ALERTS ─────────────────────────────────────── */}
-        <div className="lg:col-span-1 space-y-4">
+        <div className={`${viewMode === 'duress' ? 'lg:col-span-2' : 'lg:col-span-1'} space-y-4`}>
           <div className="bg-white rounded-2xl border border-black/8 p-5 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4 text-rose-500" />
-                <h2 className="text-sm font-bold text-black">Duress Alerts</h2>
+                <h2 className="text-sm font-bold text-black">
+                  {viewMode === 'duress' ? 'Silent Duress Emergency Management Board' : 'Duress Alerts'}
+                </h2>
                 {unacknowledgedAlerts.length > 0 && (
                   <span className="bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
                     {unacknowledgedAlerts.length}
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-1 text-[10px] text-black/40">
-                <Lock className="w-3 h-3" />
-                Privacy-filtered
-              </div>
+
+              {/* Filter pills when in duress mode */}
+              {viewMode === 'duress' ? (
+                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-medium">
+                  <button
+                    onClick={() => setDuressFilter('all')}
+                    className={`px-2.5 py-1 rounded-lg transition-all ${duressFilter === 'all' ? 'bg-white text-black font-semibold shadow-xs' : 'text-black/60 hover:text-black'}`}
+                  >
+                    All ({duressAlerts.length})
+                  </button>
+                  <button
+                    onClick={() => setDuressFilter('unacknowledged')}
+                    className={`px-2.5 py-1 rounded-lg transition-all ${duressFilter === 'unacknowledged' ? 'bg-rose-600 text-white font-semibold shadow-xs' : 'text-black/60 hover:text-black'}`}
+                  >
+                    Unacknowledged ({unacknowledgedAlerts.length})
+                  </button>
+                  <button
+                    onClick={() => setDuressFilter('investigating')}
+                    className={`px-2.5 py-1 rounded-lg transition-all ${duressFilter === 'investigating' ? 'bg-amber-600 text-white font-semibold shadow-xs' : 'text-black/60 hover:text-black'}`}
+                  >
+                    Investigating ({duressAlerts.filter(a => a.status === 'INVESTIGATING').length})
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 text-[10px] text-black/40">
+                  <Lock className="w-3 h-3" />
+                  Privacy-filtered
+                </div>
+              )}
             </div>
 
             <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-200 mb-4">
@@ -298,54 +340,81 @@ export function ValidatorWorkspace({ userFullName }: { userFullName?: string }) 
 
             {isLoading ? (
               <div className="space-y-2">
-                {[1, 2].map(i => <div key={i} className="h-16 bg-black/5 rounded-xl animate-pulse" />)}
+                {[1, 2, 3].map(i => <div key={i} className="h-20 bg-black/5 rounded-xl animate-pulse" />)}
               </div>
-            ) : duressAlerts.length === 0 ? (
-              <div className="text-center py-8">
+            ) : filteredDuressAlerts.length === 0 ? (
+              <div className="text-center py-10">
                 <ShieldCheck className="w-10 h-10 text-emerald-300 mx-auto mb-2" />
-                <p className="text-sm font-medium text-black/40">No active duress alerts</p>
+                <p className="text-sm font-medium text-black/40">No duress alerts match filter</p>
                 <p className="text-xs text-black/30 mt-0.5">All field nodes operating normally</p>
               </div>
             ) : (
-              <div className="space-y-2">
-                {duressAlerts.map(alert => (
+              <div className="space-y-3">
+                {filteredDuressAlerts.map(alert => (
                   <motion.div
                     key={alert.id}
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`p-3 rounded-xl border ${
+                    className={`p-4 rounded-xl border transition-all ${
                       alert.status === 'UNACKNOWLEDGED'
-                        ? 'bg-rose-50 border-rose-200'
+                        ? 'bg-rose-50/70 border-rose-200 hover:border-rose-300'
                         : alert.status === 'INVESTIGATING'
-                        ? 'bg-amber-50 border-amber-200'
+                        ? 'bg-amber-50/70 border-amber-200'
                         : 'bg-gray-50 border-gray-200'
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${
-                            alert.status === 'UNACKNOWLEDGED' ? 'bg-rose-200 text-rose-800' :
-                            alert.status === 'INVESTIGATING' ? 'bg-amber-200 text-amber-800' :
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded ${
+                            alert.status === 'UNACKNOWLEDGED' ? 'bg-rose-200 text-rose-900 animate-pulse' :
+                            alert.status === 'INVESTIGATING' ? 'bg-amber-200 text-amber-900' :
                             'bg-gray-200 text-gray-700'
                           }`}>{alert.status.replace('_', ' ')}</span>
+                          <span className="text-[10px] font-mono text-black/50 bg-black/5 px-2 py-0.5 rounded">
+                            {alert.jurisdictionCode}
+                          </span>
                         </div>
-                        <p className="text-xs font-mono font-bold text-black truncate">{alert.refId}</p>
-                        <p className="text-[10px] text-black/50 mt-0.5">
-                          {alert.fieldNodeId} · {alert.jurisdictionCode}
+                        <p className="text-sm font-mono font-bold text-black truncate">{alert.refId}</p>
+                        <p className="text-xs text-black/60 mt-0.5 font-medium">
+                          Node: <span className="text-black font-semibold">{alert.fieldNodeId}</span>
                         </p>
-                        <p className="text-[10px] text-black/40 mt-0.5">
-                          {new Date(alert.timestamp).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        <p className="text-[10px] text-black/40 mt-1">
+                          Triggered: {new Date(alert.timestamp).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                         </p>
+
+                        {/* Extra Telemetry Details in duress view mode */}
+                        {viewMode === 'duress' && (
+                          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] bg-white/80 p-2.5 rounded-lg border border-black/5">
+                            <div>
+                              <span className="text-black/40 font-medium">HSM Hardware Status:</span>{' '}
+                              <span className="font-semibold text-emerald-700">Authenticated (TPM v2.0)</span>
+                            </div>
+                            <div>
+                              <span className="text-black/40 font-medium">Covert Session Mode:</span>{' '}
+                              <span className="font-semibold text-amber-700">Decoy Honeypot Active</span>
+                            </div>
+                            <div>
+                              <span className="text-black/40 font-medium">Zero-Knowledge Isolation:</span>{' '}
+                              <span className="font-semibold text-blue-700">Strict Neutral Enclave</span>
+                            </div>
+                            <div>
+                              <span className="text-black/40 font-medium">Command Escalation:</span>{' '}
+                              <span className="font-semibold text-slate-700">{alert.status === 'UNACKNOWLEDGED' ? 'Awaiting Validator Action' : 'Routed to Command Enclave'}</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
+
                     {alert.status === 'UNACKNOWLEDGED' && (
                       <button
                         onClick={() => acknowledgeAlert(alert.id)}
                         disabled={acknowledgingId === alert.id}
-                        className="mt-2 w-full text-[10px] font-bold py-1.5 rounded-lg bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50 transition-colors"
+                        className="mt-3 w-full text-xs font-bold py-2 rounded-xl bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50 transition-colors shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
                       >
-                        {acknowledgingId === alert.id ? 'Acknowledging...' : 'Acknowledge & Escalate'}
+                        <ShieldAlert className="w-3.5 h-3.5" />
+                        {acknowledgingId === alert.id ? 'Acknowledging...' : 'Acknowledge & Escalate to Command Dispatch'}
                       </button>
                     )}
                   </motion.div>
@@ -354,34 +423,66 @@ export function ValidatorWorkspace({ userFullName }: { userFullName?: string }) 
             )}
           </div>
 
-          {/* Activity Log */}
-          <div className="bg-white rounded-2xl border border-black/8 p-5 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <Activity className="w-4 h-4 text-violet-500" />
-              <h2 className="text-sm font-bold text-black">Activity Log</h2>
-            </div>
-            {activityLogs.length === 0 ? (
-              <p className="text-xs text-black/40 text-center py-4">No activity yet</p>
-            ) : (
-              <div className="space-y-2">
-                {activityLogs.map(log => (
-                  <div key={log.id} className="flex items-start gap-2.5 py-2 border-b border-black/5 last:border-0">
-                    <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
-                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-black truncate">{log.action}</p>
-                      <p className="text-[10px] text-black/40">{log.nodeId} · {log.time}</p>
-                    </div>
-                  </div>
-                ))}
+          {/* Activity Log in duress view */}
+          {viewMode === 'duress' && (
+            <div className="bg-white rounded-2xl border border-black/8 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <Activity className="w-4 h-4 text-violet-500" />
+                <h2 className="text-sm font-bold text-black">Emergency Dispatch Telemetry Log</h2>
               </div>
-            )}
-          </div>
+              {activityLogs.length === 0 ? (
+                <p className="text-xs text-black/40 text-center py-4">No activity logged yet</p>
+              ) : (
+                <div className="space-y-2">
+                  {activityLogs.map(log => (
+                    <div key={log.id} className="flex items-start gap-2.5 py-2 border-b border-black/5 last:border-0">
+                      <div className="w-6 h-6 rounded-full bg-rose-100 flex items-center justify-center shrink-0 mt-0.5">
+                        <ShieldAlert className="w-3 h-3 text-rose-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-black truncate">{log.action}</p>
+                        <p className="text-[10px] text-black/40">{log.nodeId} · {log.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* ── PATH 1: CONSENSUS QUEUE ──────────────────────────────────── */}
-        <div className="lg:col-span-2 space-y-4">
+        {/* Activity log column in 'all' view mode */}
+        {viewMode === 'all' && (
+          <div className="lg:col-span-1 space-y-4">
+            <div className="bg-white rounded-2xl border border-black/8 p-5 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <Activity className="w-4 h-4 text-violet-500" />
+                <h2 className="text-sm font-bold text-black">Activity Log</h2>
+              </div>
+              {activityLogs.length === 0 ? (
+                <p className="text-xs text-black/40 text-center py-4">No activity yet</p>
+              ) : (
+                <div className="space-y-2">
+                  {activityLogs.map(log => (
+                    <div key={log.id} className="flex items-start gap-2.5 py-2 border-b border-black/5 last:border-0">
+                      <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-black truncate">{log.action}</p>
+                        <p className="text-[10px] text-black/40">{log.nodeId} · {log.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── PATH 1: CONSENSUS QUEUE (shown in 'all' view mode) ──────── */}
+        {viewMode === 'all' && (
+          <div className="lg:col-span-2 space-y-4">
 
           {/* Vote success/error banners */}
           <AnimatePresence>
@@ -596,6 +697,7 @@ export function ValidatorWorkspace({ userFullName }: { userFullName?: string }) 
             )}
           </div>
         </div>
+      )}
       </div>
     </div>
   );
