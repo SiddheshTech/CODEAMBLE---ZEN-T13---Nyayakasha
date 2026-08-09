@@ -37,12 +37,18 @@ async function fetchAPI<T = any>(endpoint: string, options: RequestInit = {}): P
     headers['X-Duress-Session'] = 'true';
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers
+    });
+  } catch (networkErr: any) {
+    // ERR_CONNECTION_REFUSED or network failure — server is offline
+    throw new Error('NYAYAKASHA backend server is offline. Please start the server on port 5000.');
+  }
 
-  const data = await response.json();
+  const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
     throw new Error(data.message || data.error || 'An error occurred while connecting to NYAYAKASHA API');
