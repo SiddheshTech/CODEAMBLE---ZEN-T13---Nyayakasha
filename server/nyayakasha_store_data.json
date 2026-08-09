@@ -89,7 +89,7 @@
       "email": "gupta@gmail.com",
       "fullName": "GUPTA",
       "role": "independent_validator",
-      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$/J0KHrjJyIvEX4w8JUB9TQ$YnDWQy4gVoejnSrncsEijnwmUaEuVM+jCmW2eZbpWr0",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$nNKtRFMWoVyTmQTgBAMUgw$FLKWO7NTM7qDvkyPbRTohNC5x/0WsaUiNOy2cwQjRsk",
       "approvalState": "active",
       "stateHistory": [
         {
@@ -102,7 +102,7 @@
       "vettingApproved": true,
       "mfaEnrolled": true,
       "createdAt": "2026-08-09T01:20:58.724Z",
-      "updatedAt": "2026-08-09T01:20:58.724Z"
+      "updatedAt": "2026-08-09T01:50:38.981Z"
     }
   ],
   "duressAlerts": [],
