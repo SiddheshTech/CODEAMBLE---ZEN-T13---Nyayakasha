@@ -1,0 +1,35 @@
+Using device: cpu
+No GPU detected -- training will be slow. Consider --freeze_backbone for a faster (lower-accuracy) run, or use Google Colab for a free GPU.
+Classes: ['fake', 'real']
+Train samples: 800 | Val samples: 200
+Class weights (to handle imbalance): {'fake': 1.0, 'real': 1.0}
+Epoch 1/10 - train_loss: 0.6866 - val_loss: 0.6727 - val_acc: 0.6550
+Epoch 2/10 - train_loss: 0.6657 - val_loss: 0.6609 - val_acc: 0.7250
+Epoch 3/10 - train_loss: 0.6481 - val_loss: 0.6499 - val_acc: 0.8200
+Epoch 4/10 - train_loss: 0.6270 - val_loss: 0.6383 - val_acc: 0.7950
+Epoch 5/10 - train_loss: 0.6090 - val_loss: 0.6261 - val_acc: 0.8050
+Epoch 6/10 - train_loss: 0.5924 - val_loss: 0.6143 - val_acc: 0.8600
+Epoch 7/10 - train_loss: 0.5757 - val_loss: 0.6060 - val_acc: 0.7900
+Epoch 8/10 - train_loss: 0.5642 - val_loss: 0.5971 - val_acc: 0.8250
+Epoch 9/10 - train_loss: 0.5482 - val_loss: 0.5874 - val_acc: 0.7900
+Epoch 10/10 - train_loss: 0.5379 - val_loss: 0.5826 - val_acc: 0.7950
+
+=== Final validation results (best checkpoint) ===
+Val accuracy: 0.7950
+
+Classification report:
+              precision    recall  f1-score   support
+
+        fake       0.95      0.62      0.75       100
+        real       0.72      0.97      0.83       100
+
+    accuracy                           0.80       200
+   macro avg       0.84      0.79      0.79       200
+weighted avg       0.84      0.80      0.79       200
+
+Confusion matrix (rows=true, cols=predicted):
+  classes: ['fake', 'real']
+[[62 38]
+ [ 3 97]]
+
+Saved best model to fake_detector.pt

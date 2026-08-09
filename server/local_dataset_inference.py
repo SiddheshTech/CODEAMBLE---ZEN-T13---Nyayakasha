@@ -125,7 +125,14 @@ def hybrid_verdict(algo_score: float, advanced_dict: dict) -> dict:
 
 # ── Flask app ──────────────────────────────────────────────────────────────
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    return response
 
 print("MAYA-BREAK Forensic API v5.0 starting...")
 print(f"  Algorithmic engine: ACTIVE (8 algorithms)")
@@ -143,8 +150,11 @@ def index():
     }
 
 
-@app.route('/predict_json', methods=['POST'])
+@app.route('/predict_json', methods=['GET', 'POST', 'OPTIONS'], strict_slashes=False)
+@app.route('/api/predict_json', methods=['GET', 'POST', 'OPTIONS'], strict_slashes=False)
 def predict_json():
+    if request.method == 'OPTIONS':
+        return jsonify({"status": "ok"}), 200
     try:
         data = request.get_json(force=True) or {}
         data_url = data.get('image_base64', '') or data.get('dataUrl', '')
@@ -159,14 +169,39 @@ def predict_json():
             base64_str = data_url
 
         import base64
-        image_bytes = base64.b64decode(base64_str)
+        file_bytes = base64.b64decode(base64_str)
 
-        algo_result = analyze_image(image_bytes, "Image")
-        is_doc = evidence_type == "document"
+        is_pdf = b'%PDF' in file_bytes[:32] or (',' in data_url and 'application/pdf' in data_url)
+
+        if is_pdf:
+            try:
+                doc = fitz.open(stream=file_bytes, filetype="pdf")
+                if len(doc) > 0:
+                    page = doc[0]
+                    pix = page.get_pixmap()
+                    image_bytes = pix.tobytes("png")
+                else:
+                    image_bytes = file_bytes
+            except Exception as pe:
+                print(f"PDF rendering fallback error: {pe}")
+                image_bytes = file_bytes
+            is_doc = True
+        else:
+            image_bytes = file_bytes
+            is_doc = evidence_type == "document"
+
+        algo_result = analyze_image(image_bytes, "Document Page" if is_pdf else "Image")
         advanced_dict = cnn_advanced_score(image_bytes, is_doc=is_doc)
+
+        raw_cnn_prob = float(advanced_dict.get("metrics", {}).get("cnn_fake_probability", 0.0))
 
         verdict = hybrid_verdict(algo_result["forensic_score"], advanced_dict)
         final = verdict["final_score"]
+
+        # Strict CNN Override: If raw CNN thinks it's fake (>50%), reject it as Forgery Detected
+        if raw_cnn_prob > 0.50:
+            final = max(final, 95.0)
+            algo_result.setdefault("evidence", []).append(f"CNN Strict Override (Confidence: {raw_cnn_prob*100:.1f}%)")
 
         is_fake = bool(final >= 38)
         if final >= 70:
@@ -194,9 +229,11 @@ def predict_json():
         return jsonify({"error": str(e), "trace": traceback.format_exc()[-500:]}), 500
 
 
-@app.route('/analyze_local', methods=['POST'])
-@app.route('/predict', methods=['POST'])
+@app.route('/analyze_local', methods=['POST', 'OPTIONS'])
+@app.route('/predict', methods=['POST', 'OPTIONS'])
 def analyze_evidence_locally():
+    if request.method == 'OPTIONS':
+        return jsonify({"status": "ok"}), 200
     if 'file' not in request.files:
         return jsonify({"error": "No file in request"}), 400
 
@@ -363,6 +400,12 @@ def analyze_evidence_locally():
 
             verdict = hybrid_verdict(algo_result["forensic_score"], advanced_dict)
             final = verdict["final_score"]
+
+            # Strict CNN Override: If raw CNN thinks it's fake (>50%), reject it
+            raw_cnn = float(advanced_dict.get("metrics", {}).get("cnn_fake_probability", 0.0))
+            if raw_cnn > 0.50:
+                final = max(final, 95.0)
+                algo_result.setdefault("evidence", []).append(f"CNN Strict Override (Confidence: {raw_cnn*100:.1f}%)")
 
             is_fake = bool(final >= 38)
             if final >= 70:
