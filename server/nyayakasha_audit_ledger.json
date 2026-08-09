@@ -305,5 +305,164 @@
     "prevHash": "112703ad55f63b0153cf0b663689c28536846fbaca43f61a789795b44073dfbc",
     "hash": "a9228de1557d031c827d3870b05891cb250d82a9364ac15f9bd6fc796c2325d6",
     "blockNumber": 1489217
+  },
+  {
+    "id": "audit_1786239610293_18",
+    "index": 18,
+    "timestamp": "2026-08-09T01:40:10.293Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786235166289",
+    "userRole": "independent_validator",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786239610289_fjx1z4",
+      "approvalState": "active"
+    },
+    "payloadHash": "068f90a1e592ade9725953498f61ce9c6391caa87f7c8132eacc168c93568ac6",
+    "prevHash": "a9228de1557d031c827d3870b05891cb250d82a9364ac15f9bd6fc796c2325d6",
+    "hash": "16d28c1152378be983987c7fcbf9c3c9d4a64fee1a83753ebe8541a4e0261fec",
+    "blockNumber": 1489218
+  },
+  {
+    "id": "audit_1786239610315_19",
+    "index": 19,
+    "timestamp": "2026-08-09T01:40:10.309Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "smithkadam24@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "smithkadam24@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "23666f9d3167b67102af117ebdba9fa14b2c450c1a979b13f32ff3629251b7f6",
+    "prevHash": "16d28c1152378be983987c7fcbf9c3c9d4a64fee1a83753ebe8541a4e0261fec",
+    "hash": "a412fb86995269d9ffc8d9234dd34fa89b83a3e9786b23b1f9f63c05cdf4478c",
+    "blockNumber": 1489219
+  },
+  {
+    "id": "audit_1786239611365_20",
+    "index": 20,
+    "timestamp": "2026-08-09T01:40:11.365Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "smithkadam24@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "a412fb86995269d9ffc8d9234dd34fa89b83a3e9786b23b1f9f63c05cdf4478c",
+    "hash": "242e86e6a56e6da8b99511b4ce6fab5ab187cb3363af0094dc34e518a09e36b6",
+    "blockNumber": 1489220
+  },
+  {
+    "id": "audit_1786239659187_21",
+    "index": 21,
+    "timestamp": "2026-08-09T01:40:59.187Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786239659187_ous308",
+      "approvalState": "active"
+    },
+    "payloadHash": "880c5650b7cf390c08b94eadbaea53c3cf9f889a4c8632ac067d186f510e7d2a",
+    "prevHash": "242e86e6a56e6da8b99511b4ce6fab5ab187cb3363af0094dc34e518a09e36b6",
+    "hash": "b272956250eedcdf0d32284a8dac72a218bd1e4e7a7028ac13186acfd61bd04e",
+    "blockNumber": 1489221
+  },
+  {
+    "id": "audit_1786239659195_22",
+    "index": 22,
+    "timestamp": "2026-08-09T01:40:59.195Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande8@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "e7e40ef7a1fa30b2457ea57a61fca28bc700d31697383c94575a00e391451050",
+    "prevHash": "b272956250eedcdf0d32284a8dac72a218bd1e4e7a7028ac13186acfd61bd04e",
+    "hash": "1a7cb5fe5aae9f032ad429eff283ae68f64dcf75f457427812f658ddb9c5e0ae",
+    "blockNumber": 1489222
+  },
+  {
+    "id": "audit_1786239660546_23",
+    "index": 23,
+    "timestamp": "2026-08-09T01:41:00.546Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Chrome / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "dcb7fe4e54f2703c65a8f06bd3a9fa85b72232df39e054308e043bf166ef21ae",
+    "prevHash": "1a7cb5fe5aae9f032ad429eff283ae68f64dcf75f457427812f658ddb9c5e0ae",
+    "hash": "0e6881b4386f6cc6b0db75cdc64a558fc1518f203c35d2f207eb12a0a71dc652",
+    "blockNumber": 1489223
+  },
+  {
+    "id": "audit_1786239676182_24",
+    "index": 24,
+    "timestamp": "2026-08-09T01:41:16.182Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786239676037_0agz",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "50adc7c12d6605eb6d4276684fec5e2702358645349988911e26fab8328d7434",
+    "prevHash": "0e6881b4386f6cc6b0db75cdc64a558fc1518f203c35d2f207eb12a0a71dc652",
+    "hash": "ef74e13afb7611163223f2fa7c1afe5fbd7001dbea3210f8cd3e80181ca5f914",
+    "blockNumber": 1489224
+  },
+  {
+    "id": "audit_1786239676183_25",
+    "index": 25,
+    "timestamp": "2026-08-09T01:41:16.183Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786239676037_0agz",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "1d7c5430b7c740940e6235d4d2693f78637179eb05a5dd38e27d1295e84ba650",
+    "prevHash": "ef74e13afb7611163223f2fa7c1afe5fbd7001dbea3210f8cd3e80181ca5f914",
+    "hash": "7f8992529d864633a1bf9e27d11922650cc9bfac4cd848f4c33698931e061b58",
+    "blockNumber": 1489225
+  },
+  {
+    "id": "audit_1786240273298_26",
+    "index": 26,
+    "timestamp": "2026-08-09T01:51:13.298Z",
+    "eventType": "USER_LOGOUT",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "sessionId": "sess_1786239659187_ous308"
+    },
+    "payloadHash": "24a40b5c2b9acdde83b58099a517a2649ab0b8e388c4835b60d93f2e817265e9",
+    "prevHash": "7f8992529d864633a1bf9e27d11922650cc9bfac4cd848f4c33698931e061b58",
+    "hash": "c7436a203e05a5f5662e1804f49efa4bc9908c082dd6940b497edb703cdef115",
+    "blockNumber": 1489226
   }
 ]

@@ -67,12 +67,20 @@ export function DashboardPage({
     localStorage.setItem('nyayakasha_user_role', role);
   }, [role]);
 
+  // Duress honeypot is ONLY for Field Submitters — validators are recipients, not subject to it
   const [isDuressSession, setIsDuressSession] = useState<boolean>(() => {
+    if (role !== 'Field Submitter') return false;
     return localStorage.getItem('nyayakasha_is_duress_session') === 'true';
   });
   const [isSimulatedGatewayTimeout, setIsSimulatedGatewayTimeout] = useState(false);
 
   useEffect(() => {
+    // Re-evaluate duress session whenever role changes (e.g. role-switcher in dev)
+    if (role !== 'Field Submitter') {
+      setIsDuressSession(false);
+      setIsSimulatedGatewayTimeout(false);
+      return;
+    }
     if (isDuressSession) {
       // 2-minute plausible technical gateway timeout for duress session containment
       const timer = setTimeout(() => {
@@ -80,7 +88,7 @@ export function DashboardPage({
       }, 120000);
       return () => clearTimeout(timer);
     }
-  }, [isDuressSession]);
+  }, [isDuressSession, role]);
 
   const [activeTab, setActiveTab] = useState<string>('Dashboard');
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
@@ -583,8 +591,8 @@ export function DashboardPage({
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto">
-        {/* Duress Mode Honeypot Banner */}
-        {isDuressSession && (
+        {/* Duress Mode Honeypot Banner — Field Submitter only */}
+        {role === 'Field Submitter' && isDuressSession && (
           <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 md:px-6 py-2.5 flex items-center justify-between text-xs text-amber-900 font-medium z-50">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2.5 w-2.5">

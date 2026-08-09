@@ -434,6 +434,32 @@ courtAuthorityRouter.post('/action', async (req: Request, res: Response) => {
         ? 'Exhibit Admitted to Trial Record — Hash-chain attestation recorded.'
         : 'Exhibit Struck & Flagged as Tampered — Permanently quarantined from evidence ledger.';
 
+      // Synchronize evidence status and send notification to Field Submitter
+      const targetExhId = updated.exhibitId || dbId;
+      const evItem = primaryStore.getEvidenceById(targetExhId);
+      if (evItem) {
+        evItem.status = decision === 'ADMIT' ? 'Admitted to Trial Record' : 'Quarantined / Struck';
+        primaryStore.saveEvidence(evItem);
+      }
+
+      primaryStore.saveNotification({
+        id: `notif-ruling-${targetExhId}-${Date.now()}`,
+        type: 'system',
+        title: decision === 'ADMIT' ? `Judicial Ruling: Exhibit Admitted to Court Record` : `Judicial Ruling: Exhibit Struck from Trial Record`,
+        message: `${judgeDisplayName} issued ruling: ${decision === 'ADMIT' ? 'ADMITTED & FILED' : 'EXCLUDED / STRUCK'} for Exhibit #${targetExhId} in Case ${updated.caseId || caseId || 'FIR-2026-001'}.`,
+        timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        isoDate: new Date().toISOString(),
+        isRead: false,
+        priority: decision === 'ADMIT' ? 'high' : 'critical',
+        caseId: updated.caseId || caseId || 'FIR-2026-001',
+        sender: judgeDisplayName,
+        details: `Judicial Order Note: ${judicialOrderText || 'Formal bench order signed.'}. Signature: ${sigHash}`,
+        actionUrlTab: 'My Submissions',
+        actionLabel: 'View Submission Record',
+        roleScope: 'field_submitter,court_authority',
+        createdAt: new Date().toISOString()
+      });
+
     } else if (itemType === 'vote' || decision === 'APPROVE_VOTE' || decision === 'REJECT_VOTE') {
       // Consensus vote — updates the request's courtAuthorityVoteStatus
       const req2 = primaryStore.getConsensusRequestById(dbId);
