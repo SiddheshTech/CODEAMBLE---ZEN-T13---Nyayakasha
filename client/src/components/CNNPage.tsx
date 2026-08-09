@@ -4,77 +4,8 @@ import { FileImage, FileVideo, FileText, ShieldAlert, FileSearch, ShieldCheck, U
 
 import { api } from '../services/api';
 
-const mockEvidence = [
-  {
-    id: 'EV-8821',
-    type: 'image',
-    filename: 'crime_scene_photo_01.jpg',
-    uploadTime: '2026-08-08 10:23 AM',
-    officer: 'Officer R. Kulkarni',
-    status: 'Authentic',
-    confidence: '99.8%',
-    previewUrl: 'https://images.unsplash.com/photo-1558227097-4ee26780c10d?w=500&q=80',
-    icon: <FileImage className="w-5 h-5 text-blue-500" />
-  },
-  {
-    id: 'EV-8822',
-    type: 'video',
-    filename: 'cctv_footage_cam3.mp4',
-    uploadTime: '2026-08-08 11:45 AM',
-    officer: 'Officer R. Kulkarni',
-    status: 'Forgery Detected',
-    confidence: '92.4%',
-    previewUrl: 'https://images.unsplash.com/photo-1510255531478-f716de818981?w=500&q=80',
-    icon: <FileVideo className="w-5 h-5 text-rose-500" />
-  },
-  {
-    id: 'EV-8823',
-    type: 'document',
-    filename: 'seizure_memo_signed.pdf',
-    uploadTime: '2026-08-08 01:15 PM',
-    officer: 'Officer R. Kulkarni',
-    status: 'Analyzing...',
-    confidence: '--',
-    previewUrl: 'https://images.unsplash.com/photo-1568228308873-10d65b169bb8?w=500&q=80',
-    icon: <FileText className="w-5 h-5 text-amber-500" />
-  },
-  {
-    id: 'EV-8824',
-    type: 'image',
-    filename: 'fingerprint_scan_04.jpg',
-    uploadTime: '2026-08-08 02:30 PM',
-    officer: 'Officer S. Patil',
-    status: 'Authentic',
-    confidence: '98.5%',
-    previewUrl: 'https://images.unsplash.com/photo-1618042164219-62c820f10723?w=500&q=80',
-    icon: <FileImage className="w-5 h-5 text-blue-500" />
-  },
-  {
-    id: 'EV-8825',
-    type: 'image',
-    filename: 'digital_signature_check.png',
-    uploadTime: '2026-08-08 03:10 PM',
-    officer: 'Officer M. Sharma',
-    status: 'Authentic',
-    confidence: '99.1%',
-    previewUrl: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=500&q=80',
-    icon: <FileImage className="w-5 h-5 text-blue-500" />
-  },
-  {
-    id: 'EV-8826',
-    type: 'video',
-    filename: 'interview_recording_02.mp4',
-    uploadTime: '2026-08-08 04:05 PM',
-    officer: 'Officer R. Kulkarni',
-    status: 'Analyzing...',
-    confidence: '--',
-    previewUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&q=80',
-    icon: <FileVideo className="w-5 h-5 text-amber-500" />
-  }
-];
-
 export function CNNPage() {
-  const [evidenceList, setEvidenceList] = useState<any[]>(mockEvidence);
+  const [evidenceList, setEvidenceList] = useState<any[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadType, setUploadType] = useState('image');
