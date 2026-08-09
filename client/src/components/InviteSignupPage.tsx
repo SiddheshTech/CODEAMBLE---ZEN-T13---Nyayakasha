@@ -65,8 +65,12 @@ export function InviteSignupPage({ onNavigate, isLocked = false }: { onNavigate:
       const hash = window.location.hash;
       const params = new URLSearchParams(hash.split('?')[1]);
       const roleParam = params.get('role');
+      const emailParam = params.get('email');
       if (roleParam && ['Independent Validator', 'Court Authority', 'Field Submitter'].includes(roleParam)) {
         setAssignedRole(roleParam as any);
+      }
+      if (emailParam) {
+        setEmail(emailParam);
       }
     }
   }, [isLocked]);

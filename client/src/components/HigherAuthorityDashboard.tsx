@@ -66,7 +66,7 @@ export function HigherAuthorityDashboard({ onNavigate }: { onNavigate: (page: st
       return;
     }
     const baseUrl = window.location.origin;
-    const url = `${baseUrl}/#invite-locked?role=${encodeURIComponent(selectedRole)}`;
+    const url = `${baseUrl}/#invite-locked?role=${encodeURIComponent(selectedRole)}&email=${encodeURIComponent(targetEmail)}`;
     setIsSending(true);
 
     try {

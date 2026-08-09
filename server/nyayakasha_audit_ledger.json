@@ -2503,5 +2503,173 @@
     "prevHash": "5ef5973fb518049e139367345737c228476c301fdec80121e7954d91302cb5b2",
     "hash": "2f0571bf14d0fb73c88cadae37aa1ba0e33c9feef010806489bc5076b0e84d3a",
     "blockNumber": 1489313
+  },
+  {
+    "id": "audit_1786250784905_114",
+    "index": 114,
+    "timestamp": "2026-08-09T04:46:24.900Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande@gmail.com",
+      "subject": "🔐 Nyayakasha — Secure Invite: Field Submitter Access"
+    },
+    "payloadHash": "12637c2c1aea028cbb5907dacb89cf0c8f8aab03580b63d3ac160e4cdf266546",
+    "prevHash": "2f0571bf14d0fb73c88cadae37aa1ba0e33c9feef010806489bc5076b0e84d3a",
+    "hash": "a97dc550d8e0d8b0228349ba93e8f2b39a7020acdcbe8ad0e9b94b8aba9fdc58",
+    "blockNumber": 1489314
+  },
+  {
+    "id": "audit_1786250788793_115",
+    "index": 115,
+    "timestamp": "2026-08-09T04:46:28.793Z",
+    "eventType": "INVITE_LINK_GENERATED",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "recipientEmail": "siddheshharwande@gmail.com",
+      "targetRole": "Field Submitter",
+      "emailSent": true
+    },
+    "payloadHash": "1edeb69173e1adb70d948cad6d33aa46d442cdb2926c7925100dc17fe26ff132",
+    "prevHash": "a97dc550d8e0d8b0228349ba93e8f2b39a7020acdcbe8ad0e9b94b8aba9fdc58",
+    "hash": "af179c6005238f96a75e3d9e699495d2c89545d09440cc31ceffc9a5942b5e43",
+    "blockNumber": 1489315
+  },
+  {
+    "id": "audit_1786250824296_116",
+    "index": 116,
+    "timestamp": "2026-08-09T04:47:04.295Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8835",
+      "caseId": "FIR-2026-001",
+      "hash": "63789f7426b1d470a7a8373600aa880d7e28f00181cca5e9b0c8ad51704a2f1f",
+      "title": "CNN Analyzed: Result 2025 (1)_page-0001.png",
+      "txHash": "0x43683320125bd505308098d390182bc4e34087873566760ce882b861099399ba",
+      "blockNumber": 15018713,
+      "merkleRoot": "0x1c15f0af360dfa9315f944f570801b89eecf30240260291073910684ff478629",
+      "cnnScore": 81.1,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "be8d7f2ea76742e1ae79ea356d2d8f0437fad181d537f335bbea66ca934b650f",
+    "prevHash": "af179c6005238f96a75e3d9e699495d2c89545d09440cc31ceffc9a5942b5e43",
+    "hash": "838cc24a06cf9d4bb89468c54a6372c0e1be7e6849d3be6d1b266c32a23dc438",
+    "blockNumber": 1489316
+  },
+  {
+    "id": "audit_1786251000399_117",
+    "index": 117,
+    "timestamp": "2026-08-09T04:50:00.399Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "source": "admin_login"
+    },
+    "payloadHash": "9219a716d50f6f7558bd9f90041d3db7cd6808975394924fc3aecc1e317af471",
+    "prevHash": "838cc24a06cf9d4bb89468c54a6372c0e1be7e6849d3be6d1b266c32a23dc438",
+    "hash": "a392b2639ca5f50e11fff0b82670b56986996b7492813ed79114eac96da5f5bb",
+    "blockNumber": 1489317
+  },
+  {
+    "id": "audit_1786251000414_118",
+    "index": 118,
+    "timestamp": "2026-08-09T04:50:00.414Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande@gmail.com",
+      "subject": "🔐 Nyayakasha — Secure Invite: Field Submitter Access"
+    },
+    "payloadHash": "12637c2c1aea028cbb5907dacb89cf0c8f8aab03580b63d3ac160e4cdf266546",
+    "prevHash": "a392b2639ca5f50e11fff0b82670b56986996b7492813ed79114eac96da5f5bb",
+    "hash": "6b2877f51ef5081a73482f2aaae5ae1eea8a84c7dcb4b01b59688f7003bd884a",
+    "blockNumber": 1489318
+  },
+  {
+    "id": "audit_1786251003434_119",
+    "index": 119,
+    "timestamp": "2026-08-09T04:50:03.434Z",
+    "eventType": "INVITE_LINK_GENERATED",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "recipientEmail": "siddheshharwande@gmail.com",
+      "targetRole": "Field Submitter",
+      "emailSent": true
+    },
+    "payloadHash": "1edeb69173e1adb70d948cad6d33aa46d442cdb2926c7925100dc17fe26ff132",
+    "prevHash": "6b2877f51ef5081a73482f2aaae5ae1eea8a84c7dcb4b01b59688f7003bd884a",
+    "hash": "70ba92e7e17e4616e6744f1633e53db0c08cdd7c8aceb1fcf8cd97e62cf6513b",
+    "blockNumber": 1489319
+  },
+  {
+    "id": "audit_1786251130864_120",
+    "index": 120,
+    "timestamp": "2026-08-09T04:52:10.864Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "source": "admin_login"
+    },
+    "payloadHash": "9219a716d50f6f7558bd9f90041d3db7cd6808975394924fc3aecc1e317af471",
+    "prevHash": "70ba92e7e17e4616e6744f1633e53db0c08cdd7c8aceb1fcf8cd97e62cf6513b",
+    "hash": "243a133f7ced1da0ad14c0cbd2c554ec30da7a301d85908ea43c803a8d4f66d8",
+    "blockNumber": 1489320
+  },
+  {
+    "id": "audit_1786251130898_121",
+    "index": 121,
+    "timestamp": "2026-08-09T04:52:10.898Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande@gmail.com",
+      "subject": "🔐 Nyayakasha — Secure Invite: Field Submitter Access"
+    },
+    "payloadHash": "12637c2c1aea028cbb5907dacb89cf0c8f8aab03580b63d3ac160e4cdf266546",
+    "prevHash": "243a133f7ced1da0ad14c0cbd2c554ec30da7a301d85908ea43c803a8d4f66d8",
+    "hash": "12c0951ebc7d36f3f42d6254139dc411dbfdedee5d23d1463f8e71de3c78c30f",
+    "blockNumber": 1489321
+  },
+  {
+    "id": "audit_1786251133550_122",
+    "index": 122,
+    "timestamp": "2026-08-09T04:52:13.550Z",
+    "eventType": "INVITE_LINK_GENERATED",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "recipientEmail": "siddheshharwande@gmail.com",
+      "targetRole": "Field Submitter",
+      "emailSent": true
+    },
+    "payloadHash": "1edeb69173e1adb70d948cad6d33aa46d442cdb2926c7925100dc17fe26ff132",
+    "prevHash": "12c0951ebc7d36f3f42d6254139dc411dbfdedee5d23d1463f8e71de3c78c30f",
+    "hash": "7f812a2badc65bc559618beb34f6f32712bf29edf1d5e1724bb1288558205d44",
+    "blockNumber": 1489322
   }
 ]
