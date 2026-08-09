@@ -120,8 +120,7 @@ identityRouter.post('/decide', (req: Request, res: Response) => {
   const judgeKeyForLog = judgeKeyId || 'BENCH-KEY-IND-003';
 
   const updated = primaryStore.decideIdentityUnlockRequest(
-    requestId, decision, remarks || '', sigHash,
-    judgeNameForLog, judgeKeyForLog
+    requestId, decision, remarks || '', sigHash
   );
 
   if (!updated) {

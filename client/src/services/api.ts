@@ -66,6 +66,7 @@ export const api = {
     institutionId?: string;
     jurisdictionCode?: string;
     consentVetting?: boolean;
+    profilePhotoUrl?: string;
   }) => {
     const res = await fetchAPI('/auth/signup', {
       method: 'POST',
@@ -335,10 +336,10 @@ export const api = {
     return fetchAPI('/identity/logs', { method: 'GET' });
   },
 
-  decideIdentityUnlock: async (requestId: string, decision: 'Approved' | 'Rejected', remarks: string) => {
+  decideIdentityUnlock: async (requestId: string, decision: 'Approved' | 'Rejected', remarks: string, judgeName?: string, benchKeyId?: string) => {
     return fetchAPI('/identity/decide', {
       method: 'POST',
-      body: JSON.stringify({ requestId, decision, remarks })
+      body: JSON.stringify({ requestId, decision, remarks, judgeName, benchKeyId })
     });
   },
 
@@ -483,6 +484,28 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ userId, deviceToken })
     });
+  },
+
+  revokeSettingsSession: async (targetSessionId?: string, revokeAllOther?: boolean) => {
+    return fetchAPI('/security/sessions/revoke', {
+      method: 'POST',
+      body: JSON.stringify({ targetSessionId, revokeAllOther })
+    });
+  },
+
+  getValidatorDuressAlerts: async () => {
+    return fetchAPI('/validator/duress-alerts', { method: 'GET' });
+  },
+
+  acknowledgeValidatorDuressAlert: async (alertId: string) => {
+    return fetchAPI(`/validator/duress-alerts/${alertId}/acknowledge`, {
+      method: 'POST',
+      body: JSON.stringify({ alertId })
+    });
+  },
+
+  getConsensusRequests: async () => {
+    return fetchAPI('/consensus', { method: 'GET' });
   },
 
 
