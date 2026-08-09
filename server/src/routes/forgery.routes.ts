@@ -35,6 +35,43 @@ forgeryRouter.post('/decide', (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Forgery review item not found' });
   }
 
+  // Update corresponding EvidenceRecord in store
+  const ev = primaryStore.getEvidenceById(updated.exhibitId);
+  if (ev) {
+    ev.status = decision === 'Accepted & Admitted' ? 'Admitted to Trial Record' : decision === 'Rejected & Excluded' ? 'Quarantined / Struck' : 'Under CFSL Review';
+    primaryStore.saveEvidence(ev);
+  }
+
+  // Update RichCaseRecord exhibit status in store
+  if (updated.caseId) {
+    const rc = primaryStore.getRichCaseById(updated.caseId);
+    if (rc && rc.evidenceTimeline) {
+      const ex = rc.evidenceTimeline.find(e => e.id === updated.exhibitId || e.title === updated.title);
+      if (ex) {
+        ex.integrityStatus = decision === 'Accepted & Admitted' ? 'Pass' : 'Flagged';
+        ex.details = `Judicial Order: ${decision}. Signature: ${digitalSignatureHash}. ${notes || ''}`;
+        primaryStore.saveRichCase(rc);
+      }
+    }
+  }
+
+  // Save real-time notification for Field Submitter
+  primaryStore.saveNotification({
+    id: `notif-jdec-${Date.now()}`,
+    type: 'forgery',
+    title: `Judicial Ruling Issued: ${updated.exhibitId}`,
+    message: `Presiding Judge issued ruling: [${decision.toUpperCase()}] for Exhibit ${updated.title}.`,
+    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    isoDate: new Date().toISOString(),
+    isRead: false,
+    priority: decision === 'Accepted & Admitted' ? 'high' : 'critical',
+    caseId: updated.caseId,
+    sender: 'High Court Bench 3',
+    details: `Digital Signature Hash: ${digitalSignatureHash}. ${notes || ''}`,
+    roleScope: 'field_submitter',
+    createdAt: new Date().toISOString()
+  });
+
   // Update corresponding standard review item if it exists
   const standardReview = primaryStore.getForgeryReviews().find(r => r.id === updated.id || r.exhibitId === updated.exhibitId);
   if (standardReview) {

@@ -527,13 +527,17 @@ const INITIAL_QUEUE: ForgeryQueueItem[] = [
 export function ForgeryReviewQueueTab() {
   const [items, setItems] = useState<ForgeryQueueItem[]>([]);
 
-  // Load dynamically submitted evidence from Field Submitter
+  // Real-Time Polling Engine (3s interval) for live Hash Chain, Merkle Proofs & Queue Updates
   useEffect(() => {
     const fetchQueue = async () => {
       try {
         const res = await api.getForgeryQueue();
-        if (res && res.success && res.reviews) {
-          setItems(res.reviews);
+        if (res && res.success && Array.isArray(res.reviews)) {
+          setItems((prev) => {
+            if (prev.length === 0) return res.reviews;
+            const updatedMap = new Map(res.reviews.map((r: ForgeryQueueItem) => [r.id, r]));
+            return prev.map((item) => updatedMap.get(item.id) || item);
+          });
         }
       } catch (err) {
         console.error('Error fetching forgery queue:', err);
@@ -541,6 +545,7 @@ export function ForgeryReviewQueueTab() {
     };
 
     fetchQueue();
+    const interval = setInterval(fetchQueue, 3000);
 
     try {
       const stored = localStorage.getItem('nyayakasha_submitted_evidence');
@@ -557,6 +562,8 @@ export function ForgeryReviewQueueTab() {
     } catch (e) {
       console.error(e);
     }
+
+    return () => clearInterval(interval);
   }, []);
 
   // SELECTION: null = Directory/List View; Item ID = Deep Detailed Inner Pager View
