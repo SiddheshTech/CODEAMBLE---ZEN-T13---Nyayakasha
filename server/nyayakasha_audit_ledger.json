@@ -2446,3 +2446,62 @@
     "hash": "b5a5e7d819c85c60c686b3ba02a36aa591206af187a97ea6caeb94314dc6c471",
     "blockNumber": 1489311
   },
+  {
+    "id": "audit_1786250575299_112",
+    "index": 112,
+    "timestamp": "2026-08-09T04:42:55.299Z",
+    "eventType": "INVITE_LINK_GENERATED",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "recipientEmail": "dummyacc8712@gmail.com",
+      "targetRole": "field_submitter",
+      "emailSent": true
+    },
+    "payloadHash": "d227041e03cdb679048f70aced98cbaa773abbce25f84336530192a51afeb533",
+    "prevHash": "b5a5e7d819c85c60c686b3ba02a36aa591206af187a97ea6caeb94314dc6c471",
+    "hash": "5ef5973fb518049e139367345737c228476c301fdec80121e7954d91302cb5b2",
+    "blockNumber": 1489312
+  },
+  {
+    "id": "audit_1786250620003_113",
+    "index": 113,
+    "timestamp": "2026-08-09T04:43:40.002Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8835",
+      "evidenceHash": "63789f7426b1d470a7a8373600aa880d7e28f00181cca5e9b0c8ad51704a2f1f",
+      "caseId": "FIR-2026-001",
+      "txHash": "0x43683320125bd505308098d390182bc4e34087873566760ce882b861099399ba",
+      "merkleRoot": "0x1c15f0af360dfa9315f944f570801b89eecf30240260291073910684ff478629",
+      "blockNumber": 15018713,
+      "fullPayload": {
+        "exhibitId": "EV-8835",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "63789f7426b1d470a7a8373600aa880d7e28f00181cca5e9b0c8ad51704a2f1f",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: Result 2025 (1)_page-0001.png",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: Authentic (Original) (81.1%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-09T04:43:39.993Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "e98475352bfdf6668c26c941f99643a02f15b67a4d330edc2edc6269df1819bc",
+    "prevHash": "5ef5973fb518049e139367345737c228476c301fdec80121e7954d91302cb5b2",
+    "hash": "2f0571bf14d0fb73c88cadae37aa1ba0e33c9feef010806489bc5076b0e84d3a",
+    "blockNumber": 1489313
+  }
+]
