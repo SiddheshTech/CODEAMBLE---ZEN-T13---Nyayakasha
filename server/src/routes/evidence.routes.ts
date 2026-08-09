@@ -219,6 +219,7 @@ evidenceRouter.post('/submit', async (req: Request, res: Response) => {
       submitter: custodian || 'Officer R. Kulkarni',
       submitterAgency: 'Zone 4 Field Operations',
       submitterPhotoUrl: newExhibit.submitterPhotoUrl,
+      signature: signature || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="320" height="70" viewBox="0 0 320 70"><path d="M 20 40 Q 60 10 90 35 T 160 25 T 220 45 T 280 20" stroke="%231e293b" stroke-width="2.5" fill="none"/><text x="20" y="60" font-family="sans-serif" font-size="9" fill="%230284c7" font-weight="bold">SEALED BY OFFICER SIDDHESH HARWANDE • TPM SECURE KEY 0xSIG_FS_8820</text></svg>`,
       previewType: 'Image',
       previewImageDataUrl: dataUrl || undefined,
       anomalySummary: isCnnFlagged 

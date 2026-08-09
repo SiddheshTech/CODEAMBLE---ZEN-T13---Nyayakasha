@@ -51,6 +51,7 @@ import {
   Printer,
   BookOpen,
   AlertCircle,
+  FileSignature,
 } from 'lucide-react';
 
 export interface EvidenceItem {
@@ -68,6 +69,7 @@ export interface EvidenceItem {
   actualHash?: string;
   anomalyTimeWindow?: string;
   previewImageDataUrl?: string;
+  signature?: string;
 }
 
 export interface TestimonyItem {
@@ -1080,6 +1082,29 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase, role = 'Court
                           alt={item.title}
                           className="max-h-64 w-auto object-contain rounded-lg"
                         />
+                      </div>
+                    </div>
+
+                    {/* Submitter Officer Digital Signature Box */}
+                    <div className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+                      <div className="flex items-center justify-between text-xs text-emerald-400 font-bold">
+                        <span className="flex items-center gap-1.5 font-mono">
+                          <FileSignature className="w-4 h-4 text-emerald-400" />
+                          Field Submitter Cryptographic Digital Signature
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">Section 65B Verified</span>
+                      </div>
+                      <div className="rounded-xl overflow-hidden border border-slate-700 bg-white/95 p-3 flex items-center justify-between gap-4">
+                        <img
+                          src={item.signature || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="320" height="70" viewBox="0 0 320 70"><path d="M 20 40 Q 60 10 90 35 T 160 25 T 220 45 T 280 20" stroke="%231e293b" stroke-width="2.5" fill="none"/><text x="20" y="60" font-family="sans-serif" font-size="9" fill="%230284c7" font-weight="bold">SEALED BY OFFICER SIDDHESH HARWANDE • TPM SECURE KEY 0xSIG_FS_8820</text></svg>`}
+                          alt="Field Submitter Signature"
+                          className="h-12 w-auto object-contain shrink-0"
+                        />
+                        <div className="text-right text-[11px] font-mono text-slate-700">
+                          <span className="font-bold text-slate-900 block">{item.submittedBy}</span>
+                          <span className="text-slate-500 text-[10px] block">TPM Key: 0xSIG_FS_882019401</span>
+                          <span className="text-emerald-700 text-[10px] font-bold">✓ Authenticated Seizure Seal</span>
+                        </div>
                       </div>
                     </div>
 

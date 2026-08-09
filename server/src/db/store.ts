@@ -109,6 +109,7 @@ export interface CaseEvidenceItem {
   actualHash?: string;
   anomalyTimeWindow?: string;
   previewImageDataUrl?: string;
+  signature?: string;
 }
 
 export interface CaseTestimonyItem {
@@ -356,6 +357,7 @@ export interface ForgeryQueueItem {
   submitter: string;
   submitterAgency: string;
   submitterPhotoUrl?: string;
+  signature?: string;
   timestamp: string;
   status: 'Flagged' | 'Pending Scan' | 'Cleared' | 'Escalated' | 'Rejected';
   confidenceScore: number; // AI Authenticity score 0-100
