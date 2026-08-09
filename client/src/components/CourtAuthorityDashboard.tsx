@@ -80,7 +80,7 @@ export function CourtAuthorityDashboard({
   
   // INNER DETAILED PAGE STATE
   const [activeDetailItem, setActiveDetailItem] = useState<AttentionItem | null>(null);
-  const [detailInnerTab, setDetailInnerTab] = useState<'analysis' | 'ledger' | 'custody' | 'order'>('analysis');
+  const [detailInnerTab, setDetailInnerTab] = useState<'summary' | 'optical' | 'ledger' | 'custody' | 'statutory' | 'order'>('summary');
   const [judicialOrderText, setJudicialOrderText] = useState('');
   const [orderSubmitted, setOrderSubmitted] = useState<string | null>(null);
   const [isSigningKey, setIsSigningKey] = useState(false);
