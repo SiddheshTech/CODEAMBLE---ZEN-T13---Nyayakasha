@@ -144,6 +144,7 @@ def index():
 
 
 @app.route('/analyze_local', methods=['POST'])
+@app.route('/predict', methods=['POST'])
 def analyze_evidence_locally():
     if 'file' not in request.files:
         return jsonify({"error": "No file in request"}), 400

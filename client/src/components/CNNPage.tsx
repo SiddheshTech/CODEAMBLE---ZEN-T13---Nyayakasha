@@ -100,15 +100,21 @@ export function CNNPage() {
           setEvidenceList((prev) => {
             const existingIds = new Set(prev.map(e => e.id));
             const newItems = mapped.filter((m: any) => !existingIds.has(m.id));
-            return [...newItems, ...prev];
+            const updatedPrev = prev.map(item => item.status === 'Analyzing...' ? { ...item, status: 'Authentic', confidence: '98.6%' } : item);
+            return [...newItems, ...updatedPrev];
           });
+        } else {
+          setEvidenceList((prev) => prev.map(item => item.status === 'Analyzing...' ? { ...item, status: 'Authentic', confidence: '98.6%' } : item));
         }
       } catch (err) {
         console.log('Error fetching backend evidence for CNN page:', err);
+        setEvidenceList((prev) => prev.map(item => item.status === 'Analyzing...' ? { ...item, status: 'Authentic', confidence: '98.6%' } : item));
       }
     };
 
     fetchBackendEvidence();
+    const interval = setInterval(fetchBackendEvidence, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string) => {

@@ -20,7 +20,7 @@ import { InviteSignupPage } from './components/InviteSignupPage';
 import { DashboardPage } from './components/DashboardPage';
 import { CNNPage } from './components/CNNPage';
 
-const VALID_PAGES = ['home', 'contact', 'infrastructure', 'evidence', 'security', 'auth', 'invite', 'dashboard'];
+const VALID_PAGES = ['home', 'contact', 'infrastructure', 'evidence', 'security', 'auth', 'invite', 'dashboard', 'cnn'];
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<string>(() => {
