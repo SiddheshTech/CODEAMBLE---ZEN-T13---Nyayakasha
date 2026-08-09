@@ -311,6 +311,7 @@ export const api = {
     preservationType?: string;
     tags?: string[];
     evidenceNotes?: string;
+    submitterPhotoUrl?: string;
     gpsLocation?: any;
   }) => {
     return fetchAPI('/evidence/submit', {

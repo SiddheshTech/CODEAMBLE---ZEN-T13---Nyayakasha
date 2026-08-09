@@ -532,7 +532,21 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
         return 'Officer R. Kulkarni (Zone 4 Field Operations)';
       };
 
+      const getCurrentUserProfilePhoto = () => {
+        try {
+          const userStr = localStorage.getItem('nyayakasha_user');
+          if (userStr) {
+            const u = JSON.parse(userStr);
+            if (u.profilePhotoUrl) return u.profilePhotoUrl;
+          }
+        } catch (e) {}
+        return undefined;
+      };
+
       const activeCustodian = getCurrentUserCustodianName();
+      const activeSubmitterPhoto = getCurrentUserProfilePhoto();
+
+      (newExhibit as any).submitterPhotoUrl = activeSubmitterPhoto;
 
       api.submitEvidence({
         caseId: firNumber || 'FIR-2026-9041',
@@ -548,6 +562,7 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
         preservationType,
         tags: tagsInput ? tagsInput.split(',').map(t => t.trim()) : ['Field Evidence'],
         evidenceNotes,
+        submitterPhotoUrl: activeSubmitterPhoto,
         signature: signatureDataUrl,
         gpsLocation: `${gpsLocation.lat}, ${gpsLocation.lng}`,
         latitude: parseFloat(gpsLocation.lat.replace(/[^0-9.]/g, '')) || 19.0760,

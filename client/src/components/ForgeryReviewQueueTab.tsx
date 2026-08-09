@@ -1295,7 +1295,17 @@ export function ForgeryReviewQueueTab() {
                     </div>
                     <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center gap-3">
                       <img
-                        src={selectedItem.submitterPhotoUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'}
+                        src={(() => {
+                          if (selectedItem.submitterPhotoUrl && selectedItem.submitterPhotoUrl.length > 10) return selectedItem.submitterPhotoUrl;
+                          try {
+                            const userStr = localStorage.getItem('nyayakasha_user');
+                            if (userStr) {
+                              const u = JSON.parse(userStr);
+                              if (u.profilePhotoUrl && u.profilePhotoUrl.length > 10) return u.profilePhotoUrl;
+                            }
+                          } catch (e) {}
+                          return 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80';
+                        })()}
                         alt={selectedItem.submitter}
                         className="w-11 h-11 rounded-full border-2 border-indigo-600 object-cover shrink-0 shadow-xs"
                       />

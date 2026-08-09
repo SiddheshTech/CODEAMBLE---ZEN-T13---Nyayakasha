@@ -1008,7 +1008,17 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase, role = 'Court
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2.5 bg-indigo-50/80 px-3 py-1.5 rounded-xl border border-indigo-100">
                           <img
-                            src={(item as any).submitterPhotoUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'}
+                            src={(() => {
+                              if ((item as any).submitterPhotoUrl && (item as any).submitterPhotoUrl.length > 10) return (item as any).submitterPhotoUrl;
+                              try {
+                                const userStr = localStorage.getItem('nyayakasha_user');
+                                if (userStr) {
+                                  const u = JSON.parse(userStr);
+                                  if (u.profilePhotoUrl && u.profilePhotoUrl.length > 10) return u.profilePhotoUrl;
+                                }
+                              } catch (e) {}
+                              return 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80';
+                            })()}
                             alt="Field Submitter Officer"
                             className="w-8 h-8 rounded-full border-2 border-indigo-500 object-cover shadow-xs"
                           />
