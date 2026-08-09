@@ -655,8 +655,8 @@ class PrimaryDataStore {
 
       const defaultFieldSub: UserRecord = {
         id: 'usr_seed_field',
-        email: 'r.kulkarni@nyayakasha.gov.in',
-        fullName: 'OFFICER RAJESH KULKARNI',
+        email: 'siddhesh@nyayakasha.gov.in',
+        fullName: 'Officer Siddhesh Harwande (Zone 4 Field Operations)',
         role: 'field_submitter',
         passwordHash: 'seeded',
         approvalState: 'active',
@@ -664,6 +664,7 @@ class PrimaryDataStore {
         institutionVerified: true,
         vettingApproved: true,
         mfaEnrolled: true,
+        profilePhotoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
         contactExtension: '+91 (022) 2650-1122 ext. 104',
         chambersLocation: 'Room 104, Zone 4 Cyber Crime Precinct',
         appointmentRef: 'MH-POL-29384',

@@ -928,5 +928,76 @@
     "prevHash": "91a924415e98509732904eb48e5dfb286df6ccb40ef14aa98b5e66d3fb90ed5f",
     "hash": "072e65ecb1d3c37643ff59d09ad3aefa4d1c81653dcb532204202d1883d85577",
     "blockNumber": 1489246
+  },
+  {
+    "id": "audit_1786244542472_47",
+    "index": 47,
+    "timestamp": "2026-08-09T03:02:22.472Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786244542423",
+    "userRole": "court_authority",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786244542471_6my8ym",
+      "approvalState": "active"
+    },
+    "payloadHash": "38b64e8f51b23b705e338d84d09fef8fc9a58f4265349367104cc2d0a8cc0c2a",
+    "prevHash": "072e65ecb1d3c37643ff59d09ad3aefa4d1c81653dcb532204202d1883d85577",
+    "hash": "4a6360c0d45323420e5aab57f20e782205f415a289f6e4269c42c731ed9df14f",
+    "blockNumber": 1489247
+  },
+  {
+    "id": "audit_1786244542515_48",
+    "index": 48,
+    "timestamp": "2026-08-09T03:02:22.515Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "dasdad@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "dasdad@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "66bbe9ff5e1f4ed3f4c11525656675df386bc986b4a03f2709050b53d1759c99",
+    "prevHash": "4a6360c0d45323420e5aab57f20e782205f415a289f6e4269c42c731ed9df14f",
+    "hash": "9ffcd0cf2d357734d60bfbba5c21069223510ccdf98d1bba6bb562cace50b669",
+    "blockNumber": 1489248
+  },
+  {
+    "id": "audit_1786244543538_49",
+    "index": 49,
+    "timestamp": "2026-08-09T03:02:23.538Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "dasdad@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Chrome / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "dcb7fe4e54f2703c65a8f06bd3a9fa85b72232df39e054308e043bf166ef21ae",
+    "prevHash": "9ffcd0cf2d357734d60bfbba5c21069223510ccdf98d1bba6bb562cace50b669",
+    "hash": "06d1c78f25fdfe40cd720ea08d361453c08aa926f571148ba0324c6623de0dad",
+    "blockNumber": 1489249
+  },
+  {
+    "id": "audit_1786244550274_50",
+    "index": 50,
+    "timestamp": "2026-08-09T03:02:30.274Z",
+    "eventType": "DURESS_PIN_ENROLLED",
+    "userId": "usr_auto_1786244542423",
+    "userRole": "court_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "hasDuressPin": true,
+      "optInRole": "court_authority"
+    },
+    "payloadHash": "7066aa88384fb0c86eea5bcdc71c7f00303dbeb8a7d29347fa91f13583e9c087",
+    "prevHash": "06d1c78f25fdfe40cd720ea08d361453c08aa926f571148ba0324c6623de0dad",
+    "hash": "37b55f0aaf648931481c2a21e75561342abb106d8c03cb2ac141bb39920ce647",
+    "blockNumber": 1489250
   }
 ]

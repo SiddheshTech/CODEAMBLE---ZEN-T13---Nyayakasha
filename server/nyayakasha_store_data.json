@@ -5384,6 +5384,28 @@
       "realPinHash": "$argon2id$v=19$m=65536,t=3,p=4$0thcoIo8lESbN4PpwT+cdQ$VPqGrD3m1+dUmvSWG376hiLrxN8HASgJoCF0cyuqiss",
       "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$H0TR8HboscHhk4gPO3ptvA$/AiSTLBAyVzzx9i0cM3dl7hADKvhnYSz2iDdG0e06RM",
       "updatedAt": "2026-08-09T02:10:35.068Z"
+    },
+    {
+      "id": "usr_auto_1786244542423",
+      "email": "dasdad@gmail.com",
+      "fullName": "DASDAD",
+      "role": "court_authority",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$GAml1VBoSGUT0DxjgC624w$wsswSeSQYplEKYWonkdfbXSPJuTyZbogzARLVmvUpyo",
+      "approvalState": "active",
+      "stateHistory": [
+        {
+          "state": "active",
+          "timestamp": "2026-08-09T03:02:22.423Z",
+          "note": "Auto-provisioned"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": true,
+      "mfaEnrolled": true,
+      "createdAt": "2026-08-09T03:02:22.423Z",
+      "updatedAt": "2026-08-09T03:02:30.258Z",
+      "realPinHash": "$argon2id$v=19$m=65536,t=3,p=4$Ovc8U9FFuzXEqeWmxX0x5g$vKEgw2oZtuGGGljvIoEcx2IjL/DtUbTC3FUjAkvYBb4",
+      "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$j7YkXTr8hrG0B7QI82e4yw$Yxxht43SDNTWYVUW1fLvZOIazzRxXGjnH8BNTPjC3Ts"
     }
   ],
   "duressAlerts": [
