@@ -152,11 +152,13 @@ profileRoutes.patch('/', async (req: Request, res: Response) => {
         id: user.id,
         fullName: user.fullName,
         email: user.email,
+        role: user.role,
         contactExtension: user.contactExtension,
         chambersLocation: user.chambersLocation,
         appointmentRef: user.appointmentRef,
         authorityScope: user.authorityScope,
         barCouncilNumber: user.barCouncilNumber,
+        profilePhotoUrl: user.profilePhotoUrl || null
       }
     });
   } catch (error: any) {

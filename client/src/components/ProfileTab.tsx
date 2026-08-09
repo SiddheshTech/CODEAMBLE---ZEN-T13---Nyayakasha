@@ -34,18 +34,27 @@ export function ProfileTab({ role }: { role: string }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      showToast('Photo size must be under 5MB');
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('Photo size must be under 10MB');
       return;
     }
 
     const reader = new FileReader();
     reader.onload = async () => {
       const dataUrl = reader.result as string;
+
+      // Update state & storage immediately for instant visual rendering
+      setProfileData((prev: any) => ({ ...(prev || {}), profilePhotoUrl: dataUrl }));
+      try {
+        const uStr = localStorage.getItem('nyayakasha_user');
+        const existing = uStr ? JSON.parse(uStr) : {};
+        localStorage.setItem('nyayakasha_user', JSON.stringify({ ...existing, profilePhotoUrl: dataUrl }));
+      } catch (e) {}
+
       try {
         const res = await api.updateProfile({ profilePhotoUrl: dataUrl });
         if (res.success && res.profile) {
-          setProfileData(res.profile);
+          setProfileData((prev: any) => ({ ...(prev || {}), ...res.profile, profilePhotoUrl: res.profile.profilePhotoUrl || dataUrl }));
           showToast('Official Field Submitter Profile Photo uploaded & institutionally bound!');
         }
       } catch (err: any) {
