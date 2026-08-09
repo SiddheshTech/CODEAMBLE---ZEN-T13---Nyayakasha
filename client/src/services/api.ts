@@ -215,6 +215,63 @@ export const api = {
     });
   },
 
+  getRichCases: async () => {
+    return fetchAPI('/cases/rich/all', { method: 'GET' });
+  },
+
+  getRichCaseById: async (id: string) => {
+    return fetchAPI(`/cases/rich/detail/${id}`, { method: 'GET' });
+  },
+
+  addRichCaseEvidence: async (caseId: string, params: { title: string; type?: string; details?: string; submittedBy?: string }) => {
+    return fetchAPI(`/cases/rich/detail/${caseId}/evidence`, {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  },
+
+  addRichCaseNote: async (caseId: string, params: { content: string; category?: string; author?: string }) => {
+    return fetchAPI(`/cases/rich/detail/${caseId}/notes`, {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  },
+
+  addRichCaseOrder: async (caseId: string, params: { title: string; type?: string; summary: string; issuedBy?: string }) => {
+    return fetchAPI(`/cases/rich/detail/${caseId}/orders`, {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  },
+
+  unlockRichCaseTestimony: async (caseId: string, testimonyId: string, passkey: string) => {
+    return fetchAPI(`/cases/rich/detail/${caseId}/testimonies/${testimonyId}/unlock`, {
+      method: 'POST',
+      body: JSON.stringify({ passkey })
+    });
+  },
+
+  transferRichCaseCustody: async (caseId: string, params: { recipient: string; reason: string; actor?: string; location?: string; biometricVerified?: boolean; gpsCoordinates?: string }) => {
+    return fetchAPI(`/cases/rich/detail/${caseId}/custody/transfer`, {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  },
+
+  authorizeRichCaseCustodyTransfer: async (caseId: string, params: { recipient: string; reason: string; actor?: string; location?: string; biometricVerified?: boolean; gpsCoordinates?: string }) => {
+    return fetchAPI(`/cases/rich/detail/${caseId}/custody/transfer`, {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  },
+
+  updateRichCaseEvidenceStatus: async (caseId: string, evidenceId: string, decision: 'ADMIT' | 'STRIKE') => {
+    return fetchAPI(`/cases/rich/detail/${caseId}/evidence/${evidenceId}/status`, {
+      method: 'POST',
+      body: JSON.stringify({ decision })
+    });
+  },
+
   getEvidence: async (caseId?: string) => {
     return fetchAPI('/evidence' + (caseId ? `?caseId=${encodeURIComponent(caseId)}` : ''), { method: 'GET' });
   },
@@ -575,56 +632,5 @@ export const api = {
 
   courtAuthoritySearch: async (query: string) => {
     return fetchAPI(`/court-authority/case-search?q=${encodeURIComponent(query)}`, { method: 'GET' });
-  },
-
-  // --- COURT AUTHORITY CASE FILES REPOSITORY ---
-  getRichCases: async () => {
-    return fetchAPI('/cases/rich/all', { method: 'GET' });
-  },
-
-  getRichCaseById: async (id: string) => {
-    return fetchAPI(`/cases/rich/detail/${id}`, { method: 'GET' });
-  },
-
-  addRichCaseEvidence: async (id: string, data: { title: string; type: string; details?: string; submittedBy?: string }) => {
-    return fetchAPI(`/cases/rich/detail/${id}/evidence`, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
-  },
-
-  addRichCaseNote: async (id: string, data: { content: string; category?: string; author?: string }) => {
-    return fetchAPI(`/cases/rich/detail/${id}/notes`, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
-  },
-
-  addRichCaseOrder: async (id: string, data: { title: string; type: string; summary: string; issuedBy?: string }) => {
-    return fetchAPI(`/cases/rich/detail/${id}/orders`, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
-  },
-
-  unlockRichCaseTestimony: async (id: string, testimonyId: string, passkey: string) => {
-    return fetchAPI(`/cases/rich/detail/${id}/testimonies/${testimonyId}/unlock`, {
-      method: 'POST',
-      body: JSON.stringify({ passkey })
-    });
-  },
-
-  authorizeRichCaseCustodyTransfer: async (id: string, data: { recipient: string; reason: string; actor?: string; location?: string; biometricVerified?: boolean; gpsCoordinates?: string }) => {
-    return fetchAPI(`/cases/rich/detail/${id}/custody/transfer`, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
-  },
-
-  updateRichCaseEvidenceStatus: async (id: string, evidenceId: string, decision: 'ADMIT' | 'STRIKE') => {
-    return fetchAPI(`/cases/rich/detail/${id}/evidence/${evidenceId}/status`, {
-      method: 'POST',
-      body: JSON.stringify({ decision })
-    });
   },
 };
