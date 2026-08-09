@@ -235,5 +235,75 @@
     "prevHash": "2f636b0ce5d836e9d32e800619512932729a1604e40896bb0cde406f4d2e441f",
     "hash": "6ced7bd220548d1ed167d1b1384526ca7674924b946b5b771e26efcbe2821c85",
     "blockNumber": 1489213
+  },
+  {
+    "id": "audit_1786238975621_14",
+    "index": 14,
+    "timestamp": "2026-08-09T01:29:35.621Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786235166289",
+    "userRole": "independent_validator",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786238975620_3xosfj",
+      "approvalState": "active"
+    },
+    "payloadHash": "02bdf6f5e5d85f0bc9ffdb005220e8fe26ad6a42eb76966d2dbe38ef53678826",
+    "prevHash": "6ced7bd220548d1ed167d1b1384526ca7674924b946b5b771e26efcbe2821c85",
+    "hash": "c3c5580ae4fe66b8d47f8b5916432e79a85d2680a0e258d6b0578d30415a72ab",
+    "blockNumber": 1489214
+  },
+  {
+    "id": "audit_1786238975631_15",
+    "index": 15,
+    "timestamp": "2026-08-09T01:29:35.631Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "smithkadam24@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "smithkadam24@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "23666f9d3167b67102af117ebdba9fa14b2c450c1a979b13f32ff3629251b7f6",
+    "prevHash": "c3c5580ae4fe66b8d47f8b5916432e79a85d2680a0e258d6b0578d30415a72ab",
+    "hash": "fe9b9ce433042b53384708239bc435290cdc2257899f6e0a765f5ca569215be3",
+    "blockNumber": 1489215
+  },
+  {
+    "id": "audit_1786238978348_16",
+    "index": 16,
+    "timestamp": "2026-08-09T01:29:38.348Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "smithkadam24@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "fe9b9ce433042b53384708239bc435290cdc2257899f6e0a765f5ca569215be3",
+    "hash": "112703ad55f63b0153cf0b663689c28536846fbaca43f61a789795b44073dfbc",
+    "blockNumber": 1489216
+  },
+  {
+    "id": "audit_1786239293900_17",
+    "index": 17,
+    "timestamp": "2026-08-09T01:34:53.890Z",
+    "eventType": "USER_LOGOUT",
+    "userId": "usr_auto_1786235166289",
+    "userRole": "independent_validator",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "sessionId": "sess_1786238975620_3xosfj"
+    },
+    "payloadHash": "2584ce1064b8a096f3859efbd82cce4f9246b6c7abf466c6b125b4397d2b346e",
+    "prevHash": "112703ad55f63b0153cf0b663689c28536846fbaca43f61a789795b44073dfbc",
+    "hash": "a9228de1557d031c827d3870b05891cb250d82a9364ac15f9bd6fc796c2325d6",
+    "blockNumber": 1489217
   }
 ]

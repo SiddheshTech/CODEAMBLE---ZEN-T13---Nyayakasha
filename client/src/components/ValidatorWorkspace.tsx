@@ -111,9 +111,11 @@ function useValidatorWebSocket(
 export function ValidatorWorkspace({
   userFullName,
   viewMode = 'all',
+  onNavigateTab,
 }: {
   userFullName?: string;
-  viewMode?: 'all' | 'duress' | 'consensus';
+  viewMode?: 'dashboard' | 'all' | 'duress' | 'consensus';
+  onNavigateTab?: (tab: string) => void;
 }) {
   const [duressAlerts, setDuressAlerts] = useState<DuressAlertItem[]>([]);
   const [consensusQueue, setConsensusQueue] = useState<ConsensusItem[]>([]);
@@ -235,10 +237,10 @@ export function ValidatorWorkspace({
         <div className="flex items-start justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-black/40 mb-1">
-              {viewMode === 'duress' ? 'Silent Duress Monitoring Enclave' : 'Independent Validator Workspace'}
+              {viewMode === 'dashboard' ? 'Executive Oversight Console' : viewMode === 'duress' ? 'Silent Duress Monitoring Enclave' : 'Independent Validator Workspace'}
             </p>
             <h1 className="text-2xl font-bold text-black tracking-tight">
-              {viewMode === 'duress' ? 'Duress Emergency Alerts & Telemetry' : 'Oversight & Consensus Node'}
+              {viewMode === 'dashboard' ? 'Judicial Oversight & Verification Dashboard' : viewMode === 'duress' ? 'Duress Emergency Alerts & Telemetry' : 'Oversight & Consensus Node'}
             </h1>
             <p className="text-sm text-black/50 mt-1">
               {userFullName ? `Signed in as ${userFullName}` : 'Zero-Knowledge Validator Mode'}
@@ -283,6 +285,167 @@ export function ValidatorWorkspace({
           ))}
         </div>
       </div>
+
+      {/* DEDICATED DASHBOARD VIEW MODE */}
+      {viewMode === 'dashboard' ? (
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Executive Hero Banner */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-black/8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-2 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                Zero-Knowledge Privacy Isolation Active · Node #IV-882
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-black tracking-tight">
+                Independent Judicial Oversight Console
+              </h2>
+              <p className="text-sm text-black/60 leading-relaxed">
+                You are operating as a certified independent validator. Case titles, officer names, and evidence content are cryptographically masked to ensure unbiased multi-sig consensus.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <button
+                onClick={() => onNavigateTab?.('Consensus Requests')}
+                className="px-5 py-3 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+              >
+                <Database className="w-4 h-4" />
+                Open Consensus Queue
+              </button>
+              <button
+                onClick={() => onNavigateTab?.('Duress Alerts')}
+                className="px-5 py-3 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+              >
+                <ShieldAlert className="w-4 h-4" />
+                Open Duress Enclave
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Enclave Action Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div
+              onClick={() => onNavigateTab?.('Duress Alerts')}
+              className="bg-white rounded-2xl border border-black/8 p-6 shadow-xs hover:shadow-md transition-all cursor-pointer group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 mb-4 group-hover:scale-105 transition-transform">
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-bold text-black mb-1 group-hover:text-rose-600 transition-colors">
+                Silent Duress Monitoring
+              </h3>
+              <p className="text-xs text-black/60 leading-relaxed mb-4">
+                Real-time covert distress signal bus. Monitors officer PIN coercion with zero-knowledge hardware isolation.
+              </p>
+              <div className="flex items-center justify-between text-xs font-bold text-rose-600 pt-2 border-t border-black/5">
+                <span>{unacknowledgedAlerts.length} Unacknowledged Alerts</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+
+            <div
+              onClick={() => onNavigateTab?.('Consensus Requests')}
+              className="bg-white rounded-2xl border border-black/8 p-6 shadow-xs hover:shadow-md transition-all cursor-pointer group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-4 group-hover:scale-105 transition-transform">
+                <Database className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-bold text-black mb-1 group-hover:text-blue-600 transition-colors">
+                Multi-Sig Consensus Engine
+              </h3>
+              <p className="text-xs text-black/60 leading-relaxed mb-4">
+                Attest evidence block hashes, record seals, and statutory digital signature integrity before Polygon PoS anchoring.
+              </p>
+              <div className="flex items-center justify-between text-xs font-bold text-blue-600 pt-2 border-t border-black/5">
+                <span>{pendingVotes.length} Pending Consensus Votes</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+
+            <div
+              onClick={() => onNavigateTab?.('Aggregate analytics')}
+              className="bg-white rounded-2xl border border-black/8 p-6 shadow-xs hover:shadow-md transition-all cursor-pointer group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center text-violet-600 mb-4 group-hover:scale-105 transition-transform">
+                <BarChart3 className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-bold text-black mb-1 group-hover:text-violet-600 transition-colors">
+                Aggregate Differential Analytics
+              </h3>
+              <p className="text-xs text-black/60 leading-relaxed mb-4">
+                Homomorphic privacy evaluation. Monitors judicial bench velocity & anomaly drift with minimum k ≥ 50 cohort guards.
+              </p>
+              <div className="flex items-center justify-between text-xs font-bold text-violet-600 pt-2 border-t border-black/5">
+                <span>Cohort Safeguard: MET (k ≥ 50)</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </div>
+
+          {/* Activity & System Telemetry Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white rounded-2xl border border-black/8 p-6 shadow-xs">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-violet-500" />
+                  <h3 className="text-sm font-bold text-black">Live Oversight Activity Log</h3>
+                </div>
+                <span className="text-[10px] text-black/40 font-mono">Node #IV-882</span>
+              </div>
+              {activityLogs.length === 0 ? (
+                <p className="text-xs text-black/40 text-center py-8">No recent activity recorded</p>
+              ) : (
+                <div className="space-y-3">
+                  {activityLogs.slice(0, 5).map(log => (
+                    <div key={log.id} className="flex items-start gap-3 py-2 border-b border-black/5 last:border-0">
+                      <div className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">
+                        ✓
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-black truncate">{log.action}</p>
+                        <p className="text-[10px] text-black/40 mt-0.5">{log.nodeId} · {log.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white rounded-2xl border border-black/8 p-6 shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-black/5 pb-3">
+                <div className="flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-emerald-500" />
+                  <h3 className="text-sm font-bold text-black">Node Cryptographic Telemetry</h3>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                  HEALTHY
+                </span>
+              </div>
+              <div className="space-y-3 text-xs">
+                <div className="flex justify-between py-1 border-b border-black/5">
+                  <span className="text-black/50">Hardware Security Module (HSM):</span>
+                  <span className="font-mono font-semibold text-black">TPM 2.0 Active (Hardware-bound)</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-black/5">
+                  <span className="text-black/50">Zero-Knowledge Proof Scheme:</span>
+                  <span className="font-mono font-semibold text-black">zk-SNARK (secp256k1)</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-black/5">
+                  <span className="text-black/50">Blockchain Anchor Network:</span>
+                  <span className="font-mono font-semibold text-black">Polygon PoS (Chain ID 137)</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-black/5">
+                  <span className="text-black/50">Homomorphic Engine:</span>
+                  <span className="font-mono font-semibold text-black">node-seal (FHE-CKKS)</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-black/50">Privacy Noise Level:</span>
+                  <span className="font-mono font-semibold text-black">Laplace Noise (ε = 0.5)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -699,6 +862,7 @@ export function ValidatorWorkspace({
         </div>
       )}
       </div>
+      )}
     </div>
   );
 }

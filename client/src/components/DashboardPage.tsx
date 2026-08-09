@@ -674,9 +674,11 @@ export function DashboardPage({
               />
             ) : role === 'Independent Validator' ? (
               <ValidatorWorkspace
+                viewMode="dashboard"
                 userFullName={profileData?.fullName || (() => {
                   try { return JSON.parse(localStorage.getItem('nyayakasha_user') || '{}').fullName; } catch { return undefined; }
                 })()}
+                onNavigateTab={(tab) => setActiveTab(tab)}
               />
             ) : (
             <motion.div
