@@ -133,14 +133,20 @@ export function CNNPage() {
       }
 
       try {
-        const response = await fetch('http://127.0.0.1:5001/predict_json', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            dataUrl,
-            evidence_type: type
-          })
-        });
+        let response;
+        try {
+          response = await fetch('http://127.0.0.1:5001/predict_json', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dataUrl, evidence_type: type })
+          });
+        } catch (e) {
+          response = await fetch('http://localhost:5001/predict_json', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dataUrl, evidence_type: type })
+          });
+        }
 
         const result = await response.json();
 
