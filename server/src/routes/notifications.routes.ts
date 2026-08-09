@@ -73,3 +73,24 @@ notificationsRouter.post('/register-device', (req: Request, res: Response) => {
     return res.status(500).json({ error: 'SERVER_ERROR', message: err.message });
   }
 });
+/**
+ * POST /api/notifications/send-test-email
+ * Test sending email with real SMTP credentials
+ */
+notificationsRouter.post('/send-test-email', async (req: Request, res: Response) => {
+  try {
+    const { recipient, subject, body } = req.body;
+    const targetEmail = recipient || process.env.SMTP_USER || 'guptasargam954@gmail.com';
+    const emailSubject = subject || 'Nyayakasha Security System - SMTP Verification Test';
+    const emailBody = body || 'Your updated Gmail App Password SMTP configuration is active and verified!';
+
+    const sent = await notificationService.sendEmail(targetEmail, emailSubject, emailBody);
+    if (sent) {
+      return res.json({ success: true, message: `Email successfully dispatched to ${targetEmail}` });
+    } else {
+      return res.status(500).json({ success: false, message: `Failed sending email to ${targetEmail}. Check server credentials for SMTP_USER/GMAIL_USER and GMAIL_APP_PASS.` });
+    }
+  } catch (err: any) {
+    return res.status(500).json({ error: 'SERVER_ERROR', message: err.message });
+  }
+});
