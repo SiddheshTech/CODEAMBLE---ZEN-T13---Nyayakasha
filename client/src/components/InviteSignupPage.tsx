@@ -6,6 +6,24 @@ import { api } from '../services/api';
 
 type Step = 'invite' | 'details' | 'password' | 'upload' | 'vetting' | 'review' | 'success' | 'approved' | 'mfa' | 'duress' | 'keys' | 'onboarding';
 
+function ApprovalPoller({ onApproved }: { onApproved: () => void }) {
+  useEffect(() => {
+    const checkStatus = async () => {
+      try {
+        const res = await api.getUserStatus();
+        if (res && res.approvalState && (res.approvalState === 'mfa_pending' || res.approvalState === 'active')) {
+          onApproved();
+        }
+      } catch (e) {
+        // silently fail and retry
+      }
+    };
+    const interval = setInterval(checkStatus, 3000);
+    return () => clearInterval(interval);
+  }, [onApproved]);
+  return null;
+}
+
 function calculateBlur(imageData: ImageData) {
   const { width, height, data } = imageData;
   let sum = 0;
@@ -36,11 +54,22 @@ function calculateBlur(imageData: ImageData) {
   return variance;
 }
 
-export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) => void }) {
+export function InviteSignupPage({ onNavigate, isLocked = false }: { onNavigate: (page: string) => void, isLocked?: boolean }) {
   const [step, setStep] = useState<Step>('invite');
   
-  const [assignedRole, setAssignedRole] = useState<'Independent Validator' | 'Court Authority' | 'Field Submitter'>('Independent Validator');
+  const [assignedRole, setAssignedRole] = useState<'Independent Validator' | 'Court Authority' | 'Field Submitter'>('Field Submitter');
   const [validatorSubtype, setValidatorSubtype] = useState<'bar_side' | 'citizen_side'>('bar_side');
+  
+  useEffect(() => {
+    if (isLocked) {
+      const hash = window.location.hash;
+      const params = new URLSearchParams(hash.split('?')[1]);
+      const roleParam = params.get('role');
+      if (roleParam && ['Independent Validator', 'Court Authority', 'Field Submitter'].includes(roleParam)) {
+        setAssignedRole(roleParam as any);
+      }
+    }
+  }, [isLocked]);
   
   // Form State
   const [fullName, setFullName] = useState('');
@@ -339,18 +368,26 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -50 }}
               className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-white p-4 rounded-2xl shadow-2xl border border-black/10 flex items-start gap-4 cursor-pointer hover:bg-gray-50 transition-colors w-[90%] max-w-sm"
-              onClick={() => setStep('approved')}
+              onClick={() => {
+                if (!isLocked) setStep('approved');
+              }}
             >
               <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center shrink-0">
                 <LogoIcon className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h4 className="text-sm font-semibold text-black">Nyayakasha</h4>
-                <p className="text-xs text-black/60 mt-0.5 leading-relaxed">Your account has been approved. Complete setup to continue.</p>
+                <p className="text-xs text-black/60 mt-0.5 leading-relaxed">
+                  {isLocked ? 'Your request has been submitted to Higher Authority.' : 'Your account has been approved. Complete setup to continue.'}
+                </p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {isLocked && step === 'success' && (
+          <ApprovalPoller onApproved={() => setStep('approved')} />
+        )}
 
         <AnimatePresence mode="wait">
           
@@ -366,14 +403,16 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
             >
               {/* Role Preview Switcher Header */}
               <div className="w-full mb-6 p-1.5 bg-[#F5F5F5] rounded-2xl border border-black/5 flex items-center justify-between text-xs font-semibold">
-                <span className="text-black/50 px-3 hidden sm:inline-block">Simulate Role Invite:</span>
+                <span className="text-black/50 px-3 hidden sm:inline-block">
+                  {isLocked ? 'Assigned Role:' : 'Simulate Role Invite:'}
+                </span>
                 <div className="grid grid-cols-3 gap-1 w-full sm:w-auto flex-1">
                   <button
                     type="button"
-                    onClick={() => handleRoleChange('Independent Validator')}
-                    className={`py-2 px-3 rounded-xl transition-all text-center cursor-pointer ${
+                    onClick={() => !isLocked && handleRoleChange('Independent Validator')}
+                    className={`py-2 px-3 rounded-xl transition-all text-center ${!isLocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'} ${
                       assignedRole === 'Independent Validator'
-                        ? 'bg-black text-white shadow-sm'
+                        ? 'bg-black text-white shadow-sm opacity-100'
                         : 'text-black/60 hover:text-black hover:bg-black/5'
                     }`}
                   >
@@ -381,10 +420,10 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleRoleChange('Court Authority')}
-                    className={`py-2 px-3 rounded-xl transition-all text-center cursor-pointer ${
+                    onClick={() => !isLocked && handleRoleChange('Court Authority')}
+                    className={`py-2 px-3 rounded-xl transition-all text-center ${!isLocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'} ${
                       assignedRole === 'Court Authority'
-                        ? 'bg-black text-white shadow-sm'
+                        ? 'bg-black text-white shadow-sm opacity-100'
                         : 'text-black/60 hover:text-black hover:bg-black/5'
                     }`}
                   >
@@ -392,10 +431,10 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleRoleChange('Field Submitter')}
-                    className={`py-2 px-3 rounded-xl transition-all text-center cursor-pointer ${
+                    onClick={() => !isLocked && handleRoleChange('Field Submitter')}
+                    className={`py-2 px-3 rounded-xl transition-all text-center ${!isLocked ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'} ${
                       assignedRole === 'Field Submitter'
-                        ? 'bg-black text-white shadow-sm'
+                        ? 'bg-black text-white shadow-sm opacity-100'
                         : 'text-black/60 hover:text-black hover:bg-black/5'
                     }`}
                   >
@@ -1295,8 +1334,9 @@ export function InviteSignupPage({ onNavigate }: { onNavigate: (page: string) =>
                         profilePhotoUrl: imagePreview || undefined
                       });
 
-                      if (selectedImage) {
-                        await api.uploadDocument(selectedImage);
+                      if (isLocked) {
+                        // The user is placed into pending automatically by the backend.
+                        // We no longer need to write to a mock localStorage queue.
                       }
 
                       setStep('success');

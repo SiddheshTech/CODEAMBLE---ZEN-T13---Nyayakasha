@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, LayoutDashboard } from 'lucide-react';
 import { LogoIcon } from './LogoIcon';
+import { DemoRequestModal } from './DemoRequestModal';
 
 export function Navbar({ onNavigate, currentPage = 'home' }: { onNavigate?: (page: string) => void, currentPage?: string }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
   useEffect(() => {
     const logged = localStorage.getItem('nyayakasha_is_logged_in') === 'true';
@@ -78,12 +80,20 @@ export function Navbar({ onNavigate, currentPage = 'home' }: { onNavigate?: (pag
                 <span>Dashboard {userRole ? `(${userRole})` : ''}</span>
               </button>
             ) : (
-              <button 
-                onClick={() => onNavigate?.('auth')}
-                className="hidden md:block bg-black text-white text-base font-medium px-7 py-2.5 rounded-full hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
-              >
-                Access System
-              </button>
+              <div className="hidden md:flex items-center gap-3">
+                <button 
+                  onClick={() => setIsDemoModalOpen(true)}
+                  className="bg-black/5 text-black text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-black/10 transition-colors duration-200 cursor-pointer border border-black/10"
+                >
+                  Request Demo Access
+                </button>
+                <button 
+                  onClick={() => onNavigate?.('auth')}
+                  className="bg-black text-white text-base font-medium px-7 py-2.5 rounded-full hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
+                >
+                  Access System
+                </button>
+              </div>
             )}
 
             <button 
@@ -120,15 +130,29 @@ export function Navbar({ onNavigate, currentPage = 'home' }: { onNavigate?: (pag
               <span>Go to Dashboard ({userRole || 'Logged In'})</span>
             </button>
           ) : (
-            <button 
-              onClick={() => handleNavigate('auth')}
-              className="w-full bg-black text-white text-lg font-medium px-7 py-4 rounded-full hover:bg-gray-800 transition-colors duration-200 shadow-lg"
-            >
-              Access System
-            </button>
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={() => { setIsMobileMenuOpen(false); setIsDemoModalOpen(true); }}
+                className="w-full bg-black/5 text-black text-lg font-semibold px-7 py-4 rounded-full hover:bg-black/10 transition-colors duration-200"
+              >
+                Request Demo Access
+              </button>
+              <button 
+                onClick={() => handleNavigate('auth')}
+                className="w-full bg-black text-white text-lg font-medium px-7 py-4 rounded-full hover:bg-gray-800 transition-colors duration-200 shadow-lg"
+              >
+                Access System
+              </button>
+            </div>
           )}
         </div>
       </div>
+
+      <DemoRequestModal 
+        isOpen={isDemoModalOpen} 
+        onClose={() => setIsDemoModalOpen(false)} 
+        onApprove={() => handleNavigate('invite')} 
+      />
     </>
   );
 }

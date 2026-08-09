@@ -22,6 +22,7 @@ import { deviceRouter } from './routes/device.routes.js';
 import { profileRoutes } from './routes/profile.routes.js';
 import { courtAuthorityRouter } from './routes/courtAuthority.routes.js';
 import { settingsRoutes } from './routes/settings.routes.js';
+import { adminRouter } from './routes/admin.routes.js';
 import { registerValidatorSocket } from './services/duress.service.js';
 const app = express();
 const server = http.createServer(app);
@@ -35,6 +36,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // Register Routers
 app.use('/api/auth', authRouter);
+app.use('/api/admin', adminRouter);
 app.use('/api/verification', verificationRouter);
 app.use('/api/mfa', mfaRouter);
 app.use('/api/security/device', deviceRouter);

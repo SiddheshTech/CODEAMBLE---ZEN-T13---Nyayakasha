@@ -19,14 +19,17 @@ import { AuthPage } from './components/AuthPage';
 import { InviteSignupPage } from './components/InviteSignupPage';
 import { DashboardPage } from './components/DashboardPage';
 import { CNNPage } from './components/CNNPage';
+import { HigherAuthorityAuthPage } from './components/HigherAuthorityAuthPage';
+import { HigherAuthorityDashboard } from './components/HigherAuthorityDashboard';
 
-const VALID_PAGES = ['home', 'contact', 'infrastructure', 'evidence', 'security', 'auth', 'invite', 'dashboard', 'cnn'];
+const VALID_PAGES = ['home', 'contact', 'infrastructure', 'evidence', 'security', 'auth', 'invite', 'dashboard', 'cnn', 'higher-authority-auth', 'higher-authority', 'invite-locked'];
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<string>(() => {
-    const hash = window.location.hash.replace('#', '');
+    let hash = window.location.hash.replace('#', '');
+    if (hash.includes('?')) hash = hash.split('?')[0];
     if (hash && VALID_PAGES.includes(hash)) {
-      return hash;
+      return window.location.hash.replace('#', ''); // keep full string for routing props
     }
     const savedPage = localStorage.getItem('nyayakasha_current_page');
     const isLoggedIn = localStorage.getItem('nyayakasha_is_logged_in') === 'true';
@@ -52,10 +55,13 @@ export default function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash && VALID_PAGES.includes(hash)) {
+      let hash = window.location.hash.replace('#', '');
+      let baseHash = hash;
+      if (hash.includes('?')) baseHash = hash.split('?')[0];
+      
+      if (baseHash && VALID_PAGES.includes(baseHash)) {
         setCurrentPage(hash);
-        localStorage.setItem('nyayakasha_current_page', hash);
+        localStorage.setItem('nyayakasha_current_page', baseHash);
       }
     };
     window.addEventListener('hashchange', handleHashChange);
@@ -109,13 +115,19 @@ export default function App() {
         <InviteSignupPage onNavigate={handleNavigate} />
       ) : currentPage === 'dashboard' ? (
         <DashboardPage onNavigate={handleNavigate} />
+      ) : currentPage === 'higher-authority-auth' ? (
+        <HigherAuthorityAuthPage onNavigate={handleNavigate} />
+      ) : currentPage === 'higher-authority' ? (
+        <HigherAuthorityDashboard onNavigate={handleNavigate} />
+      ) : currentPage.startsWith('invite-locked') ? (
+        <InviteSignupPage onNavigate={handleNavigate} isLocked={true} />
       ) : currentPage === 'cnn' ? (
         <>
           <Navbar onNavigate={handleNavigate} currentPage={currentPage} />
           <CNNPage />
         </>
       ) : null}
-      {currentPage !== 'auth' && currentPage !== 'invite' && currentPage !== 'dashboard' && (
+      {currentPage !== 'auth' && !currentPage.startsWith('invite') && currentPage !== 'dashboard' && !currentPage.startsWith('higher-authority') && (
         <FooterSection 
           onOpenWhitepaper={() => setIsWhitepaperOpen(true)} 
           onNavigate={handleNavigate}
