@@ -91,7 +91,7 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
           applyCoords(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, pos.coords.altitude || undefined, 'Live Hardware GPS');
         },
         (err) => {
-          console.warn('High accuracy GPS timeout/blocked, trying low accuracy...', err);
+          console.log('High accuracy GPS not available, trying network/cell triangulation...', err.code);
           navigator.geolocation.getCurrentPosition(
             (pos2) => {
               applyCoords(pos2.coords.latitude, pos2.coords.longitude, pos2.coords.accuracy, pos2.coords.altitude || undefined, 'Cell Triangulation');
