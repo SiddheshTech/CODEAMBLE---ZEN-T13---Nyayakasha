@@ -95,16 +95,36 @@ casesRouter.post('/', (req: Request, res: Response) => {
 // ── RICH CASES ENDPOINTS (Court-Authority Case Files Tab) ──────────────────
 
 // GET all rich case dockets with dynamic statistics
-casesRouter.get('/rich/all', (req: Request, res: Response) => {
+casesRouter.get('/rich/all', async (req: Request, res: Response) => {
   const richCases = primaryStore.getRichCases();
+  const allUsers = await primaryStore.getAllUsers();
+  const defaultFieldUser = allUsers.find(u => u.role === 'field_submitter' && u.profilePhotoUrl) || allUsers.find(u => u.profilePhotoUrl);
+
+  const enrichedRichCases = richCases.map(rc => ({
+    ...rc,
+    evidenceTimeline: (rc.evidenceTimeline || []).map(item => {
+      const submitterLower = (item.submittedBy || '').toLowerCase();
+      const matchingUser = allUsers.find(u => {
+        if (!u.fullName) return false;
+        const fnLower = u.fullName.toLowerCase();
+        const firstName = fnLower.split(' ')[0];
+        return submitterLower.includes(fnLower) || (firstName.length > 2 && submitterLower.includes(firstName));
+      }) || defaultFieldUser;
+
+      return {
+        ...item,
+        submitterPhotoUrl: matchingUser?.profilePhotoUrl || (item as any).submitterPhotoUrl
+      };
+    })
+  }));
   
   // Calculate summary counts dynamically based on actual store data
-  let totalCases = richCases.length;
+  let totalCases = enrichedRichCases.length;
   let underReview = 0;
   let flaggedExhibits = 0;
   let sealedPrecedents = 0;
 
-  richCases.forEach((rc) => {
+  enrichedRichCases.forEach((rc) => {
     if (rc.status.toLowerCase() === 'under review') {
       underReview++;
     }
@@ -120,7 +140,7 @@ casesRouter.get('/rich/all', (req: Request, res: Response) => {
 
   return res.json({
     success: true,
-    cases: richCases,
+    cases: enrichedRichCases,
     stats: {
       totalCases,
       underReview,

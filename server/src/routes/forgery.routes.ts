@@ -11,9 +11,29 @@ function calculateSHA256(data: string): string {
 }
 
 // GET all forgery review items in queue
-forgeryRouter.get('/queue', (req: Request, res: Response) => {
+forgeryRouter.get('/queue', async (req: Request, res: Response) => {
   const items = primaryStore.getForgeryQueueItems();
-  return res.json({ success: true, reviews: items });
+  const allUsers = await primaryStore.getAllUsers();
+
+  const fieldUser = allUsers.find(u => u.role === 'field_submitter' && u.profilePhotoUrl) || 
+                    allUsers.find(u => u.profilePhotoUrl);
+
+  const enriched = items.map(item => {
+    const submitterLower = (item.submitter || '').toLowerCase();
+    const matchingUser = allUsers.find(u => {
+      if (!u.fullName) return false;
+      const fnLower = u.fullName.toLowerCase();
+      const firstName = fnLower.split(' ')[0];
+      return submitterLower.includes(fnLower) || (firstName.length > 2 && submitterLower.includes(firstName));
+    }) || fieldUser;
+
+    return {
+      ...item,
+      submitterPhotoUrl: matchingUser?.profilePhotoUrl || item.submitterPhotoUrl
+    };
+  });
+
+  return res.json({ success: true, reviews: enriched });
 });
 
 // POST decide on forgery review item (Accepted / Rejected / Escalated)
