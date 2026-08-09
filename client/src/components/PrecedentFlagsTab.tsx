@@ -445,23 +445,39 @@ export function PrecedentFlagsTab() {
     api.getPrecedentFlags()
       .then(res => {
         if (res && res.success && res.flags) {
-          setFlags((prev) => {
-            return prev.map(mockFlag => {
-              const serverFlag = res.flags.find((f: any) => 
-                f.id === mockFlag.id || 
-                f.id.replace('PREC-70', 'FLAG-2026-00') === mockFlag.id
-              );
-              if (serverFlag) {
-                return {
-                  ...mockFlag,
-                  status: serverFlag.status === 'Resolved' || serverFlag.status === 'Reviewed' ? 'Reviewed' : 'Pending Review',
-                  reviewedBy: serverFlag.resolvedBy || mockFlag.reviewedBy,
-                  reviewedAt: serverFlag.resolvedAt ? new Date(serverFlag.resolvedAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : mockFlag.reviewedAt
-                };
-              }
-              return mockFlag;
-            });
+          const mapped = res.flags.map((sf: any) => {
+            const matchedMock = INITIAL_FLAGS.find(mf =>
+              mf.id === sf.id ||
+              mf.id.replace('FLAG-2026-00', 'PREC-70') === sf.id ||
+              sf.id.replace('PREC-70', 'FLAG-2026-00') === mf.id
+            );
+            return {
+              id: sf.id,
+              caseId: sf.caseId,
+              caseTitle: sf.caseTitle,
+              factPatternCategory: matchedMock?.factPatternCategory || 'General Procedure Compliance',
+              rulingDate: matchedMock?.rulingDate || '14 Jan 2026',
+              benchCourt: matchedMock?.benchCourt || 'High Court',
+              judgeName: matchedMock?.judgeName || 'Hon. Judge',
+              actualRuling: sf.conflictDescription || matchedMock?.actualRuling,
+              expectedRange: matchedMock?.expectedRange || 'Benchmark guidelines.',
+              deviationSigma: sf.severity === 'Critical' ? '+3.4 σ Outlier' : '+2.5 σ Outlier',
+              deviationDescription: sf.conflictDescription || matchedMock?.deviationDescription,
+              status: sf.status === 'Resolved' || sf.status === 'Reviewed' ? 'Reviewed' : 'Pending Review',
+              reviewNote: sf.resolvedReason || matchedMock?.reviewNote,
+              reviewedBy: sf.resolvedBy || matchedMock?.reviewedBy,
+              reviewedAt: sf.resolvedAt ? new Date(sf.resolvedAt).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : matchedMock?.reviewedAt,
+              benchmarkSampleCount: matchedMock?.benchmarkSampleCount || 1000,
+              similarityScore: matchedMock?.similarityScore || 95,
+              primaryStatutes: matchedMock?.primaryStatutes || [sf.precedentCitation],
+              matchedPrecedents: matchedMock?.matchedPrecedents || [],
+              factVectorComparison: matchedMock?.factVectorComparison || [],
+              distributionData: matchedMock?.distributionData || { medianVal: 'Normal', p90Val: 'Limit', actualVal: 'Outlier', zScore: 3, outlierPercentile: 'Tail' },
+              statutoryChecklist: matchedMock?.statutoryChecklist || [],
+              benchDirectives: matchedMock?.benchDirectives || []
+            };
           });
+          setFlags(mapped);
         }
       })
       .catch(err => console.error('Error fetching precedent flags:', err));

@@ -12,7 +12,8 @@ const profilePatchSchema = z.object({
     authorityScope: z.string().optional(),
     barCouncilNumber: z.string().optional(),
     badgeId: z.string().optional(),
-    appointmentRef: z.string().optional()
+    appointmentRef: z.string().optional(),
+    profilePhotoUrl: z.string().optional()
 });
 /**
  * Helper to get user by header session mapping or active user list
@@ -101,7 +102,8 @@ profileRoutes.get('/', async (req, res) => {
                 keyGenesisDate: formattedGenesisDate,
                 mfaAttestationLevel: user.mfaAttestationLevel || 'Level 3 Hardware Enclave Security',
                 mfaEnrolled: Boolean(user.mfaEnrolled),
-                mfaAttestationValid
+                mfaAttestationValid,
+                profilePhotoUrl: user.profilePhotoUrl || null
             }
         });
     }
@@ -111,7 +113,7 @@ profileRoutes.get('/', async (req, res) => {
 });
 /**
  * PATCH /api/profile
- * Updates the user's profile, explicitly restricting certain fields
+ * Updates the user's profile
  */
 profileRoutes.patch('/', async (req, res) => {
     try {
@@ -134,6 +136,8 @@ profileRoutes.patch('/', async (req, res) => {
             user.badgeId = validatedData.badgeId;
         if (validatedData.appointmentRef !== undefined)
             user.appointmentRef = validatedData.appointmentRef;
+        if (validatedData.profilePhotoUrl !== undefined)
+            user.profilePhotoUrl = validatedData.profilePhotoUrl;
         await primaryStore.saveUser(user);
         return res.json({
             success: true,

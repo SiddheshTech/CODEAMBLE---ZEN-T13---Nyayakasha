@@ -399,7 +399,7 @@ export function CourtAuthorityDashboard({
                     </p>
                   </div>
                   <span className="px-3 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-bold border border-rose-200">
-                    Confidence: 98.4%
+                    Confidence: {(activeDetailItem as any).aiConfidence || '98.4'}%
                   </span>
                 </div>
 
@@ -415,7 +415,9 @@ export function CourtAuthorityDashboard({
                 <div className="p-6 rounded-2xl bg-slate-900 text-white space-y-4">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-slate-300 font-mono">Spectrum & Hash Consistency Vector</span>
-                    <span className="text-amber-400 font-bold font-mono">Mismatch Detected @ Frame 1420</span>
+                    <span className="text-amber-400 font-bold font-mono">
+                      Mismatch Detected @ {(activeDetailItem as any).anomaliesList?.[0]?.frameOrPage || 'Frame 1420'}
+                    </span>
                   </div>
 
                   <div className="h-28 w-full bg-slate-950 rounded-xl border border-white/10 p-4 flex items-end justify-between gap-1">
@@ -433,7 +435,9 @@ export function CourtAuthorityDashboard({
 
                   <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
                     <span>00:00:00 (Start)</span>
-                    <span className="text-rose-400 font-bold">Tamper Window (00:02:14 - 00:02:18)</span>
+                    <span className="text-rose-400 font-bold">
+                      Tamper Window ({(activeDetailItem as any).anomaliesList?.[0]?.timestampOffset ? `${(activeDetailItem as any).anomaliesList[0].timestampOffset} - ${(activeDetailItem as any).anomaliesList[1]?.timestampOffset || ''}` : '00:02:14 - 00:02:18'})
+                    </span>
                     <span>00:05:00 (End)</span>
                   </div>
                 </div>
@@ -446,15 +450,21 @@ export function CourtAuthorityDashboard({
                   </div>
                   <div className="p-3 grid grid-cols-2 border-b border-slate-100">
                     <span className="text-slate-600">Expected SHA-256 Hash</span>
-                    <span className="font-mono text-slate-900 font-bold">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</span>
+                    <span className="font-mono text-slate-900 font-bold break-all">
+                      {(activeDetailItem as any).originalHash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}
+                    </span>
                   </div>
                   <div className="p-3 grid grid-cols-2 border-b border-slate-100">
                     <span className="text-slate-600">Actual Ledger SHA-256 Hash</span>
-                    <span className="font-mono text-rose-700 font-bold">a1c4d92298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b112</span>
+                    <span className="font-mono text-rose-700 font-bold break-all">
+                      {(activeDetailItem as any).submittedHash || 'a1c4d92298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b112'}
+                    </span>
                   </div>
                   <div className="p-3 grid grid-cols-2">
                     <span className="text-slate-600">Hardware TPM Sensor Signature</span>
-                    <span className="text-emerald-700 font-bold">Verified Knox Hardware Key #9022</span>
+                    <span className="text-emerald-700 font-bold">
+                      {(activeDetailItem as any).metadataCheck?.technicalNote || 'Verified Knox Hardware Key #9022'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -520,7 +530,7 @@ export function CourtAuthorityDashboard({
                 </p>
               </div>
               <span className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-900 text-xs font-bold font-mono">
-                Block #89201
+                Block #{(activeDetailItem as any).blockNumber || '89201'}
               </span>
             </div>
 
@@ -528,15 +538,17 @@ export function CourtAuthorityDashboard({
               <div className="p-5 rounded-2xl bg-slate-900 text-white font-mono text-xs space-y-3">
                 <div className="flex items-center justify-between border-b border-white/10 pb-2 text-slate-400">
                   <span>ZK-SNARK Proof Header</span>
-                  <span className="text-emerald-400">Status: Validated (2/3 Multi-Sig)</span>
+                  <span className="text-emerald-400">
+                    Status: {votedItems[activeDetailItem.id] || (activeDetailItem as any).courtAuthorityVoteStatus ? 'Validated (3/3 Multi-Sig)' : 'Pending (2/3 Multi-Sig)'}
+                  </span>
                 </div>
                 <div className="space-y-1">
                   <p className="text-slate-400">// Merkle Root Digest</p>
-                  <p className="text-indigo-300 break-all">0x7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069</p>
+                  <p className="text-indigo-300 break-all">{(activeDetailItem as any).merkleRoot || '0x7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069'}</p>
                 </div>
                 <div className="space-y-1 pt-2">
                   <p className="text-slate-400">// Court Validator Hardware Signature</p>
-                  <p className="text-amber-300 break-all">ECDSA_SECP256K1_PUB_KEY: 04e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</p>
+                  <p className="text-amber-300 break-all">ECDSA_SECP256K1_PUB_KEY: {(activeDetailItem as any).validatorSignature || '04e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}</p>
                 </div>
               </div>
 
@@ -547,7 +559,7 @@ export function CourtAuthorityDashboard({
                 {[
                   { name: 'High Court Judicial Registrar Node', status: 'Signed & Attested', time: 'Today, 08:30 AM', icon: CheckCircle2, color: 'text-emerald-600 bg-emerald-50' },
                   { name: 'State Cyber Crime Forensic Node', status: 'Signed & Attested', time: 'Today, 09:12 AM', icon: CheckCircle2, color: 'text-emerald-600 bg-emerald-50' },
-                  { name: 'Court Authority Bench (Your Required Signature)', status: votedItems[activeDetailItem.id] ? 'Signed by You' : 'Awaiting Your Signature', time: votedItems[activeDetailItem.id] ? 'Just Now' : 'Pending', icon: votedItems[activeDetailItem.id] ? CheckCircle2 : Clock, color: votedItems[activeDetailItem.id] ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50' },
+                  { name: 'Court Authority Bench (Your Required Signature)', status: votedItems[activeDetailItem.id] || (activeDetailItem as any).courtAuthorityVoteStatus === 'Approved' ? 'Signed by You' : votedItems[activeDetailItem.id] || (activeDetailItem as any).courtAuthorityVoteStatus === 'Rejected' ? 'Rejected by You' : 'Awaiting Your Signature', time: votedItems[activeDetailItem.id] ? 'Just Now' : (activeDetailItem as any).courtAuthorityVoteStatus ? 'Signed' : 'Pending', icon: votedItems[activeDetailItem.id] || (activeDetailItem as any).courtAuthorityVoteStatus ? CheckCircle2 : Clock, color: votedItems[activeDetailItem.id] || (activeDetailItem as any).courtAuthorityVoteStatus ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50' },
                 ].map((node, idx) => (
                   <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-4 text-xs">
                     <div className="flex items-center gap-3">
@@ -588,24 +600,38 @@ export function CourtAuthorityDashboard({
             </div>
 
             <div className="relative pl-6 space-y-6 border-l-2 border-indigo-200 ml-3">
-              {[
-                { title: 'Evidence Seized at Scene', actor: 'Officer R. Kulkarni (Badge #8902)', location: 'Sector 4 Data Center, Mumbai', time: 'Oct 12, 2026 • 02:15 PM', status: 'Sealed in Tamper Bag #EV-9022' },
-                { title: 'Transferred to Zone 4 Police Vault', actor: 'Custodian S. Patil', location: 'Zone 4 Central Evidence Locker', time: 'Oct 12, 2026 • 04:40 PM', status: 'RFID Logged & Verified' },
-                { title: 'AI Forensic Hash Upload to Ledger', actor: 'Automated Ingestion Pipeline', location: 'High Court Cloud Node #1', time: 'Oct 13, 2026 • 09:00 AM', status: 'Hash Mismatch Flagged' },
-                { title: 'Judicial Chamber Review Requested', actor: 'Court Authority Bench', location: 'Chambers 402, High Court', time: 'Today • Active', status: 'Pending Order' },
-              ].map((step, idx) => (
-                <div key={idx} className="relative space-y-1">
-                  <div className="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-indigo-600 ring-4 ring-white" />
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-bold text-slate-900">{step.title}</h4>
-                    <span className="text-[11px] font-mono text-slate-400">{step.time}</span>
+              {((activeDetailItem as any).custodyTrail || [
+                { stage: 'Evidence Seized at Scene', actor: 'Officer R. Kulkarni', role: 'Field Submitter (Badge #8902)', location: 'Sector 4 Data Center, Mumbai', timestamp: 'Oct 12, 2026 • 02:15 PM', hashVerified: true },
+                { stage: 'Transferred to Zone 4 Police Vault', actor: 'Custodian S. Patil', role: 'Vault Officer', location: 'Zone 4 Central Evidence Locker', timestamp: 'Oct 12, 2026 • 04:40 PM', hashVerified: true },
+                { stage: 'AI Forensic Hash Upload to Ledger', actor: 'Automated Ingestion Pipeline', role: 'System Gateway', location: 'High Court Cloud Node #1', timestamp: 'Oct 13, 2026 • 09:00 AM', hashVerified: false },
+                { stage: 'Judicial Chamber Review Requested', actor: 'Court Authority Bench', role: 'Presiding Judge', location: 'Chambers 402, High Court', timestamp: 'Today • Active', hashVerified: null },
+              ]).map((step: any, idx: number) => {
+                const title = step.stage || step.title;
+                const time = step.timestamp || step.time;
+                let status = step.status || 'RFID Logged & Verified';
+                if (step.hashVerified === true) {
+                  status = 'Hash Verified & Anchored';
+                } else if (step.hashVerified === false) {
+                  status = 'Hash Mismatch Flagged';
+                } else if (step.hashVerified === null) {
+                  status = 'Pending Order';
+                }
+                return (
+                  <div key={idx} className="relative space-y-1">
+                    <div className="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-indigo-600 ring-4 ring-white" />
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-bold text-slate-900">{title}</h4>
+                      <span className="text-[11px] font-mono text-slate-400">{time}</span>
+                    </div>
+                    <p className="text-xs text-slate-600 font-medium">
+                      Actor: {step.actor} {step.role ? `(${step.role})` : ''} • Location: {step.location}
+                    </p>
+                    <span className="inline-block px-2.5 py-0.5 rounded bg-slate-100 text-slate-800 text-[10px] font-bold font-mono">
+                      {status}
+                    </span>
                   </div>
-                  <p className="text-xs text-slate-600 font-medium">Actor: {step.actor} • Location: {step.location}</p>
-                  <span className="inline-block px-2.5 py-0.5 rounded bg-slate-100 text-slate-800 text-[10px] font-bold font-mono">
-                    {step.status}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </motion.div>
         )}
