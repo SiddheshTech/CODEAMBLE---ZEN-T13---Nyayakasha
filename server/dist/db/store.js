@@ -187,33 +187,96 @@ class PrimaryDataStore {
         if (this.forgeryQueueItems.size === 0) {
             const richForgerySeed = [
                 {
-                    id: 'FRG-2026-770',
-                    exhibitId: 'EXH-959',
-                    caseId: 'FIR-12345',
-                    caseTitle: 'State vs. Smith Case File',
-                    courtBench: 'High Court Bench 3',
-                    title: 'smith',
-                    submitter: 'Officer R. Kulkarni',
-                    submitterAgency: 'Zone 4 Field Operations',
-                    timestamp: 'Aug 8, 2026, 9:31 PM',
+                    id: 'FRG-2026-001',
+                    exhibitId: 'EXH-001',
+                    caseId: 'CR-2026-904',
+                    caseTitle: 'State vs. Sector 4 Cyber Heist Syndicate',
+                    courtBench: 'High Court Bench 3 (Presiding: Hon. Justice A. Mehta)',
+                    title: 'CCTV Camera 04 Footage - Sector 4 Server Room (1080p MP4)',
+                    submitter: 'Insp. V. Sharma',
+                    submitterAgency: 'Zone 4 Cyber Crime Directorate',
+                    timestamp: '12 Oct 2026, 09:30 AM',
                     status: 'Flagged',
-                    confidenceScore: 99.4,
-                    previewType: 'Image',
-                    metadataCheck: { status: 'Pass', score: 98, details: 'GPS Geofence (18.5204° N, 73.8567° E) & Seizure Bag SEZ-2026-73610 cryptographically signed.', technicalNote: 'EXIF tags match standard device profile.' },
-                    ganFingerprintCheck: { status: 'Pass', score: 99, details: 'No neural synthesis or deepfake artifacts detected.', technicalNote: 'Spectral energy distribution uniform.' },
-                    docForensicsCheck: { status: 'Pass', score: 98, details: 'EXIF metadata intact and signed with Officer TPM Key.', technicalNote: 'Metadata hash verification passed.' },
-                    originalHash: '0x78c7796e550fe3acb96a0ef11b33c44d55e66f77889900112233445566778899',
-                    submittedHash: '0x78c7796e550fe3acb96a0ef11b33c44d55e66f77889900112233445566778899',
-                    merkleRoot: '0x22a33b44c55d66e77f889900aa11bb22',
-                    blockNumber: 89350,
-                    anomalySummary: 'AI Analysis indicates high authenticity score, but flagged due to automated security rules.',
-                    diffDetails: { originalAspect: 'Direct device capture (Identical)', submittedAspect: 'Submitted copy (Identical)', impactLevel: 'Minor' },
-                    anomaliesList: [],
-                    custodyTrail: [
-                        { id: 'CUST-770-1', stage: 'Seizure', actor: 'Officer R. Kulkarni', role: 'Field Submitter', timestamp: '08 Aug 2026, 09:31 PM', location: 'Precinct 4', hashVerified: true, blockNumber: 89350 }
+                    confidenceScore: 32.4, // AI Authenticity Score
+                    previewType: 'Video',
+                    metadataCheck: {
+                        status: 'Fail',
+                        score: 25,
+                        details: 'EXIF timestamp offset (+04:00 hrs) inconsistent with NTP server logs.',
+                        technicalNote: 'MP4 container creation time header modified at offset 0x000000A4.'
+                    },
+                    ganFingerprintCheck: {
+                        status: 'Fail',
+                        score: 18,
+                        details: 'High-frequency generative artifacts detected in frames 1400-1450 (Deepfake insertion).',
+                        technicalNote: 'FFT spectral energy spikes at 120Hz spatial frequencies indicative of Diffusion-based frame blending.'
+                    },
+                    docForensicsCheck: {
+                        status: 'Pass',
+                        score: 88,
+                        details: 'Video codec quantization matrices uniform across non-edited keyframes.',
+                        technicalNote: 'H.264 macroblock allocation remains consistent outside temporal window 02:14:10-02:14:12.'
+                    },
+                    originalHash: '0x8f2a9910b2a3c4d5e6f7a8b9c0d1e2f3',
+                    submittedHash: '0x8f2a9910b2a3c4d5e6f7a8b9c0d1f0129',
+                    merkleRoot: '0x8f2a9910b2a3c4d5e6',
+                    blockNumber: 89201,
+                    anomalySummary: '"50-frame generative Deepfake insertion detected around timestamp 02:14:10 showing unauthorized figure near server rack."',
+                    diffDetails: {
+                        originalAspect: 'Clean timeline at 02:14:10 with empty rack walkway (Hash: 0x8f2a...e2f3)',
+                        submittedAspect: '50-frame neural insertion depicting suspect in black jumpsuit (Hash: 0x8f2a...f0129)',
+                        impactLevel: 'Critical'
+                    },
+                    anomaliesList: [
+                        {
+                            frameOrPage: 'Frame #1412',
+                            timestampOffset: '02:14:10.400',
+                            anomalyType: 'Generative AI Frame Insertion',
+                            confidenceScore: 94.8,
+                            description: 'Boundary blurring on face mesh and shadow mismatch on concrete floor tiles.',
+                            originalValue: 'Empty floor with ambient floor light reflection',
+                            alteredValue: 'Neural face model inserted with mismatched lighting vectors'
+                        },
+                        {
+                            frameOrPage: 'Frame #1435',
+                            timestampOffset: '02:14:11.166',
+                            anomalyType: 'EXIF Timestamp Manipulation',
+                            confidenceScore: 91.2,
+                            description: 'PTS (Presentation Timestamp) delta jump of +120ms between adjacent B-frames.',
+                            originalValue: 'PTS: 80400 (Continuous 30fps)',
+                            alteredValue: 'PTS: 80520 (Discontinuous jitter)'
+                        }
                     ],
-                    precedents: [],
-                    directives: []
+                    custodyTrail: [
+                        { id: 'CUST-001-1', stage: 'Seizure', actor: 'Insp. V. Sharma', role: 'Field Submitter', timestamp: '12 Oct 2026, 09:30 AM', location: 'Zone 4 Vault', hashVerified: true, blockNumber: 89201 }
+                    ],
+                    precedents: [
+                        {
+                            citation: '(2014) 10 SCC 473 (Supreme Court of India)',
+                            title: 'Anvar P.V. vs. P.K. Basheer & Ors.',
+                            court: 'Supreme Court of India',
+                            relevanceScore: 98.2,
+                            principle: '"Electronic records are inadmissible without Section 65B Evidence Act certificate certifying tamper-proof hash continuity."'
+                        },
+                        {
+                            citation: '(2020) 3 SCC 637 (Supreme Court of India)',
+                            title: 'Arjun Panditrao Khotkar vs. Kailash Kushanrao Gorantyal',
+                            court: 'Supreme Court of India',
+                            relevanceScore: 94.5,
+                            principle: '"Required strict primary evidence or secondary evidence backed by hash audit trails when video authenticity is challenged."'
+                        }
+                    ],
+                    directives: [
+                        {
+                            id: 'DIR-904-8819',
+                            date: '12 Oct 2026, 11:00 AM',
+                            issuedBy: 'Hon. Justice A. Mehta',
+                            type: 'CFSL Forensic Subpoena',
+                            details: 'Court orders immediate seizure of original DVR hard disk drive from Sector 4 facility for physical bitstream analysis.',
+                            status: 'Active',
+                            sealHash: '0xSEAL_DIR_904_8819'
+                        }
+                    ]
                 },
                 {
                     id: 'FRG-2026-113',

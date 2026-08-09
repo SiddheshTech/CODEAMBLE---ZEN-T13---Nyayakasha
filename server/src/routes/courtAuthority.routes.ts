@@ -127,6 +127,10 @@ courtAuthorityRouter.get('/attention-items', (req: Request, res: Response) => {
           custodyTrail: f.custodyTrail,
           precedents: f.precedents,
           directives: f.directives,
+          metadataCheck: f.metadataCheck,
+          ganFingerprintCheck: f.ganFingerprintCheck,
+          docForensicsCheck: f.docForensicsCheck,
+          diffDetails: f.diffDetails,
         });
       });
 

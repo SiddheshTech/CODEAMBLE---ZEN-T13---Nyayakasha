@@ -43,7 +43,8 @@ import {
   UserCheck,
   Terminal,
   Send,
-  Edit3
+  Edit3,
+  BookOpen
 } from 'lucide-react';
 
 interface CourtAuthorityDashboardProps {
@@ -356,13 +357,14 @@ export function CourtAuthorityDashboard({
           </p>
         </div>
 
-        {/* Inner Tab Navigation */}
         <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-2 overflow-x-auto custom-scrollbar">
           {[
-            { id: 'analysis', label: '1. Forensic & Technical Inspection', icon: Cpu },
-            { id: 'ledger', label: '2. Cryptographic Proof & Ledger', icon: ShieldCheck },
-            { id: 'custody', label: '3. Chain of Custody Audit', icon: Fingerprint },
-            { id: 'order', label: '4. Judicial Order & Multi-Sig Execution', icon: Scale },
+            { id: 'summary', label: '1. Executive Forensics Summary', icon: Cpu },
+            { id: 'optical', label: '2. Frame & Pixel Optical Forensics', icon: Search },
+            { id: 'ledger', label: '3. Hash Chain & Merkle Integrity', icon: ShieldCheck },
+            { id: 'custody', label: '4. Chain of Custody Audit Trail', icon: Fingerprint },
+            { id: 'statutory', label: '5. Statutory Admissibility (§ 65B)', icon: BookOpen },
+            { id: 'order', label: '6. Judicial Sign-Off & Orders', icon: Scale },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -379,8 +381,8 @@ export function CourtAuthorityDashboard({
           ))}
         </div>
 
-        {/* TAB 1: FORENSIC & TECHNICAL INSPECTION */}
-        {detailInnerTab === 'analysis' && (
+        {/* TAB 1: EXECUTIVE FORENSICS SUMMARY */}
+        {detailInnerTab === 'summary' && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -392,81 +394,77 @@ export function CourtAuthorityDashboard({
                 <div className="pb-4 border-b border-slate-100 flex items-center justify-between">
                   <div>
                     <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                      <Cpu className="w-5 h-5 text-indigo-600" /> Automated AI Anomaly Analysis Report
+                      <Cpu className="w-5 h-5 text-indigo-600" /> MAYA-BREAK Triple Inspection Diagnostic Matrix
                     </h3>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      Layer 2 & Layer 5 neural forensic verification output.
+                  </div>
+                </div>
+
+                {/* 1. EXIF Metadata Header Analysis */}
+                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-bold text-slate-800">1. EXIF Metadata Header Analysis</h4>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                      (activeDetailItem as any).metadataCheck?.status === 'Fail' 
+                        ? 'bg-rose-100 text-rose-800 border-rose-200' 
+                        : 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                    }`}>
+                      {(activeDetailItem as any).metadataCheck?.status} ({(activeDetailItem as any).metadataCheck?.score}/100)
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-700 leading-relaxed">
+                    {(activeDetailItem as any).metadataCheck?.details}
+                  </p>
+                  <div className="bg-slate-100 p-3 rounded-xl border border-slate-200">
+                    <p className="text-[11px] font-mono text-slate-600">
+                      <span className="font-bold text-slate-800">Technical Log:</span> {(activeDetailItem as any).metadataCheck?.technicalNote}
                     </p>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-bold border border-rose-200">
-                    Confidence: {(activeDetailItem as any).aiConfidence || '98.4'}%
-                  </span>
                 </div>
 
-                {/* Evidence Details Cards */}
+                {/* 2. Neural GAN-Fingerprint Spectral Analysis */}
                 <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">Primary Exhibit Data</h4>
-                  <p className="text-xs text-slate-800 leading-relaxed font-sans">
-                    {activeDetailItem.details}
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-bold text-slate-800">2. Neural GAN-Fingerprint Spectral Analysis</h4>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                      (activeDetailItem as any).ganFingerprintCheck?.status === 'Fail' 
+                        ? 'bg-rose-100 text-rose-800 border-rose-200' 
+                        : 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                    }`}>
+                      {(activeDetailItem as any).ganFingerprintCheck?.status} ({(activeDetailItem as any).ganFingerprintCheck?.score}/100)
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-700 leading-relaxed">
+                    {(activeDetailItem as any).ganFingerprintCheck?.details}
                   </p>
-                </div>
-
-                {/* Mock Spectral / Neural Graph */}
-                <div className="p-6 rounded-2xl bg-slate-900 text-white space-y-4">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-300 font-mono">Spectrum & Hash Consistency Vector</span>
-                    <span className="text-amber-400 font-bold font-mono">
-                      Mismatch Detected @ {(activeDetailItem as any).anomaliesList?.[0]?.frameOrPage || 'Frame 1420'}
-                    </span>
-                  </div>
-
-                  <div className="h-28 w-full bg-slate-950 rounded-xl border border-white/10 p-4 flex items-end justify-between gap-1">
-                    {[40, 55, 60, 45, 90, 95, 100, 20, 15, 80, 85, 70, 60, 50, 45, 40].map((h, i) => (
-                      <div key={i} className="flex-1 flex flex-col items-center h-full justify-end">
-                        <div
-                          className={`w-full rounded-t ${
-                            i >= 6 && i <= 8 ? 'bg-rose-500 shadow-lg shadow-rose-500/50' : 'bg-indigo-500/50'
-                          }`}
-                          style={{ height: `${h}%` }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
-                    <span>00:00:00 (Start)</span>
-                    <span className="text-rose-400 font-bold">
-                      Tamper Window ({(activeDetailItem as any).anomaliesList?.[0]?.timestampOffset ? `${(activeDetailItem as any).anomaliesList[0].timestampOffset} - ${(activeDetailItem as any).anomaliesList[1]?.timestampOffset || ''}` : '00:02:14 - 00:02:18'})
-                    </span>
-                    <span>00:05:00 (End)</span>
+                  <div className="bg-slate-100 p-3 rounded-xl border border-slate-200">
+                    <p className="text-[11px] font-mono text-slate-600">
+                      <span className="font-bold text-slate-800">Technical Log:</span> {(activeDetailItem as any).ganFingerprintCheck?.technicalNote}
+                    </p>
                   </div>
                 </div>
 
-                {/* Technical Metric Table */}
-                <div className="border border-slate-200 rounded-2xl overflow-hidden text-xs">
-                  <div className="bg-slate-50 p-3 font-bold text-slate-700 grid grid-cols-2 border-b border-slate-200">
-                    <span>Metric Name</span>
-                    <span>Diagnostic Value</span>
-                  </div>
-                  <div className="p-3 grid grid-cols-2 border-b border-slate-100">
-                    <span className="text-slate-600">Expected SHA-256 Hash</span>
-                    <span className="font-mono text-slate-900 font-bold break-all">
-                      {(activeDetailItem as any).originalHash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}
+                {/* 3. Video Codec & Temporal Forensics */}
+                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-bold text-slate-800">3. Video Codec & Temporal Forensics</h4>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                      (activeDetailItem as any).docForensicsCheck?.status === 'Fail' 
+                        ? 'bg-rose-100 text-rose-800 border-rose-200' 
+                        : 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                    }`}>
+                      {(activeDetailItem as any).docForensicsCheck?.status} ({(activeDetailItem as any).docForensicsCheck?.score}/100)
                     </span>
                   </div>
-                  <div className="p-3 grid grid-cols-2 border-b border-slate-100">
-                    <span className="text-slate-600">Actual Ledger SHA-256 Hash</span>
-                    <span className="font-mono text-rose-700 font-bold break-all">
-                      {(activeDetailItem as any).submittedHash || 'a1c4d92298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b112'}
-                    </span>
-                  </div>
-                  <div className="p-3 grid grid-cols-2">
-                    <span className="text-slate-600">Hardware TPM Sensor Signature</span>
-                    <span className="text-emerald-700 font-bold">
-                      {(activeDetailItem as any).metadataCheck?.technicalNote || 'Verified Knox Hardware Key #9022'}
-                    </span>
+                  <p className="text-xs text-slate-700 leading-relaxed">
+                    {(activeDetailItem as any).docForensicsCheck?.details}
+                  </p>
+                  <div className="bg-slate-100 p-3 rounded-xl border border-slate-200">
+                    <p className="text-[11px] font-mono text-slate-600">
+                      <span className="font-bold text-slate-800">Technical Log:</span> {(activeDetailItem as any).docForensicsCheck?.technicalNote}
+                    </p>
                   </div>
                 </div>
+
               </div>
             </div>
 
@@ -513,7 +511,94 @@ export function CourtAuthorityDashboard({
           </motion.div>
         )}
 
-        {/* TAB 2: CRYPTOGRAPHIC PROOF & LEDGER */}
+        {/* TAB 2: FRAME & PIXEL OPTICAL FORENSICS */}
+        {detailInnerTab === 'optical' && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            {/* Visual Scrubber Graph */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-xs">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 pb-4 border-b border-slate-100">
+                <Search className="w-5 h-5 text-indigo-600" /> Frame & Pixel Optical Forensics Viewer
+              </h3>
+              
+              <div className="p-6 rounded-2xl bg-slate-900 text-white space-y-4">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-300 font-mono">Spectrum & Hash Consistency Vector</span>
+                  <span className="text-amber-400 font-bold font-mono">
+                    Mismatch Detected @ {(activeDetailItem as any).anomaliesList?.[0]?.frameOrPage || 'Frame 1420'}
+                  </span>
+                </div>
+
+                <div className="h-28 w-full bg-slate-950 rounded-xl border border-white/10 p-4 flex items-end justify-between gap-1">
+                  {[40, 55, 60, 45, 90, 95, 100, 20, 15, 80, 85, 70, 60, 50, 45, 40].map((h, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center h-full justify-end">
+                      <div
+                        className={`w-full rounded-t ${
+                          i >= 6 && i <= 8 ? 'bg-rose-500 shadow-lg shadow-rose-500/50' : 'bg-indigo-500/50'
+                        }`}
+                        style={{ height: `${h}%` }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
+                  <span>00:00:00 (Start)</span>
+                  <span className="text-rose-400 font-bold">
+                    Tamper Window ({(activeDetailItem as any).anomaliesList?.[0]?.timestampOffset ? `${(activeDetailItem as any).anomaliesList[0].timestampOffset} - ${(activeDetailItem as any).anomaliesList[1]?.timestampOffset || ''}` : '00:02:14 - 00:02:18'})
+                  </span>
+                  <span>00:05:00 (End)</span>
+                </div>
+              </div>
+
+              {/* Anomalies List */}
+              <div className="space-y-4 pt-2">
+                <h4 className="text-sm font-bold text-slate-800">Detected Frame & Pixel Anomaly Events</h4>
+                {(activeDetailItem as any).anomaliesList?.map((anomaly: any, i: number) => (
+                  <div key={i} className="border border-rose-200 rounded-2xl overflow-hidden shadow-xs">
+                    <div className="bg-rose-50 p-4 flex items-center justify-between border-b border-rose-100">
+                      <div className="flex items-center gap-3">
+                        <AlertTriangle className="w-4 h-4 text-rose-600" />
+                        <span className="text-sm font-bold text-rose-900">{anomaly.frameOrPage}</span>
+                        <span className="text-xs font-mono text-rose-600 bg-rose-100 px-2 py-0.5 rounded">{anomaly.timestampOffset}</span>
+                      </div>
+                      <span className="text-xs font-bold text-rose-700 bg-white px-3 py-1 rounded-full border border-rose-200">
+                        Confidence: {anomaly.confidenceScore}%
+                      </span>
+                    </div>
+                    <div className="p-4 bg-white grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                      <div className="space-y-1">
+                        <span className="text-slate-500 font-bold uppercase tracking-wider text-[10px]">Anomaly Type</span>
+                        <p className="text-slate-900 font-bold">{anomaly.anomalyType}</p>
+                        <p className="text-slate-600 pt-1">{anomaly.description}</p>
+                      </div>
+                      <div className="space-y-2 border-t md:border-t-0 md:border-l border-slate-100 pt-3 md:pt-0 md:pl-4">
+                        <div>
+                          <span className="text-slate-500 font-bold uppercase tracking-wider text-[10px]">Original Base Frame</span>
+                          <p className="text-slate-700 font-mono text-[11px] truncate mt-0.5">{anomaly.originalValue}</p>
+                        </div>
+                        <div>
+                          <span className="text-rose-500 font-bold uppercase tracking-wider text-[10px]">Altered Artifact</span>
+                          <p className="text-rose-700 font-mono font-bold text-[11px] truncate mt-0.5">{anomaly.alteredValue}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {!(activeDetailItem as any).anomaliesList?.length && (
+                  <p className="text-xs text-slate-500 italic p-4 bg-slate-50 rounded-xl border border-slate-200 text-center">
+                    No specific frame anomalies reported by the engine.
+                  </p>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* TAB 3: CRYPTOGRAPHIC PROOF & LEDGER */}
         {detailInnerTab === 'ledger' && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
@@ -530,7 +615,7 @@ export function CourtAuthorityDashboard({
                 </p>
               </div>
               <span className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-900 text-xs font-bold font-mono">
-                Block #{(activeDetailItem as any).blockNumber || '89201'}
+                Block #{(activeDetailItem as any).blockNumber}
               </span>
             </div>
 
@@ -544,11 +629,11 @@ export function CourtAuthorityDashboard({
                 </div>
                 <div className="space-y-1">
                   <p className="text-slate-400">// Merkle Root Digest</p>
-                  <p className="text-indigo-300 break-all">{(activeDetailItem as any).merkleRoot || '0x7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069'}</p>
+                  <p className="text-indigo-300 break-all">{(activeDetailItem as any).merkleRoot}</p>
                 </div>
                 <div className="space-y-1 pt-2">
                   <p className="text-slate-400">// Court Validator Hardware Signature</p>
-                  <p className="text-amber-300 break-all">ECDSA_SECP256K1_PUB_KEY: {(activeDetailItem as any).validatorSignature || '04e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}</p>
+                  <p className="text-amber-300 break-all">ECDSA_SECP256K1_PUB_KEY: {(activeDetailItem as any).submittedHash}</p>
                 </div>
               </div>
 
@@ -600,12 +685,7 @@ export function CourtAuthorityDashboard({
             </div>
 
             <div className="relative pl-6 space-y-6 border-l-2 border-indigo-200 ml-3">
-              {((activeDetailItem as any).custodyTrail || [
-                { stage: 'Evidence Seized at Scene', actor: 'Officer R. Kulkarni', role: 'Field Submitter (Badge #8902)', location: 'Sector 4 Data Center, Mumbai', timestamp: 'Oct 12, 2026 • 02:15 PM', hashVerified: true },
-                { stage: 'Transferred to Zone 4 Police Vault', actor: 'Custodian S. Patil', role: 'Vault Officer', location: 'Zone 4 Central Evidence Locker', timestamp: 'Oct 12, 2026 • 04:40 PM', hashVerified: true },
-                { stage: 'AI Forensic Hash Upload to Ledger', actor: 'Automated Ingestion Pipeline', role: 'System Gateway', location: 'High Court Cloud Node #1', timestamp: 'Oct 13, 2026 • 09:00 AM', hashVerified: false },
-                { stage: 'Judicial Chamber Review Requested', actor: 'Court Authority Bench', role: 'Presiding Judge', location: 'Chambers 402, High Court', timestamp: 'Today • Active', hashVerified: null },
-              ]).map((step: any, idx: number) => {
+              {((activeDetailItem as any).custodyTrail || []).map((step: any, idx: number) => {
                 const title = step.stage || step.title;
                 const time = step.timestamp || step.time;
                 let status = step.status || 'RFID Logged & Verified';
@@ -636,63 +716,172 @@ export function CourtAuthorityDashboard({
           </motion.div>
         )}
 
-        {/* TAB 4: JUDICIAL ORDER & MULTI-SIG EXECUTION */}
+        {/* TAB 5: STATUTORY ADMISSIBILITY (§ 65B) */}
+        {detailInnerTab === 'statutory' && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-xs max-w-4xl"
+          >
+            <div className="pb-4 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-indigo-600" /> Statutory Admissibility Standards (§ 65B IEA)
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Automated binding precedents and compliance checks for digital evidence admissibility.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-sm font-bold text-slate-800">Binding Supreme Court Precedents Match</h4>
+              <div className="grid grid-cols-1 gap-4">
+                {(activeDetailItem as any).precedents?.map((precedent: any, i: number) => (
+                  <div key={i} className="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="space-y-1">
+                        <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
+                          {precedent.citation}
+                        </span>
+                        <h5 className="font-bold text-sm text-slate-900">{precedent.title}</h5>
+                      </div>
+                      <span className="shrink-0 text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-white px-2 py-1 rounded shadow-sm border border-slate-200">
+                        {precedent.court}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-700 leading-relaxed pt-2 border-t border-slate-200">
+                      <strong className="text-slate-900">Principle:</strong> {precedent.principle}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              
+              {!(activeDetailItem as any).precedents?.length && (
+                <div className="p-6 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center space-y-2">
+                  <BookOpen className="w-8 h-8 text-slate-300" />
+                  <p className="text-sm font-bold text-slate-500">No specific binding precedents matched for this exhibit.</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* TAB 6: JUDICIAL ORDER & MULTI-SIG EXECUTION */}
         {detailInnerTab === 'order' && (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-xs max-w-3xl"
+            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
           >
-            <div className="pb-4 border-b border-slate-100">
-              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Scale className="w-5 h-5 text-indigo-600" /> Formal Judicial Order Drafter & Digital Seal
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Draft binding directions to be cryptographically signed and published to the High Court registry.
-              </p>
+            <div className="lg:col-span-2 space-y-6">
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-xs">
+                <div className="pb-4 border-b border-slate-100">
+                  <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <Scale className="w-5 h-5 text-indigo-600" /> Formal Judicial Order Drafter & Digital Seal
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Draft binding directions to be cryptographically signed and published to the High Court registry.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700">Order Title & Directions</label>
+                    <textarea
+                      rows={5}
+                      value={judicialOrderText}
+                      onChange={(e) => setJudicialOrderText(e.target.value)}
+                      placeholder="e.g., UPON HEARING Advocates for the State and inspecting the Layer 2 Forensic Report for CCTV Exhibit #4, IT IS HEREBY ORDERED that Exhibit #4 be struck from the record due to unverified frame insertion..."
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium text-slate-900 outline-none focus:border-indigo-500 focus:bg-white transition-all leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-xs text-indigo-950 space-y-2">
+                    <div className="flex items-center gap-2 font-bold">
+                      <Key className="w-4 h-4 text-indigo-600" />
+                      <span>Hardware Key Token Authentication Required</span>
+                    </div>
+                    <p className="text-indigo-900/80 leading-relaxed">
+                      Submitting this order will prompt your PKI certificate to apply your binding digital signature.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    <button
+                      onClick={() => handleExecuteOrder('STRIKE')}
+                      disabled={isSigningKey}
+                      className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2"
+                    >
+                      {isSigningKey ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin text-amber-400" />
+                          <span>Applying Hardware Signature...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4 text-amber-400" />
+                          <span>Sign & Publish Official Court Order</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Order Title & Directions</label>
-                <textarea
-                  rows={5}
-                  value={judicialOrderText}
-                  onChange={(e) => setJudicialOrderText(e.target.value)}
-                  placeholder="e.g., UPON HEARING Advocates for the State and inspecting the Layer 2 Forensic Report for CCTV Exhibit #4, IT IS HEREBY ORDERED that Exhibit #4 be struck from the record due to unverified frame insertion..."
-                  className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium text-slate-900 outline-none focus:border-indigo-500 focus:bg-white transition-all leading-relaxed"
-                />
-              </div>
+            <div className="space-y-6">
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-5 shadow-xs">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
+                  <ShieldAlert className="w-4 h-4 text-indigo-600" /> Judicial Decision Terminal
+                </h3>
 
-              <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-xs text-indigo-950 space-y-2">
-                <div className="flex items-center gap-2 font-bold">
-                  <Key className="w-4 h-4 text-indigo-600" />
-                  <span>Hardware Key Token Authentication Required</span>
-                </div>
-                <p className="text-indigo-900/80 leading-relaxed">
-                  Submitting this order will prompt your YubiKey hardware token / PKI certificate to apply your binding digital signature.
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Select a binding judicial action below to finalize determination for Case <strong className="text-slate-900">{activeDetailItem.id}</strong>.
                 </p>
+
+                <div className="space-y-3 pt-2">
+                  <button
+                    onClick={() => handleExecuteOrder('STRIKE')}
+                    disabled={isSigningKey}
+                    className="w-full py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
+                  >
+                    <X className="w-4 h-4" />
+                    <span>Strike Exhibit from Record</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleExecuteOrder('ADMIT')}
+                    disabled={isSigningKey}
+                    className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>Admit Exhibit to Record</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  onClick={() => handleExecuteOrder('STRIKE')}
-                  disabled={isSigningKey}
-                  className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-md flex items-center gap-2"
-                >
-                  {isSigningKey ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 animate-spin text-amber-400" />
-                      <span>Applying Hardware Signature...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 text-amber-400" />
-                      <span>Sign & Publish Official Court Order</span>
-                    </>
-                  )}
-                </button>
-              </div>
+              {/* Directives Status */}
+              {(activeDetailItem as any).directives?.length > 0 && (
+                <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4 shadow-xs">
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
+                    <Edit3 className="w-4 h-4 text-indigo-600" /> Active Directives
+                  </h3>
+                  <div className="space-y-3">
+                    {(activeDetailItem as any).directives.map((dir: any, i: number) => (
+                      <div key={i} className="p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-amber-900">{dir.type}</span>
+                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-white text-amber-700 border border-amber-200">
+                            {dir.status}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-amber-900 leading-relaxed">{dir.details}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
