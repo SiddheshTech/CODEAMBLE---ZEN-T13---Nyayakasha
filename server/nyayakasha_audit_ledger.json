@@ -237,57 +237,57 @@
     "blockNumber": 1489213
   },
   {
-    "id": "audit_1786238975621_14",
+    "id": "audit_1786240238985_14",
     "index": 14,
-    "timestamp": "2026-08-09T01:29:35.621Z",
+    "timestamp": "2026-08-09T01:50:38.984Z",
     "eventType": "AUTH_SUCCESS",
-    "userId": "usr_auto_1786235166289",
+    "userId": "usr_auto_1786238458724",
     "userRole": "independent_validator",
     "ipAddress": "::1",
     "details": {
-      "sessionId": "sess_1786238975620_3xosfj",
+      "sessionId": "sess_1786240238984_398zze",
       "approvalState": "active"
     },
-    "payloadHash": "02bdf6f5e5d85f0bc9ffdb005220e8fe26ad6a42eb76966d2dbe38ef53678826",
+    "payloadHash": "3198bf332876eb8adae8f9798487a6cb4434cc5f138c68f6a2a050c8fa2d2a3a",
     "prevHash": "6ced7bd220548d1ed167d1b1384526ca7674924b946b5b771e26efcbe2821c85",
-    "hash": "c3c5580ae4fe66b8d47f8b5916432e79a85d2680a0e258d6b0578d30415a72ab",
+    "hash": "8a3a1fba578d3ac0b73603ef6e5720ebd1772a9370ac3a1cb663c9dfae1a0287",
     "blockNumber": 1489214
   },
   {
-    "id": "audit_1786238975631_15",
+    "id": "audit_1786240238997_15",
     "index": 15,
-    "timestamp": "2026-08-09T01:29:35.631Z",
+    "timestamp": "2026-08-09T01:50:38.997Z",
     "eventType": "NOTIFICATION_DISPATCH",
-    "userId": "smithkadam24@gmail.com",
+    "userId": "gupta@gmail.com",
     "userRole": "SYSTEM",
     "ipAddress": "0.0.0.0",
     "details": {
       "channel": "EMAIL",
-      "recipient": "smithkadam24@gmail.com",
+      "recipient": "gupta@gmail.com",
       "subject": "Nyayakasha — 2FA Verification Code"
     },
-    "payloadHash": "23666f9d3167b67102af117ebdba9fa14b2c450c1a979b13f32ff3629251b7f6",
-    "prevHash": "c3c5580ae4fe66b8d47f8b5916432e79a85d2680a0e258d6b0578d30415a72ab",
-    "hash": "fe9b9ce433042b53384708239bc435290cdc2257899f6e0a765f5ca569215be3",
+    "payloadHash": "b6bfaef396a7d782cd16c60a4881351b332e12e78da5bb5e4ad816d936c814ee",
+    "prevHash": "8a3a1fba578d3ac0b73603ef6e5720ebd1772a9370ac3a1cb663c9dfae1a0287",
+    "hash": "031df5c5f6c68771aea066c8947e790daa5147a4ef7b74d3c225e0defd95cff5",
     "blockNumber": 1489215
   },
   {
-    "id": "audit_1786238978348_16",
+    "id": "audit_1786240244187_16",
     "index": 16,
-    "timestamp": "2026-08-09T01:29:38.348Z",
+    "timestamp": "2026-08-09T01:50:44.187Z",
     "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
-    "userId": "smithkadam24@gmail.com",
+    "userId": "gupta@gmail.com",
     "userRole": "USER",
     "ipAddress": "0.0.0.0",
     "details": {
-      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "deviceInfo": "Chrome / Windows (x64)",
       "ip": "::1",
       "mfaVerified": true,
       "location": "Regional Network"
     },
-    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
-    "prevHash": "fe9b9ce433042b53384708239bc435290cdc2257899f6e0a765f5ca569215be3",
-    "hash": "112703ad55f63b0153cf0b663689c28536846fbaca43f61a789795b44073dfbc",
+    "payloadHash": "dcb7fe4e54f2703c65a8f06bd3a9fa85b72232df39e054308e043bf166ef21ae",
+    "prevHash": "031df5c5f6c68771aea066c8947e790daa5147a4ef7b74d3c225e0defd95cff5",
+    "hash": "e98162e0f1c6441bbbc38a6f6f84a64a3d9a4311dadd4db73ab3c292f03b7d88",
     "blockNumber": 1489216
   },
   {
