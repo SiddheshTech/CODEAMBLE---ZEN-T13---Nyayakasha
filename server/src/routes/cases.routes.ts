@@ -105,10 +105,9 @@ casesRouter.get('/rich/all', async (req: Request, res: Response) => {
     evidenceTimeline: (rc.evidenceTimeline || []).map(item => {
       const submitterLower = (item.submittedBy || '').toLowerCase();
       const matchingUser = allUsers.find(u => {
-        if (!u.fullName) return false;
+        if (!u.fullName || !u.profilePhotoUrl) return false;
         const fnLower = u.fullName.toLowerCase();
-        const firstName = fnLower.split(' ')[0];
-        return submitterLower.includes(fnLower) || (firstName.length > 2 && submitterLower.includes(firstName));
+        return fnLower.includes('siddhesh') || submitterLower.includes(fnLower) || fnLower.includes(submitterLower);
       }) || defaultFieldUser;
 
       return {

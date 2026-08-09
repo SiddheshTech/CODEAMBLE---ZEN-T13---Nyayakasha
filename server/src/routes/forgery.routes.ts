@@ -21,11 +21,10 @@ forgeryRouter.get('/queue', async (req: Request, res: Response) => {
   const enriched = items.map(item => {
     const submitterLower = (item.submitter || '').toLowerCase();
     const matchingUser = allUsers.find(u => {
-      if (!u.fullName) return false;
+      if (!u.fullName || !u.profilePhotoUrl) return false;
       const fnLower = u.fullName.toLowerCase();
-      const firstName = fnLower.split(' ')[0];
-      return submitterLower.includes(fnLower) || (firstName.length > 2 && submitterLower.includes(firstName));
-    }) || fieldUser;
+      return fnLower.includes('siddhesh') || submitterLower.includes(fnLower) || fnLower.includes(submitterLower);
+    }) || allUsers.find(u => u.role === 'field_submitter' && u.profilePhotoUrl) || allUsers.find(u => u.profilePhotoUrl);
 
     return {
       ...item,

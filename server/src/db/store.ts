@@ -664,7 +664,7 @@ class PrimaryDataStore {
         institutionVerified: true,
         vettingApproved: true,
         mfaEnrolled: true,
-        profilePhotoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+        profilePhotoUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAY4AAAA8CAYAAABxcV22AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAABPiSURBVHhe7d0LWFTnvQfwP8E4QCpeElJdaNMFdd2JruFSI9oUiBHQFYhJhkSDaBdtEok+QswjYg1rjYiNAaPFtKtsVFhNnRpFfBRIFczFsUadtOrERIc2KRR3ySORJuAkovu9Z76R4aacM8NFfX95COd8czkz55P3Ped7z8XjmgDGGGOsi+6SvxljjLEu4cTBGGNMFU4cjDHGVOHEwRhjTBVOHIwxxlTp1aOqzp49i5MnT+LMmTOoqqpCbW0tLl68iMuXL4MP9mKMMRGkPTzg5eWFIUOGYNiwYQgMDMSDDz6IkJAQjBo1Sj6rZ/V44jCbzdi3bx8OHjwInU6HsLAwZSUMHz4c/v7+GDx4MLy9vZWVxRhjdzoK0U1NTaivr0dNTQ3Onz+vbGwfP34cNpsNkyZNwrRp0xAcHCxf0f16LHHs378fhYWFyh5FfHw8oqOjMWLECPkoY4wxtc6dO4fy8nLs3btX2SOZNWsWpk6dKh/tPt2eOEwmE9avX69kzTlz5iA2NlY+whhjzF1KS0uxZcsWZbRm4cKFCA8Pl4+4X7cmjpUrV+Ldd99FWloapk+fLlsZY4x1l927dyMvLw+TJ0/G8uXLZat7dctRVVT0pkRBRW7Kgpw0GGOsZ1C8pbhL8ZemKR67m9sTR0VFBRITE2EwGLBq1Sr4+PjIRxhjjPUEirsUfykOUzymuOxObh2qogL4kiVLsGHDBkRGRspWxhhjvaWyshILFizAmjVr3FY4d1voi...',
         contactExtension: '+91 (022) 2650-1122 ext. 104',
         chambersLocation: 'Room 104, Zone 4 Cyber Crime Precinct',
         appointmentRef: 'MH-POL-29384',
