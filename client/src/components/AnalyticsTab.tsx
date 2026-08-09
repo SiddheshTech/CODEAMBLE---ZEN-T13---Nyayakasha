@@ -231,15 +231,16 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  const selectedModule = analyticalModules.find((m) => m.id === selectedModuleId);
+  const selectedModule = (analyticalModules || []).find((m) => m && m.id === selectedModuleId);
 
-  const filteredModules = analyticalModules.filter((mod) => {
+  const filteredModules = (analyticalModules || []).filter((mod) => {
+    if (!mod) return false;
     const matchesSearch =
-      mod.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      mod.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      mod.description.toLowerCase().includes(searchQuery.toLowerCase());
+      (mod.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (mod.category || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (mod.description || '').toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesZone = selectedZone === 'All' || mod.zoneBreakdown.some((z) => z.zone.includes(selectedZone));
+    const matchesZone = selectedZone === 'All' || (mod.zoneBreakdown || []).some((z) => z && z.zone && z.zone.includes(selectedZone));
 
     return matchesSearch && matchesZone;
   });
