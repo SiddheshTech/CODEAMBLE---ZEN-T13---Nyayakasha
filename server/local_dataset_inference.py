@@ -143,6 +143,57 @@ def index():
     }
 
 
+@app.route('/predict_json', methods=['POST'])
+def predict_json():
+    try:
+        data = request.get_json(force=True) or {}
+        data_url = data.get('image_base64', '') or data.get('dataUrl', '')
+        evidence_type = (data.get('evidence_type') or data.get('type') or 'image').lower()
+
+        if not data_url:
+            return jsonify({"error": "No image_base64 or dataUrl provided"}), 400
+
+        if ',' in data_url:
+            base64_str = data_url.split(',')[1]
+        else:
+            base64_str = data_url
+
+        import base64
+        image_bytes = base64.b64decode(base64_str)
+
+        algo_result = analyze_image(image_bytes, "Image")
+        is_doc = evidence_type == "document"
+        advanced_dict = cnn_advanced_score(image_bytes, is_doc=is_doc)
+
+        verdict = hybrid_verdict(algo_result["forensic_score"], advanced_dict)
+        final = verdict["final_score"]
+
+        is_fake = bool(final >= 38)
+        if final >= 70:
+            status = "HIGH RISK: Strong Forgery Evidence"
+        elif final >= 38:
+            status = "MODERATE RISK: Tampering Detected"
+        elif final >= 20:
+            status = "LOW RISK: Minor Anomalies"
+        else:
+            status = "Authentic (Original)"
+        confidence = float(final if is_fake else (100.0 - final))
+
+        return jsonify({
+            "status": str(status),
+            "is_fake": bool(is_fake),
+            "forensic_score": round(final, 1),
+            "confidence": f"{round(confidence, 1)}%",
+            "source": "Hybrid (8-Algo + Advanced Strict Engine)",
+            "cnn_tamper_confidence": round(float(advanced_dict["metrics"]["cnn_fake_probability"]), 3),
+            "evidence": [str(e) for e in algo_result.get("evidence", [])],
+            "raw_scores": {k: float(v) for k, v in algo_result.get("raw_scores", {}).items()},
+        })
+    except Exception as e:
+        import traceback
+        return jsonify({"error": str(e), "trace": traceback.format_exc()[-500:]}), 500
+
+
 @app.route('/analyze_local', methods=['POST'])
 @app.route('/predict', methods=['POST'])
 def analyze_evidence_locally():

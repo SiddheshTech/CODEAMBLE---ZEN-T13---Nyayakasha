@@ -208,17 +208,13 @@ evidenceRouter.post('/submit', async (req: Request, res: Response) => {
 
     try {
       if (dataUrl && dataUrl.startsWith('data:image')) {
-        const base64Data = dataUrl.replace(/^data:image\/\w+;base64,/, '');
-        const imageBuffer = Buffer.from(base64Data, 'base64');
-
-        const formData = new FormData();
-        const blob = new Blob([imageBuffer], { type: 'image/png' });
-        formData.append('file', blob, 'evidence_capture.png');
-        formData.append('evidence_type', type || 'Image');
-
-        const cnnRes = await fetch('http://localhost:5001/predict', {
+        const cnnRes = await fetch('http://127.0.0.1:5001/predict_json', {
           method: 'POST',
-          body: formData
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dataUrl,
+            evidence_type: type || 'image'
+          })
         });
 
         if (cnnRes.ok) {
@@ -226,14 +222,23 @@ evidenceRouter.post('/submit', async (req: Request, res: Response) => {
           if (cnnData.forensic_score !== undefined) {
             const rawScore = Number(cnnData.forensic_score);
             isCnnFlagged = Boolean(cnnData.is_fake);
-            cnnOverallConfidence = isCnnFlagged ? Number((100 - rawScore).toFixed(1)) : Number((100 - rawScore).toFixed(1));
+            cnnOverallConfidence = isCnnFlagged
+              ? Number(Math.max(10, 100 - rawScore).toFixed(1))
+              : Number(Math.min(99.8, 100 - rawScore).toFixed(1));
             cnnSpectralScore = Number((100 - rawScore * 0.9).toFixed(1));
             cnnMetadataScore = Number((100 - rawScore * 0.8).toFixed(1));
             cnnStatusText = cnnData.status || 'CNN Forensic Scan Complete';
             if (Array.isArray(cnnData.evidence)) {
               cnnRawEvidence = cnnData.evidence;
             }
+            console.log('✅ Real CNN Engine analysis received for exhibit:', {
+              status: cnnStatusText,
+              confidence: cnnOverallConfidence,
+              isFlagged: isCnnFlagged
+            });
           }
+        } else {
+          console.log('⚠️ CNN Flask response not ok:', cnnRes.status);
         }
       }
     } catch (cnnErr: any) {
