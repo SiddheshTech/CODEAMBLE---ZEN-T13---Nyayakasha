@@ -65,6 +65,46 @@ validatorRouter.post('/duress/acknowledge', requireAuth, requireRole('independen
     }
 });
 /**
+ * GET /api/validator/duress-alerts
+ * Returns privacy-filtered duress alert list for Independent Validator.
+ * DELIBERATELY strips: userName, ipAddress, lat/lng coordinates.
+ * Only exposes: id, timestamp, status, refId, jurisdictionCode (role oversight data only).
+ */
+validatorRouter.get('/duress-alerts', requireAuth, requireRole('independent_validator', 'court_authority'), async (req, res) => {
+    try {
+        const alerts = primaryStore.getDuressAlerts();
+        // Privacy filter: Validator sees ONLY oversight-relevant fields, never officer identity/location
+        const filtered = alerts.map(a => ({
+            id: a.id,
+            timestamp: a.timestamp,
+            status: a.status,
+            refId: a.refId || `DURESS-REF-${a.id.slice(-6).toUpperCase()}`,
+            fieldNodeId: a.fieldNodeId || `FIELD-NODE-${a.id.slice(-4).toUpperCase()}`,
+            jurisdictionCode: a.locationInfo?.jurisdiction || 'MH-MUM-DIST-01',
+            // NOTE: userName, ipAddress, lat, lng are intentionally NOT included
+        }));
+        return res.json({ success: true, alerts: filtered, total: filtered.length });
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'SERVER_ERROR', message: error.message });
+    }
+});
+/**
+ * POST /api/validator/duress-alerts/:id/acknowledge
+ */
+validatorRouter.post('/duress-alerts/:id/acknowledge', requireAuth, requireRole('independent_validator', 'court_authority'), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await primaryStore.getUserById(req.userId);
+        const userName = user ? user.fullName : 'Adv. A. Mehta';
+        const result = await validatorService.acknowledgeDuress(req.userId, userName, id);
+        return res.json(result);
+    }
+    catch (error) {
+        return res.status(400).json({ error: 'ACKNOWLEDGE_FAILED', message: error.message });
+    }
+});
+/**
  * GET /api/validator/activity-log
  * Fetch full validator audit log
  */
