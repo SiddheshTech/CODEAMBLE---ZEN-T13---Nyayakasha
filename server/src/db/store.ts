@@ -1130,8 +1130,8 @@ class PrimaryDataStore {
       richForgerySeed.forEach(item => this.forgeryQueueItems.set(item.id, item));
     }
 
-    // Default Identity Unlocks Seed
-    if (this.identityUnlocks.length < 5) {
+    // Default Identity Unlocks Seed — only seed if completely empty (never on restart with live data)
+    if (this.identityUnlocks.length === 0) {
       this.identityUnlocks = [
         {
           id: 'REQ-UNK-2026-09',
@@ -2311,7 +2311,9 @@ class PrimaryDataStore {
     id: string,
     decision: 'Approved' | 'Rejected',
     remarks: string,
-    signatureHash: string
+    signatureHash: string,
+    judgeName: string = 'Hon. Presiding Magistrate (Active Bench)',
+    judgeKeyId: string = 'BENCH-KEY-IND-003'
   ): IdentityUnlockRequest | undefined {
     const req = this.identityUnlocks.find(u => u.id === id);
     if (!req) return undefined;
@@ -2324,14 +2326,19 @@ class PrimaryDataStore {
     req.status = decision === 'Approved' ? 'Approved & Unlocked' : 'Rejected';
 
     if (decision === 'Approved') {
+      // Generate per-witness masked identity data derived from witness alias and case
+      const witnessId = req.witnessAlias.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8).toUpperCase();
+      const caseCode = req.caseId.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      const aadhaarSuffix = Buffer.from(`${req.witnessZkpHash}-UIDAI`).toString('base64').substring(0, 8).toUpperCase();
+      const phoneSuffix = (parseInt(witnessId, 36) % 900 + 100).toString();
       req.unlockedDetails = {
-        realName: 'Anil Kumar S. Sharma (Principal Systems Engineer)',
-        aadhaarPanHash: '0x7782...A912 (Verified UIDAI Cryptographic Vault)',
-        addressMasked: 'Plot 104, Tech Park Enclave, Sector 4, Navi Mumbai',
-        phoneEncrypted: '+91 99*** **102 (Encrypted Channel #2)',
-        emergencyContact: 'Commandant R. Kulkarni (State Special Cyber Cell)',
+        realName: `Protected Witness ${witnessId} (Identity Sealed per Bench Order)`,
+        aadhaarPanHash: `0x${aadhaarSuffix}...UIDAI (Verified Cryptographic Vault)`,
+        addressMasked: `[REDACTED — Accessible only via In-Camera Session, Case: ${caseCode}]`,
+        phoneEncrypted: `+91 ***** ***${phoneSuffix} (Encrypted Channel #${(parseInt(phoneSuffix) % 9) + 1})`,
+        emergencyContact: `Witness Protection Cell (Case Ref: ${req.caseId})`,
         unlockedAt: timestampStr,
-        unlockedByJudge: 'Hon. Presiding Magistrate (Bench 3)',
+        unlockedByJudge: 'Hon. Presiding Magistrate (Active Bench)',
         digitalSignature: signatureHash,
         accessDurationWindow: '48 Hours (In-Camera Cross Examination Window)',
       };
@@ -2343,8 +2350,8 @@ class PrimaryDataStore {
       requestId: req.id,
       caseId: req.caseId,
       witnessAlias: req.witnessAlias,
-      judgeName: 'Hon. Presiding Magistrate (Bench 3)',
-      judgeKeyId: 'BENCH-KEY-IND-003',
+      judgeName,
+      judgeKeyId,
       decision,
       timestamp: timestampStr,
       blockNumber: 89350 + this.identityUnlockLogs.length,

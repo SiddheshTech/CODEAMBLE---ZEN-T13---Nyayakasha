@@ -342,10 +342,22 @@ export const api = {
     return fetchAPI('/identity/logs', { method: 'GET' });
   },
 
-  decideIdentityUnlock: async (requestId: string, decision: 'Approved' | 'Rejected', remarks: string) => {
+  decideIdentityUnlock: async (requestId: string, decision: 'Approved' | 'Rejected', remarks: string, judgeName?: string, judgeKeyId?: string) => {
     return fetchAPI('/identity/decide', {
       method: 'POST',
-      body: JSON.stringify({ requestId, decision, remarks })
+      body: JSON.stringify({ requestId, decision, remarks, judgeName, judgeKeyId })
+    });
+  },
+
+  submitIdentityUnlockRequest: async (data: {
+    caseId: string; caseTitle?: string; courtBench?: string; witnessAlias: string;
+    requestingParty: string; requestingPartyRole?: string; counselBarId?: string; counselAgency?: string;
+    statedLegalGrounds: string; statutoryProvision?: string; urgency?: string;
+    witnessRiskIndex?: number; threatAssessmentSummary?: string; protectionCategory?: string;
+  }) => {
+    return fetchAPI('/identity/submit', {
+      method: 'POST',
+      body: JSON.stringify(data)
     });
   },
 

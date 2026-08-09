@@ -1275,7 +1275,7 @@ export function DashboardPage({
             <ForgeryReviewQueueTab />
           )}
           {(activeTab === 'Identity unlock' || activeTab === 'Identity Unlock') && (
-            <IdentityUnlockTab />
+            <IdentityUnlockTab role={role} />
           )}
           {(activeTab === 'Precedent flags' || activeTab === 'Precedent Flags') && (
             <PrecedentFlagsTab />
