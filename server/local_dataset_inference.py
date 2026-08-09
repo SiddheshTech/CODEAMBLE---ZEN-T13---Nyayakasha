@@ -165,8 +165,15 @@ def predict_json():
         is_doc = evidence_type == "document"
         advanced_dict = cnn_advanced_score(image_bytes, is_doc=is_doc)
 
+        raw_cnn_prob = float(advanced_dict.get("metrics", {}).get("cnn_fake_probability", 0.0))
+
         verdict = hybrid_verdict(algo_result["forensic_score"], advanced_dict)
         final = verdict["final_score"]
+
+        # Strict CNN Override: If raw CNN thinks it's fake (>50%), reject it as Forgery Detected
+        if raw_cnn_prob > 0.50:
+            final = max(final, 95.0)
+            algo_result.setdefault("evidence", []).append(f"CNN Strict Override (Confidence: {raw_cnn_prob*100:.1f}%)")
 
         is_fake = bool(final >= 38)
         if final >= 70:
@@ -363,6 +370,12 @@ def analyze_evidence_locally():
 
             verdict = hybrid_verdict(algo_result["forensic_score"], advanced_dict)
             final = verdict["final_score"]
+
+            # Strict CNN Override: If raw CNN thinks it's fake (>50%), reject it
+            raw_cnn = float(advanced_dict.get("metrics", {}).get("cnn_fake_probability", 0.0))
+            if raw_cnn > 0.50:
+                final = max(final, 95.0)
+                algo_result.setdefault("evidence", []).append(f"CNN Strict Override (Confidence: {raw_cnn*100:.1f}%)")
 
             is_fake = bool(final >= 38)
             if final >= 70:
