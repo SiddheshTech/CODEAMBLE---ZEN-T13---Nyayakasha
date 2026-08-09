@@ -109,192 +109,6 @@ class PrimaryDataStore {
                 this.usersByEmail.set(u.email.toLowerCase(), u);
             });
         }
-        // Default Cases
-        const defaultCases = [
-            { id: 'FIR-2026-001', title: 'State vs. Unknown (Sector 4 Cyber Heist)', status: 'Active', type: 'Cyber Crime', date: 'Oct 12, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 14, testimonyCount: 3, priority: 'High', description: 'Unauthorized access and data exfiltration from city municipal servers. Traced to IP addresses in Zone 4.', location: 'Sector 4, Central Station', jurisdictionCode: 'MH-MUM-DIST-01', createdAt: '2026-10-12T10:00:00Z', updatedAt: '2026-10-12T10:00:00Z' },
-            { id: 'FIR-2026-002', title: 'State vs. Deshmukh (Property Fraud)', status: 'Pending Review', type: 'Financial', date: 'Oct 10, 2026', officer: 'Inspector S. Patel', evidenceCount: 8, testimonyCount: 5, priority: 'Medium', description: 'Alleged forgery of land registry documents in the western suburbs.', location: 'Bandra West Sub-Registry', jurisdictionCode: 'MH-MUM-DIST-02', createdAt: '2026-10-10T11:30:00Z', updatedAt: '2026-10-10T11:30:00Z' },
-            { id: 'FIR-2026-003', title: 'Vehicle Theft Ring - Highway 9', status: 'Active', type: 'Theft', date: 'Oct 08, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 22, testimonyCount: 8, priority: 'High', description: 'Organized syndicate targeting luxury vehicles on the inter-city highway.', location: 'Inter-State Highway 9 Toll Gate', jurisdictionCode: 'MH-MUM-DIST-01', createdAt: '2026-10-08T14:15:00Z', updatedAt: '2026-10-08T14:15:00Z' },
-            { id: 'FIR-2026-004', title: 'Industrial Espionage - TechCorp', status: 'Sealed', type: 'Corporate', date: 'Sep 25, 2026', officer: 'Chief Inv. M. Singh', evidenceCount: 31, testimonyCount: 12, priority: 'Critical', description: 'Theft of proprietary AI algorithms by a former employee.', location: 'Tech Park Cyber City', jurisdictionCode: 'MH-MUM-DIST-03', createdAt: '2026-09-25T09:00:00Z', updatedAt: '2026-09-25T09:00:00Z' },
-            { id: 'FIR-2026-005', title: 'State vs. Unknown (Warehouse Arson)', status: 'Cold Case', type: 'Arson', date: 'Aug 14, 2026', officer: 'Inspector S. Patel', evidenceCount: 5, testimonyCount: 1, priority: 'Low', description: 'Fire at abandoned warehouse. Lack of leads and surveillance footage.', location: 'Dockyard Industrial Zone', jurisdictionCode: 'MH-MUM-DIST-02', createdAt: '2026-08-14T16:45:00Z', updatedAt: '2026-08-14T16:45:00Z' },
-            { id: 'FIR-2026-006', title: 'Counterfeit Currency Operation', status: 'Active', type: 'Forgery', date: 'Oct 14, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 19, testimonyCount: 4, priority: 'High', description: 'Distribution of fake currency notes in local markets.', location: 'Central Bazaar Market', jurisdictionCode: 'MH-MUM-DIST-01', createdAt: '2026-10-14T08:20:00Z', updatedAt: '2026-10-14T08:20:00Z' }
-        ];
-        defaultCases.forEach(c => this.cases.set(c.id, c));
-        // ── Rich Judicial Case Files (full forensic records for CaseFilesTab) ───
-        if (this.richCases.size === 0) {
-            const richCaseSeed = [
-                {
-                    id: 'CR-2026-904',
-                    title: 'State vs. Cyber Heist Syndicate (Municipal Server Exfiltration)',
-                    caseType: 'Cyber Crime',
-                    filingDate: '12 Oct 2026',
-                    currentStage: 'Judicial Review',
-                    status: 'Under Review',
-                    priority: 'CRITICAL',
-                    mayaBreakStatus: 'Flagged',
-                    mayaBreakDetails: '1 exhibit flagged: Hash mismatch on CCTV Exhibit #4',
-                    officerInCharge: 'Officer R. Kulkarni (Badge #8902)',
-                    courtBench: 'High Court Bench 3 (Presiding: Hon. Adv. A. Mehta)',
-                    prosecutor: 'Adv. V. S. Nambiar (State Cyber Cell)',
-                    defenseCounsel: 'Adv. S. Ramachandran',
-                    statutorySections: ['Sec 43A IT Act 2000', 'Sec 66B Computer Fraud', 'Sec 379 IPC Theft'],
-                    evidenceTimeline: [
-                        { id: 'EXH-001', title: 'CCTV Camera 04 Footage - Sector 4 Server Room (1080p)', type: 'Video MP4', submittedBy: 'Insp. V. Sharma', timestamp: '12 Oct 2026, 09:30 AM', pramanaHash: '0x8f2a...910b', blockNumber: 89201, integrityStatus: 'Flagged', integrityScore: '94.2% Integrity (Frame 1400 anomaly)', details: 'MAYA-BREAK detected potential frame insertion at timestamp 02:14:10.', expectedHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', actualHash: 'a1c4d92298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b112', anomalyTimeWindow: '00:02:14 - 00:02:18 (45 Frames inserted)' },
-                        { id: 'EXH-002', title: 'Server Access Syslog Excerpt (Encrypted Log)', type: 'Syslog Text', submittedBy: 'Cyber Forensics Unit', timestamp: '12 Oct 2026, 11:15 AM', pramanaHash: '0x3c11...4a89', blockNumber: 89203, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Hash anchor matched across 3 distributed validator nodes.', expectedHash: '9a31f...9011a', actualHash: '9a31f...9011a' },
-                        { id: 'EXH-003', title: 'Seized Encrypted USB Storage Drive (Zone 4 Vault)', type: 'Forensic Memory Dump', submittedBy: 'Officer R. Kulkarni', timestamp: '13 Oct 2026, 03:00 PM', pramanaHash: '0x77d1...9911', blockNumber: 89240, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Hardware TPM Knox attestation verified.' },
-                    ],
-                    testimonies: [
-                        { id: 'ZKP-901', zkpHash: '0x7f2a...81b9c2041a', summary: 'Attestation confirming physical breach alarm timestamp aligns with server logs.', timestamp: '13 Oct 2026, 02:20 PM', isUnlocked: false, unlockedIdentity: 'Dr. S. Raman (Lead System Administrator)', witnessRole: 'System Admin Witness', verificationNode: 'CertIn-Node-04' },
-                        { id: 'ZKP-902', zkpHash: '0x4d12...99e1a88b12', summary: 'Expert forensic opinion on IP routing origin and VPN node interception.', timestamp: '14 Oct 2026, 10:05 AM', isUnlocked: true, unlockedIdentity: 'Prof. M. Deshmukh (CERT-In Senior Analyst)', witnessRole: 'Forensic Expert', verificationNode: 'HighCourt-Validator-1' },
-                    ],
-                    custodyHistory: [
-                        { id: 'cust-1', title: 'Evidence Seized at Scene', actor: 'Officer R. Kulkarni (Badge #8902)', location: 'Sector 4 Data Center, Mumbai', timestamp: 'Oct 12, 2026 • 02:15 PM', status: 'Sealed in Tamper Bag #EV-9022', biometricVerified: true, gpsCoordinates: '18.9220° N, 72.8347° E' },
-                        { id: 'cust-2', title: 'Transferred to Zone 4 Police Vault', actor: 'Custodian S. Patil', location: 'Zone 4 Central Evidence Locker', timestamp: 'Oct 12, 2026 • 04:40 PM', status: 'RFID Logged & Vault Locked', biometricVerified: true, gpsCoordinates: '18.9311° N, 72.8290° E' },
-                        { id: 'cust-3', title: 'AI Forensic Hash Upload to PRAMANA Ledger', actor: 'Automated Ingestion Pipeline', location: 'High Court Cloud Node #1', timestamp: 'Oct 13, 2026 • 09:00 AM', status: 'Hash Mismatch Flagged', biometricVerified: true },
-                    ],
-                    orders: [
-                        { id: 'ORD-2026-904-01', title: 'Re-examination Order for CCTV Exhibit #4', issuedBy: 'Hon. Adv. A. Mehta (Bench 3)', timestamp: '14 Oct 2026 • 04:15 PM', summary: 'Ordered CFSL Director to inspect frame insertion anomaly between 02:14:10 and 02:14:15.', sealHash: '0x9920a...110bf', type: 'Evidentiary Direction' },
-                    ],
-                    notes: [
-                        { id: 'note-1', author: 'Adv. A. Mehta', timestamp: '14 Oct 2026, 04:30 PM', category: 'Judicial Directive', content: 'Ordered independent re-verification of CCTV Exhibit #4 frame 1400 by Central Forensic Science Laboratory.' },
-                        { id: 'note-2', author: 'Adv. V. S. Nambiar', timestamp: '15 Oct 2026, 11:00 AM', category: 'Evidence Note', content: 'State submits original server syslog dump corresponding to network switch #3.' },
-                    ],
-                    precedents: [
-                        { caseId: 'CR-2025-044', title: 'State vs. Sharma (Landmark CCTV Frame Tampering Guidelines)', court: 'Supreme Court of India', similarityScore: 94.2, relevantSections: ['Sec 65B Evidence Act', 'Sec 43A IT Act'], summary: 'Held that unverified video frame insertions render digital video evidence inadmissible without raw sensor cryptographic logs.' },
-                        { caseId: 'SC-2022-108', title: 'Union of India vs. Cyber-Net Labs', court: 'Supreme Court of India', similarityScore: 88.5, relevantSections: ['Sec 66 IT Act'], summary: 'Established multi-sig validator quorum as mandatory standard for cloud server audit logs in criminal trials.' },
-                    ],
-                    createdAt: '2026-10-12T10:00:00Z',
-                    updatedAt: new Date().toISOString(),
-                },
-                {
-                    id: 'FIR-2026-102',
-                    title: 'State vs. Malhotra Logistics (Customs Fraud & Tax Evasion)',
-                    caseType: 'Financial Fraud',
-                    filingDate: '01 Aug 2026',
-                    currentStage: 'Consensus Voting',
-                    status: 'Active',
-                    priority: 'HIGH',
-                    mayaBreakStatus: 'Pass',
-                    mayaBreakDetails: 'All 6 evidence items 100% verified by MAYA-BREAK',
-                    officerInCharge: 'ACP S. Verma',
-                    courtBench: 'Commercial Court Bench 1',
-                    prosecutor: 'Adv. R. K. Saxena',
-                    defenseCounsel: 'Adv. P. N. Merchant',
-                    statutorySections: ['Sec 132 Customs Act', 'Sec 420 IPC Cheating', 'Sec 65B Evidence Act'],
-                    evidenceTimeline: [
-                        { id: 'EXH-101', title: 'Digital Bill of Lading & Waybills Ledger', type: 'PDF Document', submittedBy: 'Customs Officer P. Nair', timestamp: '01 Aug 2026, 02:00 PM', pramanaHash: '0x1a99...33ef', blockNumber: 87102, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Cryptographically signed by Port Customs Terminal gateway.' },
-                        { id: 'EXH-102', title: 'Dual-Ledger Accounting Records (Seized)', type: 'Spreadsheet XLS', submittedBy: 'CA Audit Team', timestamp: '02 Aug 2026, 03:30 PM', pramanaHash: '0x2b88...77ac', blockNumber: 87210, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Enterprise accounting export, hash-verified against originating server.' },
-                    ],
-                    testimonies: [
-                        { id: 'ZKP-102', zkpHash: '0x88c1...12a4b901ce', summary: 'Whistleblower testimony detailing dual-ledger accounting practices.', timestamp: '02 Aug 2026, 11:30 AM', isUnlocked: false, unlockedIdentity: 'K. Patel (Senior Auditor)', witnessRole: 'Whistleblower' },
-                    ],
-                    custodyHistory: [],
-                    orders: [],
-                    notes: [],
-                    precedents: [],
-                    createdAt: '2026-08-01T09:00:00Z',
-                    updatedAt: new Date().toISOString(),
-                },
-                {
-                    id: 'MH-CR-8821',
-                    title: 'State vs. Kulkarni & Others (Land Registry Deed Tampering)',
-                    caseType: 'Document Forgery',
-                    filingDate: '28 Jul 2026',
-                    currentStage: 'Pre-Trial Hearing',
-                    status: 'Under Review',
-                    priority: 'HIGH',
-                    mayaBreakStatus: 'Pass',
-                    mayaBreakDetails: 'PRAMANA blockchain verification intact',
-                    officerInCharge: 'Insp. T. Patil',
-                    courtBench: 'Civil Sessions Bench 2',
-                    prosecutor: 'Adv. M. Joshi',
-                    defenseCounsel: 'Adv. G. Kulkarni',
-                    statutorySections: ['Sec 467 IPC Forgery', 'Sec 468 IPC', 'Sec 120B Conspiracy'],
-                    evidenceTimeline: [
-                        { id: 'EXH-201', title: 'Original Property Deed #1984-A (Digitized Scan)', type: 'High-Res TIFF', submittedBy: 'Sub-Registrar Office', timestamp: '28 Jul 2026, 10:00 AM', pramanaHash: '0x55d4...91c0', blockNumber: 86510, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Watermark seal verified via MAYA-BREAK optical analyzer.' },
-                        { id: 'EXH-202', title: 'Alleged Forged Deed (Accused Copy)', type: 'PDF Scan', submittedBy: 'Complainant Counsel', timestamp: '28 Jul 2026, 03:20 PM', pramanaHash: '0x88f2...0099', blockNumber: 86522, integrityStatus: 'Flagged', integrityScore: '71.3% Integrity (Font vector mismatch)', details: 'Pixel grid analysis shows non-contiguous ink density at stamp area.' },
-                    ],
-                    testimonies: [
-                        { id: 'ZKP-821', zkpHash: '0x9a11...88b201ca', summary: 'Sub-Registrar confirms original deed was never transferred after 1998.', timestamp: '30 Jul 2026, 09:00 AM', isUnlocked: true, unlockedIdentity: 'Mr. B. Nair (Sub-Registrar, Bandra)', witnessRole: 'Government Official' },
-                    ],
-                    custodyHistory: [
-                        { id: 'cust-21', title: 'Original Deed Seized from Registry Archive', actor: 'Insp. T. Patil', location: 'Bandra Sub-Registry Office', timestamp: 'Jul 28, 2026 • 10:00 AM', status: 'Sealed in RFID Evidence Bag #MH-1492', biometricVerified: true, gpsCoordinates: '19.0549° N, 72.8407° E' },
-                    ],
-                    orders: [],
-                    notes: [
-                        { id: 'note-821', author: 'Hon. Adv. A. Mehta', timestamp: '30 Jul 2026, 02:00 PM', category: 'Judicial Directive', content: 'Handwriting expert to compare signatures on both deeds and report within 10 working days.' },
-                    ],
-                    precedents: [
-                        { caseId: 'SC-2018-412', title: 'State vs. Parekh (Land Deed Stamp Act Tampering)', court: 'Bombay High Court', similarityScore: 91.8, relevantSections: ['Sec 467 IPC', 'Stamp Act 1899'], summary: 'Held that digitized deed copies must carry cryptographic provenance chain from originating authority to be admissible.' },
-                    ],
-                    createdAt: '2026-07-28T07:00:00Z',
-                    updatedAt: new Date().toISOString(),
-                },
-                {
-                    id: 'SHV-2291',
-                    title: 'State vs. Nexus Pharma (Substandard Drug Distribution)',
-                    caseType: 'Public Health',
-                    filingDate: '15 Jul 2026',
-                    currentStage: 'Consensus Voting',
-                    status: 'Active',
-                    priority: 'MEDIUM',
-                    mayaBreakStatus: 'Pass',
-                    mayaBreakDetails: 'Consensus vote pending for record update',
-                    officerInCharge: 'Drug Inspector R. Joshi',
-                    courtBench: 'High Court Bench 3',
-                    prosecutor: 'Adv. A. Roy',
-                    defenseCounsel: 'Adv. D. Sengupta',
-                    statutorySections: ['Sec 18 Drugs & Cosmetics Act', 'Sec 274 IPC Adulteration'],
-                    evidenceTimeline: [
-                        { id: 'EXH-301', title: 'Batch Analysis Lab Certificate #NP-2026-88', type: 'PDF Report', submittedBy: 'Govt Testing Lab', timestamp: '15 Jul 2026, 03:45 PM', pramanaHash: '0x99e2...0011', blockNumber: 85992, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Lab signature anchored on PRAMANA block.' },
-                        { id: 'EXH-302', title: 'FDA Inspection Report — Nexus Pharma Plant', type: 'PDF Report', submittedBy: 'FDA Inspector K. Murthy', timestamp: '16 Jul 2026, 11:00 AM', pramanaHash: '0xab11...cc82', blockNumber: 86001, integrityStatus: 'Pass', integrityScore: '100% Original', details: 'Official FDA seal verified via cryptographic timestamp service.' },
-                    ],
-                    testimonies: [],
-                    custodyHistory: [],
-                    orders: [],
-                    notes: [
-                        { id: 'note-22', author: 'Drug Inspector R. Joshi', timestamp: '17 Jul 2026, 09:00 AM', category: 'Evidence Note', content: 'Samples sent to Central Drug Testing Laboratory. Results expected in 21 days.' },
-                    ],
-                    precedents: [],
-                    createdAt: '2026-07-15T10:00:00Z',
-                    updatedAt: new Date().toISOString(),
-                },
-                {
-                    id: 'CR-2025-044',
-                    title: 'State vs. Sharma (Landmark Digital Contract Case)',
-                    caseType: 'Cyber Crime',
-                    filingDate: '10 Jan 2025',
-                    currentStage: 'Final Ruling Sealed',
-                    status: 'Sealed',
-                    priority: 'LOW',
-                    mayaBreakStatus: 'Pass',
-                    mayaBreakDetails: 'Case permanently sealed under judicial order',
-                    officerInCharge: 'ACP S. Verma',
-                    courtBench: 'Supreme Bench Precedent',
-                    prosecutor: 'State Attorney General Office',
-                    defenseCounsel: 'Senior Counsel K. Subramaniam',
-                    statutorySections: ['Sec 65B Evidence Act', 'Sec 10A IT Act'],
-                    evidenceTimeline: [
-                        { id: 'EXH-401', title: 'Smart Contract Execution Log #SC-44', type: 'EVM Log', submittedBy: 'Judicial Registrar', timestamp: '10 Jan 2025, 05:00 PM', pramanaHash: '0x44aa...99bb', blockNumber: 71000, integrityStatus: 'Pass', integrityScore: '100% Immutable', details: 'Sealed precedent record.' },
-                    ],
-                    testimonies: [
-                        { id: 'ZKP-044', zkpHash: '0x19ab...332c11de01', summary: 'Expert testimony affirming on-chain contract execution logs are admissible under Sec 65B.', timestamp: '08 Jan 2025, 10:00 AM', isUnlocked: true, unlockedIdentity: 'Prof. A. Krishnamurthy (IIT Bombay, Blockchain Expert)', witnessRole: 'Technical Expert' },
-                    ],
-                    custodyHistory: [
-                        { id: 'cust-44', title: 'Smart Contract Logs Extracted & Verified', actor: 'Judicial Registrar Office', location: 'Supreme Court Registry, New Delhi', timestamp: 'Jan 10, 2025 • 03:00 PM', status: 'Permanently Sealed — Block #71000', biometricVerified: true },
-                    ],
-                    orders: [
-                        { id: 'ORD-2025-044-FINAL', title: 'Final Judgment — Digital Contract Precedent', issuedBy: 'Hon. Chief Justice (3-Bench Coram)', timestamp: '15 Jan 2025 • 11:00 AM', summary: 'Smart contract logs held admissible as primary evidence. PRAMANA hash attestation mandatory standard for all future digital contract disputes.', sealHash: '0x7890a...001cc', type: 'Final Ruling' },
-                    ],
-                    notes: [
-                        { id: 'note-44', author: 'Supreme Court Registrar', timestamp: '15 Jan 2025, 12:00 PM', category: 'Ruling', content: 'Landmark ruling: This case establishes that PRAMANA-anchored smart contract logs are irrefutably admissible as primary evidence under Sec 10A IT Act.' },
-                    ],
-                    precedents: [],
-                    createdAt: '2025-01-10T07:00:00Z',
-                    updatedAt: new Date().toISOString(),
-                },
-            ];
-            richCaseSeed.forEach(rc => this.richCases.set(rc.id, rc));
-        }
         // Default Evidence
         const defaultEvidence = [];
         defaultEvidence.forEach(e => this.evidence.set(e.id, e));
@@ -1951,28 +1765,34 @@ class PrimaryDataStore {
             }
             periods.push(`Q${q} ${y}`);
         }
-        return periods.map((period, idx) => {
-            const multiplier = 0.9 + (idx * 0.05);
-            const z1 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-01')).length;
-            const z2 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-02')).length;
-            const z3 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-03')).length;
-            const z4 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-04')).length;
-            // Compute per-case avg duration weighted by zone
-            const allAvgDays = casesArr.length > 0 ? (() => {
-                const total = casesArr.reduce((sum, c) => {
+        return periods.map((period) => {
+            const [qStr, yStr] = period.split(' ');
+            const qNum = parseInt(qStr.replace('Q', ''));
+            const yNum = parseInt(yStr);
+            const periodCases = casesArr.filter(c => {
+                const d = new Date(c.createdAt || c.date || Date.now());
+                const cQ = Math.ceil((d.getMonth() + 1) / 3);
+                const cY = d.getFullYear();
+                return cQ === qNum && cY === yNum;
+            });
+            const getAvgDays = (jurisdictionMatch, altMatch) => {
+                const matchingCases = periodCases.filter(c => c.jurisdictionCode?.includes(jurisdictionMatch) || c.location?.toLowerCase().includes(altMatch.toLowerCase()));
+                if (matchingCases.length === 0)
+                    return 0;
+                const totalDays = matchingCases.reduce((sum, c) => {
                     const created = new Date(c.createdAt || c.date || Date.now()).getTime();
                     const updated = new Date(c.updatedAt || Date.now()).getTime();
-                    return sum + Math.max(0.5, (updated - created) / (1000 * 60 * 60 * 24));
+                    return sum + Math.max(0, (updated - created) / (1000 * 60 * 60 * 24));
                 }, 0);
-                return total / casesArr.length;
-            })() : 1.4;
+                return Number((totalDays / matchingCases.length).toFixed(1));
+            };
             return {
                 period,
-                zone1North: Number((Math.max(0.5, (z1 > 0 ? allAvgDays * 0.85 : 1.2) * (0.9 + idx * 0.02))).toFixed(1)),
-                zone2South: Number((Math.max(0.6, (z2 > 0 ? allAvgDays * 1.1 : 1.7) * (0.9 + idx * 0.03))).toFixed(1)),
-                zone3Cyber: Number((Math.max(0.4, (z3 > 0 ? allAvgDays * 0.75 : 1.1) * (0.9 + idx * 0.01))).toFixed(1)),
-                zone4West: Number((Math.max(0.8, (z4 > 0 ? allAvgDays * 1.5 : 1.9) * (0.9 + idx * 0.08))).toFixed(1)),
-                zone5Apex: Number((Math.max(0.3, allAvgDays * 0.55 * (0.9 + idx * 0.01))).toFixed(1)),
+                zone1North: getAvgDays('DIST-01', 'North'),
+                zone2South: getAvgDays('DIST-02', 'South'),
+                zone3Cyber: getAvgDays('DIST-03', 'East'),
+                zone4West: getAvgDays('DIST-04', 'West'),
+                zone5Apex: getAvgDays('DIST-05', 'Central'),
             };
         });
     }
@@ -1987,15 +1807,22 @@ class PrimaryDataStore {
             const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
             months.push(`${monthNames[d.getMonth()]} ${d.getFullYear()}`);
         }
-        return months.map((month, idx) => {
-            const baseAnomaly = 0.02 * (idx + 1);
+        return months.map((month) => {
+            const [mStr, yStr] = month.split(' ');
+            const mIndex = monthNames.indexOf(mStr);
+            const yNum = parseInt(yStr);
+            const monthReviews = forgeryArr.filter(f => {
+                const d = new Date(f.timestamp || Date.now());
+                return d.getMonth() === mIndex && d.getFullYear() === yNum;
+            });
+            const getCount = (typeMatch) => monthReviews.filter(f => f.type?.toLowerCase().includes(typeMatch.toLowerCase())).length;
             return {
                 month,
-                bench1Cyber: Number((baseAnomaly * 0.5).toFixed(2)),
-                bench2Commercial: Number((baseAnomaly * 0.8).toFixed(2)),
-                bench3Criminal: Number((baseAnomaly * 0.6).toFixed(2)),
-                bench4WestTribunal: Number((baseAnomaly + (quarantinedCount * 0.05)).toFixed(2)),
-                bench5Apex: Number((baseAnomaly * 0.2).toFixed(2)),
+                bench1Cyber: getCount('Cyber') || 0,
+                bench2Commercial: getCount('Commercial') || getCount('Financial') || 0,
+                bench3Criminal: getCount('Criminal') || getCount('Theft') || 0,
+                bench4WestTribunal: getCount('Forgery') || getCount('Document') || 0,
+                bench5Apex: getCount('Appeal') || 0,
             };
         });
     }
@@ -2107,11 +1934,15 @@ class PrimaryDataStore {
                     metricValue: `${z.incidents} Cases • ${z.avgDays}d Avg`,
                     status: z.incidents > 3 ? 'Optimal' : 'Normal'
                 })),
-                timeSeriesDetailed: [
-                    { time: '08:00 AM', valueA: evidenceArr.length * 2, valueB: evidenceArr.length * 2 - 1, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-                    { time: '12:00 PM', valueA: evidenceArr.length * 4, valueB: evidenceArr.length * 4, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-                    { time: '04:00 PM', valueA: evidenceArr.length * 6, valueB: evidenceArr.length * 6 - 1, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-                ],
+                timeSeriesDetailed: (() => {
+                    const hours = [8, 12, 16]; // 08:00 AM, 12:00 PM, 04:00 PM
+                    return hours.map(h => {
+                        const label = h === 8 ? '08:00 AM' : h === 12 ? '12:00 PM' : '04:00 PM';
+                        const incoming = evidenceArr.filter(e => new Date(e.createdAt || e.date || Date.now()).getHours() === h).length;
+                        const sealed = evidenceArr.filter(e => (e.status === 'Sealed' || e.status === 'Verified') && new Date(e.createdAt || e.date || Date.now()).getHours() === h).length;
+                        return { time: label, valueA: incoming, valueB: sealed, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' };
+                    });
+                })(),
                 statutoryAuditLog: evidenceArr.slice(0, 3).map((e, idx) => ({
                     event: `Evidence #${e.id} (${e.title}) Sealed via SHA-256`,
                     timestamp: e.date || `${(idx + 1) * 10} mins ago`,
@@ -2142,10 +1973,20 @@ class PrimaryDataStore {
                     metricValue: `${b.avgDispositionDays} Days Avg • ${b.activeDockets} Dockets`,
                     status: b.activeDockets > 1 ? 'Optimal' : 'Normal'
                 })),
-                timeSeriesDetailed: [
-                    { time: 'Week 1', valueA: casesArr.length, valueB: casesArr.filter(c => c.status === 'Closed').length + 1, labelA: 'New Filings', labelB: 'Orders Executed' },
-                    { time: 'Week 2', valueA: casesArr.length + 2, valueB: casesArr.filter(c => c.status === 'Closed').length + 3, labelA: 'New Filings', labelB: 'Orders Executed' },
-                ],
+                timeSeriesDetailed: (() => {
+                    const days = [];
+                    for (let i = 2; i >= 0; i--) {
+                        const d = new Date();
+                        d.setDate(d.getDate() - i);
+                        days.push(d);
+                    }
+                    return days.map(d => {
+                        const timeLabel = d.toLocaleDateString('en-US', { weekday: 'short' });
+                        const filings = casesArr.filter(c => new Date(c.createdAt || c.date || Date.now()).toDateString() === d.toDateString()).length;
+                        const executed = casesArr.filter(c => c.status === 'Closed' && new Date(c.updatedAt || Date.now()).toDateString() === d.toDateString()).length;
+                        return { time: timeLabel, valueA: filings, valueB: executed, labelA: 'New Filings', labelB: 'Orders Executed' };
+                    });
+                })(),
                 statutoryAuditLog: casesArr.slice(0, 3).map((c, idx) => ({
                     event: `Case #${c.id} (${c.title}) Status Updated to ${c.status}`,
                     timestamp: `${(idx + 1) * 15} mins ago`,
@@ -2175,9 +2016,20 @@ class PrimaryDataStore {
                     { zone: 'Zone 1 (North)', metricValue: `${forgeryArr.length} Audited • 100% Score`, status: 'Optimal' },
                     { zone: 'Zone 2 (South)', metricValue: `${forgeryArr.filter(f => f.status === 'Under Review').length} Under Review`, status: 'Normal' },
                 ],
-                timeSeriesDetailed: [
-                    { time: 'Day 1', valueA: 100, valueB: forgeryArr.filter(f => f.status === 'Under Review').length, labelA: 'Integrity %', labelB: 'Unresolved Flags' },
-                ],
+                timeSeriesDetailed: (() => {
+                    const days = [];
+                    for (let i = 2; i >= 0; i--) {
+                        const d = new Date();
+                        d.setDate(d.getDate() - i);
+                        days.push(d);
+                    }
+                    return days.map(d => {
+                        const timeLabel = d.toLocaleDateString('en-US', { weekday: 'short' });
+                        const audited = forgeryArr.filter(f => new Date(f.timestamp || Date.now()).toDateString() === d.toDateString()).length;
+                        const unresolved = forgeryArr.filter(f => f.status === 'Under Review' && new Date(f.timestamp || Date.now()).toDateString() === d.toDateString()).length;
+                        return { time: timeLabel, valueA: audited, valueB: unresolved, labelA: 'Integrity %', labelB: 'Unresolved Flags' };
+                    });
+                })(),
                 statutoryAuditLog: forgeryArr.slice(0, 3).map((f, idx) => ({
                     event: `Forgery Review #${f.id} (${f.title}) -> ${f.status}`,
                     timestamp: `${(idx + 1) * 20} mins ago`,
@@ -2207,9 +2059,15 @@ class PrimaryDataStore {
                     { zone: 'Cyber Crime Cohort', metricValue: `${casesArr.filter(c => c.type === 'Cyber Crime').length} Cases`, status: 'Optimal' },
                     { zone: 'Financial Fraud Cohort', metricValue: `${casesArr.filter(c => c.type === 'Financial').length} Cases`, status: 'Optimal' },
                 ],
-                timeSeriesDetailed: [
-                    { time: 'Jan', valueA: casesArr.length, valueB: casesArr.length - 1, labelA: 'Outliers Flagged', labelB: 'Quality Panel Reviewed' },
-                ],
+                timeSeriesDetailed: (() => {
+                    const d = new Date();
+                    const currentMonthName = d.toLocaleString('default', { month: 'short' });
+                    const outliers = this.precedentFlags.filter(p => p.status === 'Flagged').length;
+                    const reviewed = this.precedentFlags.filter(p => p.status === 'Resolved' || p.status === 'Overridden').length;
+                    return [
+                        { time: currentMonthName, valueA: outliers, valueB: reviewed, labelA: 'Outliers Flagged', labelB: 'Quality Panel Reviewed' }
+                    ];
+                })(),
                 statutoryAuditLog: this.precedentFlags.slice(0, 3).map((p, idx) => ({
                     event: `Precedent Flag #${p.id} (${p.caseTitle}) -> ${p.status}`,
                     timestamp: `${(idx + 1) * 30} mins ago`,
@@ -2239,9 +2097,12 @@ class PrimaryDataStore {
                     { zone: 'Node Alpha (Court Authority)', metricValue: `${consensusArr.filter(c => c.courtAuthorityVoteStatus === 'Approved').length} Votes Approved`, status: 'Optimal' },
                     { zone: 'Node Beta (Independent Validator)', metricValue: `${consensusArr.filter(c => c.validatorVoteStatus === 'Approved').length} Votes Approved`, status: 'Optimal' },
                 ],
-                timeSeriesDetailed: [
-                    { time: 'Block #1', valueA: consensusArr.length, valueB: consensusArr.filter(c => c.status === 'Approved').length, labelA: 'Total Requests', labelB: 'Approved' },
-                ],
+                timeSeriesDetailed: (() => {
+                    const latestBlocks = consensusArr.slice(-3);
+                    return latestBlocks.map((c, idx) => {
+                        return { time: `Block #${c.id.substring(0, 4)}`, valueA: consensusArr.length, valueB: c.status === 'Approved' ? 1 : 0, labelA: 'Total Requests', labelB: 'Approved' };
+                    });
+                })(),
                 statutoryAuditLog: consensusArr.slice(0, 3).map((c, idx) => ({
                     event: `Consensus Request #${c.id} (${c.title || c.category}) -> ${c.status}`,
                     timestamp: `${(idx + 1) * 12} mins ago`,
@@ -2272,9 +2133,14 @@ class PrimaryDataStore {
                     metricValue: `${z.incidents} Active Cases • ${z.resolveRate}% Resolve Rate`,
                     status: 'Optimal'
                 })),
-                timeSeriesDetailed: [
-                    { time: 'Q1 2026', valueA: casesArr.length, valueB: casesArr.length, labelA: 'Infrastructure Readiness', labelB: 'Resource Equity' },
-                ],
+                timeSeriesDetailed: (() => {
+                    const d = new Date();
+                    const q = Math.ceil((d.getMonth() + 1) / 3);
+                    const y = d.getFullYear();
+                    return [
+                        { time: `Q${q} ${y}`, valueA: casesArr.length, valueB: casesArr.length, labelA: 'Infrastructure Readiness', labelB: 'Resource Equity' }
+                    ];
+                })(),
                 statutoryAuditLog: [
                     { event: 'Inter-Jurisdictional Database Ledger Audit Passed', timestamp: '5 mins ago', hash: '0xDIST_AUDIT_OK', status: 'Passed' }
                 ]
@@ -2292,6 +2158,7 @@ class PrimaryDataStore {
                     status: 'Attested'
                 });
             }
+            return mod;
         });
     }
 }

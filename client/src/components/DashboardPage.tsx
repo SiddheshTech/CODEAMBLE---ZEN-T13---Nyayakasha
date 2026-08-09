@@ -1323,6 +1323,7 @@ export function DashboardPage({
               <CaseFilesTab
                 initialCaseId={selectedCaseId}
                 onClearSelectedCase={() => setSelectedCaseId(null)}
+                role={role}
               />
             )
           )}

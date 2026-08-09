@@ -5245,6 +5245,26 @@
       "updatedAt": "2026-08-08T22:57:39.576Z",
       "realPinHash": "$argon2id$v=19$m=65536,t=3,p=4$/7PZe1icNqXeaCtJaBVrPQ$DA0jz9buNt4oO70xMp1v18K0Pnr7zU5zvMnUdQdCUEs",
       "duressPinHash": "$argon2id$v=19$m=65536,t=3,p=4$YaddOB6dMn/IAdKf37kggQ$AjVBwImUDds5s6WCb9xBjxPHrK9WsZLv5bkgbW5gwXU"
+    },
+    {
+      "id": "usr_auto_1786235166289",
+      "email": "smithkadam24@gmail.com",
+      "fullName": "SMITHKADAM24",
+      "role": "independent_validator",
+      "passwordHash": "$argon2id$v=19$m=65536,t=3,p=4$r22WGSfCTY+TVz6+8BYMWQ$VcerZItl0K6ST1p4MvhS42158jYG46l8lcH6skztU3U",
+      "approvalState": "active",
+      "stateHistory": [
+        {
+          "state": "active",
+          "timestamp": "2026-08-09T00:26:06.289Z",
+          "note": "Auto-provisioned"
+        }
+      ],
+      "institutionVerified": true,
+      "vettingApproved": true,
+      "mfaEnrolled": true,
+      "createdAt": "2026-08-09T00:26:06.289Z",
+      "updatedAt": "2026-08-09T00:26:06.289Z"
     }
   ],
   "duressAlerts": [
