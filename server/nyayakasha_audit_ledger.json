@@ -851,5 +851,82 @@
     "prevHash": "3a92ed9caeb369da035fd36660aef780cd8dc4e176fce568edd04cca395d9578",
     "hash": "8df4f46480d46f47ca6930280701977cd8892fec7a9c06844afab0e82389e76b",
     "blockNumber": 1489242
+  },
+  {
+    "id": "audit_1786242664061_43",
+    "index": 43,
+    "timestamp": "2026-08-09T02:31:04.060Z",
+    "eventType": "FORGERY_VERDICT_SUBMITTED",
+    "userId": "Adv. A. Mehta",
+    "userRole": "court_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "reviewId": "FRG-EV-8823",
+      "exhibitId": "EV-8823",
+      "decision": "Accepted & Admitted",
+      "signatureHash": "0xSIG_BENCH_3B8325DD1BFD98F7"
+    },
+    "payloadHash": "fa6217bee540e3509919d53bb90a687f6f6b1752253951d7a1c11c4394157ff3",
+    "prevHash": "8df4f46480d46f47ca6930280701977cd8892fec7a9c06844afab0e82389e76b",
+    "hash": "8b47fd711803f1f1daa284eea8a7272b2ef14c2b7aed5f67c2dce06e3c148e5e",
+    "blockNumber": 1489243,
+    "category": "System Safeguard",
+    "actionName": "Issued Ruling: Accepted & Admitted on Exhibit EV-8823",
+    "targetScope": "High Court Bench 3 (Presiding: Hon. Adv. A. Mehta)",
+    "outcome": "Approved"
+  },
+  {
+    "id": "audit_1786242708135_44",
+    "index": 44,
+    "timestamp": "2026-08-09T02:31:48.135Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786235166289",
+    "userRole": "independent_validator",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786242708135_afwucl",
+      "approvalState": "active"
+    },
+    "payloadHash": "a322e2e68c75bbf835f1f6a185375d513bbe56b05426ba41504064714474d670",
+    "prevHash": "8b47fd711803f1f1daa284eea8a7272b2ef14c2b7aed5f67c2dce06e3c148e5e",
+    "hash": "f60f887ff4596e9d0fc87f62fffe3146945ef174f36a56a714491fbf007b5e95",
+    "blockNumber": 1489244
+  },
+  {
+    "id": "audit_1786242708144_45",
+    "index": 45,
+    "timestamp": "2026-08-09T02:31:48.144Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "smithkadam24@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "smithkadam24@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "23666f9d3167b67102af117ebdba9fa14b2c450c1a979b13f32ff3629251b7f6",
+    "prevHash": "f60f887ff4596e9d0fc87f62fffe3146945ef174f36a56a714491fbf007b5e95",
+    "hash": "91a924415e98509732904eb48e5dfb286df6ccb40ef14aa98b5e66d3fb90ed5f",
+    "blockNumber": 1489245
+  },
+  {
+    "id": "audit_1786242709201_46",
+    "index": 46,
+    "timestamp": "2026-08-09T02:31:49.201Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "smithkadam24@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Chrome / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "dcb7fe4e54f2703c65a8f06bd3a9fa85b72232df39e054308e043bf166ef21ae",
+    "prevHash": "91a924415e98509732904eb48e5dfb286df6ccb40ef14aa98b5e66d3fb90ed5f",
+    "hash": "072e65ecb1d3c37643ff59d09ad3aefa4d1c81653dcb532204202d1883d85577",
+    "blockNumber": 1489246
   }
 ]

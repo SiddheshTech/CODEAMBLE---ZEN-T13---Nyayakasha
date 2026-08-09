@@ -10072,7 +10072,7 @@
       "type": "Digital Photo Snapshot",
       "date": "Aug 09, 2026, 07:58 AM",
       "hash": "0xf7be57802de92d4ae010281a2eb0e6656c40d077b07525912a7171b7dadccf51",
-      "status": "CNN Verified & Filed",
+      "status": "Admitted to Trial Record",
       "custodian": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
       "incidentLocation": "Field Location",
       "confidentialityLevel": "Restricted",
@@ -10330,7 +10330,15 @@
         }
       ],
       "precedents": [],
-      "directives": []
+      "directives": [],
+      "judicialDecision": {
+        "action": "Accepted & Admitted",
+        "judgeName": "Hon. Presiding Magistrate (Bench 3)",
+        "benchKeyId": "BENCH-KEY-IND-003",
+        "timestamp": "09 Aug 2026, 08:01 AM",
+        "justification": "It is not perfect",
+        "digitalSignatureHash": "0xSIG_BENCH_3B8325DD1BFD98F7"
+      }
     }
   ],
   "identityUnlocks": [],

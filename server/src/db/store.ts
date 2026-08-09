@@ -255,16 +255,22 @@ export interface ConsensusRequest {
   txHash?: string;
   blockNumber?: number;
   category?: string;
+  changeTypeLabel?: string;
+  requestedBy?: string;
   requestAgency?: string;
+  riskScore?: number;
+  reasonForRequest?: string;
   description?: string;
   targetRecordHash?: string;
+  proposedRecordHash?: string;
+  previousBlockHash?: string;
   validatorVote?: string;
   validatorJustificationNote?: string;
   nodeVotes?: any[];
+  fieldDiffs?: any[];
   courtAuthorityVoteStatus?: string;
   yourVote?: string;
   title?: string;
-  proposedRecordHash?: string;
   currentApprovalCount?: number;
   totalRequiredCount?: number;
   systemFlagIndicator?: {

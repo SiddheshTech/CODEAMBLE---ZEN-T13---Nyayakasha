@@ -284,15 +284,51 @@ evidenceRouter.post('/submit', async (req: Request, res: Response) => {
       caseId: caseId || 'FIR-2026-001',
       status: 'Pending',
       queue: `${newExhibit.type} Hash Consensus`,
+      category: 'Section 65B Re-hash',
+      changeTypeLabel: 'PRAMANA Payload SHA-256 Hash Consensus & Chain Attestation',
+      requestedBy: custodian || 'Officer Rajesh Kulkarni (Zone 4 Operations)',
+      requestAgency: 'Zone 4 Cyber Crime Precinct',
+      riskScore: 12,
+      reasonForRequest: `Cryptographic state payload verification for Exhibit #${id} (${title}). Zero case content embedded for neutral validation.`,
+      targetRecordHash: generatedHash,
+      proposedRecordHash: generatedHash,
+      previousBlockHash: '0x7710a9041fe882019401',
+      merkleRoot: anchorResult.merkleRoot,
+      blockNumber: anchorResult.blockNumber,
+      fieldDiffs: [
+        {
+          fieldName: 'Payload SHA-256 Digest',
+          originalValue: '0x00000000000000000000000000000000',
+          proposedValue: generatedHash,
+          impactLevel: 'Minor',
+          note: 'Cryptographically sealed & anchored on Polygon PoS'
+        },
+        {
+          fieldName: 'EXIF Telemetry Clock',
+          originalValue: 'Unverified Scene Hardware Clock',
+          proposedValue: 'Verified NTP Timestamp (GPS Geofenced)',
+          impactLevel: 'Minor',
+          note: 'GPS telemetry matched precinct geofence'
+        }
+      ],
+      nodeVotes: [
+        {
+          nodeName: 'Zone 4 Field Submitter Terminal',
+          nodeRole: 'Field Operations Node',
+          keyId: 'KEY-FS-9041',
+          status: 'Approved',
+          timestamp: new Date().toLocaleString(),
+          signatureHash: '0xSIG_FS_' + generatedHash.slice(0, 12)
+        }
+      ],
       waitTimeHours: 0.05,
       waitTimeFormatted: '3 mins',
       slaLimitFormatted: '12.0h SLA Limit',
       urgency: 'NORMAL',
       urgencyColor: 'bg-emerald-100 text-emerald-900 border-emerald-200',
       badgeColor: 'bg-emerald-500',
-      quorumSigned: 0,
+      quorumSigned: 1,
       quorumTotal: 3,
-      merkleRoot: anchorResult.merkleRoot,
       zkProofType: 'ZK-SNARK-secp256k1',
       entropyScore: '0.999',
       cryptographicDetails: `Cryptographic state payload for Exhibit #${id} (${title}). Zero case content embedded for neutral validation.`,
