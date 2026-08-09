@@ -95,7 +95,7 @@ identityRouter.post('/decide', (req, res) => {
     // Optionally store judge identity if provided
     const judgeNameForLog = judgeName || 'Hon. Presiding Magistrate (Active Bench)';
     const judgeKeyForLog = judgeKeyId || 'BENCH-KEY-IND-003';
-    const updated = primaryStore.decideIdentityUnlockRequest(requestId, decision, remarks || '', sigHash, judgeNameForLog, judgeKeyForLog);
+    const updated = primaryStore.decideIdentityUnlockRequest(requestId, decision, remarks || '', sigHash);
     if (!updated) {
         return res.status(404).json({ error: 'Identity unlock request not found' });
     }

@@ -230,15 +230,8 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
     }
   }, [slideOverItemId]);
 
-  const [validatorJustifications, setValidatorJustifications] = useState<Record<string, string>>({
-    'CNS-2026-101': 'Verified against ISP router NTP clock logs. Time offset realignment is cryptographically valid and preserves raw payload hashes.',
-  });
-  const [validatorPins, setValidatorPins] = useState<Record<string, string>>({
-    'CNS-2026-101': '882091',
-    'CNS-2026-102': '882091',
-    'CNS-2026-103': '882091',
-    'CNS-2026-104': '882091',
-  });
+  const [validatorJustifications, setValidatorJustifications] = useState<Record<string, string>>({});
+  const [validatorPins, setValidatorPins] = useState<Record<string, string>>({});
   const [validatorErrors, setValidatorErrors] = useState<Record<string, string | null>>({});
 
   const handleValidatorVoteSubmit = (itemId: string, voteAction: 'Approved' | 'Rejected') => {
@@ -331,7 +324,7 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // JUDICIAL SIGNING FORM STATE
-  const [judgePasskey, setJudgePasskey] = useState('JUDGE-BENCH-KEY-2026-SECRET');
+  const [judgePasskey, setJudgePasskey] = useState('');
   const [judgeRemarks, setJudgeRemarks] = useState('');
   const [agreedToOath, setAgreedToOath] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
@@ -363,10 +356,10 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
     const matchesCategory = filterCategory === 'All' || item.category === filterCategory;
 
     const matchesSearch =
-      item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.caseRef.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.requestedBy.toLowerCase().includes(searchQuery.toLowerCase());
+      (item.id?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (item.caseRef?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (item.title?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (item.requestedBy?.toLowerCase() || '').includes(searchQuery.toLowerCase());
 
     return matchesStatus && matchesCategory && matchesSearch;
   });
@@ -391,76 +384,24 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
 
     setIsSigning(true);
 
-    setTimeout(() => {
-      const now = new Date();
-      const timestampStr =
-        now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) +
-        ', ' +
-        now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-      const sigHash = `0xSIG_BENCH_${voteAction.startsWith('Approved') ? 'ADM' : voteAction.startsWith('Rejected') ? 'REJ' : 'ESC'}_${Math.floor(
-        Math.random() * 899999 + 100000
-      )}`;
-
-      const newYourVote: ConsensusItem['yourVote'] = voteAction.startsWith('Approved')
-        ? 'approved'
-        : 'rejected';
-
-      let newStatus: ConsensusItem['status'] = selectedItem.status;
-      if (voteAction.startsWith('Rejected')) {
-        newStatus = 'Rejected';
-      } else if (voteAction.startsWith('Approved')) {
-        if (selectedItem.validatorVote === 'approved') {
-          newStatus = 'Approved';
-        } else {
-          newStatus = 'Awaiting validator';
+    const decision = voteAction.startsWith('Approved') ? 'Approved' : 'Rejected';
+    api.castConsensusVote(selectedItem.id, decision, judgeRemarks || 'Judicial threshold vote cast following payload diff audit.', 'Hon. Presiding Magistrate (Bench 3)')
+      .then(() => {
+        fetchPendingConsensus();
+        setIsSigning(false);
+        showToast(`Consensus Vote for ${selectedItem.id} (${selectedItem.caseRef}) RECORDED: ${voteAction.toUpperCase()}.`);
+        if (slideOverItemId === selectedItem.id) {
+          api.getConsensusById(slideOverItemId).then(res => {
+            if (res.request) {
+              setItems(prev => prev.map(i => i.id === slideOverItemId ? { ...i, ...res.request } : i));
+            }
+          });
         }
-      }
-
-      const newApprovalCount =
-        voteAction.startsWith('Approved') ? selectedItem.currentApprovalCount + 1 : selectedItem.currentApprovalCount;
-
-      setItems((prev) =>
-        prev.map((i) => {
-          if (i.id === selectedItem.id) {
-            return {
-              ...i,
-              status: newStatus,
-              yourVote: newYourVote,
-              currentApprovalCount: newApprovalCount,
-              nodeVotes: i.nodeVotes.map((nv) => {
-                if (nv.nodeRole.includes('Judicial')) {
-                  return {
-                    ...nv,
-                    status: voteAction.startsWith('Approved') ? 'Approved' : 'Rejected',
-                    timestamp: timestampStr,
-                    signatureHash: sigHash,
-                  };
-                }
-                return nv;
-              }),
-              judicialDecision: {
-                action: voteAction,
-                judgeName: 'Hon. Presiding Magistrate (Bench 3)',
-                benchKeyId: 'BENCH-KEY-IND-003',
-                timestamp: timestampStr,
-                justification: judgeRemarks || 'Judicial threshold vote cast following payload diff audit.',
-                digitalSignatureHash: sigHash,
-              },
-            };
-          }
-          return i;
-        })
-      );
-
-      setIsSigning(false);
-      showToast(
-        `Consensus Vote for ${selectedItem.id} (${selectedItem.caseRef}) RECORDED: ${voteAction.toUpperCase()}. Signature: ${sigHash.substring(
-          0,
-          18
-        )}...`
-      );
-    }, 700);
+      })
+      .catch(err => {
+        setIsSigning(false);
+        showToast(`Failed to cast vote: ${err.message}`);
+      });
   };
 
   const handleAddDirective = (e: React.FormEvent) => {
@@ -497,7 +438,7 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
   const flaggedCount = items.filter((i) => i.status === 'Flagged suspicious').length;
   const approvedCount = items.filter((i) => i.status === 'Approved').length;
 
-  if (role === 'Independent Validator') {
+  if (role === 'Independent Validator' || role === 'independent_validator') {
     const pendingItems = items.filter((i) => i.validatorVote === 'pending');
     const historyItems = items.filter((i) => i.validatorVote !== 'pending');
     const tabSourceItems = validatorTab === 'pending' ? pendingItems : historyItems;
@@ -507,7 +448,7 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
 
       let matchesStatus = true;
       if (statusFilter === 'Pending') {
-        matchesStatus = item.validatorVote === 'pending' || item.status.includes('Awaiting');
+        matchesStatus = item.validatorVote === 'pending' || item.status?.includes('Awaiting');
       } else if (statusFilter === 'Approved') {
         matchesStatus = item.validatorVote === 'approved' || item.status === 'Approved';
       } else if (statusFilter === 'Rejected') {
@@ -519,13 +460,13 @@ export function ConsensusApprovalsTab({ role = 'Court Authority' }: { role?: str
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||
-        item.id.toLowerCase().includes(q) ||
-        item.caseRef.toLowerCase().includes(q) ||
-        item.title.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q) ||
+        (item.id?.toLowerCase() || '').includes(q) ||
+        (item.caseRef?.toLowerCase() || '').includes(q) ||
+        (item.title?.toLowerCase() || '').includes(q) ||
+        (item.category?.toLowerCase() || '').includes(q) ||
         (item.changeTypeLabel && item.changeTypeLabel.toLowerCase().includes(q)) ||
-        item.requestedBy.toLowerCase().includes(q) ||
-        item.requestAgency.toLowerCase().includes(q);
+        (item.requestedBy?.toLowerCase() || '').includes(q) ||
+        (item.requestAgency?.toLowerCase() || '').includes(q);
 
       return matchesStatus && matchesSearch;
     });
