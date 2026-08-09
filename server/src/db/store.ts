@@ -2629,30 +2629,36 @@ class PrimaryDataStore {
       periods.push(`Q${q} ${y}`);
     }
 
-    return periods.map((period, idx) => {
-      const multiplier = 0.9 + (idx * 0.05);
-      const z1 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-01')).length;
-      const z2 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-02')).length;
-      const z3 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-03')).length;
-      const z4 = casesArr.filter(c => c.jurisdictionCode?.includes('DIST-04')).length;
+    return periods.map((period) => {
+      const [qStr, yStr] = period.split(' ');
+      const qNum = parseInt(qStr.replace('Q', ''));
+      const yNum = parseInt(yStr);
 
-      // Compute per-case avg duration weighted by zone
-      const allAvgDays = casesArr.length > 0 ? (() => {
-        const total = casesArr.reduce((sum, c) => {
+      const periodCases = casesArr.filter(c => {
+        const d = new Date(c.createdAt || c.date || Date.now());
+        const cQ = Math.ceil((d.getMonth() + 1) / 3);
+        const cY = d.getFullYear();
+        return cQ === qNum && cY === yNum;
+      });
+
+      const getAvgDays = (jurisdictionMatch: string, altMatch: string) => {
+        const matchingCases = periodCases.filter(c => c.jurisdictionCode?.includes(jurisdictionMatch) || c.location?.toLowerCase().includes(altMatch.toLowerCase()));
+        if (matchingCases.length === 0) return 0;
+        const totalDays = matchingCases.reduce((sum, c) => {
           const created = new Date(c.createdAt || c.date || Date.now()).getTime();
           const updated = new Date(c.updatedAt || Date.now()).getTime();
-          return sum + Math.max(0.5, (updated - created) / (1000 * 60 * 60 * 24));
+          return sum + Math.max(0, (updated - created) / (1000 * 60 * 60 * 24));
         }, 0);
-        return total / casesArr.length;
-      })() : 1.4;
+        return Number((totalDays / matchingCases.length).toFixed(1));
+      };
 
       return {
         period,
-        zone1North: Number((Math.max(0.5, (z1 > 0 ? allAvgDays * 0.85 : 1.2) * (0.9 + idx * 0.02))).toFixed(1)),
-        zone2South: Number((Math.max(0.6, (z2 > 0 ? allAvgDays * 1.1 : 1.7) * (0.9 + idx * 0.03))).toFixed(1)),
-        zone3Cyber: Number((Math.max(0.4, (z3 > 0 ? allAvgDays * 0.75 : 1.1) * (0.9 + idx * 0.01))).toFixed(1)),
-        zone4West: Number((Math.max(0.8, (z4 > 0 ? allAvgDays * 1.5 : 1.9) * (0.9 + idx * 0.08))).toFixed(1)),
-        zone5Apex: Number((Math.max(0.3, allAvgDays * 0.55 * (0.9 + idx * 0.01))).toFixed(1)),
+        zone1North: getAvgDays('DIST-01', 'North'),
+        zone2South: getAvgDays('DIST-02', 'South'),
+        zone3Cyber: getAvgDays('DIST-03', 'East'),
+        zone4West: getAvgDays('DIST-04', 'West'),
+        zone5Apex: getAvgDays('DIST-05', 'Central'),
       };
     });
   }
@@ -2670,15 +2676,25 @@ class PrimaryDataStore {
       months.push(`${monthNames[d.getMonth()]} ${d.getFullYear()}`);
     }
 
-    return months.map((month, idx) => {
-      const baseAnomaly = 0.02 * (idx + 1);
+    return months.map((month) => {
+      const [mStr, yStr] = month.split(' ');
+      const mIndex = monthNames.indexOf(mStr);
+      const yNum = parseInt(yStr);
+
+      const monthReviews = forgeryArr.filter(f => {
+        const d = new Date(f.timestamp || Date.now());
+        return d.getMonth() === mIndex && d.getFullYear() === yNum;
+      });
+
+      const getCount = (typeMatch: string) => monthReviews.filter(f => f.type?.toLowerCase().includes(typeMatch.toLowerCase())).length;
+
       return {
         month,
-        bench1Cyber: Number((baseAnomaly * 0.5).toFixed(2)),
-        bench2Commercial: Number((baseAnomaly * 0.8).toFixed(2)),
-        bench3Criminal: Number((baseAnomaly * 0.6).toFixed(2)),
-        bench4WestTribunal: Number((baseAnomaly + (quarantinedCount * 0.05)).toFixed(2)),
-        bench5Apex: Number((baseAnomaly * 0.2).toFixed(2)),
+        bench1Cyber: getCount('Cyber') || 0,
+        bench2Commercial: getCount('Commercial') || getCount('Financial') || 0,
+        bench3Criminal: getCount('Criminal') || getCount('Theft') || 0,
+        bench4WestTribunal: getCount('Forgery') || getCount('Document') || 0,
+        bench5Apex: getCount('Appeal') || 0,
       };
     });
   }
@@ -2803,11 +2819,15 @@ class PrimaryDataStore {
           metricValue: `${z.incidents} Cases • ${z.avgDays}d Avg`,
           status: z.incidents > 3 ? 'Optimal' : 'Normal'
         })),
-        timeSeriesDetailed: [
-          { time: '08:00 AM', valueA: evidenceArr.length * 2, valueB: evidenceArr.length * 2 - 1, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-          { time: '12:00 PM', valueA: evidenceArr.length * 4, valueB: evidenceArr.length * 4, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-          { time: '04:00 PM', valueA: evidenceArr.length * 6, valueB: evidenceArr.length * 6 - 1, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' },
-        ],
+        timeSeriesDetailed: (() => {
+          const hours = [8, 12, 16]; // 08:00 AM, 12:00 PM, 04:00 PM
+          return hours.map(h => {
+            const label = h === 8 ? '08:00 AM' : h === 12 ? '12:00 PM' : '04:00 PM';
+            const incoming = evidenceArr.filter(e => new Date(e.createdAt || e.date || Date.now()).getHours() === h).length;
+            const sealed = evidenceArr.filter(e => (e.status === 'Sealed' || e.status === 'Verified') && new Date(e.createdAt || e.date || Date.now()).getHours() === h).length;
+            return { time: label, valueA: incoming, valueB: sealed, labelA: 'Incoming Exhibits', labelB: 'HSM Sealed' };
+          });
+        })(),
         statutoryAuditLog: evidenceArr.slice(0, 3).map((e, idx) => ({
           event: `Evidence #${e.id} (${e.title}) Sealed via SHA-256`,
           timestamp: e.date || `${(idx + 1) * 10} mins ago`,
@@ -2839,10 +2859,20 @@ class PrimaryDataStore {
           metricValue: `${b.avgDispositionDays} Days Avg • ${b.activeDockets} Dockets`,
           status: b.activeDockets > 1 ? 'Optimal' : 'Normal'
         })),
-        timeSeriesDetailed: [
-          { time: 'Week 1', valueA: casesArr.length, valueB: casesArr.filter(c => c.status === 'Closed').length + 1, labelA: 'New Filings', labelB: 'Orders Executed' },
-          { time: 'Week 2', valueA: casesArr.length + 2, valueB: casesArr.filter(c => c.status === 'Closed').length + 3, labelA: 'New Filings', labelB: 'Orders Executed' },
-        ],
+        timeSeriesDetailed: (() => {
+          const days = [];
+          for (let i = 2; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            days.push(d);
+          }
+          return days.map(d => {
+            const timeLabel = d.toLocaleDateString('en-US', { weekday: 'short' });
+            const filings = casesArr.filter(c => new Date(c.createdAt || c.date || Date.now()).toDateString() === d.toDateString()).length;
+            const executed = casesArr.filter(c => c.status === 'Closed' && new Date(c.updatedAt || Date.now()).toDateString() === d.toDateString()).length;
+            return { time: timeLabel, valueA: filings, valueB: executed, labelA: 'New Filings', labelB: 'Orders Executed' };
+          });
+        })(),
         statutoryAuditLog: casesArr.slice(0, 3).map((c, idx) => ({
           event: `Case #${c.id} (${c.title}) Status Updated to ${c.status}`,
           timestamp: `${(idx + 1) * 15} mins ago`,
@@ -2873,9 +2903,20 @@ class PrimaryDataStore {
           { zone: 'Zone 1 (North)', metricValue: `${forgeryArr.length} Audited • 100% Score`, status: 'Optimal' },
           { zone: 'Zone 2 (South)', metricValue: `${forgeryArr.filter(f => f.status === 'Under Review').length} Under Review`, status: 'Normal' },
         ],
-        timeSeriesDetailed: [
-          { time: 'Day 1', valueA: 100, valueB: forgeryArr.filter(f => f.status === 'Under Review').length, labelA: 'Integrity %', labelB: 'Unresolved Flags' },
-        ],
+        timeSeriesDetailed: (() => {
+          const days = [];
+          for (let i = 2; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            days.push(d);
+          }
+          return days.map(d => {
+            const timeLabel = d.toLocaleDateString('en-US', { weekday: 'short' });
+            const audited = forgeryArr.filter(f => new Date(f.timestamp || Date.now()).toDateString() === d.toDateString()).length;
+            const unresolved = forgeryArr.filter(f => f.status === 'Under Review' && new Date(f.timestamp || Date.now()).toDateString() === d.toDateString()).length;
+            return { time: timeLabel, valueA: audited, valueB: unresolved, labelA: 'Integrity %', labelB: 'Unresolved Flags' };
+          });
+        })(),
         statutoryAuditLog: forgeryArr.slice(0, 3).map((f, idx) => ({
           event: `Forgery Review #${f.id} (${f.title}) -> ${f.status}`,
           timestamp: `${(idx + 1) * 20} mins ago`,
@@ -2906,9 +2947,15 @@ class PrimaryDataStore {
           { zone: 'Cyber Crime Cohort', metricValue: `${casesArr.filter(c => c.type === 'Cyber Crime').length} Cases`, status: 'Optimal' },
           { zone: 'Financial Fraud Cohort', metricValue: `${casesArr.filter(c => c.type === 'Financial').length} Cases`, status: 'Optimal' },
         ],
-        timeSeriesDetailed: [
-          { time: 'Jan', valueA: casesArr.length, valueB: casesArr.length - 1, labelA: 'Outliers Flagged', labelB: 'Quality Panel Reviewed' },
-        ],
+        timeSeriesDetailed: (() => {
+          const d = new Date();
+          const currentMonthName = d.toLocaleString('default', { month: 'short' });
+          const outliers = this.precedentFlags.filter(p => p.status === 'Flagged').length;
+          const reviewed = this.precedentFlags.filter(p => p.status === 'Archived' || p.status === 'Cleared').length;
+          return [
+            { time: currentMonthName, valueA: outliers, valueB: reviewed, labelA: 'Outliers Flagged', labelB: 'Quality Panel Reviewed' }
+          ];
+        })(),
         statutoryAuditLog: this.precedentFlags.slice(0, 3).map((p, idx) => ({
           event: `Precedent Flag #${p.id} (${p.caseTitle}) -> ${p.status}`,
           timestamp: `${(idx + 1) * 30} mins ago`,
@@ -2939,9 +2986,12 @@ class PrimaryDataStore {
           { zone: 'Node Alpha (Court Authority)', metricValue: `${consensusArr.filter(c => c.courtAuthorityVoteStatus === 'Approved').length} Votes Approved`, status: 'Optimal' },
           { zone: 'Node Beta (Independent Validator)', metricValue: `${consensusArr.filter(c => c.validatorVoteStatus === 'Approved').length} Votes Approved`, status: 'Optimal' },
         ],
-        timeSeriesDetailed: [
-          { time: 'Block #1', valueA: consensusArr.length, valueB: consensusArr.filter(c => c.status === 'Approved').length, labelA: 'Total Requests', labelB: 'Approved' },
-        ],
+        timeSeriesDetailed: (() => {
+          const latestBlocks = consensusArr.slice(-3);
+          return latestBlocks.map((c, idx) => {
+            return { time: `Block #${c.id.substring(0, 4)}`, valueA: consensusArr.length, valueB: c.status === 'Approved' ? 1 : 0, labelA: 'Total Requests', labelB: 'Approved' };
+          });
+        })(),
         statutoryAuditLog: consensusArr.slice(0, 3).map((c, idx) => ({
           event: `Consensus Request #${c.id} (${c.title || c.category}) -> ${c.status}`,
           timestamp: `${(idx + 1) * 12} mins ago`,
@@ -2973,9 +3023,14 @@ class PrimaryDataStore {
           metricValue: `${z.incidents} Active Cases • ${z.resolveRate}% Resolve Rate`,
           status: 'Optimal'
         })),
-        timeSeriesDetailed: [
-          { time: 'Q1 2026', valueA: casesArr.length, valueB: casesArr.length, labelA: 'Infrastructure Readiness', labelB: 'Resource Equity' },
-        ],
+        timeSeriesDetailed: (() => {
+          const d = new Date();
+          const q = Math.ceil((d.getMonth() + 1) / 3);
+          const y = d.getFullYear();
+          return [
+            { time: `Q${q} ${y}`, valueA: casesArr.length, valueB: casesArr.length, labelA: 'Infrastructure Readiness', labelB: 'Resource Equity' }
+          ];
+        })(),
         statutoryAuditLog: [
           { event: 'Inter-Jurisdictional Database Ledger Audit Passed', timestamp: '5 mins ago', hash: '0xDIST_AUDIT_OK', status: 'Passed' }
         ]
@@ -2994,6 +3049,7 @@ class PrimaryDataStore {
           status: 'Attested'
         });
       }
+      return mod;
     });
   }
 }

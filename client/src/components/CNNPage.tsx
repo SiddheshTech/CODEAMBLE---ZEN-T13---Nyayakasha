@@ -88,7 +88,7 @@ export function CNNPage() {
     formData.append('type', type);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/analyze_local', {
+      const response = await fetch('http://127.0.0.1:5001/analyze_local', {
         method: 'POST',
         body: formData,
       });
@@ -117,7 +117,7 @@ export function CNNPage() {
       }
     } catch (error) {
       console.error(error);
-      alert("Could not connect to the backend CNN API. Make sure it's running on port 5000.");
+      alert("Could not connect to the backend CNN API. Make sure it's running on port 5001.");
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';

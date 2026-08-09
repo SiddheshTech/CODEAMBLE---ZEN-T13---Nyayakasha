@@ -28,8 +28,15 @@ analyticsRouter.get('/overview', (req: Request, res: Response) => {
   const cohortPrivacyAudit = primaryStore.getLiveCohortPrivacyAudit();
   const timeSeriesVolume = primaryStore.getLiveTimeSeriesVolume();
   const caseCategories = primaryStore.getLiveCaseCategories();
-  const analyticalModules = primaryStore.getLiveAnalyticalModules();
-
+  let analyticalModules = primaryStore.getLiveAnalyticalModules();
+  
+  const role = req.query.role as string;
+  if (role === 'Field Submitter') {
+    analyticalModules = analyticalModules.filter(m => m.category === 'Evidence Integrity & Volume');
+  } else if (role === 'Independent Validator') {
+    // Show everything except court operational metrics
+    analyticalModules = analyticalModules.filter(m => m.category !== 'Court Operations & Efficiency');
+  }
   const avgDurationDays = cases.length > 0 ? (cases.reduce((sum, c) => {
     const created = new Date(c.createdAt || c.date || Date.now()).getTime();
     const updated = new Date(c.updatedAt || Date.now()).getTime();

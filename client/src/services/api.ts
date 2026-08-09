@@ -361,8 +361,9 @@ export const api = {
   },
 
   // --- ANALYTICS ---
-  getAnalyticsOverview: async () => {
-    return fetchAPI('/analytics/overview', { method: 'GET' });
+  getAnalyticsOverview: async (role?: string) => {
+    const query = role ? `?role=${encodeURIComponent(role)}` : '';
+    return fetchAPI(`/analytics/overview${query}`, { method: 'GET' });
   },
 
   // --- SECURITY & DEVICE UNRECOGNIZED ALERT ---

@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 
 
-
 // ==================== ANALYTICAL CORE MODULE INTERFACE ==================== //
 
 export interface AnalyticalModuleItem {
@@ -39,11 +38,6 @@ export interface AnalyticalModuleItem {
   timeSeriesDetailed: Array<{ time: string; valueA: number; valueB: number; labelA: string; labelB: string }>;
   statutoryAuditLog: Array<{ event: string; timestamp: string; hash: string; status: string }>;
 }
-
-const ANALYTICAL_MODULES: AnalyticalModuleItem[] = [];
-
-// ==================== HOMOMORPHIC ENCRYPTED DATASETS (INDEPENDENT VALIDATOR) ==================== //
-
 export interface HomomorphicReportItem {
   id: string;
   reportCode: string;
@@ -68,9 +62,6 @@ export interface HomomorphicReportItem {
   escalationCategory?: string;
 }
 
-const INITIAL_HOMOMORPHIC_REPORTS: HomomorphicReportItem[] = [];
-
-
 
 export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d' | '90d' | 'YTD'>('7d');
@@ -90,7 +81,7 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
 
   const fetchAnalyticsData = () => {
     setIsLoadingAnalytics(true);
-    api.getAnalyticsOverview()
+    api.getAnalyticsOverview(role)
       .then(res => {
         if (res.metrics) {
           setBackendMetrics(res.metrics);
@@ -136,7 +127,7 @@ export function AnalyticsTab({ role = 'Court Authority' }: { role?: string }) {
   }, []);
 
   // INDEPENDENT VALIDATOR HOMOMORPHIC STATE
-  const [homomorphicReports, setHomomorphicReports] = useState<HomomorphicReportItem[]>(INITIAL_HOMOMORPHIC_REPORTS);
+  const [homomorphicReports, setHomomorphicReports] = useState<HomomorphicReportItem[]>([]);
   const [validatorMainTab, setValidatorMainTab] = useState<'overview' | 'by_court' | 'trends'>('overview');
   const [validatorDateRange, setValidatorDateRange] = useState<'30d' | 'quarter' | 'custom'>('30d');
   const [validatorCourtFilter, setValidatorCourtFilter] = useState<string>('All');
