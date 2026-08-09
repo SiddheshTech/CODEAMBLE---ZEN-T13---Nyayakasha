@@ -125,7 +125,7 @@ export function SettingsTab({ role }: { role: string }) {
 
   const handleRevokeSession = async (id: string) => {
     try {
-      await api.revokeSession(id);
+      await api.revokeSettingsSession(id);
       setActiveSessions(prev => prev.filter(s => s.id !== id));
       showToast('Session terminated and cryptographic token revoked.');
     } catch (e: any) {
@@ -143,7 +143,7 @@ export function SettingsTab({ role }: { role: string }) {
         themeMode
       });
       if (res.success) {
-        localStorage.setItem('nyayakasha_session_timeout', sessionTimeout);
+        localStorage.setItem('nyayakasha_session_timeout', String(sessionTimeout));
         localStorage.setItem('nyayakasha_language', language);
         localStorage.setItem('nyayakasha_theme', themeMode);
 

@@ -72,7 +72,7 @@ const mockEvidence = [
 ];
 
 export function CNNPage() {
-  const [evidenceList, setEvidenceList] = useState(mockEvidence);
+  const [evidenceList, setEvidenceList] = useState<any[]>(mockEvidence);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadType, setUploadType] = useState('image');

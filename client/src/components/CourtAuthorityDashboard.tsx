@@ -66,6 +66,7 @@ interface AttentionItem {
   actionLabel: string;
   caseRef?: string;
   judgeInstruction?: string;
+  dbId?: string;
 }
 
 export function CourtAuthorityDashboard({

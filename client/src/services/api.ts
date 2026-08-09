@@ -66,6 +66,7 @@ export const api = {
     institutionId?: string;
     jurisdictionCode?: string;
     consentVetting?: boolean;
+    profilePhotoUrl?: string;
   }) => {
     const res = await fetchAPI('/auth/signup', {
       method: 'POST',
@@ -486,17 +487,6 @@ export const api = {
   },
 
   // --- PROFILE MANAGEMENT ---
-  getProfile: async () => {
-    return fetchAPI('/profile', { method: 'GET' });
-  },
-
-  updateProfile: async (data: any) => {
-    return fetchAPI('/profile', {
-      method: 'PATCH',
-      body: JSON.stringify(data)
-    });
-  },
-
   // --- INSTITUTIONAL SETTINGS ---
   getSettings: async () => {
     return fetchAPI('/settings', { method: 'GET' });
@@ -528,7 +518,7 @@ export const api = {
     return res;
   },
 
-  revokeSession: async (sessionId: string) => {
+  revokeSettingsSession: async (sessionId: string) => {
     return fetchAPI('/settings/revoke-session', {
       method: 'POST',
       body: JSON.stringify({ sessionId })

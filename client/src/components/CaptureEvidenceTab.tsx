@@ -517,6 +517,8 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
         directives: []
       };
 
+      const signatureDataUrl: string | undefined = undefined; // signature pad not present in this view
+
       const getCurrentUserCustodianName = () => {
         try {
           const userStr = localStorage.getItem('nyayakasha_user');
