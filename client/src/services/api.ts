@@ -20,7 +20,7 @@ async function fetchAPI<T = any>(endpoint: string, options: RequestInit = {}): P
     headers['Content-Type'] = 'application/json';
   }
 
-  if (token) {
+  if (token && !headers['Authorization']) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
@@ -91,6 +91,14 @@ export const api = {
     return res;
   },
 
+  getUserStatus: async () => {
+    // A quick way to get user approval status without full session validation
+    // Wait, let's use the current user from localStorage to just check their status via a mock or actual endpoint
+    // Let's create an endpoint in auth.routes to get me or just return from signup if we rely on polling
+    // Since we don't have a /api/auth/me right now, I will use /api/auth/session-status
+    return fetchAPI('/auth/session-status', { method: 'GET' });
+  },
+
   logout: async () => {
     try {
       await fetchAPI('/auth/logout', { method: 'POST' });
@@ -147,6 +155,53 @@ export const api = {
     return fetchAPI('/verification/admin/approve-user', {
       method: 'POST',
       body: JSON.stringify({ targetUserId, decision, note })
+    });
+  },
+
+  // --- HIGHER AUTHORITY (ADMIN) API ---
+  adminLogin: async (password: string) => {
+    const res = await fetchAPI('/admin/login', {
+      method: 'POST',
+      body: JSON.stringify({ password })
+    });
+    if (res.token) {
+      localStorage.setItem('nyayakasha_admin_token', res.token);
+    }
+    return res;
+  },
+
+  getAdminPendingRequests: async () => {
+    const token = localStorage.getItem('nyayakasha_admin_token');
+    return fetchAPI('/admin/pending', {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  },
+
+  adminSendInvite: async (email: string, role: string, link: string) => {
+    const token = localStorage.getItem('nyayakasha_admin_token');
+    return fetchAPI('/admin/invite/send', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ email, role, link })
+    });
+  },
+
+  adminApproveRequest: async (userId: string) => {
+    const token = localStorage.getItem('nyayakasha_admin_token');
+    return fetchAPI('/admin/approve', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ userId })
+    });
+  },
+
+  adminDeclineRequest: async (userId: string) => {
+    const token = localStorage.getItem('nyayakasha_admin_token');
+    return fetchAPI('/admin/decline', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ userId })
     });
   },
 

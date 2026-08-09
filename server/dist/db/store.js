@@ -83,8 +83,8 @@ class PrimaryDataStore {
             };
             const defaultFieldSub = {
                 id: 'usr_seed_field',
-                email: 'r.kulkarni@nyayakasha.gov.in',
-                fullName: 'OFFICER RAJESH KULKARNI',
+                email: 'siddhesh@nyayakasha.gov.in',
+                fullName: 'Officer Siddhesh Harwande (Zone 4 Field Operations)',
                 role: 'field_submitter',
                 passwordHash: 'seeded',
                 approvalState: 'active',
@@ -92,6 +92,7 @@ class PrimaryDataStore {
                 institutionVerified: true,
                 vettingApproved: true,
                 mfaEnrolled: true,
+                profilePhotoUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAY4AAAA8CAYAAABxcV22AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAABPiSURBVHhe7d0LWFTnvQfwP8E4QCpeElJdaNMFdd2JruFSI9oUiBHQFYhJhkSDaBdtEok+QswjYg1rjYiNAaPFtKtsVFhNnRpFfBRIFczFsUadtOrERIc2KRR3ySORJuAkovu9Z76R4aacM8NFfX95COd8czkz55P3Ped7z8XjmgDGGGOsi+6SvxljjLEu4cTBGGNMFU4cjDHGVOHEwRhjTBVOHIwxxlTp1aOqzp49i5MnT+LMmTOoqqpCbW0tLl68iMuXL4MP9mKMMRGkPTzg5eWFIUOGYNiwYQgMDMSDDz6IkJAQjBo1Sj6rZ/V44jCbzdi3bx8OHjwInU6HsLAwZSUMHz4c/v7+GDx4MLy9vZWVxRhjdzoK0U1NTaivr0dNTQ3Onz+vbGwfP34cNpsNkyZNwrRp0xAcHCxf0f16LHHs378fhYWFyh5FfHw8oqOjMWLECPkoY4wxtc6dO4fy8nLs3btX2SOZNWsWpk6dKh/tPt2eOEwmE9avX69kzTlz5iA2NlY+whhjzF1KS0uxZcsWZbRm4cKFCA8Pl4+4X7cmjpUrV+Ldd99FWloapk+fLlsZY4x1l927dyMvLw+TJ0/G8uXLZat7dctRVVT0pkRBRW7Kgpw0GGOsZ1C8pbhL8ZemKR67m9sTR0VFBRITE2EwGLBq1Sr4+PjIRxhjjPUEirsUfykOUzymuOxObh2qogL4kiVLsGHDBkRGRspWxhhjvaWyshILFizAmjVr3FY4d1voi...',
                 contactExtension: '+91 (022) 2650-1122 ext. 104',
                 chambersLocation: 'Room 104, Zone 4 Cyber Crime Precinct',
                 appointmentRef: 'MH-POL-29384',
@@ -107,6 +108,195 @@ class PrimaryDataStore {
             [defaultValidator, defaultCourtAuth, defaultFieldSub].forEach(u => {
                 this.users.set(u.id, u);
                 this.usersByEmail.set(u.email.toLowerCase(), u);
+            });
+        }
+        if (this.richCases.size === 0) {
+            const defaultRichCases = [
+                {
+                    id: 'FIR-2026-001',
+                    title: 'State vs. Apex Financial Technologies Ltd (Sec 65B Cyber Fraud)',
+                    caseType: 'Financial Fraud',
+                    filingDate: 'Nov 14, 2025',
+                    currentStage: 'Evidence Collection',
+                    status: 'Under Review',
+                    priority: 'CRITICAL',
+                    mayaBreakStatus: 'Pass',
+                    mayaBreakDetails: 'All 4 evidence exhibits hash-anchored on Polygon PoS',
+                    officerInCharge: 'Officer Rajesh Kulkarni (Badge: FS-8820)',
+                    courtBench: 'Division Bench 2 (Commercial & Cyber Disputes)',
+                    prosecutor: 'Adv. V. S. Nambiar (State Cyber Cell)',
+                    defenseCounsel: 'Adv. S. Ramachandran (High Court Bar)',
+                    statutorySections: ['Sec 65B Evidence Act', 'Sec 43A IT Act', 'Sec 420 IPC'],
+                    evidenceTimeline: [
+                        {
+                            id: 'EXH-8821',
+                            title: 'Encrypted Server Transaction Log Dump (Partition #3)',
+                            type: 'Digital Asset',
+                            submittedBy: 'Officer Rajesh Kulkarni (GPS: 19.0760° N, 72.8777° E)',
+                            timestamp: 'Nov 14, 2025 • 10:24 AM',
+                            pramanaHash: '0xa49f2b18c091d3ef841109a2e48f1107',
+                            blockNumber: 89201,
+                            integrityStatus: 'Pass',
+                            integrityScore: '100% Original (Verified via CNN & Blockchain)',
+                            details: 'Sealed forensic disk image. Seizure Bag ID: SEZ-2026-90412.',
+                            previewImageDataUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80'
+                        },
+                        {
+                            id: 'EXH-8822',
+                            title: 'Questioned Land Conveyance Deed (Property Sector 4)',
+                            type: 'Document',
+                            submittedBy: 'Officer Rajesh Kulkarni (GPS: 19.0760° N, 72.8777° E)',
+                            timestamp: 'Nov 14, 2025 • 11:05 AM',
+                            pramanaHash: '0x8841a029fe11d940c8832a11b09f441a',
+                            blockNumber: 89204,
+                            integrityStatus: 'Pass',
+                            integrityScore: '100% Original (Verified via CNN & Blockchain)',
+                            details: 'Optical document scan checked for chemical erasure and stamp splicing.',
+                            previewImageDataUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80'
+                        }
+                    ],
+                    testimonies: [
+                        {
+                            id: 'TM-2026-401',
+                            zkpHash: '0xzkp_a49f88219042',
+                            summary: 'Deponent confirms unauthorized ledger manipulation at 22:15 hrs on 12th Nov 2025.',
+                            timestamp: 'Nov 14, 2025 • 02:15 PM',
+                            isUnlocked: false,
+                            witnessRole: 'Principal Systems Auditor',
+                            verificationNode: 'Node-IN-WEST-04'
+                        }
+                    ],
+                    custodyHistory: [
+                        {
+                            id: 'cust-fir001-1',
+                            title: 'Captured & Sealed on Field Terminal',
+                            actor: 'Officer Rajesh Kulkarni (Zone 4 Operations)',
+                            location: 'Zone 4 Metropolitan Precinct',
+                            timestamp: 'Nov 14, 2025 • 10:24 AM',
+                            status: 'Sealed & Polygon PoS Anchored',
+                            biometricVerified: true,
+                            gpsCoordinates: '19.0760° N, 72.8777° E'
+                        }
+                    ],
+                    orders: [],
+                    notes: [
+                        {
+                            id: 'note-fir001-1',
+                            author: 'Adv. A. Mehta (Bench 3)',
+                            timestamp: 'Nov 14, 2025 • 03:00 PM',
+                            category: 'Judicial Directive',
+                            content: 'Forensic team to verify frame timestamps against municipal traffic server backup ledger prior to next hearing.'
+                        }
+                    ],
+                    precedents: [
+                        {
+                            caseId: 'HC-2024-88',
+                            title: 'State of Maharashtra vs. M. K. Financials',
+                            court: 'Bombay High Court',
+                            similarityScore: 94.2,
+                            relevantSections: ['Sec 65B', 'Sec 43A'],
+                            summary: 'Section 65B certificate mandatory for electronic server logs.'
+                        }
+                    ],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                },
+                {
+                    id: 'FIR-2026-002',
+                    title: 'State vs. Cybernet Solutions (Corporate Data Breach & Extortion)',
+                    caseType: 'Cyber Crime',
+                    filingDate: 'Nov 10, 2025',
+                    currentStage: 'Judicial Review',
+                    status: 'Active',
+                    priority: 'HIGH',
+                    mayaBreakStatus: 'Pass',
+                    mayaBreakDetails: 'PRAMANA blockchain verification intact',
+                    officerInCharge: 'Inspector V. Thorne (Zone 4 Cyber Cell)',
+                    courtBench: 'High Court Bench 3 (Presiding: Hon. Adv. A. Mehta)',
+                    prosecutor: 'Adv. V. S. Nambiar',
+                    defenseCounsel: 'Adv. S. Ramachandran',
+                    statutorySections: ['Sec 66 IT Act', 'Sec 43 IT Act'],
+                    evidenceTimeline: [
+                        {
+                            id: 'EXH-9012',
+                            title: 'Firewall Intrusion Packet Log (PCAP Stream)',
+                            type: 'Digital Asset',
+                            submittedBy: 'Inspector V. Thorne (GPS: 19.0760° N, 72.8777° E)',
+                            timestamp: 'Nov 10, 2025 • 09:10 AM',
+                            pramanaHash: '0x7731f904a2118c991a0029b4f11a8820',
+                            blockNumber: 89150,
+                            integrityStatus: 'Pass',
+                            integrityScore: '100% Original (Verified via CNN & Blockchain)',
+                            details: 'PCAP packet capture file containing unauthorized SSH connection attempts.',
+                            previewImageDataUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80'
+                        }
+                    ],
+                    testimonies: [],
+                    custodyHistory: [],
+                    orders: [],
+                    notes: [],
+                    precedents: [],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                },
+                {
+                    id: 'FIR-2026-003',
+                    title: 'State vs. Metro Infrastructure Corp (Document Forgery & Stamp Fraud)',
+                    caseType: 'Document Forgery',
+                    filingDate: 'Nov 08, 2025',
+                    currentStage: 'Pre-Trial Hearing',
+                    status: 'Active',
+                    priority: 'MEDIUM',
+                    mayaBreakStatus: 'Pass',
+                    mayaBreakDetails: 'PRAMANA blockchain verification intact',
+                    officerInCharge: 'Officer Rajesh Kulkarni (Badge: FS-8820)',
+                    courtBench: 'High Court Bench 3 (Presiding: Hon. Adv. A. Mehta)',
+                    prosecutor: 'Adv. V. S. Nambiar',
+                    defenseCounsel: 'Adv. S. Ramachandran',
+                    statutorySections: ['Sec 468 IPC', 'Sec 471 IPC'],
+                    evidenceTimeline: [
+                        {
+                            id: 'EXH-9041',
+                            title: 'Forged Municipal Approval Letter (Stamp Spliced)',
+                            type: 'Document',
+                            submittedBy: 'Officer Rajesh Kulkarni (GPS: 19.0760° N, 72.8777° E)',
+                            timestamp: 'Nov 08, 2025 • 04:30 PM',
+                            pramanaHash: '0x1104f9821a004921b882901f4400a12e',
+                            blockNumber: 89120,
+                            integrityStatus: 'Pass',
+                            integrityScore: '100% Original (Verified via CNN & Blockchain)',
+                            details: 'Physical document scan showing optical stamp splicing artifacts.',
+                            previewImageDataUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80'
+                        }
+                    ],
+                    testimonies: [],
+                    custodyHistory: [],
+                    orders: [],
+                    notes: [],
+                    precedents: [],
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                }
+            ];
+            defaultRichCases.forEach(rc => {
+                this.richCases.set(rc.id, rc);
+                const stdCase = {
+                    id: rc.id,
+                    title: rc.title,
+                    status: rc.status,
+                    type: rc.caseType,
+                    date: rc.filingDate,
+                    officer: rc.officerInCharge,
+                    evidenceCount: rc.evidenceTimeline.length,
+                    testimonyCount: rc.testimonies.length,
+                    priority: rc.priority,
+                    description: `Rich case record initialized for ${rc.title}.`,
+                    location: 'High Court Jurisdiction',
+                    jurisdictionCode: 'MH-MUM-DIST-01',
+                    createdAt: rc.createdAt,
+                    updatedAt: rc.updatedAt
+                };
+                this.cases.set(stdCase.id, stdCase);
             });
         }
     }
@@ -390,6 +580,71 @@ class PrimaryDataStore {
             catch (e) {
                 console.log('Firestore write info:', e.message || e);
             }
+        }
+        // Auto-link to RichCaseRecord for Court Authority Case Files
+        let rc = this.richCases.get(item.caseId);
+        if (!rc && c) {
+            rc = {
+                id: c.id,
+                title: c.title,
+                caseType: c.type || 'General Investigation',
+                filingDate: c.date || new Date().toLocaleDateString(),
+                currentStage: 'Evidence Collection',
+                status: c.status || 'Active',
+                priority: (c.priority || 'MEDIUM').toUpperCase(),
+                mayaBreakStatus: 'Pass',
+                mayaBreakDetails: 'PRAMANA blockchain verification intact',
+                officerInCharge: c.officer || item.custodian || 'Field Submitter',
+                courtBench: 'High Court Bench 3 (Presiding: Hon. Adv. A. Mehta)',
+                prosecutor: 'Adv. V. S. Nambiar',
+                defenseCounsel: 'Adv. S. Ramachandran',
+                statutorySections: ['Sec 65B Evidence Act', 'Sec 43A IT Act'],
+                evidenceTimeline: [],
+                testimonies: [],
+                custodyHistory: [],
+                orders: [],
+                notes: [],
+                precedents: [],
+                createdAt: c.createdAt || new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            this.richCases.set(rc.id, rc);
+        }
+        if (rc) {
+            const existingExhIdx = rc.evidenceTimeline.findIndex(e => e.id === item.id);
+            const exhItem = {
+                id: item.id,
+                title: item.title,
+                type: item.type || 'Digital Asset',
+                submittedBy: `${item.custodian || 'Field Officer'} (GPS: ${item.latitude || 19.0760}° N, ${item.longitude || 72.8777}° E)`,
+                timestamp: item.date || new Date().toLocaleString(),
+                pramanaHash: item.hash,
+                blockNumber: item.blockNumber || (89300 + Math.floor(Math.random() * 500)),
+                integrityStatus: item.status === 'Quarantined' || item.status === 'Flagged' ? 'Flagged' : 'Pass',
+                integrityScore: item.status === 'Quarantined' || item.status === 'Flagged' ? 'Flagged Anomaly (Spectral Check)' : '100% Original (Verified via CNN & Blockchain)',
+                details: item.evidenceNotes || `Exhibit sealed by ${item.custodian || 'Field Officer'}. Seizure Bag ID: ${item.seizureBagId || item.id}. Polygon PoS TX Hash: ${item.txHash || 'Anchored'}.`,
+                previewImageDataUrl: item.fileUrl || (item.customMetadata && item.customMetadata.startsWith('data:') ? item.customMetadata : undefined)
+            };
+            if (existingExhIdx >= 0) {
+                rc.evidenceTimeline[existingExhIdx] = exhItem;
+            }
+            else {
+                rc.evidenceTimeline.unshift(exhItem);
+            }
+            // Add Custody Step
+            const custodyStep = {
+                id: `cust-${item.id}-${Date.now()}`,
+                title: `Captured & Sealed: ${item.title}`,
+                actor: item.custodian || 'Field Submitter Officer',
+                location: item.incidentLocation || 'Field Precinct Location',
+                timestamp: item.date || new Date().toLocaleString(),
+                status: `Cryptographically Anchored (${item.status})`,
+                biometricVerified: true,
+                gpsCoordinates: `${item.latitude || 19.0760}° N, ${item.longitude || 72.8777}° E`
+            };
+            rc.custodyHistory.unshift(custodyStep);
+            rc.updatedAt = new Date().toISOString();
+            this.richCases.set(rc.id, rc);
         }
         this.persistToDisk();
         try {

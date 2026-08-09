@@ -13,7 +13,8 @@ const profilePatchSchema = z.object({
     barCouncilNumber: z.string().optional(),
     badgeId: z.string().optional(),
     appointmentRef: z.string().optional(),
-    profilePhotoUrl: z.string().optional()
+    profilePhotoUrl: z.string().optional(),
+    digitalSignatureUrl: z.string().optional()
 });
 /**
  * Helper to get user by header session mapping or active user list
@@ -138,6 +139,8 @@ profileRoutes.patch('/', async (req, res) => {
             user.appointmentRef = validatedData.appointmentRef;
         if (validatedData.profilePhotoUrl !== undefined)
             user.profilePhotoUrl = validatedData.profilePhotoUrl;
+        if (validatedData.digitalSignatureUrl !== undefined)
+            user.digitalSignatureUrl = validatedData.digitalSignatureUrl;
         await primaryStore.saveUser(user);
         return res.json({
             success: true,
@@ -152,7 +155,8 @@ profileRoutes.patch('/', async (req, res) => {
                 appointmentRef: user.appointmentRef,
                 authorityScope: user.authorityScope,
                 barCouncilNumber: user.barCouncilNumber,
-                profilePhotoUrl: user.profilePhotoUrl || null
+                profilePhotoUrl: user.profilePhotoUrl || null,
+                digitalSignatureUrl: user.digitalSignatureUrl || null
             }
         });
     }

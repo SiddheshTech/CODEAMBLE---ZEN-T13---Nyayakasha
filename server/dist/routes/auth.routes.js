@@ -235,6 +235,25 @@ authRouter.post('/signin', loginRateLimiter, async (req, res) => {
     }
 });
 /**
+ * GET /api/auth/session-status
+ * Returns current user's approval state
+ */
+authRouter.get('/session-status', requireAuth, async (req, res) => {
+    try {
+        const user = await primaryStore.getUserById(req.userId);
+        if (!user)
+            return res.status(404).json({ error: 'USER_NOT_FOUND' });
+        return res.json({
+            userId: user.id,
+            approvalState: user.approvalState,
+            mfaEnrolled: user.mfaEnrolled
+        });
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'SERVER_ERROR', message: error.message });
+    }
+});
+/**
  * POST /api/auth/enroll-duress-pin
  */
 authRouter.post('/enroll-duress-pin', requireAuth, async (req, res) => {
