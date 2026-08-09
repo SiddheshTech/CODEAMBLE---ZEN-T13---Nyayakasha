@@ -120,250 +120,17 @@ export interface PermanentUnlockLogEntry {
   legalJustificationSummary: string;
 }
 
-const INITIAL_REQUESTS: IdentityUnlockRequest[] = [
-  {
-    id: 'REQ-UNK-2026-09',
-    caseId: 'CR-2026-904',
-    caseTitle: 'State vs. Sector 4 Cyber Heist Syndicate',
-    courtBench: 'High Court Bench 3 (Presiding: Hon. Justice A. Mehta)',
-    witnessAlias: 'Witness #904-B (Whistleblower Lead Systems Engineer)',
-    witnessZkpHash: '0x3f7a91a288b3c4d5e6f7a8b9c0d1e2f3',
-    zkpMerkleRoot: '0x8f2a...910b441a29c1',
-    witnessRiskIndex: 92,
-    threatAssessmentSummary: 'High probability of retaliatory coercion. Encrypted threats intercepted on darkweb communication nodes on July 29, 2026.',
-    protectionCategory: 'Grade A (Extreme Risk - 24/7 Police Protection)',
-    requestingParty: 'Adv. S. Ramanujam (Special Public Prosecutor)',
-    requestingPartyRole: 'Special Prosecutor',
-    counselBarId: 'BCI/MAH/2012/8904',
-    counselAgency: 'State Special Cyber Crimes Directorate',
-    statedLegalGrounds: 'Cross-examination necessity under Section 161 CrPC. Substantial forensic logs indicate witness witnessed key database decryption authorization code entry.',
-    statutoryProvision: 'Judicial Evidence Act § 145 / Protection of Whistleblowers Order 2018',
-    timestamp: '06 Aug 2026, 09:15 AM',
-    urgency: 'Critical',
-    status: 'Pending Judicial Review',
-    validatorConsensus: '3 of 3 Nodes Verified (100% ZKP Integrity)',
-    relatedExhibits: [
-      { id: 'EXH-001', title: 'Encrypted Syslog Entry #890', type: 'Server Log', hash: '0x8f2a...910b' },
-      { id: 'EXH-003', title: 'Hardware Security Module Audit Dump', type: 'Forensic Dump', hash: '0x77d1...9911' },
-    ],
-    statutoryChecklist: [
-      { item: 'Section 161 CrPC Depositional Relevance', passed: true, note: 'Direct nexus established with server breach timestamp' },
-      { item: 'Witness Protection Scheme 2018 Grade A Criteria', passed: true, note: 'Physical threat score 92/100 verified by Cyber Cell' },
-      { item: 'Zero-Knowledge Cryptographic Proof Audit', passed: true, note: 'Merkle root signed across 3 High Court nodes' },
-      { item: 'Proportionality & Non-Disclosure Exhaustion Test', passed: true, note: 'Identity required strictly for in-camera cross-examination' },
-    ],
-    precedents: [
-      {
-        caseId: 'SC-2022-108',
-        title: 'Union of India vs. Cyber-Net Labs',
-        court: 'Supreme Court of India',
-        relevanceScore: 95.4,
-        rulingSummary: 'Held that whistleblower identity in cyber espionage trials may be disclosed exclusively to presiding judges under sealed envelope procedure.',
-      },
-      {
-        caseId: 'CR-2024-411',
-        title: 'State vs. National Data Gateway',
-        court: 'High Court of Bombay',
-        relevanceScore: 89.1,
-        rulingSummary: 'Established multi-sig judicial passkey requirement for ZKP identity decryption.',
-      },
-    ],
-    directives: [
-      {
-        id: 'DIR-904-01',
-        judgeName: 'Hon. Justice A. Mehta',
-        date: '05 Aug 2026, 04:00 PM',
-        type: 'In-Camera Directive',
-        note: 'Court orders that all proceedings involving Witness #904-B shall be conducted in-camera without public or media attendance.',
-        hash: '0xDIR_SEAL_904_881',
-      },
-    ],
-  },
-  {
-    id: 'REQ-UNK-2026-11',
-    caseId: 'MH-CR-8821',
-    caseTitle: 'State vs. Land Registry Cartel (Deed Forgery)',
-    courtBench: 'Civil & Criminal Sessions Bench 2',
-    witnessAlias: 'Witness #8821-Alpha (Surrogate Deputy Registrar)',
-    witnessZkpHash: '0x99a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4',
-    zkpMerkleRoot: '0x55d4...91c0991a00ef',
-    witnessRiskIndex: 68,
-    threatAssessmentSummary: 'Moderate threat score. Defense counsel asserts alibi verification necessity.',
-    protectionCategory: 'Grade B (High Risk - Masked Credentials)',
-    requestingParty: 'Adv. M. Deshmukh (Lead Defense Counsel)',
-    requestingPartyRole: 'Defense Counsel',
-    counselBarId: 'BCI/MAH/2008/1102',
-    counselAgency: 'High Court Criminal Defense Bar',
-    statedLegalGrounds: 'Alibi contradiction verification under Criminal Procedure Code § 243. Defense asserts witness was absent from land office on disputed date of June 14, 2026.',
-    statutoryProvision: 'Criminal Procedure Code § 243 (Defense Right of Summons)',
-    timestamp: '05 Aug 2026, 03:40 PM',
-    urgency: 'High',
-    status: 'Pending Judicial Review',
-    validatorConsensus: '3 of 3 Nodes Verified (100% ZKP Integrity)',
-    relatedExhibits: [
-      { id: 'EXH-201', title: 'Property Deed Scan #1984-A', type: 'TIFF Image', hash: '0x55d4...91c0' },
-    ],
-    statutoryChecklist: [
-      { item: 'CrPC § 243 Defense Right of Summons', passed: true, note: 'Alibi material to defense argument' },
-      { item: 'Witness Safety Protocol Check', passed: true, note: 'Masked identity sufficient for initial deposition' },
-    ],
-    precedents: [
-      {
-        caseId: 'SC-2020-044',
-        title: 'State vs. K. L. Sharma',
-        court: 'Supreme Court of India',
-        relevanceScore: 91.0,
-        rulingSummary: 'Mandated defense right to verify public officer alibi without compromising physical security.',
-      },
-    ],
-    directives: [],
-  },
-  {
-    id: 'REQ-UNK-2026-02',
-    caseId: 'FIR-2026-102',
-    caseTitle: 'State vs. Port Customs Smuggling Ring',
-    courtBench: 'Commercial & Customs Special Bench 1',
-    witnessAlias: 'Witness #102-Gamma (Port Logistics Auditor)',
-    witnessZkpHash: '0x1234567890abcdef1234567890abcdef',
-    zkpMerkleRoot: '0x1a99...33ef881023aa',
-    witnessRiskIndex: 85,
-    threatAssessmentSummary: 'Severe retaliation threat from international smuggling syndicate. Entered Witness Protection Scheme Grade A.',
-    protectionCategory: 'Grade A (Extreme Risk - 24/7 Police Protection)',
-    requestingParty: 'ACP V. Gaikwad (Crime Branch Special Wing)',
-    requestingPartyRole: 'Investigating Officer',
-    counselBarId: 'IPS/MH/2014/9912',
-    counselAgency: 'Mumbai Police Crime Branch',
-    statedLegalGrounds: 'Safety threat neutralization & formal enrollment into Witness Protection Scheme Grade A following SC 2018 guidelines.',
-    statutoryProvision: 'Witness Protection Scheme (Supreme Court Landmark Order 2018)',
-    timestamp: '01 Aug 2026, 11:00 AM',
-    urgency: 'Standard',
-    status: 'Approved & Unlocked',
-    validatorConsensus: '3 of 3 Nodes Verified (100% ZKP Integrity)',
-    relatedExhibits: [
-      { id: 'EXH-101', title: 'Digital Waybills & Customs Entry Ledger', type: 'PDF Document', hash: '0x1a99...33ef' },
-    ],
-    statutoryChecklist: [
-      { item: 'Supreme Court Witness Protection Scheme Grade A', passed: true, note: 'Approved under emergency judicial order' },
-      { item: 'Judicial Passkey Digital Signature', passed: true, note: 'Signed by Hon. Justice K. V. Subramanian' },
-    ],
-    precedents: [],
-    directives: [
-      {
-        id: 'DIR-102-01',
-        judgeName: 'Hon. Justice K. V. Subramanian',
-        date: '01 Aug 2026, 11:45 AM',
-        type: 'Security Detail',
-        note: 'Order issued to Armed Police Security Division to provide 24/7 tactical escort to witness residence.',
-        hash: '0xDIR_SEAL_102_992',
-      },
-    ],
-    unlockedDetails: {
-      realName: 'Rameshwar B. Kadam (Senior Logistics Auditor)',
-      aadhaarPanHash: '0x9871...A420 (Verified via UIDAI Vault)',
-      addressMasked: 'Flat 402, Customs Officers Enclave, Dockyard West, Mumbai',
-      phoneEncrypted: '+91 98*** **410 (Encrypted Channel #4)',
-      emergencyContact: 'Commandant R. S. Shinde (Crime Branch Protection Cell)',
-      unlockedAt: '01 Aug 2026, 11:45 AM',
-      unlockedByJudge: 'Hon. Justice K. V. Subramanian (Bench 4)',
-      digitalSignature: '0xSIG_JUDGE_KV_SUB_99018274A1C8',
-      accessDurationWindow: '72 Hours (Expires 04 Aug 2026)',
-    },
-  },
-  {
-    id: 'REQ-UNK-2026-15',
-    caseId: 'SHV-2291',
-    caseTitle: 'State vs. Nexus Pharma (Substandard Drug Distribution)',
-    courtBench: 'High Court Public Health & Pharma Bench 3',
-    witnessAlias: 'Witness #2291-Beta (QC Senior Chemist)',
-    witnessZkpHash: '0x88e1a2b3c4d5e6f7a8b9c0d1e2f3a4b5',
-    zkpMerkleRoot: '0x99e2...0011449911a2',
-    witnessRiskIndex: 78,
-    threatAssessmentSummary: 'Corporate intimidation threats logged by state drug inspector.',
-    protectionCategory: 'Grade B (High Risk - Masked Credentials)',
-    requestingParty: 'Adv. A. Roy (State Special Prosecutor)',
-    requestingPartyRole: 'Special Prosecutor',
-    counselBarId: 'BCI/DEL/2010/4491',
-    counselAgency: 'Directorate of Public Prosecutions',
-    statedLegalGrounds: 'Authenticity verification of batch analysis report #NP-2026-88. Chemist signature required to confirm adulteration findings.',
-    statutoryProvision: 'Drugs & Cosmetics Act § 25 / Evidence Act § 45',
-    timestamp: '04 Aug 2026, 02:20 PM',
-    urgency: 'High',
-    status: 'Pending Judicial Review',
-    validatorConsensus: '3 of 3 Nodes Verified (100% ZKP Integrity)',
-    relatedExhibits: [
-      { id: 'EXH-301', title: 'Batch Analysis Certificate #NP-2026-88', type: 'PDF Report', hash: '0x99e2...0011' },
-    ],
-    statutoryChecklist: [
-      { item: 'Drugs & Cosmetics Act § 25 Analyst Verification', passed: true, note: 'Government Analyst report nexus established' },
-      { item: 'Zero-Knowledge Proof Audit', passed: true, note: 'ZKP Hash anchor matched' },
-    ],
-    precedents: [],
-    directives: [],
-  },
-  {
-    id: 'REQ-UNK-2026-04',
-    caseId: 'CR-2025-044',
-    caseTitle: 'State vs. Sharma (Landmark Digital Contract Case)',
-    courtBench: 'Supreme Court Precedent Division',
-    witnessAlias: 'Witness #044-Epsilon (Smart Contract Auditor)',
-    witnessZkpHash: '0x44aa55bb66cc77dd88ee99ff00112233',
-    zkpMerkleRoot: '0x44aa...99bb00112233',
-    witnessRiskIndex: 40,
-    threatAssessmentSummary: 'Low physical risk score. Trial completed and sealed.',
-    protectionCategory: 'Grade C (Standard Protection)',
-    requestingParty: 'Adv. P. N. Merchant (Counsel)',
-    requestingPartyRole: 'Defense Counsel',
-    counselBarId: 'BCI/MAH/1999/0012',
-    counselAgency: 'Supreme Court Bar Association',
-    statedLegalGrounds: 'Retrial petition request based on contract code audit review.',
-    statutoryProvision: 'Criminal Procedure Code § 397 (Revisionary Powers)',
-    timestamp: '28 Jul 2026, 04:10 PM',
-    urgency: 'Standard',
-    status: 'Rejected',
-    validatorConsensus: '3 of 3 Nodes Verified (100% ZKP Integrity)',
-    relatedExhibits: [],
-    statutoryChecklist: [
-      { item: 'Statutory Necessity Test', passed: false, note: 'Failed: Case is permanently sealed under Supreme Court final order' },
-    ],
-    precedents: [],
-    directives: [],
-  },
-];
 
-const INITIAL_PERMANENT_LOG: PermanentUnlockLogEntry[] = [
-  {
-    logId: 'LOG-UNLOCK-0082',
-    requestId: 'REQ-UNK-2026-02',
-    caseId: 'FIR-2026-102',
-    witnessAlias: 'Witness #102-Gamma',
-    judgeName: 'Hon. Justice K. V. Subramanian',
-    judgeKeyId: 'BENCH-KEY-IND-004',
-    decision: 'Approved',
-    timestamp: '01 Aug 2026, 11:45:02 AM',
-    blockNumber: 88120,
-    digitalSignatureHash: '0xSIG_JUDGE_KV_SUB_99018274A1C8',
-    legalJustificationSummary: 'Admitted under Witness Protection Scheme Grade A. Full judicial record sealed.',
-  },
-  {
-    logId: 'LOG-UNLOCK-0081',
-    requestId: 'REQ-UNK-2026-04',
-    caseId: 'CR-2025-044',
-    witnessAlias: 'Witness #044-Epsilon',
-    judgeName: 'Hon. Justice Archana P. Sen',
-    judgeKeyId: 'BENCH-KEY-IND-001',
-    decision: 'Rejected',
-    timestamp: '28 Jul 2026, 04:12:30 PM',
-    blockNumber: 86900,
-    digitalSignatureHash: '0xSIG_JUDGE_APS_33918200B912',
-    legalJustificationSummary: 'Rejected due to insufficient statutory grounds. Defense failed to demonstrate material relevance in sealed precedent.',
-  },
-];
-
-export function IdentityUnlockTab() {
+export function IdentityUnlockTab({ role = 'Court Authority' }: { role?: string }) {
   const [requests, setRequests] = useState<IdentityUnlockRequest[]>([]);
   const [logs, setLogs] = useState<PermanentUnlockLogEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const isJudge = role === 'Court Authority';
+
 
   const fetchIdentityData = async () => {
+    setIsLoading(true);
     try {
       const reqsRes = await api.getIdentityUnlockRequests();
       if (reqsRes && reqsRes.success && reqsRes.requests) {
@@ -375,6 +142,8 @@ export function IdentityUnlockTab() {
       }
     } catch (err) {
       console.error('Error fetching identity unlock requests or logs:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -397,6 +166,7 @@ export function IdentityUnlockTab() {
 
   // FORM & MODAL STATES inside Deep Detailed View
   const [judgePasskey, setJudgePasskey] = useState('JUDGE-BENCH-KEY-2026-SECRET');
+  const [judgeName, setJudgeName] = useState('Hon. Presiding Magistrate (Active Bench)');
   const [judgeRemarks, setJudgeRemarks] = useState('');
   const [agreedToLegalOath, setAgreedToLegalOath] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
@@ -454,7 +224,7 @@ export function IdentityUnlockTab() {
 
     setIsSigning(true);
     try {
-      const res = await api.decideIdentityUnlock(selectedRequest.id, decision, judgeRemarks);
+      const res = await api.decideIdentityUnlock(selectedRequest.id, decision, judgeRemarks, judgeName, 'BENCH-KEY-IND-003');
       if (res && res.success) {
         setRequests((prev) =>
           prev.map((r) => (r.id === selectedRequest.id ? res.request : r))
@@ -531,6 +301,25 @@ export function IdentityUnlockTab() {
       {/* VIEW 1: REPOSITORY LIST OF DISCLOSURE REQUESTS */}
       {!selectedRequestId ? (
         <div className="space-y-6">
+          {/* Loading Skeleton */}
+          {isLoading && (
+            <div className="space-y-4 animate-pulse">
+              {[1,2,3].map(i => (
+                <div key={i} className="p-6 rounded-3xl border border-slate-200 bg-slate-50 space-y-4">
+                  <div className="flex justify-between">
+                    <div className="space-y-2">
+                      <div className="h-4 w-48 bg-slate-200 rounded-full" />
+                      <div className="h-5 w-72 bg-slate-200 rounded-full" />
+                      <div className="h-3 w-56 bg-slate-200 rounded-full" />
+                    </div>
+                    <div className="h-8 w-32 bg-slate-200 rounded-full" />
+                  </div>
+                  <div className="h-16 w-full bg-slate-100 rounded-2xl" />
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Header Banner - High Court Bench Authority Clearance */}
           <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 border border-amber-500/30 shadow-xl space-y-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
@@ -747,7 +536,7 @@ export function IdentityUnlockTab() {
                         <ChevronRight className="w-4 h-4" />
                       </button>
 
-                      {req.status === 'Pending Judicial Review' && (
+                      {req.status === 'Pending Judicial Review' && isJudge && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -756,7 +545,7 @@ export function IdentityUnlockTab() {
                           className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition-colors flex items-center gap-1.5 shadow-xs"
                         >
                           <FileSignature className="w-3.5 h-3.5" />
-                          <span>Review & Sign</span>
+                          <span>Review &amp; Sign</span>
                         </button>
                       )}
                     </div>
@@ -892,13 +681,13 @@ export function IdentityUnlockTab() {
                 <span>Export PDF Seal</span>
               </button>
 
-              {selectedRequest.status === 'Pending Judicial Review' && (
+              {selectedRequest.status === 'Pending Judicial Review' && isJudge && (
                 <button
                   onClick={() => setInnerSubTab('decrypted_vault')}
                   className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs"
                 >
                   <FileSignature className="w-4 h-4" />
-                  <span>Perform Review & Sign</span>
+                  <span>Perform Review &amp; Sign</span>
                 </button>
               )}
             </div>
@@ -1193,15 +982,31 @@ export function IdentityUnlockTab() {
                     </p>
                   </div>
                 </div>
-              ) : selectedRequest.status === 'Pending Judicial Review' ? (
-                /* INTERACTIVE JUDICIAL DIGITAL SIGNATURE FORM */
+              ) : selectedRequest.status === 'Pending Judicial Review' && isJudge ? (
+                /* INTERACTIVE JUDICIAL DIGITAL SIGNATURE FORM — only for Court Authority */
                 <div className="bg-white rounded-3xl border border-amber-300 p-6 sm:p-8 space-y-6 shadow-lg">
                   <div className="flex items-center gap-2 text-amber-900 font-bold text-base pb-3 border-b border-slate-100">
                     <FileSignature className="w-5 h-5 text-amber-600" />
-                    Judicial Authority Authorization & Digital Signing Panel
+                    Judicial Authority Authorization &amp; Digital Signing Panel
                   </div>
 
                   <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-800 mb-1">
+                        Presiding Judge / Magistrate Name *
+                      </label>
+                      <div className="relative">
+                        <User className="w-4 h-4 text-indigo-600 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                        <input
+                          type="text"
+                          value={judgeName}
+                          onChange={(e) => setJudgeName(e.target.value)}
+                          placeholder="e.g. Hon. Justice A. Mehta (Bench 3)"
+                          className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold outline-none focus:bg-white focus:border-indigo-500"
+                        />
+                      </div>
+                    </div>
+
                     <div>
                       <label className="block text-xs font-bold text-slate-800 mb-1">
                         Judicial Bench Private Key / Security Passkey *
@@ -1264,6 +1069,14 @@ export function IdentityUnlockTab() {
                       </button>
                     </div>
                   </div>
+                </div>
+              ) : selectedRequest.status === 'Pending Judicial Review' && !isJudge ? (
+                <div className="p-8 text-center bg-amber-50 rounded-3xl border border-amber-200 text-amber-900 space-y-2">
+                  <LockKeyhole className="w-10 h-10 text-amber-600 mx-auto" />
+                  <p className="text-sm font-bold">Court Authority Access Required</p>
+                  <p className="text-xs text-amber-700">
+                    Only presiding Court Authority magistrates may review and sign identity disclosure requests.
+                  </p>
                 </div>
               ) : (
                 <div className="p-8 text-center bg-rose-50 rounded-3xl border border-rose-200 text-rose-900 space-y-2">

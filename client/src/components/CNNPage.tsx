@@ -72,16 +72,18 @@ const mockEvidence = [
 ];
 
 export function CNNPage() {
-  const [evidenceList, setEvidenceList] = useState(mockEvidence);
+  const [evidenceList, setEvidenceList] = useState<any[]>(mockEvidence);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadType, setUploadType] = useState('image');
+  const [cnnApiError, setCnnApiError] = useState<string | null>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: string) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
+    setCnnApiError(null); // clear previous error
 
     const formData = new FormData();
     formData.append('file', file);
@@ -113,11 +115,14 @@ export function CNNPage() {
         };
         setEvidenceList([newEvidence, ...evidenceList]);
       } else {
-        alert("Verification failed: " + result.error);
+        setCnnApiError('Verification failed: ' + (result.error || 'Unknown error from CNN API'));
       }
-    } catch (error) {
-      console.error(error);
-      alert("Could not connect to the backend CNN API. Make sure it's running on port 5001.");
+    } catch (error: any) {
+      if (error?.message?.includes('Failed to fetch') || error?.message?.includes('ERR_CONNECTION_REFUSED')) {
+        setCnnApiError('CNN AI server is offline. Start the Python Flask server on port 5001 to enable forensic analysis.');
+      } else {
+        setCnnApiError('CNN API error: ' + (error?.message || 'Unknown error'));
+      }
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -221,6 +226,14 @@ export function CNNPage() {
               {isUploading && uploadType === 'video' ? "Verifying..." : "Upload Video Deepfake"}
             </button>
           </div>
+          {/* Inline CNN API error banner — replaces browser alert() */}
+          {cnnApiError && (
+            <div className="mt-5 w-full flex items-start gap-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl px-4 py-3 text-sm text-left">
+              <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5 text-rose-500" />
+              <span className="flex-1">{cnnApiError}</span>
+              <button onClick={() => setCnnApiError(null)} className="text-rose-400 hover:text-rose-700 font-bold text-lg leading-none shrink-0">×</button>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

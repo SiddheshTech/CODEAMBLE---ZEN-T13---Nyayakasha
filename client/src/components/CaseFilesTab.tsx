@@ -142,319 +142,12 @@ export interface CaseRecord {
   precedents: PrecedentMatch[];
 }
 
-const INITIAL_CASES: CaseRecord[] = [
-  {
-    id: 'CR-2026-904',
-    title: 'State vs. Cyber Heist Syndicate (Municipal Server Exfiltration)',
-    caseType: 'Cyber Crime',
-    filingDate: '12 Oct 2026',
-    currentStage: 'Judicial Review',
-    status: 'Under Review',
-    priority: 'CRITICAL',
-    mayaBreakStatus: 'Flagged',
-    mayaBreakDetails: '1 exhibit flagged: Hash mismatch on CCTV Exhibit #4',
-    officerInCharge: 'Officer R. Kulkarni (Badge #8902)',
-    courtBench: 'High Court Bench 3 (Presiding: Hon. Adv. A. Mehta)',
-    prosecutor: 'Adv. V. S. Nambiar (State Cyber Cell)',
-    defenseCounsel: 'Adv. S. Ramachandran',
-    statutorySections: ['Sec 43A IT Act 2000', 'Sec 66B Computer Fraud', 'Sec 379 IPC Theft'],
-    evidenceTimeline: [
-      {
-        id: 'EXH-001',
-        title: 'CCTV Camera 04 Footage - Sector 4 Server Room (1080p)',
-        type: 'Video MP4',
-        submittedBy: 'Insp. V. Sharma',
-        timestamp: '12 Oct 2026, 09:30 AM',
-        pramanaHash: '0x8f2a...910b',
-        blockNumber: 89201,
-        integrityStatus: 'Flagged',
-        integrityScore: '94.2% Integrity (Frame 1400 anomaly)',
-        details: 'MAYA-BREAK detected potential frame insertion at timestamp 02:14:10.',
-        expectedHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-        actualHash: 'a1c4d92298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b112',
-        anomalyTimeWindow: '00:02:14 - 00:02:18 (45 Frames inserted)',
-      },
-      {
-        id: 'EXH-002',
-        title: 'Server Access Syslog Excerpt (Encrypted Log)',
-        type: 'Syslog Text',
-        submittedBy: 'Cyber Forensics Unit',
-        timestamp: '12 Oct 2026, 11:15 AM',
-        pramanaHash: '0x3c11...4a89',
-        blockNumber: 89203,
-        integrityStatus: 'Pass',
-        integrityScore: '100% Original',
-        details: 'Hash anchor matched across 3 distributed validator nodes.',
-        expectedHash: '9a31f...9011a',
-        actualHash: '9a31f...9011a',
-      },
-      {
-        id: 'EXH-003',
-        title: 'Seized Encrypted USB Storage Drive (Zone 4 Vault)',
-        type: 'Forensic Memory Dump',
-        submittedBy: 'Officer R. Kulkarni',
-        timestamp: '13 Oct 2026, 03:00 PM',
-        pramanaHash: '0x77d1...9911',
-        blockNumber: 89240,
-        integrityStatus: 'Pass',
-        integrityScore: '100% Original',
-        details: 'Hardware TPM Knox attestation verified.',
-      },
-    ],
-    testimonies: [
-      {
-        id: 'ZKP-901',
-        zkpHash: '0x7f2a...81b9c2041a',
-        summary: 'Attestation confirming physical breach alarm timestamp aligns with server logs.',
-        timestamp: '13 Oct 2026, 02:20 PM',
-        isUnlocked: false,
-        unlockedIdentity: 'Dr. S. Raman (Lead System Administrator)',
-        witnessRole: 'System Admin Witness',
-        verificationNode: 'CertIn-Node-04',
-      },
-      {
-        id: 'ZKP-902',
-        zkpHash: '0x4d12...99e1a88b12',
-        summary: 'Expert forensic opinion on IP routing origin and VPN node interception.',
-        timestamp: '14 Oct 2026, 10:05 AM',
-        isUnlocked: true,
-        unlockedIdentity: 'Prof. M. Deshmukh (CERT-In Senior Analyst)',
-        witnessRole: 'Forensic Expert',
-        verificationNode: 'HighCourt-Validator-1',
-      },
-    ],
-    custodyHistory: [
-      {
-        id: 'cust-1',
-        title: 'Evidence Seized at Scene',
-        actor: 'Officer R. Kulkarni (Badge #8902)',
-        location: 'Sector 4 Data Center, Mumbai',
-        timestamp: 'Oct 12, 2026 • 02:15 PM',
-        status: 'Sealed in Tamper Bag #EV-9022',
-        biometricVerified: true,
-        gpsCoordinates: '18.9220° N, 72.8347° E',
-      },
-      {
-        id: 'cust-2',
-        title: 'Transferred to Zone 4 Police Vault',
-        actor: 'Custodian S. Patil',
-        location: 'Zone 4 Central Evidence Locker',
-        timestamp: 'Oct 12, 2026 • 04:40 PM',
-        status: 'RFID Logged & Vault Locked',
-        biometricVerified: true,
-        gpsCoordinates: '18.9311° N, 72.8290° E',
-      },
-      {
-        id: 'cust-3',
-        title: 'AI Forensic Hash Upload to PRAMANA Ledger',
-        actor: 'Automated Ingestion Pipeline',
-        location: 'High Court Cloud Node #1',
-        timestamp: 'Oct 13, 2026 • 09:00 AM',
-        status: 'Hash Mismatch Flagged',
-        biometricVerified: true,
-      },
-    ],
-    orders: [
-      {
-        id: 'ORD-2026-904-01',
-        title: 'Re-examination Order for CCTV Exhibit #4',
-        issuedBy: 'Hon. Adv. A. Mehta (Bench 3)',
-        timestamp: '14 Oct 2026 • 04:15 PM',
-        summary: 'Ordered CFSL Director to inspect frame insertion anomaly between 02:14:10 and 02:14:15.',
-        sealHash: '0x9920a...110bf',
-        type: 'Evidentiary Direction',
-      },
-    ],
-    notes: [
-      {
-        id: 'note-1',
-        author: 'Adv. A. Mehta',
-        timestamp: '14 Oct 2026, 04:30 PM',
-        category: 'Judicial Directive',
-        content: 'Ordered independent re-verification of CCTV Exhibit #4 frame 1400 by Central Forensic Science Laboratory.',
-      },
-      {
-        id: 'note-2',
-        author: 'Adv. V. S. Nambiar',
-        timestamp: '15 Oct 2026, 11:00 AM',
-        category: 'Evidence Note',
-        content: 'State submits original server syslog dump corresponding to network switch #3.',
-      },
-    ],
-    precedents: [
-      {
-        caseId: 'CR-2025-044',
-        title: 'State vs. Sharma (Landmark CCTV Frame Tampering Guidelines)',
-        court: 'Supreme Court of India',
-        similarityScore: 94.2,
-        relevantSections: ['Sec 65B Evidence Act', 'Sec 43A IT Act'],
-        summary: 'Held that unverified video frame insertions render digital video evidence inadmissible without raw sensor cryptographic logs.',
-      },
-      {
-        caseId: 'SC-2022-108',
-        title: 'Union of India vs. Cyber-Net Labs',
-        court: 'Supreme Court of India',
-        similarityScore: 88.5,
-        relevantSections: ['Sec 66 IT Act'],
-        summary: 'Established multi-sig validator quorum as mandatory standard for cloud server audit logs in criminal trials.',
-      },
-    ],
-  },
-  {
-    id: 'FIR-2026-102',
-    title: 'State vs. Malhotra Logistics (Customs Fraud & Tax Evasion)',
-    caseType: 'Financial Fraud',
-    filingDate: '01 Aug 2026',
-    currentStage: 'Consensus Voting',
-    status: 'Active',
-    priority: 'HIGH',
-    mayaBreakStatus: 'Pass',
-    mayaBreakDetails: 'All 6 evidence items 100% verified by MAYA-BREAK',
-    officerInCharge: 'ACP S. Verma',
-    courtBench: 'Commercial Court Bench 1',
-    prosecutor: 'Adv. R. K. Saxena',
-    defenseCounsel: 'Adv. P. N. Merchant',
-    statutorySections: ['Sec 132 Customs Act', 'Sec 420 IPC Cheating', 'Sec 65B Evidence Act'],
-    evidenceTimeline: [
-      {
-        id: 'EXH-101',
-        title: 'Digital Bill of Lading & Waybills Ledger',
-        type: 'PDF Document',
-        submittedBy: 'Customs Officer P. Nair',
-        timestamp: '01 Aug 2026, 02:00 PM',
-        pramanaHash: '0x1a99...33ef',
-        blockNumber: 87102,
-        integrityStatus: 'Pass',
-        integrityScore: '100% Original',
-        details: 'Cryptographically signed by Port Customs Terminal gateway.',
-      },
-    ],
-    testimonies: [
-      {
-        id: 'ZKP-102',
-        zkpHash: '0x88c1...12a4b901ce',
-        summary: 'Whistleblower testimony detailing dual-ledger accounting practices.',
-        timestamp: '02 Aug 2026, 11:30 AM',
-        isUnlocked: false,
-        unlockedIdentity: 'K. Patel (Senior Auditor)',
-        witnessRole: 'Whistleblower',
-      },
-    ],
-    custodyHistory: [],
-    orders: [],
-    notes: [],
-    precedents: [],
-  },
-  {
-    id: 'MH-CR-8821',
-    title: 'State vs. Kulkarni & Others (Land Registry Deed Tampering)',
-    caseType: 'Document Forgery',
-    filingDate: '28 Jul 2026',
-    currentStage: 'Pre-Trial Hearing',
-    status: 'Under Review',
-    priority: 'HIGH',
-    mayaBreakStatus: 'Pass',
-    mayaBreakDetails: 'PRAMANA blockchain verification intact',
-    officerInCharge: 'Insp. T. Patil',
-    courtBench: 'Civil Sessions Bench 2',
-    prosecutor: 'Adv. M. Joshi',
-    defenseCounsel: 'Adv. G. Kulkarni',
-    statutorySections: ['Sec 467 IPC Forgery', 'Sec 468 IPC', 'Sec 120B Conspiracy'],
-    evidenceTimeline: [
-      {
-        id: 'EXH-201',
-        title: 'Original Property Deed #1984-A (Digitized Scan)',
-        type: 'High-Res TIFF',
-        submittedBy: 'Sub-Registrar Office',
-        timestamp: '28 Jul 2026, 10:00 AM',
-        pramanaHash: '0x55d4...91c0',
-        blockNumber: 86510,
-        integrityStatus: 'Pass',
-        integrityScore: '100% Original',
-        details: 'Watermark seal verified via MAYA-BREAK optical analyzer.',
-      },
-    ],
-    testimonies: [],
-    custodyHistory: [],
-    orders: [],
-    notes: [],
-    precedents: [],
-  },
-  {
-    id: 'SHV-2291',
-    title: 'State vs. Nexus Pharma (Substandard Drug Distribution)',
-    caseType: 'Public Health',
-    filingDate: '15 Jul 2026',
-    currentStage: 'Consensus Voting',
-    status: 'Active',
-    priority: 'MEDIUM',
-    mayaBreakStatus: 'Pass',
-    mayaBreakDetails: 'Consensus vote pending for record update',
-    officerInCharge: 'Drug Inspector R. Joshi',
-    courtBench: 'High Court Bench 3',
-    prosecutor: 'Adv. A. Roy',
-    defenseCounsel: 'Adv. D. Sengupta',
-    statutorySections: ['Sec 18 Drugs & Cosmetics Act', 'Sec 274 IPC Adulteration'],
-    evidenceTimeline: [
-      {
-        id: 'EXH-301',
-        title: 'Batch Analysis Lab Certificate #NP-2026-88',
-        type: 'PDF Report',
-        submittedBy: 'Govt Testing Lab',
-        timestamp: '15 Jul 2026, 03:45 PM',
-        pramanaHash: '0x99e2...0011',
-        blockNumber: 85992,
-        integrityStatus: 'Pass',
-        integrityScore: '100% Original',
-        details: 'Lab signature anchored on PRAMANA block.',
-      },
-    ],
-    testimonies: [],
-    custodyHistory: [],
-    orders: [],
-    notes: [],
-    precedents: [],
-  },
-  {
-    id: 'CR-2025-044',
-    title: 'State vs. Sharma (Landmark Digital Contract Case)',
-    caseType: 'Cyber Crime',
-    filingDate: '10 Jan 2025',
-    currentStage: 'Final Ruling Sealed',
-    status: 'Sealed',
-    priority: 'LOW',
-    mayaBreakStatus: 'Pass',
-    mayaBreakDetails: 'Case permanently sealed under judicial order',
-    officerInCharge: 'ACP S. Verma',
-    courtBench: 'Supreme Bench Precedent',
-    prosecutor: 'State Attorney General Office',
-    defenseCounsel: 'Senior Counsel K. Subramaniam',
-    statutorySections: ['Sec 65B Evidence Act', 'Sec 10A IT Act'],
-    evidenceTimeline: [
-      {
-        id: 'EXH-401',
-        title: 'Smart Contract Execution Log #SC-44',
-        type: 'EVM Log',
-        submittedBy: 'Judicial Registrar',
-        timestamp: '10 Jan 2025, 05:00 PM',
-        pramanaHash: '0x44aa...99bb',
-        blockNumber: 71000,
-        integrityStatus: 'Pass',
-        integrityScore: '100% Immutable',
-        details: 'Sealed precedent record.',
-      },
-    ],
-    testimonies: [],
-    custodyHistory: [],
-    orders: [],
-    notes: [],
-    precedents: [],
-  },
-];
+
 
 interface CaseFilesTabProps {
   initialCaseId?: string | null;
   onClearSelectedCase?: () => void;
+  role?: string;
 }
 
 const getFallbackExhibitImage = (item: EvidenceItem): string => {
@@ -475,7 +168,7 @@ const getFallbackExhibitImage = (item: EvidenceItem): string => {
   return 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80';
 };
 
-export function CaseFilesTab({ initialCaseId, onClearSelectedCase }: CaseFilesTabProps) {
+export function CaseFilesTab({ initialCaseId, onClearSelectedCase, role = 'Court Authority' }: CaseFilesTabProps) {
   const [cases, setCases] = useState<CaseRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -1027,21 +720,25 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase }: CaseFilesTa
 
             {/* Quick Action Buttons */}
             <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => setIsDraftOrderModalOpen(true)}
-                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs"
-              >
-                <Gavel className="w-4 h-4 text-amber-400" />
-                <span>Issue Bench Order</span>
-              </button>
+              {role === 'Court Authority' && (
+                <button
+                  onClick={() => setIsDraftOrderModalOpen(true)}
+                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs"
+                >
+                  <Gavel className="w-4 h-4 text-amber-400" />
+                  <span>Issue Bench Order</span>
+                </button>
+              )}
 
-              <button
-                onClick={() => setIsAddEvidenceModalOpen(true)}
-                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Formally File Exhibit</span>
-              </button>
+              {role !== 'Independent Validator' && (
+                <button
+                  onClick={() => setIsAddEvidenceModalOpen(true)}
+                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Formally File Exhibit</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -1080,13 +777,15 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase }: CaseFilesTa
 
               {/* Action Toolbar */}
               <div className="flex flex-wrap items-center gap-2">
-                <button
-                  onClick={() => setIsTransferModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-all flex items-center gap-1.5 border border-white/15"
-                >
-                  <Fingerprint className="w-3.5 h-3.5 text-indigo-300" />
-                  <span>Transfer Custody</span>
-                </button>
+                {role === 'Court Authority' && (
+                  <button
+                    onClick={() => setIsTransferModalOpen(true)}
+                    className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white transition-all flex items-center gap-1.5 border border-white/15"
+                  >
+                    <Fingerprint className="w-3.5 h-3.5 text-indigo-300" />
+                    <span>Transfer Custody</span>
+                  </button>
+                )}
 
                 <button
                   onClick={() => showToast('Certified Copy Generated with QR Seal')}
@@ -1129,7 +828,7 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase }: CaseFilesTa
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
-                <span>{tab.label}</span>
+                        <span>{tab.label}</span>
               </button>
             ))}
           </div>
@@ -1139,104 +838,122 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase }: CaseFilesTa
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start"
             >
-              {/* Left 2 Cols: Procedural Milestones & Stakeholders */}
-              <div className="lg:col-span-2 space-y-6">
+              {/* Left Column: Flow & Details */}
+              <div className="col-span-1 lg:col-span-2 space-y-6">
+                {/* 1. Procedural Flow */}
                 <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-xs">
-                  <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-                    <Activity className="w-5 h-5 text-indigo-600" /> Procedural Stage Milestones
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-indigo-600" /> Procedural Stage Milestones
                   </h3>
+                  
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 justify-between max-w-2xl text-xs font-bold text-slate-400">
+                    {['FIR Filed', 'Evidence Anchored', 'MAYA-BREAK Audit', 'Judicial Review', 'Final Ruling'].map((step, idx) => {
+                      const isActive =
+                        (selectedCase.currentStage === 'Evidence Collection' && idx <= 1) ||
+                        (selectedCase.currentStage === 'Pre-Trial Hearing' && idx <= 2) ||
+                        (selectedCase.currentStage === 'Judicial Review' && idx <= 3) ||
+                        (selectedCase.currentStage === 'Consensus Voting' && idx <= 3) ||
+                        (selectedCase.currentStage === 'Final Ruling Sealed' && idx <= 4);
 
-                  <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 text-center text-xs">
-                    {[
-                      { step: '1. FIR Filed', active: true, done: true },
-                      { step: '2. Evidence Anchored', active: true, done: true },
-                      { step: '3. MAYA-BREAK Audit', active: true, done: true },
-                      { step: '4. Judicial Review', active: true, done: false },
-                      { step: '5. Final Ruling', active: false, done: false },
-                    ].map((st, i) => (
-                      <div
-                        key={i}
-                        className={`p-3 rounded-2xl border font-bold ${
-                          st.done
-                            ? 'bg-emerald-50 text-emerald-900 border-emerald-200'
-                            : st.active
-                            ? 'bg-indigo-50 text-indigo-900 border-indigo-300 ring-2 ring-indigo-200'
-                            : 'bg-slate-50 text-slate-400 border-slate-200'
-                        }`}
-                      >
-                        <span>{st.step}</span>
-                      </div>
-                    ))}
+                      const isCurrent =
+                        (selectedCase.currentStage === 'Evidence Collection' && idx === 1) ||
+                        (selectedCase.currentStage === 'Pre-Trial Hearing' && idx === 2) ||
+                        (selectedCase.currentStage === 'Judicial Review' && idx === 3) ||
+                        (selectedCase.currentStage === 'Consensus Voting' && idx === 3) ||
+                        (selectedCase.currentStage === 'Final Ruling Sealed' && idx === 4);
+
+                      return (
+                        <div
+                          key={step}
+                          className={`flex-1 text-center py-4 px-2 rounded-xl transition-colors border ${
+                            isCurrent
+                              ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                              : isActive
+                              ? 'bg-emerald-50/50 text-emerald-700 border-emerald-100'
+                              : 'bg-slate-50 border-slate-100'
+                          }`}
+                        >
+                          <span className="block mb-1 text-[10px] opacity-70">
+                            {idx + 1}.
+                          </span>
+                          {step}
+                        </div>
+                      );
+                    })}
                   </div>
+                </div>
 
-                  {/* Key Stakeholders & Legal Representation */}
-                  <div className="space-y-3 pt-2">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Case Stakeholders & Counsel</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                        <span className="text-slate-400 font-bold block text-[10px] uppercase">State Prosecutor</span>
-                        <span className="font-bold text-slate-900 block">{selectedCase.prosecutor}</span>
-                        <span className="text-slate-500">Special Cyber Cell Division</span>
-                      </div>
-                      <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                        <span className="text-slate-400 font-bold block text-[10px] uppercase">Defense Counsel</span>
-                        <span className="font-bold text-slate-900 block">{selectedCase.defenseCounsel}</span>
-                        <span className="text-slate-500">High Court Bar Association</span>
-                      </div>
+                {/* 2. Stakeholders */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-extrabold uppercase text-slate-400 tracking-wider px-2">
+                    Case Stakeholders & Counsel
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase">State Prosecutor</p>
+                      <p className="text-sm font-bold text-slate-900">{selectedCase.prosecutor}</p>
+                      <p className="text-xs text-slate-500">Special Cyber Cell Division</p>
+                    </div>
+                    <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-1">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase">Defense Counsel</p>
+                      <p className="text-sm font-bold text-slate-900">{selectedCase.defenseCounsel}</p>
+                      <p className="text-xs text-slate-500">High Court Bar Association</p>
                     </div>
                   </div>
+                </div>
 
-                  {/* Case Integrity Overview Box */}
-                  <div className="p-5 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-2 text-xs">
-                    <div className="flex items-center justify-between font-bold text-indigo-950">
-                      <span className="flex items-center gap-1.5">
-                        <ShieldCheck className="w-4 h-4 text-indigo-600" />
-                        PRAMANA Cryptographic Ledger Guarantee
-                      </span>
-                      <span>Block Range #89201 - #89240</span>
+                {/* 3. Block Audit */}
+                <div className="p-6 rounded-3xl bg-indigo-50 border border-indigo-100 space-y-3">
+                  <div className="flex items-center justify-between text-indigo-900">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5" />
+                      <h3 className="text-sm font-bold">PRAMANA Cryptographic Ledger Guarantee</h3>
                     </div>
-                    <p className="text-indigo-900/80 leading-relaxed">
-                      All exhibits and witness testimonies associated with <strong className="text-indigo-950">{selectedCase.id}</strong> are anchored across 3 independent court validator nodes using SHA-256 Merkle proofs.
-                    </p>
+                    <span className="text-xs font-bold font-mono">Block Range #89201 - #89240</span>
                   </div>
+                  <p className="text-xs text-indigo-800 leading-relaxed max-w-2xl">
+                    All exhibits and witness testimonies associated with <strong className="font-mono text-[11px]">{selectedCase.id}</strong> are anchored across 3 independent court validator nodes using SHA-256 Merkle proofs.
+                  </p>
                 </div>
               </div>
 
-              {/* Right 1 Col: Quick Actions & Bench Notes */}
-              <div className="space-y-6">
-                <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4 shadow-xs">
-                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
-                    <Zap className="w-4 h-4 text-indigo-600" /> Presiding Bench Controls
-                  </h3>
+              {/* Right Column: Court Actions */}
+              <div className="col-span-1 space-y-6">
+                {role === 'Court Authority' && (
+                  <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-4 shadow-xs">
+                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
+                      <Zap className="w-4 h-4 text-indigo-600" /> Presiding Bench Controls
+                    </h3>
 
-                  <div className="space-y-2.5">
-                    <button
-                      onClick={() => setIsDraftOrderModalOpen(true)}
-                      className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-between"
-                    >
-                      <span>Draft Custom Bench Order</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
+                    <div className="space-y-2.5">
+                      <button
+                        onClick={() => setIsDraftOrderModalOpen(true)}
+                        className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-between"
+                      >
+                        <span>Draft Custom Bench Order</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
 
-                    <button
-                      onClick={() => setIsAddEvidenceModalOpen(true)}
-                      className="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-between"
-                    >
-                      <span>Formally Admit New Exhibit</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
+                      <button
+                        onClick={() => setIsAddEvidenceModalOpen(true)}
+                        className="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-between"
+                      >
+                        <span>Formally Admit New Exhibit</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
 
-                    <button
-                      onClick={() => showToast('Hearing Scheduled for Tomorrow, 10:30 AM')}
-                      className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold transition-all flex items-center justify-between border border-slate-200"
-                    >
-                      <span>Schedule Bench Hearing</span>
-                      <Calendar className="w-4 h-4 text-slate-500" />
-                    </button>
+                      <button
+                        onClick={() => showToast('Hearing Scheduled for Tomorrow, 10:30 AM')}
+                        className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-bold transition-all flex items-center justify-between border border-slate-200"
+                      >
+                        <span>Schedule Bench Hearing</span>
+                        <Calendar className="w-4 h-4 text-slate-500" />
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -1461,13 +1178,15 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase }: CaseFilesTa
                   </p>
                 </div>
 
-                <button
-                  onClick={() => setIsTransferModalOpen(true)}
-                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs"
-                >
-                  <Fingerprint className="w-4 h-4 text-amber-400" />
-                  <span>Authorize Custody Transfer</span>
-                </button>
+                {role === 'Court Authority' && (
+                  <button
+                    onClick={() => setIsTransferModalOpen(true)}
+                    className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs"
+                  >
+                    <Fingerprint className="w-4 h-4 text-amber-400" />
+                    <span>Authorize Custody Transfer</span>
+                  </button>
+                )}
               </div>
 
               <div className="relative pl-6 space-y-6 border-l-2 border-indigo-200 ml-3">
@@ -1509,13 +1228,15 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase }: CaseFilesTa
                     <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                       <Scale className="w-5 h-5 text-indigo-600" /> Formally Issued Bench Orders
                     </h3>
-                    <button
-                      onClick={() => setIsDraftOrderModalOpen(true)}
-                      className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs"
-                    >
-                      <Plus className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Issue Order</span>
-                    </button>
+                    {role === 'Court Authority' && (
+                      <button
+                        onClick={() => setIsDraftOrderModalOpen(true)}
+                        className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Issue Order</span>
+                      </button>
+                    )}
                   </div>
 
                   <div className="space-y-4">

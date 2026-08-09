@@ -17,7 +17,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
 import cv2
-import fitz  # PyMuPDF
+import pymupdf as fitz  # PyMuPDF (replaces deprecated `import fitz`)
 
 # ── Our algorithmic engine ─────────────────────────────────────────────────
 from forensic_engine import analyze_image

@@ -39,6 +39,7 @@ import { ForgeryReviewQueueTab } from "./ForgeryReviewQueueTab";
 import { IdentityUnlockTab } from "./IdentityUnlockTab";
 import { SettingsTab } from "./SettingsTab";
 import { PrecedentFlagsTab } from "./PrecedentFlagsTab";
+import { ValidatorWorkspace } from "./ValidatorWorkspace";
 
 type ToastInfo = {
   id: string;
@@ -662,7 +663,7 @@ export function DashboardPage({
         {/* View Switcher Content */}
         <main className="flex-1 p-4 sm:p-6 md:p-10 max-w-7xl w-full mx-auto">
           {activeTab === 'Dashboard' && (
-            role === 'Court Authority' || role === 'Independent Validator' ? (
+            role === 'Court Authority' ? (
               <CourtAuthorityDashboard
                 onSelectTab={(tab) => setActiveTab(tab)}
                 onSelectCase={(caseId) => {
@@ -670,6 +671,12 @@ export function DashboardPage({
                   setActiveTab('Case Files');
                 }}
                 role={role}
+              />
+            ) : role === 'Independent Validator' ? (
+              <ValidatorWorkspace
+                userFullName={profileData?.fullName || (() => {
+                  try { return JSON.parse(localStorage.getItem('nyayakasha_user') || '{}').fullName; } catch { return undefined; }
+                })()}
               />
             ) : (
             <motion.div
@@ -1225,7 +1232,7 @@ export function DashboardPage({
             <ForgeryReviewQueueTab />
           )}
           {(activeTab === 'Identity unlock' || activeTab === 'Identity Unlock') && (
-            <IdentityUnlockTab />
+            <IdentityUnlockTab role={role} />
           )}
           {(activeTab === 'Precedent flags' || activeTab === 'Precedent Flags') && (
             <PrecedentFlagsTab />
@@ -1280,12 +1287,22 @@ export function DashboardPage({
               <CaseFilesTab
                 initialCaseId={selectedCaseId}
                 onClearSelectedCase={() => setSelectedCaseId(null)}
+                role={role}
               />
             )
           )}
 
 
           {activeTab === 'Chain of Custody' && <ChainOfCustodyTab />}
+
+          {/* Independent Validator dedicated workspace tab */}
+          {(activeTab === 'Validator Workspace' || activeTab === 'Consensus Requests' || activeTab === 'Duress Alerts') && role === 'Independent Validator' && (
+            <ValidatorWorkspace
+              userFullName={profileData?.fullName || (() => {
+                try { return JSON.parse(localStorage.getItem('nyayakasha_user') || '{}').fullName; } catch { return undefined; }
+              })()}
+            />
+          )}
 
           {(activeTab === 'Analytics' || activeTab === 'Aggregate analytics' || activeTab === 'Aggregate Analytics' || activeTab === 'Aggregate analytics page' || activeTab === 'Court Analytics') && (
             <AnalyticsTab role={role} />

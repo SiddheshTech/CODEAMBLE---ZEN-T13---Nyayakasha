@@ -1,0 +1,602 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import {
+  ShieldAlert, ShieldCheck, Clock, CheckCircle2, XCircle,
+  RefreshCw, AlertTriangle, Lock, Wifi, WifiOff, Activity,
+  FileCode, Scale, Info, ChevronRight, Bell, Database,
+  Eye, Fingerprint, Hash, Zap, BarChart3, ListChecks,
+} from 'lucide-react';
+import { api } from '../services/api';
+
+// ─── Types ─────────────────────────────────────────────────────────────────
+interface DuressAlertItem {
+  id: string;
+  timestamp: string;
+  status: string;
+  refId: string;
+  fieldNodeId: string;
+  jurisdictionCode: string;
+}
+
+interface ConsensusItem {
+  id: string;
+  caseRef: string;
+  title: string;
+  category: string;
+  requestedBy: string;
+  timestamp: string;
+  status: string;
+  validatorVoteStatus: string;
+  validatorVote: string;
+  quorumSigned?: number;
+  quorumTotal?: number;
+  merkleRoot?: string;
+  zkProofType?: string;
+  cryptographicDetails?: string;
+  reasonForRequest?: string;
+  validatorJustificationNote?: string;
+  systemFlagIndicator?: { isFlagged: boolean; flagType?: string; title?: string; description?: string };
+}
+
+interface ActivityLog {
+  id: string;
+  action: string;
+  type: string;
+  time: string;
+  nodeId: string;
+  icon?: string;
+  color?: string;
+}
+
+// ─── WebSocket Hook ─────────────────────────────────────────────────────────
+function useValidatorWebSocket(
+  onDuressAlert: (alert: DuressAlertItem) => void,
+  onConsensusUpdate: (data: any) => void,
+) {
+  const wsRef = useRef<WebSocket | null>(null);
+  const [wsStatus, setWsStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
+
+  useEffect(() => {
+    const connect = () => {
+      try {
+        const ws = new WebSocket('ws://localhost:5000/ws/duress-bus');
+        wsRef.current = ws;
+
+        ws.onopen = () => setWsStatus('connected');
+        ws.onclose = () => {
+          setWsStatus('disconnected');
+          // Reconnect after 5s
+          setTimeout(connect, 5000);
+        };
+        ws.onerror = () => setWsStatus('disconnected');
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'DURESS_ALERT' && data.alert) {
+              // Privacy filter: strip userName/ip/coords before exposing to UI
+              const filtered: DuressAlertItem = {
+                id: data.alert.id,
+                timestamp: data.alert.timestamp,
+                status: data.alert.status,
+                refId: data.alert.refId || `DURESS-REF-${data.alert.id.slice(-6).toUpperCase()}`,
+                fieldNodeId: data.alert.fieldNodeId || `FIELD-NODE-${data.alert.id.slice(-4).toUpperCase()}`,
+                jurisdictionCode: data.alert.locationInfo?.jurisdiction || 'MH-MUM-DIST-01',
+              };
+              onDuressAlert(filtered);
+            } else if (
+              data.type === 'CONSENSUS_VOTE_CAST' ||
+              data.type === 'COUNTS_UPDATE' ||
+              data.type === 'CONSENSUS_QUORUM_FINALIZED'
+            ) {
+              onConsensusUpdate(data);
+            }
+          } catch (_) {}
+        };
+      } catch (_) {
+        setWsStatus('disconnected');
+      }
+    };
+
+    connect();
+    return () => {
+      wsRef.current?.close();
+    };
+  }, [onDuressAlert, onConsensusUpdate]);
+
+  return wsStatus;
+}
+
+// ─── Main Component ─────────────────────────────────────────────────────────
+export function ValidatorWorkspace({ userFullName }: { userFullName?: string }) {
+  const [duressAlerts, setDuressAlerts] = useState<DuressAlertItem[]>([]);
+  const [consensusQueue, setConsensusQueue] = useState<ConsensusItem[]>([]);
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
+  const [dashboardSummary, setDashboardSummary] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+
+  // Voting state
+  const [votingId, setVotingId] = useState<string | null>(null);
+  const [justification, setJustification] = useState('');
+  const [voteError, setVoteError] = useState<string | null>(null);
+  const [voteSuccess, setVoteSuccess] = useState<string | null>(null);
+  const [isVoting, setIsVoting] = useState(false);
+
+  // Acknowledge state
+  const [acknowledgingId, setAcknowledgingId] = useState<string | null>(null);
+
+  // ── Fetch from backend ─────────────────────────────────────────────────
+  const fetchAll = useCallback(async (silent = false) => {
+    if (!silent) setIsLoading(true);
+    try {
+      const [duressRes, consensusRes, activityRes, dashRes] = await Promise.all([
+        api.getValidatorDuressAlerts().catch(() => null),
+        api.getConsensusRequests().catch(() => null),
+        api.getValidatorActivityLogs().catch(() => null),
+        api.getValidatorDashboard().catch(() => null),
+      ]);
+
+      if (duressRes?.alerts) setDuressAlerts(duressRes.alerts);
+      if (consensusRes?.pendingRequests) setConsensusQueue(consensusRes.pendingRequests);
+      if (activityRes?.logs) setActivityLogs(activityRes.logs.slice(0, 15));
+      if (dashRes) setDashboardSummary(dashRes.summary);
+
+      setLastRefresh(new Date());
+    } catch (err) {
+      console.error('ValidatorWorkspace fetch error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAll();
+    // Poll every 20s
+    const interval = setInterval(() => fetchAll(true), 20000);
+    return () => clearInterval(interval);
+  }, [fetchAll]);
+
+  // ── WebSocket real-time handlers ────────────────────────────────────────
+  const handleDuressAlert = useCallback((alert: DuressAlertItem) => {
+    setDuressAlerts(prev => {
+      const exists = prev.find(a => a.id === alert.id);
+      return exists ? prev.map(a => a.id === alert.id ? alert : a) : [alert, ...prev];
+    });
+  }, []);
+
+  const handleConsensusUpdate = useCallback(() => {
+    fetchAll(true);
+  }, [fetchAll]);
+
+  const wsStatus = useValidatorWebSocket(handleDuressAlert, handleConsensusUpdate);
+
+  // ── Vote handler ────────────────────────────────────────────────────────
+  const castVote = async (requestId: string, decision: 'Approved' | 'Rejected') => {
+    if (!justification.trim()) {
+      setVoteError('Mandatory justification note required before casting vote.');
+      return;
+    }
+    setIsVoting(true);
+    setVoteError(null);
+    try {
+      await api.castConsensusVote(requestId, decision, justification.trim());
+      setVoteSuccess(`Vote "${decision}" cast successfully for ${requestId}.`);
+      setVotingId(null);
+      setJustification('');
+      setTimeout(() => setVoteSuccess(null), 4000);
+      fetchAll(true);
+    } catch (err: any) {
+      setVoteError(err.message || 'Vote submission failed.');
+    } finally {
+      setIsVoting(false);
+    }
+  };
+
+  // ── Acknowledge duress handler ──────────────────────────────────────────
+  const acknowledgeAlert = async (alertId: string) => {
+    setAcknowledgingId(alertId);
+    try {
+      await api.acknowledgeValidatorDuressAlert(alertId);
+      setDuressAlerts(prev =>
+        prev.map(a => a.id === alertId ? { ...a, status: 'INVESTIGATING' } : a)
+      );
+    } catch (err) {
+      console.error('Acknowledge failed:', err);
+    } finally {
+      setAcknowledgingId(null);
+    }
+  };
+
+  const unacknowledgedAlerts = duressAlerts.filter(a => a.status === 'UNACKNOWLEDGED');
+  const pendingVotes = consensusQueue.filter(r =>
+    r.validatorVote === 'pending' || r.validatorVoteStatus === 'Pending' || !r.validatorVoteStatus
+  );
+
+  // ── Render ───────────────────────────────────────────────────────────────
+  return (
+    <div className="flex-1 min-h-screen bg-[#F7F8FA] pt-6 pb-24 px-4 sm:px-6 lg:px-10">
+
+      {/* Header */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-black/40 mb-1">Independent Validator Workspace</p>
+            <h1 className="text-2xl font-bold text-black tracking-tight">
+              Oversight & Consensus Node
+            </h1>
+            <p className="text-sm text-black/50 mt-1">
+              {userFullName ? `Signed in as ${userFullName}` : 'Zero-Knowledge Validator Mode'}
+              {' · '}Last synced {lastRefresh.toLocaleTimeString()}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            {/* WebSocket status */}
+            <div className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border ${
+              wsStatus === 'connected' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' :
+              wsStatus === 'connecting' ? 'bg-amber-50 border-amber-200 text-amber-700' :
+              'bg-red-50 border-red-200 text-red-700'
+            }`}>
+              {wsStatus === 'connected' ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+              {wsStatus === 'connected' ? 'Live' : wsStatus === 'connecting' ? 'Connecting...' : 'Offline'}
+            </div>
+            <button
+              onClick={() => fetchAll()}
+              className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full bg-black text-white hover:bg-black/80 transition-colors"
+            >
+              <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        {/* Summary counters */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
+          {[
+            { label: 'Duress Alerts', value: unacknowledgedAlerts.length, icon: ShieldAlert, color: unacknowledgedAlerts.length > 0 ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-emerald-600 bg-emerald-50 border-emerald-200' },
+            { label: 'Pending Votes', value: pendingVotes.length, icon: Scale, color: 'text-blue-600 bg-blue-50 border-blue-200' },
+            { label: 'Total Consensus', value: consensusQueue.length, icon: ListChecks, color: 'text-violet-600 bg-violet-50 border-violet-200' },
+            { label: 'Activity Logs', value: activityLogs.length, icon: Activity, color: 'text-slate-600 bg-slate-50 border-slate-200' },
+          ].map(({ label, value, icon: Icon, color }) => (
+            <div key={label} className={`flex items-center gap-3 p-3 rounded-xl border ${color}`}>
+              <Icon className="w-5 h-5 shrink-0" />
+              <div>
+                <p className="text-xs font-medium opacity-70">{label}</p>
+                <p className="text-xl font-bold leading-none mt-0.5">{isLoading ? '—' : value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        {/* ── PATH 2: DURESS ALERTS ─────────────────────────────────────── */}
+        <div className="lg:col-span-1 space-y-4">
+          <div className="bg-white rounded-2xl border border-black/8 p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-rose-500" />
+                <h2 className="text-sm font-bold text-black">Duress Alerts</h2>
+                {unacknowledgedAlerts.length > 0 && (
+                  <span className="bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                    {unacknowledgedAlerts.length}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-1 text-[10px] text-black/40">
+                <Lock className="w-3 h-3" />
+                Privacy-filtered
+              </div>
+            </div>
+
+            <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-200 mb-4">
+              <p className="text-[10px] text-amber-800 font-medium leading-relaxed">
+                <strong>Path 2 — Direct Officer-to-Oversight Signal.</strong> Officer identity, location coordinates, and case content are deliberately hidden. You see only: alert ID, timestamp, jurisdiction code.
+              </p>
+            </div>
+
+            {isLoading ? (
+              <div className="space-y-2">
+                {[1, 2].map(i => <div key={i} className="h-16 bg-black/5 rounded-xl animate-pulse" />)}
+              </div>
+            ) : duressAlerts.length === 0 ? (
+              <div className="text-center py-8">
+                <ShieldCheck className="w-10 h-10 text-emerald-300 mx-auto mb-2" />
+                <p className="text-sm font-medium text-black/40">No active duress alerts</p>
+                <p className="text-xs text-black/30 mt-0.5">All field nodes operating normally</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {duressAlerts.map(alert => (
+                  <motion.div
+                    key={alert.id}
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`p-3 rounded-xl border ${
+                      alert.status === 'UNACKNOWLEDGED'
+                        ? 'bg-rose-50 border-rose-200'
+                        : alert.status === 'INVESTIGATING'
+                        ? 'bg-amber-50 border-amber-200'
+                        : 'bg-gray-50 border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                            alert.status === 'UNACKNOWLEDGED' ? 'bg-rose-200 text-rose-800' :
+                            alert.status === 'INVESTIGATING' ? 'bg-amber-200 text-amber-800' :
+                            'bg-gray-200 text-gray-700'
+                          }`}>{alert.status.replace('_', ' ')}</span>
+                        </div>
+                        <p className="text-xs font-mono font-bold text-black truncate">{alert.refId}</p>
+                        <p className="text-[10px] text-black/50 mt-0.5">
+                          {alert.fieldNodeId} · {alert.jurisdictionCode}
+                        </p>
+                        <p className="text-[10px] text-black/40 mt-0.5">
+                          {new Date(alert.timestamp).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                    </div>
+                    {alert.status === 'UNACKNOWLEDGED' && (
+                      <button
+                        onClick={() => acknowledgeAlert(alert.id)}
+                        disabled={acknowledgingId === alert.id}
+                        className="mt-2 w-full text-[10px] font-bold py-1.5 rounded-lg bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50 transition-colors"
+                      >
+                        {acknowledgingId === alert.id ? 'Acknowledging...' : 'Acknowledge & Escalate'}
+                      </button>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Activity Log */}
+          <div className="bg-white rounded-2xl border border-black/8 p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <Activity className="w-4 h-4 text-violet-500" />
+              <h2 className="text-sm font-bold text-black">Activity Log</h2>
+            </div>
+            {activityLogs.length === 0 ? (
+              <p className="text-xs text-black/40 text-center py-4">No activity yet</p>
+            ) : (
+              <div className="space-y-2">
+                {activityLogs.map(log => (
+                  <div key={log.id} className="flex items-start gap-2.5 py-2 border-b border-black/5 last:border-0">
+                    <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-black truncate">{log.action}</p>
+                      <p className="text-[10px] text-black/40">{log.nodeId} · {log.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ── PATH 1: CONSENSUS QUEUE ──────────────────────────────────── */}
+        <div className="lg:col-span-2 space-y-4">
+
+          {/* Vote success/error banners */}
+          <AnimatePresence>
+            {voteSuccess && (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-sm"
+              >
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
+                {voteSuccess}
+              </motion.div>
+            )}
+            {voteError && (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-3 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-sm"
+              >
+                <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
+                {voteError}
+                <button onClick={() => setVoteError(null)} className="ml-auto text-rose-400 hover:text-rose-700 font-bold">×</button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="bg-white rounded-2xl border border-black/8 p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Database className="w-4 h-4 text-blue-500" />
+                <h2 className="text-sm font-bold text-black">Consensus Queue</h2>
+                {pendingVotes.length > 0 && (
+                  <span className="bg-blue-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                    {pendingVotes.length} pending
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="p-2.5 rounded-lg bg-blue-50 border border-blue-200 mb-4">
+              <p className="text-[10px] text-blue-800 font-medium leading-relaxed">
+                <strong>Path 1 — Structural via Case Record.</strong> Each row is a hash consensus request auto-created when a Field Submitter seals evidence. You see: case ID, change type, requester role. No evidence images. No officer identity beyond what's in the case record.
+              </p>
+            </div>
+
+            {isLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map(i => <div key={i} className="h-24 bg-black/5 rounded-xl animate-pulse" />)}
+              </div>
+            ) : consensusQueue.length === 0 ? (
+              <div className="text-center py-12">
+                <Scale className="w-12 h-12 text-black/20 mx-auto mb-3" />
+                <p className="text-sm font-medium text-black/40">No consensus requests</p>
+                <p className="text-xs text-black/30 mt-1">Requests appear when evidence is submitted and sealed</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {consensusQueue.map(item => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className={`border rounded-2xl overflow-hidden transition-all ${
+                      item.systemFlagIndicator?.isFlagged ? 'border-rose-300 bg-rose-50/30' :
+                      item.validatorVote === 'approved' || item.validatorVoteStatus === 'Approved' ? 'border-emerald-200 bg-emerald-50/20' :
+                      item.validatorVote === 'rejected' || item.validatorVoteStatus === 'Rejected' ? 'border-gray-200 bg-gray-50/20' :
+                      'border-black/8 bg-white'
+                    }`}
+                  >
+                    {/* Header row */}
+                    <div className="p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                            <span className="font-mono text-xs font-bold text-black/70 bg-black/5 px-2 py-0.5 rounded">
+                              {item.caseRef || 'CASE-REF'}
+                            </span>
+                            <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                              item.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' :
+                              item.status === 'Rejected' ? 'bg-gray-100 text-gray-700' :
+                              item.status?.includes('Awaiting') ? 'bg-blue-100 text-blue-800' :
+                              item.systemFlagIndicator?.isFlagged ? 'bg-rose-100 text-rose-800' :
+                              'bg-amber-100 text-amber-800'
+                            }`}>{item.status || 'Pending'}</span>
+                            {item.systemFlagIndicator?.isFlagged && (
+                              <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-rose-200 text-rose-900 animate-pulse">
+                                ⚠ DURESS FLAG
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm font-semibold text-black leading-tight truncate">{item.title}</p>
+                          <p className="text-xs text-black/50 mt-0.5">
+                            {item.category} · Requested by <span className="font-medium text-black/70">{item.requestedBy}</span>
+                          </p>
+                        </div>
+
+                        {/* Quorum indicator */}
+                        <div className="shrink-0 text-center">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 text-xs font-bold ${
+                            item.validatorVote === 'approved' || item.validatorVoteStatus === 'Approved'
+                              ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
+                              : item.validatorVote === 'rejected' || item.validatorVoteStatus === 'Rejected'
+                              ? 'border-gray-300 bg-gray-50 text-gray-600'
+                              : 'border-blue-300 bg-blue-50 text-blue-700'
+                          }`}>
+                            {item.validatorVote === 'approved' || item.validatorVoteStatus === 'Approved' ? '✓' :
+                             item.validatorVote === 'rejected' || item.validatorVoteStatus === 'Rejected' ? '✗' : '?'}
+                          </div>
+                          <p className="text-[9px] text-black/40 mt-0.5">Your vote</p>
+                        </div>
+                      </div>
+
+                      {/* Hash preview */}
+                      {item.merkleRoot && (
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <Hash className="w-3 h-3 text-black/30" />
+                          <p className="font-mono text-[10px] text-black/40 truncate">{item.merkleRoot}</p>
+                        </div>
+                      )}
+
+                      {/* Duress flag detail */}
+                      {item.systemFlagIndicator?.isFlagged && (
+                        <div className="mt-2 p-2 bg-rose-100 border border-rose-200 rounded-lg">
+                          <p className="text-[10px] text-rose-800 font-semibold">{item.systemFlagIndicator.title}</p>
+                          <p className="text-[10px] text-rose-700 mt-0.5">{item.systemFlagIndicator.description}</p>
+                        </div>
+                      )}
+
+                      {/* Expand / collapse vote panel */}
+                      {!item.validatorVoteStatus || (item.validatorVoteStatus === 'Pending' && item.validatorVote === 'pending') ? (
+                        <button
+                          onClick={() => {
+                            setVotingId(votingId === item.id ? null : item.id);
+                            setJustification('');
+                            setVoteError(null);
+                          }}
+                          className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+                        >
+                          <Scale className="w-3.5 h-3.5" />
+                          {votingId === item.id ? 'Close Voting Panel' : 'Cast Vote'}
+                          <ChevronRight className={`w-3 h-3 transition-transform ${votingId === item.id ? 'rotate-90' : ''}`} />
+                        </button>
+                      ) : (
+                        <div className={`mt-2 flex items-center gap-1.5 text-xs font-medium ${
+                          item.validatorVoteStatus === 'Approved' ? 'text-emerald-700' : 'text-gray-600'
+                        }`}>
+                          {item.validatorVoteStatus === 'Approved' ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                          Your vote: <strong>{item.validatorVoteStatus}</strong>
+                          {item.validatorJustificationNote && (
+                            <span className="text-black/40"> · "{item.validatorJustificationNote}"</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Vote panel */}
+                    <AnimatePresence>
+                      {votingId === item.id && (
+                        <motion.div
+                          key="vote-panel"
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="border-t border-black/8 bg-slate-50 p-4 overflow-hidden"
+                        >
+                          <p className="text-xs font-semibold text-black mb-2 flex items-center gap-1.5">
+                            <Fingerprint className="w-3.5 h-3.5 text-violet-500" />
+                            Mandatory Justification Note
+                          </p>
+                          <textarea
+                            value={justification}
+                            onChange={e => setJustification(e.target.value)}
+                            placeholder="Enter your technical rationale for this vote (required for validator accountability)..."
+                            rows={3}
+                            className="w-full text-xs border border-black/15 rounded-lg p-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
+                          />
+                          <div className="flex gap-2 mt-3">
+                            <button
+                              onClick={() => castVote(item.id, 'Approved')}
+                              disabled={isVoting}
+                              className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-bold rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => castVote(item.id, 'Rejected')}
+                              disabled={isVoting}
+                              className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-bold rounded-xl bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50 transition-colors"
+                            >
+                              <XCircle className="w-3.5 h-3.5" />
+                              Reject
+                            </button>
+                          </div>
+                          {voteError && (
+                            <p className="text-[10px] text-rose-700 mt-2">{voteError}</p>
+                          )}
+                          <p className="text-[10px] text-black/40 mt-2 flex items-center gap-1">
+                            <Lock className="w-3 h-3" />
+                            Vote is cryptographically signed and permanently anchored on Polygon PoS. Cannot be undone.
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

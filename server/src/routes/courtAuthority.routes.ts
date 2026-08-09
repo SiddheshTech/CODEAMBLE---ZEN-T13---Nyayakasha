@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import crypto from 'crypto';
 import { primaryStore } from '../db/store.js';
 import { auditLedger } from '../db/auditLedger.js';
 
@@ -86,9 +87,57 @@ courtAuthorityRouter.get('/attention-items', (req: Request, res: Response) => {
     const items: any[] = [];
 
     // 1. FORGERY items — Under Review = URGENT
+    const addedExhibitIds = new Set<string>();
+
+    const forgeryQueueItems = primaryStore.getForgeryQueueItems();
+    forgeryQueueItems
+      .filter(f => f.status === 'Flagged' || f.status === 'Escalated' || f.status === 'Pending Scan')
+      .forEach(f => {
+        const relatedCase = cases.find(c => c.id === f.caseId);
+        const createdAt = new Date(f.timestamp || Date.now()).getTime();
+        const hoursLeft = Math.max(0, Math.round((createdAt + 48 * 3600000 - Date.now()) / 3600000));
+        addedExhibitIds.add(f.exhibitId);
+        items.push({
+          id: f.caseId || f.exhibitId,
+          dbId: f.id,
+          type: 'forgery',
+          title: f.title,
+          queue: 'Forgery Detection Engine',
+          urgency: 'URGENT',
+          urgencyColor: 'bg-rose-100 text-rose-800 border-rose-200',
+          badgeColor: 'bg-rose-500',
+          timeLeft: hoursLeft > 0 ? `${hoursLeft} hours left` : 'Overdue',
+          details: f.anomalySummary || (f.metadataCheck?.details + ' ' + f.ganFingerprintCheck?.details),
+          courtNote: 'Requires judicial determination to admit or strike exhibit from trial record.',
+          actionLabel: 'Inspect & Determine',
+          caseRef: relatedCase ? relatedCase.title : f.caseTitle || f.caseId,
+          judgeInstruction: 'Verify frame timestamps against municipal traffic server backup ledger before issuing evidentiary order.',
+          exhibitId: f.exhibitId,
+          spectralScore: f.ganFingerprintCheck?.score || 98.4,
+          metadataIntegrityScore: f.metadataCheck?.score || 98.4,
+          aiConfidence: f.confidenceScore || 98.4,
+          status: f.status,
+          submittedBy: f.submitter,
+          timestamp: f.timestamp,
+          originalHash: f.originalHash,
+          submittedHash: f.submittedHash,
+          merkleRoot: f.merkleRoot,
+          blockNumber: f.blockNumber,
+          anomaliesList: f.anomaliesList,
+          custodyTrail: f.custodyTrail,
+          precedents: f.precedents,
+          directives: f.directives,
+          metadataCheck: f.metadataCheck,
+          ganFingerprintCheck: f.ganFingerprintCheck,
+          docForensicsCheck: f.docForensicsCheck,
+          diffDetails: f.diffDetails,
+        });
+      });
+
     forgeryReviews
       .filter(f => f.status === 'Under Review' || f.status === 'Escalated to Bench')
       .forEach(f => {
+        if (addedExhibitIds.has(f.exhibitId)) return;
         const relatedCase = cases.find(c => c.id === f.caseId);
         const createdAt = new Date(f.timestamp || Date.now()).getTime();
         const hoursLeft = Math.max(0, Math.round((createdAt + 48 * 3600000 - Date.now()) / 3600000));
@@ -363,7 +412,19 @@ courtAuthorityRouter.post('/action', async (req: Request, res: Response) => {
     if (itemType === 'forgery' || decision === 'ADMIT' || decision === 'STRIKE') {
       // Forgery — ADMIT maps to 'Cleared', STRIKE maps to 'Quarantined'
       const forgeryDecision = decision === 'ADMIT' ? 'Cleared' : 'Quarantined';
-      const updated = primaryStore.decideForgery(dbId, forgeryDecision, judicialOrderText);
+      const richAction = decision === 'ADMIT' ? 'Accepted & Admitted' : 'Rejected & Excluded';
+      const sigHash = '0xSIG_BENCH_' + crypto.createHash('sha256').update(`${dbId}-${richAction}-${judicialOrderText || ''}-${now.toISOString()}`).digest('hex').substring(0, 16).toUpperCase();
+
+      let updated: any = primaryStore.decideRichForgery(dbId, richAction, judicialOrderText || '', sigHash);
+      if (!updated) {
+        updated = primaryStore.decideForgery(dbId, forgeryDecision, judicialOrderText);
+      } else {
+        const standardReview = primaryStore.getForgeryReviews().find(r => r.id === updated.id || r.exhibitId === updated.exhibitId);
+        if (standardReview) {
+          primaryStore.decideForgery(standardReview.id, forgeryDecision, judicialOrderText);
+        }
+      }
+
       if (!updated) {
         return res.status(404).json({ error: 'FORGERY_ITEM_NOT_FOUND', message: `Forgery review item ${dbId} not found.` });
       }
