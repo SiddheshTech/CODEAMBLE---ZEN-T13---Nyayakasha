@@ -2241,5 +2241,208 @@
     "prevHash": "44cac39a74b7274de9153afd62b9a8933e0656da25f845371228a972b861fc8c",
     "hash": "8c49d48b9a2580d20fd8ba9b077dada8cbb7e2ce41e3b8d0307882a7d0537c68",
     "blockNumber": 1489303
-  }
-]
+  },
+  {
+    "id": "audit_1786250158159_104",
+    "index": 104,
+    "timestamp": "2026-08-09T04:35:58.158Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8833",
+      "evidenceHash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+      "caseId": "FIR-2026-001",
+      "txHash": "0xa652c4e0fdb853f51e84a538bec70bcf1f6bf6812867bb3abedac0d094ce0491",
+      "merkleRoot": "0x0421c0392e6e7c779b07dac0b5ceee751eed163203043803930bfc204e0ebf8b",
+      "blockNumber": 15080750,
+      "fullPayload": {
+        "exhibitId": "EV-8833",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: file_000000006d2c722fba46d9fcc07c9db1.png",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: Authentic (Original) (80.1%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-09T04:35:58.156Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "7d1c61147b87ecaaaadc717aa22e6384a36124fc4d56bbfa7084b87a712e7088",
+    "prevHash": "8c49d48b9a2580d20fd8ba9b077dada8cbb7e2ce41e3b8d0307882a7d0537c68",
+    "hash": "e788ed5b7b1bd02b7adf5c2de520f64a8ef4dd3b7c05dad53c05e975dc73e43c",
+    "blockNumber": 1489304
+  },
+  {
+    "id": "audit_1786250169013_105",
+    "index": 105,
+    "timestamp": "2026-08-09T04:36:09.012Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8833",
+      "caseId": "FIR-2026-001",
+      "hash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+      "title": "CNN Analyzed: file_000000006d2c722fba46d9fcc07c9db1.png",
+      "txHash": "0xa652c4e0fdb853f51e84a538bec70bcf1f6bf6812867bb3abedac0d094ce0491",
+      "blockNumber": 15080750,
+      "merkleRoot": "0x0421c0392e6e7c779b07dac0b5ceee751eed163203043803930bfc204e0ebf8b",
+      "cnnScore": 80.1,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "a2e39f7911807e60967a52dc003e2f3121998866f1499867cbe65c598f7f31e0",
+    "prevHash": "e788ed5b7b1bd02b7adf5c2de520f64a8ef4dd3b7c05dad53c05e975dc73e43c",
+    "hash": "83f35a14a91ab3c692b73607858a32cea78917b6088ab881453d05579588f77b",
+    "blockNumber": 1489305
+  },
+  {
+    "id": "audit_1786250304766_106",
+    "index": 106,
+    "timestamp": "2026-08-09T04:38:24.765Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8834",
+      "evidenceHash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+      "caseId": "FIR-2026-001",
+      "txHash": "0x1497afc21e034f3accba81146614cd2f705157ffa4be32676318121dfca89cc0",
+      "merkleRoot": "0xe3c47aa27741928339dd831717d7a3bc34e34c31b2ea9b64dfae659600d12b16",
+      "blockNumber": 15019395,
+      "fullPayload": {
+        "exhibitId": "EV-8834",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: file_000000006d2c722fba46d9fcc07c9db1.png",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: Authentic (Original) (80.1%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-09T04:38:24.765Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "e67d0e7bac2783633930b0a5b26ff18f1fb2482a91438443e616e66c81d44484",
+    "prevHash": "83f35a14a91ab3c692b73607858a32cea78917b6088ab881453d05579588f77b",
+    "hash": "0654d6f2946771dcded3b6fd8aa04aa561916908b0a54897bf816f8ff04ea48a",
+    "blockNumber": 1489306
+  },
+  {
+    "id": "audit_1786250316793_107",
+    "index": 107,
+    "timestamp": "2026-08-09T04:38:36.793Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8834",
+      "caseId": "FIR-2026-001",
+      "hash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+      "title": "CNN Analyzed: file_000000006d2c722fba46d9fcc07c9db1.png",
+      "txHash": "0x1497afc21e034f3accba81146614cd2f705157ffa4be32676318121dfca89cc0",
+      "blockNumber": 15019395,
+      "merkleRoot": "0xe3c47aa27741928339dd831717d7a3bc34e34c31b2ea9b64dfae659600d12b16",
+      "cnnScore": 80.1,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "94e11c92792ab3c74bc39b852abc36f0d2a2b2ad9a0c5068b5c44576ba69415f",
+    "prevHash": "0654d6f2946771dcded3b6fd8aa04aa561916908b0a54897bf816f8ff04ea48a",
+    "hash": "0b705e3f7a29055b479223bb14f3927a0744a186ca612eb57dcd8078f79228d1",
+    "blockNumber": 1489307
+  },
+  {
+    "id": "audit_1786250388110_108",
+    "index": 108,
+    "timestamp": "2026-08-09T04:39:48.110Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "source": "admin_login"
+    },
+    "payloadHash": "9219a716d50f6f7558bd9f90041d3db7cd6808975394924fc3aecc1e317af471",
+    "prevHash": "0b705e3f7a29055b479223bb14f3927a0744a186ca612eb57dcd8078f79228d1",
+    "hash": "414091ddb3a28c4e62a3285a3dc31a66b5de6aae43c48c1966e8dd108d38f0df",
+    "blockNumber": 1489308
+  },
+  {
+    "id": "audit_1786250399827_109",
+    "index": 109,
+    "timestamp": "2026-08-09T04:39:59.827Z",
+    "eventType": "INVITE_LINK_GENERATED",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "recipientEmail": "dummyacc8712@gmail.com",
+      "targetRole": "Field Submitter",
+      "emailSent": true
+    },
+    "payloadHash": "f879ce7f891cd6b4aea07d62c43e50978bebf6179a31ea7944d2e4024d16dbcd",
+    "prevHash": "414091ddb3a28c4e62a3285a3dc31a66b5de6aae43c48c1966e8dd108d38f0df",
+    "hash": "c6bf7905d54f151ab8d6c4ceb3f36d261035cd918d8c67b65ef15a85d6bbd1a6",
+    "blockNumber": 1489309
+  },
+  {
+    "id": "audit_1786250572511_110",
+    "index": 110,
+    "timestamp": "2026-08-09T04:42:52.511Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "source": "admin_login"
+    },
+    "payloadHash": "9219a716d50f6f7558bd9f90041d3db7cd6808975394924fc3aecc1e317af471",
+    "prevHash": "c6bf7905d54f151ab8d6c4ceb3f36d261035cd918d8c67b65ef15a85d6bbd1a6",
+    "hash": "58b033b8fdd853570d24ff9e162e8e30d8f4f9c7e136cd23df07a78d7b83f03a",
+    "blockNumber": 1489310
+  },
+  {
+    "id": "audit_1786250572554_111",
+    "index": 111,
+    "timestamp": "2026-08-09T04:42:52.554Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "dummyacc8712@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "dummyacc8712@gmail.com",
+      "subject": "🔐 Nyayakasha — Secure Invite: field_submitter Access"
+    },
+    "payloadHash": "92e7183870f02bef4abf9f6a84d33fdef5a111d63622469f484809bd39fc783d",
+    "prevHash": "58b033b8fdd853570d24ff9e162e8e30d8f4f9c7e136cd23df07a78d7b83f03a",
+    "hash": "b5a5e7d819c85c60c686b3ba02a36aa591206af187a97ea6caeb94314dc6c471",
+    "blockNumber": 1489311
+  },

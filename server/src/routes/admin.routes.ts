@@ -7,23 +7,9 @@ import { auditLedger } from '../db/auditLedger.js';
 
 export const adminRouter = Router();
 
-// ─── SMTP Transporter (own instance, not shared) ──────────────────────────────
-function createTransporter() {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: 587,
-    secure: false,            // false = STARTTLS (port 587) — NOT blocked unlike 465
-    auth: {
-      user: process.env.SMTP_USER || process.env.GMAIL_USER,
-      pass: process.env.SMTP_PASS || process.env.GMAIL_APP_PASS,
-    },
-    requireTLS: true,         // force STARTTLS upgrade
-    tls: { rejectUnauthorized: false }
-  });
-}
+import { notificationService } from '../services/notification.service.js';
 
 async function sendInviteEmail(to: string, role: string, link: string): Promise<{ ok: boolean; error?: string }> {
-  const from = `"Nyayakasha Higher Authority" <${process.env.SMTP_USER || process.env.GMAIL_USER}>`;
   const subject = `🔐 Nyayakasha — Secure Invite: ${role} Access`;
   const html = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
@@ -55,10 +41,12 @@ async function sendInviteEmail(to: string, role: string, link: string): Promise<
   `;
 
   try {
-    const transporter = createTransporter();
-    await transporter.sendMail({ from, to, subject, html });
-    console.log(`✅ Invite email sent to ${to}`);
-    return { ok: true };
+    const sent = await notificationService.sendEmail(to, subject, html);
+    if (sent) {
+      console.log(`✅ Invite email sent to ${to}`);
+      return { ok: true };
+    }
+    return { ok: false, error: 'Failed sending invite email' };
   } catch (err: any) {
     console.error(`❌ SMTP invite email failed to ${to}:`, err.message);
     return { ok: false, error: err.message };
