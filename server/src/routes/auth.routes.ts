@@ -20,7 +20,8 @@ export const authRouter = Router();
  */
 authRouter.post('/signup', async (req: Request, res: Response) => {
   try {
-    const { email, password, fullName, role, inviteToken, publicKeyPem, badgeId, barCouncilNumber, institutionId, jurisdictionCode, consentVetting } = req.body;
+    const { email, password, fullName, role, inviteToken, publicKeyPem, badgeId, barCouncilNumber, institutionId, jurisdictionCode, consentVetting, profilePhotoUrl, avatarUrl } = req.body;
+    const photoUrl = profilePhotoUrl || avatarUrl;
 
     if (!email || !password || !fullName || !role) {
       return res.status(400).json({ error: 'MISSING_FIELDS', message: 'Email, password, fullName, and role are required.' });
@@ -88,6 +89,7 @@ authRouter.post('/signup', async (req: Request, res: Response) => {
       appointmentRef: userApptRef,
       institutionId,
       jurisdictionCode,
+      profilePhotoUrl: photoUrl || undefined,
       approvalState: 'submitted',
       stateHistory: [{ state: 'submitted', timestamp: new Date().toISOString(), note: 'Account signup submitted' }],
       institutionVerified: false,

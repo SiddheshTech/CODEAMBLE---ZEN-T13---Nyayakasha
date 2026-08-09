@@ -14,7 +14,8 @@ const profilePatchSchema = z.object({
   authorityScope: z.string().optional(),
   barCouncilNumber: z.string().optional(),
   badgeId: z.string().optional(),
-  appointmentRef: z.string().optional()
+  appointmentRef: z.string().optional(),
+  profilePhotoUrl: z.string().optional()
 });
 
 /**
@@ -110,7 +111,8 @@ profileRoutes.get('/', async (req: Request, res: Response) => {
         keyGenesisDate: formattedGenesisDate,
         mfaAttestationLevel: user.mfaAttestationLevel || 'Level 3 Hardware Enclave Security',
         mfaEnrolled: Boolean(user.mfaEnrolled),
-        mfaAttestationValid
+        mfaAttestationValid,
+        profilePhotoUrl: user.profilePhotoUrl || null
       }
     });
   } catch (error: any) {
@@ -120,7 +122,7 @@ profileRoutes.get('/', async (req: Request, res: Response) => {
 
 /**
  * PATCH /api/profile
- * Updates the user's profile, explicitly restricting certain fields
+ * Updates the user's profile
  */
 profileRoutes.patch('/', async (req: Request, res: Response) => {
   try {
@@ -139,6 +141,7 @@ profileRoutes.patch('/', async (req: Request, res: Response) => {
     if (validatedData.barCouncilNumber !== undefined) user.barCouncilNumber = validatedData.barCouncilNumber;
     if (validatedData.badgeId !== undefined) user.badgeId = validatedData.badgeId;
     if (validatedData.appointmentRef !== undefined) user.appointmentRef = validatedData.appointmentRef;
+    if (validatedData.profilePhotoUrl !== undefined) user.profilePhotoUrl = validatedData.profilePhotoUrl;
 
     await primaryStore.saveUser(user);
 

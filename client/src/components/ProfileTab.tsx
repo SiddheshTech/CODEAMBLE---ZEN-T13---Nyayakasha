@@ -5,7 +5,8 @@ import {
   MapPin, Briefcase, Key, 
   CheckCircle2, Lock, Copy, Download,
   Building, FileText, Check, Shield, AlertCircle,
-  X, Send, Fingerprint, HardDrive, HelpCircle
+  X, Send, Fingerprint, HardDrive, HelpCircle,
+  Camera, Upload
 } from 'lucide-react';
 
 import { api } from '../services/api';
@@ -28,6 +29,31 @@ export function ProfileTab({ role }: { role: string }) {
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [copiedFingerprint, setCopiedFingerprint] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const handleProfilePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Photo size must be under 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = reader.result as string;
+      try {
+        const res = await api.updateProfile({ profilePhotoUrl: dataUrl });
+        if (res.success && res.profile) {
+          setProfileData(res.profile);
+          showToast('Official Field Submitter Profile Photo uploaded & institutionally bound!');
+        }
+      } catch (err: any) {
+        showToast(err.message || 'Failed to upload profile photo');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const officialName = profileData?.fullName || user?.fullName || user?.name || 'Authenticated User';
   const officialEmail = profileData?.email || user?.email || 'user@nyayakasha.gov.in';
@@ -205,9 +231,34 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
         
         <div className="relative z-10 flex flex-col lg:flex-row gap-6 lg:items-center justify-between">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-            <div className="relative shrink-0">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-4 border-white/20">
-                {profileData.fullName.split(' ').map((n: string) => n[0]).join('').substring(0,2).toUpperCase()}
+            <div className="relative shrink-0 group">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg border-4 border-white/20 overflow-hidden relative">
+                {profileData?.profilePhotoUrl || user?.profilePhotoUrl ? (
+                  <img 
+                    src={profileData?.profilePhotoUrl || user?.profilePhotoUrl} 
+                    alt={profileData?.fullName || 'Profile Photo'} 
+                    className="w-full h-full object-cover" 
+                  />
+                ) : (
+                  profileData.fullName.split(' ').map((n: string) => n[0]).join('').substring(0,2).toUpperCase()
+                )}
+                
+                {/* Upload Overlay Button */}
+                <label 
+                  htmlFor="profile-photo-input" 
+                  className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 text-white text-xs font-bold cursor-pointer"
+                  title="Upload / Change Official Profile Photo"
+                >
+                  <Camera className="w-5 h-5 text-amber-300" />
+                  <span>Upload</span>
+                </label>
+                <input 
+                  id="profile-photo-input" 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={handleProfilePhotoUpload} 
+                />
               </div>
               <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-500 rounded-full border-4 border-slate-900 flex items-center justify-center shadow-sm" title="Institutional Identity Verified">
                 <ShieldCheck className="w-4 h-4 text-white" />
@@ -237,17 +288,33 @@ Digital Ledger Root Hash: 0x72a910bf8912c00e12f41982b189a
             </div>
           </div>
 
-          {/* Download Certificate Action */}
+          {/* Download Certificate & Photo Action */}
           <div className="flex flex-col sm:items-end gap-3 border-t lg:border-t-0 border-white/10 pt-4 lg:pt-0 shrink-0">
-            <button
-              onClick={handleDownloadCertificate}
-              className="px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-extrabold flex items-center gap-2.5 shadow-lg transition-all cursor-pointer"
-            >
-              <Download className="w-4 h-4 text-slate-950" />
-              <span>Download Verification Certificate</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-3">
+              <label 
+                htmlFor="btn-photo-upload"
+                className="px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold flex items-center gap-2 border border-white/15 transition-all cursor-pointer"
+              >
+                <Camera className="w-4 h-4 text-amber-400" />
+                <span>Upload Official Photo</span>
+              </label>
+              <input 
+                id="btn-photo-upload" 
+                type="file" 
+                accept="image/*" 
+                className="hidden" 
+                onChange={handleProfilePhotoUpload} 
+              />
+              <button
+                onClick={handleDownloadCertificate}
+                className="px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-extrabold flex items-center gap-2.5 shadow-lg transition-all cursor-pointer"
+              >
+                <Download className="w-4 h-4 text-slate-950" />
+                <span>Download Verification Certificate</span>
+              </button>
+            </div>
             <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1">
-              <Lock className="w-3 h-3 text-emerald-400" /> High Court Signed Certificate
+              <Lock className="w-3 h-3 text-emerald-400" /> High Court Signed Certificate &amp; Photo Bound
             </span>
           </div>
         </div>

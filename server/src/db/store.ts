@@ -39,6 +39,7 @@ export interface UserRecord {
   mfaAttestationLevel?: string;
   documentBlurScore?: number;
   documentPassesQuality?: boolean;
+  profilePhotoUrl?: string;
   settings?: UserSettings;
 
   // Approval State Machine

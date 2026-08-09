@@ -326,9 +326,19 @@ export function FieldSubmitterSidebar({
         >
           <div className="flex items-center gap-3 overflow-hidden">
             {/* Avatar Circle */}
-            <div className="w-9 h-9 rounded-full bg-[#E1E3E1] text-[#1F1F1F] font-bold text-xs flex items-center justify-center shrink-0">
-              {userInitials}
-            </div>
+            {(() => {
+              const uObj = (() => { try { return JSON.parse(localStorage.getItem('nyayakasha_user') || '{}'); } catch { return {}; } })();
+              const photo = profileData?.profilePhotoUrl || uObj.profilePhotoUrl;
+              return (
+                <div className="w-9 h-9 rounded-full bg-[#E1E3E1] text-[#1F1F1F] font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden">
+                  {photo ? (
+                    <img src={photo} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    userInitials
+                  )}
+                </div>
+              );
+            })()}
 
             {!collapsed && (
               <div className="flex flex-col min-w-0 pr-1">

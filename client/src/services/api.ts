@@ -508,6 +508,25 @@ export const api = {
     });
   },
 
+  getProfile: async () => {
+    return fetchAPI('/profile', { method: 'GET' });
+  },
+
+  updateProfile: async (data: any) => {
+    const res = await fetchAPI('/profile', {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+    if (res.profile) {
+      try {
+        const uStr = localStorage.getItem('nyayakasha_user');
+        const existing = uStr ? JSON.parse(uStr) : {};
+        localStorage.setItem('nyayakasha_user', JSON.stringify({ ...existing, ...res.profile }));
+      } catch (e) {}
+    }
+    return res;
+  },
+
   revokeSession: async (sessionId: string) => {
     return fetchAPI('/settings/revoke-session', {
       method: 'POST',
