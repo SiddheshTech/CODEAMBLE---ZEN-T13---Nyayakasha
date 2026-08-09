@@ -2097,5 +2097,149 @@
     "prevHash": "79752f814c4954149beb0ea47162d48aa12713ab903bfeffbfa312f2afa54e13",
     "hash": "451c226d4b515c2b269071b99058a6a49983850a5988dd8e533712871b225266",
     "blockNumber": 1489295
+  },
+  {
+    "id": "audit_1786249893116_96",
+    "index": 96,
+    "timestamp": "2026-08-09T04:31:33.109Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786249893106_oaxbhi",
+      "approvalState": "active"
+    },
+    "payloadHash": "90e3280d8acf1042d71fc4306dade23ce089735a44f08c10d1da35ec4dc063ff",
+    "prevHash": "451c226d4b515c2b269071b99058a6a49983850a5988dd8e533712871b225266",
+    "hash": "c6d6d35a8fcbbce42ac5aaa74968e834861bd64ea48ea8ea187d7ec6e08a8abf",
+    "blockNumber": 1489296
+  },
+  {
+    "id": "audit_1786249893129_97",
+    "index": 97,
+    "timestamp": "2026-08-09T04:31:33.124Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande8@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "e7e40ef7a1fa30b2457ea57a61fca28bc700d31697383c94575a00e391451050",
+    "prevHash": "c6d6d35a8fcbbce42ac5aaa74968e834861bd64ea48ea8ea187d7ec6e08a8abf",
+    "hash": "9d981da06f7f012e47d3c050d30baf05fb1acf1008c6760221feb8505e696f51",
+    "blockNumber": 1489297
+  },
+  {
+    "id": "audit_1786249894052_98",
+    "index": 98,
+    "timestamp": "2026-08-09T04:31:34.052Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "9d981da06f7f012e47d3c050d30baf05fb1acf1008c6760221feb8505e696f51",
+    "hash": "dd5455441ede6254543629cb690694375b4768da102abd59d3870a07ae54e9f5",
+    "blockNumber": 1489298
+  },
+  {
+    "id": "audit_1786250003407_99",
+    "index": 99,
+    "timestamp": "2026-08-09T04:33:23.406Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "guptasargam954@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "guptasargam954@gmail.com",
+      "subject": "Nyayakasha OTP & SMTP Email Test"
+    },
+    "payloadHash": "050e2b4c4b930caa0587191a3a8f155ebf4d008673def2c033d34e2291cf1f4f",
+    "prevHash": "dd5455441ede6254543629cb690694375b4768da102abd59d3870a07ae54e9f5",
+    "hash": "83d7dbb4b267f1131364f621ee5a13d40450e88f38c437b1d30dc1b5b71dd0b8",
+    "blockNumber": 1489299
+  },
+  {
+    "id": "audit_1786250023231_100",
+    "index": 100,
+    "timestamp": "2026-08-09T04:33:43.230Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "guptasargam954@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "guptasargam954@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "aed4f2a700618bece9c3f95465b9c132a1619ce0fd51d4d1ec7df3395d70aa5f",
+    "prevHash": "83d7dbb4b267f1131364f621ee5a13d40450e88f38c437b1d30dc1b5b71dd0b8",
+    "hash": "763db086c8f5460435232d4f38ab6b6e6daf20385eff27c8905e357ad668f672",
+    "blockNumber": 1489300
+  },
+  {
+    "id": "audit_1786250037517_101",
+    "index": 101,
+    "timestamp": "2026-08-09T04:33:57.517Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786250037516_4h4xvu",
+      "approvalState": "active"
+    },
+    "payloadHash": "59bd2f27a91dc5f9c084ad9351385f57f1693a349c58b5931df42c769b9cfd3a",
+    "prevHash": "763db086c8f5460435232d4f38ab6b6e6daf20385eff27c8905e357ad668f672",
+    "hash": "815ff099f0910e89befe31fb45d91428d6afb520170cec1cc6acc72e7758e6ce",
+    "blockNumber": 1489301
+  },
+  {
+    "id": "audit_1786250037525_102",
+    "index": 102,
+    "timestamp": "2026-08-09T04:33:57.525Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande8@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "e7e40ef7a1fa30b2457ea57a61fca28bc700d31697383c94575a00e391451050",
+    "prevHash": "815ff099f0910e89befe31fb45d91428d6afb520170cec1cc6acc72e7758e6ce",
+    "hash": "44cac39a74b7274de9153afd62b9a8933e0656da25f845371228a972b861fc8c",
+    "blockNumber": 1489302
+  },
+  {
+    "id": "audit_1786250038805_103",
+    "index": 103,
+    "timestamp": "2026-08-09T04:33:58.805Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "44cac39a74b7274de9153afd62b9a8933e0656da25f845371228a972b861fc8c",
+    "hash": "8c49d48b9a2580d20fd8ba9b077dada8cbb7e2ce41e3b8d0307882a7d0537c68",
+    "blockNumber": 1489303
   }
 ]

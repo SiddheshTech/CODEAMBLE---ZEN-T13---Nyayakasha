@@ -19,7 +19,7 @@ class NotificationService {
   }
 
   private initTransporter() {
-    const user = process.env.SMTP_USER || process.env.GMAIL_USER || 'smirh2211@gmail.com';
+    const user = process.env.SMTP_USER || process.env.GMAIL_USER || 'guptasargam954@gmail.com';
     const pass = process.env.SMTP_PASS || process.env.GMAIL_APP_PASS || 'vrlyobkptwdducgm';
 
     try {
@@ -51,7 +51,7 @@ class NotificationService {
     if (this.transporter) {
       try {
         const fromName = process.env.EMAIL_FROM_NAME || 'Nyayakasha Security System';
-        const fromUser = process.env.SMTP_USER || process.env.GMAIL_USER || 'smirh2211@gmail.com';
+        const fromUser = process.env.SMTP_USER || process.env.GMAIL_USER || 'guptasargam954@gmail.com';
         const fromAddr = process.env.SMTP_FROM || fromUser;
         
         await this.transporter.sendMail({
