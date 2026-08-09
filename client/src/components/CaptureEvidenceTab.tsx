@@ -447,7 +447,7 @@ export function CaptureEvidenceTab({ role, addToast }: CaptureEvidenceTabProps) 
         '0x' + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
 
       const sigCanvasDraw = evidenceSigPad.current && !evidenceSigPad.current.isEmpty()
-        ? evidenceSigPad.current.getTrimmedCanvas().toDataURL('image/png')
+        ? (evidenceSigPad.current.getCanvas ? evidenceSigPad.current.getCanvas().toDataURL('image/png') : (evidenceSigPad.current as any).toDataURL?.('image/png'))
         : undefined;
 
       if (sigCanvasDraw) {
