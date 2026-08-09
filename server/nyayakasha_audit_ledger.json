@@ -1275,5 +1275,73 @@
     "prevHash": "288e823d11ed8f96f4f2bcf10c4d0511a05e3975862df75af086fc8d3c58bd14",
     "hash": "93be904c27c45cb8973abb3c5987c39ef46c5fa12fe1a8e4512af295f3e056d0",
     "blockNumber": 1489258
+  },
+  {
+    "id": "audit_1786246896622_59",
+    "index": 59,
+    "timestamp": "2026-08-09T03:41:36.617Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Rajesh Kulkarni (CNN Direct Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8828",
+      "evidenceHash": "d24a3fe75ce9d19cffc93e4864c8b65530bebfe3add83cf90ea2635f3757f08a",
+      "caseId": "FIR-2026-001",
+      "txHash": "0xcb0fa0912244ccc74488bf520461aa6e2f466021aa50b606055b34cd60f7cdf2",
+      "merkleRoot": "0x0aa7f2daa56e084dcc5aff7fb094fa2b5471f5ad2daa440b0190f0a542c8c3e0",
+      "blockNumber": 15022417,
+      "fullPayload": {
+        "exhibitId": "EV-8828",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "d24a3fe75ce9d19cffc93e4864c8b65530bebfe3add83cf90ea2635f3757f08a",
+        "custodian": "Officer Rajesh Kulkarni (CNN Direct Terminal)",
+        "title": "CNN Direct Upload: file_000000006d2c722fba46d9fcc07c9db1.png",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via CNN Specialized image model. Score: 80.1%.",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-09T03:41:36.607Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "ad6495cd503d0b54d5ef1a4b58657778de38f5f4e40570831f4e1a871cddb710",
+    "prevHash": "93be904c27c45cb8973abb3c5987c39ef46c5fa12fe1a8e4512af295f3e056d0",
+    "hash": "7276d499cf87cdc01ecfa4b97455a8dbb4fd991eafe5c74775ba35b63cd6195e",
+    "blockNumber": 1489259
+  },
+  {
+    "id": "audit_1786246898002_60",
+    "index": 60,
+    "timestamp": "2026-08-09T03:41:38.002Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Rajesh Kulkarni (CNN Direct Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8828",
+      "caseId": "FIR-2026-001",
+      "hash": "d24a3fe75ce9d19cffc93e4864c8b65530bebfe3add83cf90ea2635f3757f08a",
+      "title": "CNN Direct Upload: file_000000006d2c722fba46d9fcc07c9db1.png",
+      "txHash": "0xcb0fa0912244ccc74488bf520461aa6e2f466021aa50b606055b34cd60f7cdf2",
+      "blockNumber": 15022417,
+      "merkleRoot": "0x0aa7f2daa56e084dcc5aff7fb094fa2b5471f5ad2daa440b0190f0a542c8c3e0",
+      "cnnScore": 98.6,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "90e2a6ebd5d7f86d5479d701ce808dd10a976220b64596610739b79544b3ede1",
+    "prevHash": "7276d499cf87cdc01ecfa4b97455a8dbb4fd991eafe5c74775ba35b63cd6195e",
+    "hash": "af8af6fc47289d5de59ab97930b216d43e2f0a7e414974e92df504988e275c0e",
+    "blockNumber": 1489260
   }
 ]

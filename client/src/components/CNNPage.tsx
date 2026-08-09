@@ -122,89 +122,73 @@ export function CNNPage() {
     if (!file) return;
 
     setIsUploading(true);
-    setCnnApiError(null); // clear previous error
+    setCnnApiError(null);
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', type);
-
-    try {
-      const response = await fetch('http://127.0.0.1:5001/analyze_local', {
-        method: 'POST',
-        body: formData,
-      });
-      const result = await response.json();
-
-      if (response.ok) {
-        const newEvidence = {
-          id: `EV-${Math.floor(Math.random() * 10000)}`,
-          type: type,
-          filename: file.name,
-          uploadTime: new Date().toLocaleString(),
-          officer: 'Test User',
-          status: result.status,
-          confidence: result.confidence,
-          forensic_score: result.forensic_score,
-          evidence: result.evidence || [],
-          raw_scores: result.raw_scores || {},
-          cnn_tamper_confidence: result.cnn_tamper_confidence,
-          ocr_fields: result.ocr_fields,
-          previewUrl: URL.createObjectURL(file),
-          icon: type === 'video' ? <FileVideo className="w-5 h-5 text-amber-500" /> : type === 'document' ? <FileText className="w-5 h-5 text-amber-500" /> : <FileImage className="w-5 h-5 text-blue-500" />
-        };
-        setEvidenceList([newEvidence, ...evidenceList]);
-
-        // Auto-anchor on Polygon PoS Blockchain and submit to Court Authority Forgery Queue
-        api.submitEvidence({
-          caseId: 'FIR-2026-001',
-          title: `CNN Direct Upload: ${file.name}`,
-          type: type === 'video' ? 'Video Footage' : type === 'document' ? 'PDF Document' : 'Digital Photo Snapshot',
-          custodian: 'Officer Rajesh Kulkarni (CNN Direct Terminal)',
-          dataUrl: URL.createObjectURL(file),
-          evidenceNotes: `Analyzed via CNN Specialized ${type} model. Score: ${result.confidence || '98.6%'}.`
-        }).catch(err => console.log('CNN Direct Submit status:', err));
-
-      } else {
-        setCnnApiError('Verification failed: ' + (result.error || 'Unknown error from CNN API'));
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const dataUrl = event.target?.result as string;
+      if (!dataUrl) {
+        setIsUploading(false);
+        return;
       }
-    } catch (error: any) {
-      if (error?.message?.includes('Failed to fetch') || error?.message?.includes('ERR_CONNECTION_REFUSED')) {
-        setCnnApiError('CNN AI server is offline. Running fallback MAYA-BREAK CNN Neural Analysis Engine...');
 
-        // Fallback local CNN analyzer simulation if Python server is not active
-        setTimeout(() => {
-          const fallbackConfidence = '98.6%';
+      try {
+        const response = await fetch('http://127.0.0.1:5001/predict_json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dataUrl,
+            evidence_type: type
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          const confidenceText = result.confidence || `${result.forensic_score || 98.6}%`;
+          const statusText = result.status || (result.is_fake ? 'Forgery Detected' : 'Authentic');
+
           const newEvidence = {
-            id: `EV-${Math.floor(8827 + Math.random() * 900)}`,
+            id: `EV-${Math.floor(8820 + Math.random() * 1000)}`,
             type: type,
             filename: file.name,
             uploadTime: new Date().toLocaleString(),
-            officer: 'Officer Rajesh Kulkarni',
-            status: 'Authentic',
-            confidence: fallbackConfidence,
-            previewUrl: URL.createObjectURL(file),
+            officer: 'Officer Siddhesh Harwande',
+            status: statusText,
+            confidence: confidenceText,
+            forensic_score: result.forensic_score,
+            evidence: result.evidence || [],
+            raw_scores: result.raw_scores || {},
+            cnn_tamper_confidence: result.cnn_tamper_confidence,
+            ocr_fields: result.ocr_fields,
+            previewUrl: dataUrl,
             icon: type === 'video' ? <FileVideo className="w-5 h-5 text-amber-500" /> : type === 'document' ? <FileText className="w-5 h-5 text-amber-500" /> : <FileImage className="w-5 h-5 text-blue-500" />
           };
-          setEvidenceList([newEvidence, ...evidenceList]);
-          setCnnApiError(null);
 
-          // Submit to Polygon PoS Blockchain and Court Authority
+          setEvidenceList((prev) => [newEvidence, ...prev]);
+
+          // Auto-anchor on Polygon PoS Blockchain and submit to Court Authority Forgery Queue
           api.submitEvidence({
             caseId: 'FIR-2026-001',
             title: `CNN Analyzed: ${file.name}`,
             type: type === 'video' ? 'Video Footage' : type === 'document' ? 'PDF Document' : 'Digital Photo Snapshot',
-            custodian: 'Officer Rajesh Kulkarni (Zone 4 Operations)',
-            dataUrl: URL.createObjectURL(file),
-            evidenceNotes: `CNN Specialized ${type} analysis passed (${fallbackConfidence} authenticity score). Anchored on Polygon PoS.`
-          }).catch(err => console.log('CNN Fallback submit status:', err));
-        }, 1200);
-      } else {
+            custodian: 'Officer Siddhesh Harwande (CNN Neural Engine Terminal)',
+            dataUrl: dataUrl,
+            evidenceNotes: `Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: ${statusText} (${confidenceText}).`
+          }).catch(err => console.log('CNN Direct Submit status:', err));
+
+        } else {
+          setCnnApiError('Verification failed: ' + (result.error || 'Unknown error from CNN API'));
+        }
+      } catch (error: any) {
         setCnnApiError('CNN API error: ' + (error?.message || 'Unknown error'));
+      } finally {
+        setIsUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
       }
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const [summary, setSummary] = useState<any>(null);
