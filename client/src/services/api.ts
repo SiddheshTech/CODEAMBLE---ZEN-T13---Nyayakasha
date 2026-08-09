@@ -492,6 +492,22 @@ export const api = {
     });
   },
 
+  // --- NEW: Independent Validator duress-alerts and consensus helpers ---
+  getValidatorDuressAlerts: async () => {
+    return fetchAPI('/validator/duress-alerts', { method: 'GET' });
+  },
+
+  acknowledgeValidatorDuressAlert: async (alertId: string) => {
+    return fetchAPI(`/validator/duress-alerts/${alertId}/acknowledge`, {
+      method: 'POST',
+      body: JSON.stringify({ alertId })
+    });
+  },
+
+  getConsensusRequests: async () => {
+    return fetchAPI('/consensus', { method: 'GET' });
+  },
+
   // --- PROFILE MANAGEMENT ---
   // --- INSTITUTIONAL SETTINGS ---
   getSettings: async () => {

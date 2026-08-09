@@ -22,6 +22,9 @@ import {
   BadgeCheck,
   AlertTriangle,
   Scale,
+  ShieldAlert,
+  Database,
+  Activity,
 } from 'lucide-react';
 
 interface FieldSubmitterSidebarProps {
@@ -55,11 +58,25 @@ export function FieldSubmitterSidebar({
   const independentValidatorNavItems: NavItem[] = [
     { name: 'Dashboard', icon: Home, id: 'Dashboard' },
     {
-      name: 'Consensus votes',
-      icon: Check,
-      id: 'Consensus votes',
+      name: 'Validator Workspace',
+      icon: ShieldAlert,
+      id: 'Validator Workspace',
+      badge: 'Live',
+      badgeColor: 'bg-emerald-100 text-emerald-800 border border-emerald-200',
+    },
+    {
+      name: 'Consensus Requests',
+      icon: Database,
+      id: 'Consensus Requests',
       badge: 2,
-      badgeColor: 'bg-[#FEEFC3] text-[#7C4A00]',
+      badgeColor: 'bg-blue-100 text-blue-800',
+    },
+    {
+      name: 'Duress Alerts',
+      icon: AlertTriangle,
+      id: 'Duress Alerts',
+      badge: '!',
+      badgeColor: 'bg-rose-100 text-rose-800',
     },
     { name: 'Aggregate analytics', icon: BarChart3, id: 'Aggregate analytics' },
     { name: 'Audit log', icon: FileText, id: 'Audit log' },
