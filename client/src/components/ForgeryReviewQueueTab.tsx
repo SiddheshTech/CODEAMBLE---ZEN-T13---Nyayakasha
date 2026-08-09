@@ -1320,7 +1320,14 @@ export function ForgeryReviewQueueTab() {
                       <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-400 font-mono block">Officer Digital Signature</span>
                       <div className="bg-white/95 rounded-xl p-2 border border-slate-700 flex justify-center">
                         <img
-                          src={selectedItem.signature || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="320" height="70" viewBox="0 0 320 70"><path d="M 20 40 Q 60 10 90 35 T 160 25 T 220 45 T 280 20" stroke="%231e293b" stroke-width="2.5" fill="none"/><text x="20" y="60" font-family="sans-serif" font-size="9" fill="%230284c7" font-weight="bold">SEALED BY OFFICER SIDDHESH HARWANDE • TPM SECURE KEY 0xSIG_FS_8820</text></svg>`}
+                          src={(() => {
+                            if (selectedItem.signature && selectedItem.signature.length > 20) return selectedItem.signature;
+                            try {
+                              const savedSig = localStorage.getItem('nyayakasha_user_signature');
+                              if (savedSig && savedSig.length > 20) return savedSig;
+                            } catch (e) {}
+                            return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="340" height="80" viewBox="0 0 340 80"><path d="M 25 45 C 45 15, 65 65, 85 30 C 105 10, 125 55, 145 35 C 165 20, 185 50, 205 30 C 225 15, 245 45, 265 25 T 310 40" stroke="%230f172a" stroke-width="3.2" stroke-linecap="round" fill="none"/><text x="25" y="70" font-family="sans-serif" font-size="10" fill="%230284c7" font-weight="bold">SEALED BY OFFICER SIDDHESH HARWANDE • TPM KEY 0xSIG_FS_8820</text></svg>`;
+                          })()}
                           alt="Officer Signature"
                           className="h-10 w-auto object-contain"
                         />

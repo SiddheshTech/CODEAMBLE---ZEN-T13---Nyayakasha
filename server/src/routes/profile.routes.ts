@@ -15,7 +15,8 @@ const profilePatchSchema = z.object({
   barCouncilNumber: z.string().optional(),
   badgeId: z.string().optional(),
   appointmentRef: z.string().optional(),
-  profilePhotoUrl: z.string().optional()
+  profilePhotoUrl: z.string().optional(),
+  digitalSignatureUrl: z.string().optional()
 });
 
 /**
@@ -142,6 +143,7 @@ profileRoutes.patch('/', async (req: Request, res: Response) => {
     if (validatedData.badgeId !== undefined) user.badgeId = validatedData.badgeId;
     if (validatedData.appointmentRef !== undefined) user.appointmentRef = validatedData.appointmentRef;
     if (validatedData.profilePhotoUrl !== undefined) user.profilePhotoUrl = validatedData.profilePhotoUrl;
+    if (validatedData.digitalSignatureUrl !== undefined) (user as any).digitalSignatureUrl = validatedData.digitalSignatureUrl;
 
     await primaryStore.saveUser(user);
 
@@ -158,7 +160,8 @@ profileRoutes.patch('/', async (req: Request, res: Response) => {
         appointmentRef: user.appointmentRef,
         authorityScope: user.authorityScope,
         barCouncilNumber: user.barCouncilNumber,
-        profilePhotoUrl: user.profilePhotoUrl || null
+        profilePhotoUrl: user.profilePhotoUrl || null,
+        digitalSignatureUrl: (user as any).digitalSignatureUrl || null
       }
     });
   } catch (error: any) {

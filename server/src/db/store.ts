@@ -40,6 +40,7 @@ export interface UserRecord {
   documentBlurScore?: number;
   documentPassesQuality?: boolean;
   profilePhotoUrl?: string;
+  digitalSignatureUrl?: string;
   settings?: UserSettings;
 
   // Approval State Machine
