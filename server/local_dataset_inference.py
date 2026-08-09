@@ -317,6 +317,12 @@ def analyze_evidence_locally():
             if is_blacklisted:
                 final = max(final, 95.0)
 
+            # Strict Perfect CNN Block: if ANY page looks fake to the CNN, reject the document
+            max_raw_cnn = float(np.max([s["metrics"]["cnn_fake_probability"] for s in cnn_scores])) if cnn_scores else 0.0
+            if max_raw_cnn > 0.5:
+                final = 100.0
+                all_evidence.append(f"CNN Strict Override (Confidence: {max_raw_cnn*100:.1f}%)")
+
             # Very strict threshold for PDFs (35 instead of 38)
             is_fake = bool(final >= 35)
             status = "Document Forgery Detected" if is_fake else "Authentic Document"

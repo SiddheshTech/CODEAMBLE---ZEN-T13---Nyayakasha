@@ -142,8 +142,8 @@ def train(data_dir: str, epochs: int, batch_size: int, lr: float,
     print(f"Classes: {train_ds.classes}")  # e.g. ['fake', 'real'] -- alphabetical
     print(f"Train samples: {len(train_ds)} | Val samples: {len(val_ds)}")
 
-    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=2)
-    val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False, num_workers=2)
+    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=0)
+    val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False, num_workers=0)
 
     model = build_model(num_classes=len(train_ds.classes), freeze_backbone=freeze_backbone).to(device)
 

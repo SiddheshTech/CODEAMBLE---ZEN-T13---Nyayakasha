@@ -146,7 +146,7 @@ def advanced_verify_image(model, classes, pil_image: Image.Image, device: str) -
     # PDF CRITICAL OVERRIDE:
     # Documents (PDFs) often have perfect solid colors, making ELA (0) and Noise (0).
     # If the CNN (which is trained on documents) strongly suspects a fake, it must override.
-    if cnn_risk > 70.0:
+    if cnn_risk > 45.0:
         final_risk = max(final_risk, cnn_risk)
     
     # Threshold set to 60. Real images generally have low ELA and normal noise (risk < 40).
