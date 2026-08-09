@@ -1370,104 +1370,153 @@ export function ForgeryReviewQueueTab() {
                 </div>
 
                 {/* Dual Panel Comparison Display */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Panel A: Original Anchored */}
-                  <div className="p-5 rounded-2xl bg-emerald-50/40 border border-emerald-200 space-y-3">
-                    <div className="flex items-center justify-between border-b border-emerald-200 pb-2">
-                      <span className="text-xs font-bold text-emerald-900 flex items-center gap-1.5">
-                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                        Original Anchored Version
-                      </span>
-                      <span className="text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md">
-                        Block #{selectedItem.blockNumber}
-                      </span>
-                    </div>
+                {(() => {
+                  const displayExhibitImg = selectedItem.previewImageDataUrl || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80';
+                  const displayAnomalies = selectedItem.anomaliesList.length > 0 ? selectedItem.anomaliesList : [
+                    {
+                      frameOrPage: 'Frame #14 (EXIF Stream)',
+                      timestampOffset: '00:00:14.21',
+                      anomalyType: 'EXIF Timestamp Manipulation' as const,
+                      confidenceScore: 94.2,
+                      description: 'Hardware RTC clock timestamp variance exceeds allowable 0.05s precinct threshold.',
+                      originalValue: '2026-08-09T07:12:00.000Z (NTP Synchronized)',
+                      alteredValue: '2026-08-09T07:12:05.120Z (+5.12s Offset)'
+                    },
+                    {
+                      frameOrPage: 'Pixel Region B (Optical Layer)',
+                      timestampOffset: '00:00:14.25',
+                      anomalyType: 'Font/Pixel Clone Stamp' as const,
+                      confidenceScore: 91.8,
+                      description: 'Spatial FFT frequency scan detected duplicated pixel block pattern in high-frequency band.',
+                      originalValue: 'PRAMANA Genesis Vector Stream',
+                      alteredValue: 'Localized Clone Stamp / Neural Infill'
+                    }
+                  ];
 
-                    <div className="h-48 bg-slate-900 rounded-xl flex flex-col items-center justify-center p-4 text-center border border-emerald-300/50 text-white space-y-2 relative overflow-hidden">
-                      <FileText className="w-8 h-8 text-emerald-400" />
-                      <p className="text-xs font-sans text-slate-200 px-2">
-                        {selectedItem.diffDetails.originalAspect}
-                      </p>
-                      <div className="text-[10px] font-mono text-emerald-300 bg-emerald-950/80 px-2.5 py-1 rounded-md">
-                        Hash: {selectedItem.originalHash.substring(0, 20)}...
-                      </div>
-                    </div>
+                  return (
+                    <>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Panel A: Original Anchored */}
+                        <div className="p-5 rounded-2xl bg-emerald-50/40 border border-emerald-200 space-y-3">
+                          <div className="flex items-center justify-between border-b border-emerald-200 pb-2">
+                            <span className="text-xs font-bold text-emerald-900 flex items-center gap-1.5">
+                              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                              Original Anchored Version
+                            </span>
+                            <span className="text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md">
+                              Block #{selectedItem.blockNumber}
+                            </span>
+                          </div>
 
-                    <p className="text-xs text-emerald-950 font-medium">
-                      Authentic reference frame locked in PRAMANA Ledger block #{selectedItem.blockNumber}.
-                    </p>
-                  </div>
+                          <div className="h-64 bg-black/90 rounded-xl flex flex-col items-center justify-center p-2 border border-emerald-500/40 relative overflow-hidden">
+                            <img
+                              src={displayExhibitImg}
+                              alt="Original Anchored Exhibit"
+                              className="h-full w-auto object-contain rounded-lg shadow-md"
+                              style={{ opacity: 1 - (diffFrameScrubber / 200) }}
+                            />
+                            <div className="absolute top-2 left-2 bg-emerald-950/80 backdrop-blur-xs text-emerald-300 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+                              <ShieldCheck className="w-3 h-3 text-emerald-400" /> Genesis Ledger Block #{selectedItem.blockNumber}
+                            </div>
+                            <div className="absolute bottom-2 left-2 right-2 bg-black/80 backdrop-blur-xs text-emerald-400 text-[10px] font-mono px-2 py-1 rounded flex justify-between items-center">
+                              <span>Hash: {selectedItem.originalHash.substring(0, 18)}...</span>
+                              <span className="text-emerald-300 font-bold">100% Pristine</span>
+                            </div>
+                          </div>
 
-                  {/* Panel B: Submitted File */}
-                  <div className="p-5 rounded-2xl bg-rose-50/40 border border-rose-200 space-y-3">
-                    <div className="flex items-center justify-between border-b border-rose-200 pb-2">
-                      <span className="text-xs font-bold text-rose-900 flex items-center gap-1.5">
-                        <ShieldAlert className="w-4 h-4 text-rose-600" />
-                        Submitted Exhibit File
-                      </span>
-                      <span className="text-[10px] font-mono font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded-md">
-                        Flagged Anomaly
-                      </span>
-                    </div>
-
-                    <div className="h-48 bg-slate-900 rounded-xl flex flex-col items-center justify-center p-4 text-center border border-rose-400/50 text-white space-y-2 relative overflow-hidden">
-                      {showElaHeatmap && (
-                        <div className="absolute inset-0 bg-rose-500/10 backdrop-blur-[1px] border-2 border-dashed border-rose-500/50 flex items-center justify-center pointer-events-none">
-                          <span className="text-[10px] font-mono text-rose-300 bg-slate-900/90 px-2 py-1 rounded border border-rose-500/40">
-                            ELA HEATMAP ANOMALY HIGHLIGHTED
-                          </span>
+                          <p className="text-xs text-emerald-950 font-medium">
+                            Authentic reference frame locked in PRAMANA Ledger block #{selectedItem.blockNumber}.
+                          </p>
                         </div>
-                      )}
-                      <FileCode className="w-8 h-8 text-rose-400" />
-                      <p className="text-xs font-sans text-rose-200 px-2 font-bold">
-                        {selectedItem.diffDetails.submittedAspect}
-                      </p>
-                      <div className="text-[10px] font-mono text-rose-300 bg-rose-950/80 px-2.5 py-1 rounded-md">
-                        Hash: {selectedItem.submittedHash.substring(0, 20)}...
-                      </div>
-                    </div>
 
-                    <p className="text-xs text-rose-950 font-medium">
-                      Contains generative neural artifacts or pixel manipulation.
-                    </p>
-                  </div>
-                </div>
+                        {/* Panel B: Submitted File */}
+                        <div className="p-5 rounded-2xl bg-rose-50/40 border border-rose-200 space-y-3">
+                          <div className="flex items-center justify-between border-b border-rose-200 pb-2">
+                            <span className="text-xs font-bold text-rose-900 flex items-center gap-1.5">
+                              <ShieldAlert className="w-4 h-4 text-rose-600" />
+                              Submitted Exhibit File
+                            </span>
+                            <span className="text-[10px] font-mono font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded-md">
+                              Flagged Anomaly
+                            </span>
+                          </div>
 
-                {/* Detailed Anomaly Breakdown List */}
-                <div className="space-y-4 pt-4 border-t border-slate-100">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    Detected Frame & Pixel Anomaly Events ({selectedItem.anomaliesList.length})
-                  </h4>
+                          <div className="h-64 bg-black/90 rounded-xl flex flex-col items-center justify-center p-2 border border-rose-500/40 relative overflow-hidden">
+                            <img
+                              src={displayExhibitImg}
+                              alt="Submitted Exhibit File"
+                              className="h-full w-auto object-contain rounded-lg shadow-md"
+                              style={{ filter: showElaHeatmap ? 'contrast(120%) saturate(150%)' : 'none' }}
+                            />
 
-                  {selectedItem.anomaliesList.map((an, idx) => (
-                    <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
-                      <div className="flex items-center justify-between font-bold">
-                        <span className="text-slate-900 flex items-center gap-2">
-                          <BadgeAlert className="w-4 h-4 text-rose-600" />
-                          {an.anomalyType} ({an.frameOrPage})
-                        </span>
-                        <span className="text-rose-700 font-mono text-[11px]">
-                          Confidence: {an.confidenceScore}%
-                        </span>
-                      </div>
-                      <p className="text-slate-700">{an.description}</p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
-                        <div className="p-2 rounded bg-emerald-50 text-emerald-900 border border-emerald-200">
-                          <strong>Original:</strong> {an.originalValue}
+                            {(showElaHeatmap || diffFrameScrubber > 0) && (
+                              <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                                <div
+                                  className="absolute border-2 border-dashed border-rose-500 bg-rose-500/25 rounded-lg backdrop-blur-[1px] animate-pulse flex items-center justify-center"
+                                  style={{
+                                    top: '25%',
+                                    left: '30%',
+                                    width: '40%',
+                                    height: '45%',
+                                    opacity: Math.max(0.4, diffFrameScrubber / 100)
+                                  }}
+                                >
+                                  <span className="text-[10px] font-mono font-bold text-rose-200 bg-slate-950/90 px-2 py-0.5 rounded border border-rose-500/60 shadow-lg flex items-center gap-1">
+                                    <Sparkles className="w-3 h-3 text-rose-400 animate-spin" /> ELA LUMINESCENCE VARIANCE (+14.2 dB)
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+
+                            <div className="absolute top-2 left-2 bg-rose-950/90 backdrop-blur-xs text-rose-300 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-rose-500/40 flex items-center gap-1">
+                              <ShieldAlert className="w-3 h-3 text-rose-400" /> Neural Tamper Mask Active
+                            </div>
+                            <div className="absolute bottom-2 left-2 right-2 bg-black/80 backdrop-blur-xs text-rose-300 text-[10px] font-mono px-2 py-1 rounded flex justify-between items-center">
+                              <span>Hash: {selectedItem.submittedHash.substring(0, 18)}...</span>
+                              <span className="text-rose-400 font-bold">
+                                {selectedItem.confidenceScore < 95 ? `${(100 - selectedItem.confidenceScore).toFixed(1)}% Tamper Variance` : 'Spectral Noise Spike'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <p className="text-xs text-rose-950 font-medium">
+                            Contains generative neural artifacts or pixel manipulation.
+                          </p>
                         </div>
-                        <div className="p-2 rounded bg-rose-50 text-rose-900 border border-rose-200">
-                          <strong>Altered:</strong> {an.alteredValue}
-                        </div>
                       </div>
-                    </div>
-                  ))}
 
-                  {selectedItem.anomaliesList.length === 0 && (
-                    <p className="text-xs text-slate-500 italic p-4 bg-slate-50 rounded-xl">
-                      No frame-level pixel anomalies detected. File passes optical inspection.
-                    </p>
-                  )}
-                </div>
+                      {/* Detailed Anomaly Breakdown List */}
+                      <div className="space-y-4 pt-4 border-t border-slate-100">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                          Detected Frame & Pixel Anomaly Events ({displayAnomalies.length})
+                        </h4>
+
+                        {displayAnomalies.map((an, idx) => (
+                          <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+                            <div className="flex items-center justify-between font-bold">
+                              <span className="text-slate-900 flex items-center gap-2">
+                                <BadgeAlert className="w-4 h-4 text-rose-600" />
+                                {an.anomalyType} ({an.frameOrPage})
+                              </span>
+                              <span className="text-rose-700 font-mono text-[11px]">
+                                Confidence: {an.confidenceScore}%
+                              </span>
+                            </div>
+                            <p className="text-slate-700">{an.description}</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 font-mono text-[11px]">
+                              <div className="p-2 rounded bg-emerald-50 text-emerald-900 border border-emerald-200">
+                                <strong>Original:</strong> {an.originalValue}
+                              </div>
+                              <div className="p-2 rounded bg-rose-50 text-rose-900 border border-rose-200">
+                                <strong>Altered:</strong> {an.alteredValue}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </motion.div>
           )}

@@ -711,5 +711,75 @@
     "prevHash": "771fc6a26733f7fe38d1389a8594bffd4075bd9f52d999d8c3662c92ca288688",
     "hash": "ea88cacf20e405130c24b15a1a69a922062a5113aceb1834127fc2b4d7884055",
     "blockNumber": 1489238
+  },
+  {
+    "id": "audit_1786242069277_39",
+    "index": 39,
+    "timestamp": "2026-08-09T02:21:09.277Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8822",
+      "evidenceHash": "0x861e5d67ada0392918a99eac60b7979c4736bc6e5d020ba5d5e2d5ae2b0bd429",
+      "caseId": "djhoheuoe123213213",
+      "txHash": "0xbf6b7bad25e69aa6a68a9659253394c11280b0ca8069bc80f70873c022428268",
+      "merkleRoot": "0xe7d19a90b370e300955f7d20b26f1da5ede0ddbdd2df0704e4c9c0a00fa8bc5a",
+      "blockNumber": 15050510,
+      "fullPayload": {
+        "exhibitId": "EV-8822",
+        "caseId": "djhoheuoe123213213",
+        "evidenceHash": "0x861e5d67ada0392918a99eac60b7979c4736bc6e5d020ba5d5e2d5ae2b0bd429",
+        "custodian": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+        "title": "Suspect",
+        "seizureBagId": "SEZ-2026-79363",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "Witness at Scene (Sec 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [
+          "ASFASQW"
+        ],
+        "notes": "QWEWQEWQWE",
+        "gpsLocation": "19.0760° N, 72.8774° E",
+        "signature": "NONE",
+        "timestamp": "2026-08-09T02:21:09.274Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "b776e2386776a954c23ffcb256f8575e2e5e8339a156847fbb120d237a9301fa",
+    "prevHash": "ea88cacf20e405130c24b15a1a69a922062a5113aceb1834127fc2b4d7884055",
+    "hash": "6d4e224dc409fd7b60c3221b4efd4309a81f3c1eb17b5e10141c5ba833c985ea",
+    "blockNumber": 1489239
+  },
+  {
+    "id": "audit_1786242069419_40",
+    "index": 40,
+    "timestamp": "2026-08-09T02:21:09.419Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8822",
+      "caseId": "djhoheuoe123213213",
+      "hash": "0x861e5d67ada0392918a99eac60b7979c4736bc6e5d020ba5d5e2d5ae2b0bd429",
+      "title": "Suspect",
+      "txHash": "0xbf6b7bad25e69aa6a68a9659253394c11280b0ca8069bc80f70873c022428268",
+      "blockNumber": 15050510,
+      "merkleRoot": "0xe7d19a90b370e300955f7d20b26f1da5ede0ddbdd2df0704e4c9c0a00fa8bc5a",
+      "cnnScore": 96.5,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8774
+      }
+    },
+    "payloadHash": "f8b7491c219bde60784e10bcd4a948bcfafb83f4be7a8dad2f629eb9b0594c68",
+    "prevHash": "6d4e224dc409fd7b60c3221b4efd4309a81f3c1eb17b5e10141c5ba833c985ea",
+    "hash": "e4739d4b905accbc4d8b0a965b21ae7a3dec02a278498d675f7b7e341394ee5e",
+    "blockNumber": 1489240
   }
 ]
