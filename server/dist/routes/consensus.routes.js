@@ -16,8 +16,8 @@ const getConsensusData = (req, res) => {
     // Collect all case IDs with active duress alerts for suspicious-flag check
     const duressCaseIds = new Set(duressAlerts.map(a => (a.refId || a.id || '').toUpperCase()));
     // Cross-reference against duress alerts for suspicious activity flags & enrich all metadata fields
-    const processedRequests = requests.map((req) => {
-        const r = req;
+    const processedRequests = requests.map(reqItem => {
+        const r = reqItem;
         const caseIdentifier = (r.caseRef || r.caseId || '').toUpperCase();
         const isSuspicious = duressCaseIds.has(caseIdentifier) || (r.systemFlagIndicator && r.systemFlagIndicator.isFlagged);
         // Map existing db fields to client-expected ConsensusItem fields

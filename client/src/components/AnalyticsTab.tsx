@@ -1302,7 +1302,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
                 <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider block">Total Evidence Assets</span>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-xl font-extrabold font-mono text-white">{(backendMetrics?.sealedEvidence?.toLocaleString() ?? 4)}</span>
+                  <span className="text-xl font-extrabold font-mono text-white">{(backendMetrics?.sealedEvidence?.toLocaleString() ?? 0)}</span>
                   <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5"><TrendingUp className="w-3 h-3" /> Live DB</span>
                 </div>
                 <span className="text-[10px] text-slate-400 block">100% Cryptographically Sealed</span>
@@ -1323,13 +1323,13 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                 <span className="text-xl font-extrabold font-mono text-amber-300">{backendMetrics?.meanCaseDuration ?? '—'}</span>
                   <span className="text-xs font-bold text-emerald-400 flex items-center gap-0.5"><TrendingDown className="w-3 h-3" /> Live</span>
                 </div>
-                <span className="text-[10px] text-slate-400 block">{backendMetrics?.totalCases ?? 6} Active Court Dockets</span>
+                <span className="text-[10px] text-slate-400 block">{backendMetrics?.totalCases ?? 0} Active Court Dockets</span>
               </div>
 
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
                 <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider block">Consensus Blocks</span>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-xl font-extrabold font-mono text-indigo-300">{backendMetrics?.totalAuditBlocks ?? 7} Blocks</span>
+                  <span className="text-xl font-extrabold font-mono text-indigo-300">{backendMetrics?.totalAuditBlocks ?? 0} Blocks</span>
                   <span className="text-xs font-bold text-indigo-300 flex items-center gap-0.5"><Users className="w-3 h-3" /> 100% Quorum</span>
                 </div>
                 <span className="text-[10px] text-slate-400 block">Height #{backendMetrics?.consensusBlockHeight ?? '—'}</span>
@@ -1423,7 +1423,7 @@ Cohort size verified above minimum threshold (k >= 50). No individual case file,
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                   <span className="text-xs text-slate-400 font-bold uppercase">Total Cases</span>
-                  <span className="text-xl font-extrabold text-slate-900 font-mono">{(backendMetrics?.totalCases ?? 6).toLocaleString()}</span>
+                  <span className="text-xl font-extrabold text-slate-900 font-mono">{(backendMetrics?.totalCases ?? 0).toLocaleString()}</span>
                 </div>
               </div>
 

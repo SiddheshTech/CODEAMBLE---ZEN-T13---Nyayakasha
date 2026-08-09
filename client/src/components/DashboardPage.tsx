@@ -40,21 +40,6 @@ import { IdentityUnlockTab } from "./IdentityUnlockTab";
 import { SettingsTab } from "./SettingsTab";
 import { PrecedentFlagsTab } from "./PrecedentFlagsTab";
 
-const MOCK_CASES = [
-  { id: 'FIR-2026-001', title: 'State vs. Unknown (Sector 4 Cyber Heist)', status: 'Active', type: 'Cyber Crime', date: 'Oct 12, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 14, testimonyCount: 3, priority: 'High', description: 'Unauthorized access and data exfiltration from city municipal servers. Traced to IP addresses in Zone 4.' },
-  { id: 'FIR-2026-002', title: 'State vs. Deshmukh (Property Fraud)', status: 'Pending Review', type: 'Financial', date: 'Oct 10, 2026', officer: 'Inspector S. Patel', evidenceCount: 8, testimonyCount: 5, priority: 'Medium', description: 'Alleged forgery of land registry documents in the western suburbs.' },
-  { id: 'FIR-2026-003', title: 'Vehicle Theft Ring - Highway 9', status: 'Active', type: 'Theft', date: 'Oct 08, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 22, testimonyCount: 8, priority: 'High', description: 'Organized syndicate targeting luxury vehicles on the inter-city highway.' },
-  { id: 'FIR-2026-004', title: 'Industrial Espionage - TechCorp', status: 'Closed', type: 'Corporate', date: 'Sep 25, 2026', officer: 'Chief Inv. M. Singh', evidenceCount: 31, testimonyCount: 12, priority: 'Critical', description: 'Theft of proprietary AI algorithms by a former employee.' },
-  { id: 'FIR-2026-005', title: 'State vs. Unknown (Warehouse Arson)', status: 'Cold Case', type: 'Arson', date: 'Aug 14, 2026', officer: 'Inspector S. Patel', evidenceCount: 5, testimonyCount: 1, priority: 'Low', description: 'Fire at abandoned warehouse. Lack of leads and surveillance footage.' },
-  { id: 'FIR-2026-006', title: 'Counterfeit Currency Operation', status: 'Active', type: 'Forgery', date: 'Oct 14, 2026', officer: 'Officer R. Kulkarni', evidenceCount: 19, testimonyCount: 4, priority: 'High', description: 'Distribution of fake currency notes in local markets.' }
-];
-
-const MOCK_EVIDENCE_FOR_CASE = [
-  { id: 'EV-8821', type: 'Video', title: 'CCTV Footage - Main Server Room', date: 'Oct 12, 2026 14:30', hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', status: 'Sealed' },
-  { id: 'EV-8822', type: 'Document', title: 'Server Access Logs (Encrypted)', date: 'Oct 12, 2026 15:45', hash: '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', status: 'Sealed' },
-  { id: 'EV-8823', type: 'Photo', title: 'Tampered Network Switch', date: 'Oct 13, 2026 09:15', hash: '4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5', status: 'Pending Chain Transfer' }
-];
-
 type ToastInfo = {
   id: string;
   message: string;
@@ -583,34 +568,6 @@ export function DashboardPage({
     }
   };
 
-  // Mock submissions list
-  const recentSubmissions = [
-    {
-      id: 'EV-2026-891',
-      title: 'Crime Scene Snapshot - Sector 4',
-      type: 'Evidence',
-      timestamp: 'Today, 10:42 AM',
-      hash: '0x8f9a...3c2e',
-      status: 'Hashed & Sealed',
-    },
-    {
-      id: 'TM-2026-412',
-      title: 'Deposition Statement - FIR #402',
-      type: 'Testimony',
-      timestamp: 'Yesterday, 04:15 PM',
-      hash: '0x7b1c...9a4f',
-      status: 'Verified',
-    },
-    {
-      id: 'EV-2026-880',
-      title: 'CCTV Surveillance Backup File',
-      type: 'Evidence',
-      timestamp: '01 Aug 2026, 02:30 PM',
-      hash: '0x3d4e...1f82',
-      status: 'Pending Sync',
-    },
-  ];
-
   return (
     <div className="w-full h-screen bg-[#F5F5F5] font-sans flex flex-col md:flex-row relative overflow-hidden">
       {/* Field Submitter Sidebar */}
@@ -773,7 +730,7 @@ export function DashboardPage({
                   </div>
                   <div className="flex items-baseline justify-between">
                     <span className="text-3xl font-medium tracking-tight text-black">
-                      {realEvidence.length > 0 ? realEvidence.length : 128}
+                      {realEvidence.length > 0 ? realEvidence.length : 0}
                     </span>
                     <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                       Live Database Sync
@@ -790,7 +747,7 @@ export function DashboardPage({
                   </div>
                   <div className="flex items-baseline justify-between">
                     <span className="text-3xl font-medium tracking-tight text-black">
-                      {realEvidence.filter(e => e.type === 'Document' || e.type === 'Audio' || (e.title && (e.title.toLowerCase().includes('statement') || e.title.toLowerCase().includes('testimony')))).length || 45}
+                      {realEvidence.filter(e => e.type === 'Document' || e.type === 'Audio' || (e.title && (e.title.toLowerCase().includes('statement') || e.title.toLowerCase().includes('testimony')))).length || 0}
                     </span>
                     <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
                       100% Signed

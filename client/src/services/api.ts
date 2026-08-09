@@ -485,17 +485,6 @@ export const api = {
     });
   },
 
-  // --- PROFILE MANAGEMENT ---
-  getProfile: async () => {
-    return fetchAPI('/profile', { method: 'GET' });
-  },
-
-  updateProfile: async (data: any) => {
-    return fetchAPI('/profile', {
-      method: 'PATCH',
-      body: JSON.stringify(data)
-    });
-  },
 
   // --- INSTITUTIONAL SETTINGS ---
   getSettings: async () => {
@@ -528,12 +517,6 @@ export const api = {
     return res;
   },
 
-  revokeSession: async (sessionId: string) => {
-    return fetchAPI('/settings/revoke-session', {
-      method: 'POST',
-      body: JSON.stringify({ sessionId })
-    });
-  },
 
   getHealth: async () => {
     return fetchAPI('/health', { method: 'GET' });
