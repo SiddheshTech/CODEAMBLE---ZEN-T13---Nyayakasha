@@ -10133,7 +10133,20 @@
       "entropyScore": "0.999",
       "cryptographicDetails": "Cryptographic state payload for Exhibit #EV-8822 (Suspect). Zero case content embedded for neutral validation.",
       "createdAt": "2026-08-09T02:21:09.384Z",
-      "signedBy": {}
+      "signedBy": {},
+      "validatorVoteStatus": "Approved",
+      "validatorVote": "approved",
+      "validatorJustificationNote": "dsfdfsdfdafs",
+      "nodeVotes": [
+        {
+          "nodeName": "Hon. Presiding Magistrate (Bench 3)",
+          "nodeRole": "Certified Independent Validator",
+          "keyId": "VAL-KEY-IND-002",
+          "status": "Approved",
+          "timestamp": "09 Aug 2026, 08:12 AM",
+          "signatureHash": "0xSIG_VALIDATOR_ADM_801806"
+        }
+      ]
     },
     {
       "id": "BLOCK-89317",

@@ -209,6 +209,7 @@ export interface EvidenceRecord {
   preservationType?: string;
   tags?: string[];
   evidenceNotes?: string;
+  submitterPhotoUrl?: string;
   txHash?: string;
   blockNumber?: number;
   merkleRoot?: string;
@@ -354,6 +355,7 @@ export interface ForgeryQueueItem {
   title: string;
   submitter: string;
   submitterAgency: string;
+  submitterPhotoUrl?: string;
   timestamp: string;
   status: 'Flagged' | 'Pending Scan' | 'Cleared' | 'Escalated' | 'Rejected';
   confidenceScore: number; // AI Authenticity score 0-100

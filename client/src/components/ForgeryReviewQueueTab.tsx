@@ -107,6 +107,7 @@ export interface ForgeryQueueItem {
   title: string;
   submitter: string;
   submitterAgency: string;
+  submitterPhotoUrl?: string;
   timestamp: string;
   status: 'Flagged' | 'Pending Scan' | 'Cleared' | 'Escalated' | 'Rejected';
   confidenceScore: number; // AI Authenticity score 0-100
@@ -1292,10 +1293,17 @@ export function ForgeryReviewQueueTab() {
                       <span className="text-slate-400 block text-[10px]">COURT BENCH</span>
                       <span className="font-bold text-slate-900">{selectedItem.courtBench}</span>
                     </div>
-                    <div>
-                      <span className="text-slate-400 block text-[10px]">SUBMITTER OFFICER</span>
-                      <span className="font-bold text-slate-900">{selectedItem.submitter}</span>
-                      <span className="text-slate-500 block text-[11px]">{selectedItem.submitterAgency}</span>
+                    <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center gap-3">
+                      <img
+                        src={selectedItem.submitterPhotoUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'}
+                        alt={selectedItem.submitter}
+                        className="w-11 h-11 rounded-full border-2 border-indigo-600 object-cover shrink-0 shadow-xs"
+                      />
+                      <div>
+                        <span className="text-slate-400 block text-[9px] font-bold uppercase tracking-wider">Field Submitter Officer</span>
+                        <span className="font-bold text-slate-900 text-xs block">{selectedItem.submitter}</span>
+                        <span className="text-slate-500 block text-[10px]">{selectedItem.submitterAgency}</span>
+                      </div>
                     </div>
                     <div>
                       <span className="text-slate-400 block text-[10px]">TIMESTAMP</span>

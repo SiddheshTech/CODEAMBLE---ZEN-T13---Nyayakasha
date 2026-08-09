@@ -1005,13 +1005,27 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase, role = 'Court
                         </h4>
                       </div>
 
-                      <div className="text-right">
-                        <span className="text-[11px] font-medium text-slate-400 block">
-                          {item.timestamp}
-                        </span>
-                        <span className="text-[11px] text-slate-600 font-medium">
-                          Submitted by: {item.submittedBy}
-                        </span>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2.5 bg-indigo-50/80 px-3 py-1.5 rounded-xl border border-indigo-100">
+                          <img
+                            src={(item as any).submitterPhotoUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'}
+                            alt="Field Submitter Officer"
+                            className="w-8 h-8 rounded-full border-2 border-indigo-500 object-cover shadow-xs"
+                          />
+                          <div className="text-left">
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-indigo-700 block">Seizure Officer</span>
+                            <span className="text-xs font-bold text-slate-900">{item.submittedBy}</span>
+                          </div>
+                        </div>
+
+                        <div className="text-right">
+                          <span className="text-[11px] font-medium text-slate-400 block">
+                            {item.timestamp}
+                          </span>
+                          <span className="text-[10px] font-mono text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded">
+                            Verified Seizure
+                          </span>
+                        </div>
                       </div>
                     </div>
 

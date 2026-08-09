@@ -191,6 +191,7 @@ evidenceRouter.post('/submit', async (req: Request, res: Response) => {
       preservationType,
       tags,
       evidenceNotes,
+      submitterPhotoUrl: (req as any).user?.profilePhotoUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
       txHash: anchorResult.txHash,
       blockNumber: anchorResult.blockNumber,
       merkleRoot: anchorResult.merkleRoot,
@@ -217,6 +218,7 @@ evidenceRouter.post('/submit', async (req: Request, res: Response) => {
       title,
       submitter: custodian || 'Officer R. Kulkarni',
       submitterAgency: 'Zone 4 Field Operations',
+      submitterPhotoUrl: newExhibit.submitterPhotoUrl,
       previewType: 'Image',
       previewImageDataUrl: dataUrl || undefined,
       anomalySummary: isCnnFlagged 
