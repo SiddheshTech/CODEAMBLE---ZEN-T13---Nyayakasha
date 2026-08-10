@@ -3379,5 +3379,804 @@
     "prevHash": "eb7f0c19e6499d0d946670ae2b7b8883388051fc1c245775fc5afc8e66262ab4",
     "hash": "c81c58998b2ba7268cb0c2d15acbf0e09da581eafc90197273df44bcfb73d76e",
     "blockNumber": 1489360
+  },
+  {
+    "id": "audit_1786260263198_161",
+    "index": 161,
+    "timestamp": "2026-08-09T07:24:23.198Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8840",
+      "evidenceHash": "0x6c36bb839efcc2292b9557b7d6a0a311074b79b12532221164824fadf9d5303d",
+      "caseId": "FIalksk12",
+      "txHash": "0xc12e19bfca4ec2d7fcddf199398e5e4302d09705d7b4658c17e63b4d01c1ae85",
+      "merkleRoot": "0x66e1f02be149e799fd9d27f6800641dd4e93a85c0fdea06134c640a8d0569dbc",
+      "blockNumber": 15072861,
+      "fullPayload": {
+        "exhibitId": "EV-8840",
+        "caseId": "FIalksk12",
+        "evidenceHash": "0x6c36bb839efcc2292b9557b7d6a0a311074b79b12532221164824fadf9d5303d",
+        "custodian": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+        "title": "Crim1i0210",
+        "seizureBagId": "SEZ-2026-70046",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "Witness at Scene (Sec 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [
+          "Knife"
+        ],
+        "notes": "JKdhKAHSDJ",
+        "gpsLocation": "19.0760° N, 72.8774° E",
+        "signature": "ECDSA_SIGNED_SECP256K1",
+        "timestamp": "2026-08-09T07:24:23.194Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "bf6ca268fa79eb0f0895543ad3fccc0dae2e1d608f265214c82d902cf3fa8269",
+    "prevHash": "c81c58998b2ba7268cb0c2d15acbf0e09da581eafc90197273df44bcfb73d76e",
+    "hash": "fd5e4adbab63d0ee3f3c977018da5d742b195988e999329baf19cf491d767a6b",
+    "blockNumber": 1489361
+  },
+  {
+    "id": "audit_1786260263667_162",
+    "index": 162,
+    "timestamp": "2026-08-09T07:24:23.667Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8840",
+      "caseId": "FIalksk12",
+      "hash": "0x6c36bb839efcc2292b9557b7d6a0a311074b79b12532221164824fadf9d5303d",
+      "title": "Crim1i0210",
+      "txHash": "0xc12e19bfca4ec2d7fcddf199398e5e4302d09705d7b4658c17e63b4d01c1ae85",
+      "blockNumber": 15072861,
+      "merkleRoot": "0x66e1f02be149e799fd9d27f6800641dd4e93a85c0fdea06134c640a8d0569dbc",
+      "cnnScore": 98.6,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8774
+      }
+    },
+    "payloadHash": "3e62a8a528e4bb04b8e8562046330645746bb52be1d6db73ee2f72065eaf11e0",
+    "prevHash": "fd5e4adbab63d0ee3f3c977018da5d742b195988e999329baf19cf491d767a6b",
+    "hash": "a2e5aeb43f39c26b5b7ff5119495afe8be056da8145793c49916cc3615d6bdb7",
+    "blockNumber": 1489362
+  },
+  {
+    "id": "audit_1786260782840_163",
+    "index": 163,
+    "timestamp": "2026-08-09T07:33:02.840Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8841",
+      "evidenceHash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+      "caseId": "FIR-2026-001",
+      "txHash": "0xd6f07128f1e9d17480b10c3bdd85f39da3eba35a75fed47f3bce4b4bdc9956c8",
+      "merkleRoot": "0x31161c5ae0e46895eac99e51f4219779c4e35b43724877b1361f1fcbd89a207b",
+      "blockNumber": 15054842,
+      "fullPayload": {
+        "exhibitId": "EV-8841",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: file_000000006d2c722fba46d9fcc07c9db1.png",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: LOW RISK: Minor Anomalies (69.2%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-09T07:33:02.839Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "6464887260cfad16b7b48ed46eaff868e68e752b155981988caf395865964424",
+    "prevHash": "a2e5aeb43f39c26b5b7ff5119495afe8be056da8145793c49916cc3615d6bdb7",
+    "hash": "f795dc258541916a02228c78c8657a8f7ac0d9c728352cde9cf5f1fc439016e2",
+    "blockNumber": 1489363
+  },
+  {
+    "id": "audit_1786260804477_164",
+    "index": 164,
+    "timestamp": "2026-08-09T07:33:24.477Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8841",
+      "caseId": "FIR-2026-001",
+      "hash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+      "title": "CNN Analyzed: file_000000006d2c722fba46d9fcc07c9db1.png",
+      "txHash": "0xd6f07128f1e9d17480b10c3bdd85f39da3eba35a75fed47f3bce4b4bdc9956c8",
+      "blockNumber": 15054842,
+      "merkleRoot": "0x31161c5ae0e46895eac99e51f4219779c4e35b43724877b1361f1fcbd89a207b",
+      "cnnScore": 69.2,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "4c60fce59a2ce70502d63feb3977e89e5d43f194955b8eb2dde64efdaa503108",
+    "prevHash": "f795dc258541916a02228c78c8657a8f7ac0d9c728352cde9cf5f1fc439016e2",
+    "hash": "da22bdf792bedee82f97e3e13e74527c58072c925b6e36dbe2c735f6d6b15376",
+    "blockNumber": 1489364
+  },
+  {
+    "id": "audit_1786260811018_165",
+    "index": 165,
+    "timestamp": "2026-08-09T07:33:31.018Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8842",
+      "evidenceHash": "696fbade4ef7a80d5ebf2174b180f465c4006986befaaf9065a64bc27c504e36",
+      "caseId": "FIR-2026-001",
+      "txHash": "0x8c148fafe3f449586ceb53392f12c5d1c12e3d73d0a3d8fff0dac1acc642bf7f",
+      "merkleRoot": "0xe0e8a5476c73ae455c1bff635e201fa12d3af28c24c7e9b7b7943630ee0796c8",
+      "blockNumber": 15070334,
+      "fullPayload": {
+        "exhibitId": "EV-8842",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "696fbade4ef7a80d5ebf2174b180f465c4006986befaaf9065a64bc27c504e36",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: Result 2025 (1).pdf",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "PDF Document",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: HIGH RISK: Strong Forgery Evidence (95.0%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-09T07:33:31.018Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "f059d5517b1fbea9ff34c1727f5453df7ef26cd6eadfa7a5ea9949f3fd2223ef",
+    "prevHash": "da22bdf792bedee82f97e3e13e74527c58072c925b6e36dbe2c735f6d6b15376",
+    "hash": "039c84feba9e70df90509bba259a23fa4db9e709f25322b4ef8f1a3ec38c4a65",
+    "blockNumber": 1489365
+  },
+  {
+    "id": "audit_1786260811447_166",
+    "index": 166,
+    "timestamp": "2026-08-09T07:33:31.447Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8842",
+      "caseId": "FIR-2026-001",
+      "hash": "696fbade4ef7a80d5ebf2174b180f465c4006986befaaf9065a64bc27c504e36",
+      "title": "CNN Analyzed: Result 2025 (1).pdf",
+      "txHash": "0x8c148fafe3f449586ceb53392f12c5d1c12e3d73d0a3d8fff0dac1acc642bf7f",
+      "blockNumber": 15070334,
+      "merkleRoot": "0xe0e8a5476c73ae455c1bff635e201fa12d3af28c24c7e9b7b7943630ee0796c8",
+      "cnnScore": 98.6,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "d28cd9e19753aa0be9e7aaf6926068c1da773675ee766b0ef6d6923bb5d11629",
+    "prevHash": "039c84feba9e70df90509bba259a23fa4db9e709f25322b4ef8f1a3ec38c4a65",
+    "hash": "dcb23b49e3f8d10306490a88cbc77a71f10816e954422a47215536f83d9b524b",
+    "blockNumber": 1489366
+  },
+  {
+    "id": "audit_1786260935874_167",
+    "index": 167,
+    "timestamp": "2026-08-09T07:35:35.874Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8843",
+      "evidenceHash": "b7a32e8dd5f39a95ad68f8fb5e9d184dbffc4038321ec9ccd4b3771b5b911371",
+      "caseId": "FIR-2026-001",
+      "txHash": "0xeb42d619923b869bc7732c9ed380d44d0a1f9d0cbbaf9f207b781e369d24e7ba",
+      "merkleRoot": "0x83a8979b05d71439f5e3fec6e0d9a1ec4422670d0b863367a2cdb40b5549a5e1",
+      "blockNumber": 15060424,
+      "fullPayload": {
+        "exhibitId": "EV-8843",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "b7a32e8dd5f39a95ad68f8fb5e9d184dbffc4038321ec9ccd4b3771b5b911371",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: Result 2025 (1)_page-0001.jpg",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: HIGH RISK: Strong Forgery Evidence (95.0%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-09T07:35:35.874Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "f4a31efad71bc9050c0f1a4d6f6d6819474ffecba4d180de188ea24acf83c479",
+    "prevHash": "dcb23b49e3f8d10306490a88cbc77a71f10816e954422a47215536f83d9b524b",
+    "hash": "74941fa891326237e815c59faab53f288a5b437e2ce54e338d61c742c12d2b22",
+    "blockNumber": 1489367
+  },
+  {
+    "id": "audit_1786260975607_168",
+    "index": 168,
+    "timestamp": "2026-08-09T07:36:15.607Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8843",
+      "evidenceHash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+      "caseId": "FIR-2026-001",
+      "txHash": "0xd45e38a6736b51339d74367af6062285e44c912bb970ddf5eef764d1cd5a8854",
+      "merkleRoot": "0x7b0041206704dc16fca4d9496f9da91d89ead635988b5ba9aacdaa2b32d044e4",
+      "blockNumber": 15020601,
+      "fullPayload": {
+        "exhibitId": "EV-8843",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: fictional_aadhaar_demo.pdf",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "PDF Document",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: HIGH RISK: Strong Forgery Evidence (95.0%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-09T07:36:15.606Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "8cace9ba32fe9b3d2e0baff87185ebf1bd260c909fc33c9fa5c6b39466fdca68",
+    "prevHash": "74941fa891326237e815c59faab53f288a5b437e2ce54e338d61c742c12d2b22",
+    "hash": "3e2b4daccdff366ef8b4d70355507261c1dc07571f4bb9503c9db59d6453d11b",
+    "blockNumber": 1489368
+  },
+  {
+    "id": "audit_1786260976034_169",
+    "index": 169,
+    "timestamp": "2026-08-09T07:36:16.034Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8843",
+      "caseId": "FIR-2026-001",
+      "hash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+      "title": "CNN Analyzed: fictional_aadhaar_demo.pdf",
+      "txHash": "0xd45e38a6736b51339d74367af6062285e44c912bb970ddf5eef764d1cd5a8854",
+      "blockNumber": 15020601,
+      "merkleRoot": "0x7b0041206704dc16fca4d9496f9da91d89ead635988b5ba9aacdaa2b32d044e4",
+      "cnnScore": 98.6,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "6ecc86e8577b047c92f1c7745b1c994a294c2288195fe50000b1d313249e13d3",
+    "prevHash": "3e2b4daccdff366ef8b4d70355507261c1dc07571f4bb9503c9db59d6453d11b",
+    "hash": "d8739d7eb817b473f02c4cc4e220d166000d6a3910625c3b50741f17a125d35c",
+    "blockNumber": 1489369
+  },
+  {
+    "id": "audit_1786261055180_170",
+    "index": 170,
+    "timestamp": "2026-08-09T07:37:35.180Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8843",
+      "caseId": "FIR-2026-001",
+      "hash": "b7a32e8dd5f39a95ad68f8fb5e9d184dbffc4038321ec9ccd4b3771b5b911371",
+      "title": "CNN Analyzed: Result 2025 (1)_page-0001.jpg",
+      "txHash": "0xeb42d619923b869bc7732c9ed380d44d0a1f9d0cbbaf9f207b781e369d24e7ba",
+      "blockNumber": 15060424,
+      "merkleRoot": "0x83a8979b05d71439f5e3fec6e0d9a1ec4422670d0b863367a2cdb40b5549a5e1",
+      "cnnScore": 10,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "fa16a0fcb1c43ba6eb46f668e6713d97681e0b3bdf574350e66ce1f1b3bf2795",
+    "prevHash": "d8739d7eb817b473f02c4cc4e220d166000d6a3910625c3b50741f17a125d35c",
+    "hash": "3f15449cc0d60bf4ac73cdd9626e7b1364cada90bb110a9606deed6b69397b98",
+    "blockNumber": 1489370
+  },
+  {
+    "id": "audit_1786261080239_171",
+    "index": 171,
+    "timestamp": "2026-08-09T07:38:00.239Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande8@gmail.com",
+      "subject": "🔐 Nyayakasha — Secure Invite: Independent Validator Access"
+    },
+    "payloadHash": "0bbbd783ac43ad51665d13e20b6ebec2fffff447af6ff9ff3bb6dc273b4f8475",
+    "prevHash": "3f15449cc0d60bf4ac73cdd9626e7b1364cada90bb110a9606deed6b69397b98",
+    "hash": "a212530c4f86bd2427b81afa6deadefd531180f4671df7f4d0db6d4efcdde614",
+    "blockNumber": 1489371
+  },
+  {
+    "id": "audit_1786261096162_172",
+    "index": 172,
+    "timestamp": "2026-08-09T07:38:16.162Z",
+    "eventType": "INVITE_LINK_GENERATED",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "recipientEmail": "siddheshharwande8@gmail.com",
+      "targetRole": "Independent Validator",
+      "emailSent": true
+    },
+    "payloadHash": "340668a7b9eedd4dfede0d9938eb7d488a6527f3ab5b7d72d498945e6aae6f3f",
+    "prevHash": "a212530c4f86bd2427b81afa6deadefd531180f4671df7f4d0db6d4efcdde614",
+    "hash": "bf00199151c06e72b00c67660f330a60186e68392a05065293419761e5251ab0",
+    "blockNumber": 1489372
+  },
+  {
+    "id": "audit_1786261133898_173",
+    "index": 173,
+    "timestamp": "2026-08-09T07:38:53.898Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786252149214",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "institution_review",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "0b04fd9a71e5ae15e58d4d3d575c976dabc9a6ead7f6c767539dfe498b52bdee",
+    "prevHash": "bf00199151c06e72b00c67660f330a60186e68392a05065293419761e5251ab0",
+    "hash": "d2a2dcc4646168e450098a648b32bed65e49c708e44a98031615889ca1048aec",
+    "blockNumber": 1489373
+  },
+  {
+    "id": "audit_1786261135533_174",
+    "index": 174,
+    "timestamp": "2026-08-09T07:38:55.533Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786252149214",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "d2a2dcc4646168e450098a648b32bed65e49c708e44a98031615889ca1048aec",
+    "hash": "6c684b086b183839eca599fbec52b2a7dd1612751dfb8d29e0c35215c373f367",
+    "blockNumber": 1489374
+  },
+  {
+    "id": "audit_1786261135699_175",
+    "index": 175,
+    "timestamp": "2026-08-09T07:38:55.699Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786252149214",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "6c684b086b183839eca599fbec52b2a7dd1612751dfb8d29e0c35215c373f367",
+    "hash": "2245ffa995db678792c4d9ac613045cc5c38c5fec66caa94e089014983e81360",
+    "blockNumber": 1489375
+  },
+  {
+    "id": "audit_1786261135924_176",
+    "index": 176,
+    "timestamp": "2026-08-09T07:38:55.924Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786252149214",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "2245ffa995db678792c4d9ac613045cc5c38c5fec66caa94e089014983e81360",
+    "hash": "a0b728a980e325d60c3e887c3a4c6b08b791faa122718682ce81a9ac1ea06c7b",
+    "blockNumber": 1489376
+  },
+  {
+    "id": "audit_1786261136139_177",
+    "index": 177,
+    "timestamp": "2026-08-09T07:38:56.139Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786252149214",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "a0b728a980e325d60c3e887c3a4c6b08b791faa122718682ce81a9ac1ea06c7b",
+    "hash": "545f630c5f7701ec476541885133c7fcae51cbdb0ce236abb05988bbbcb57609",
+    "blockNumber": 1489377
+  },
+  {
+    "id": "audit_1786261137111_178",
+    "index": 178,
+    "timestamp": "2026-08-09T07:38:57.111Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786252149214",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "545f630c5f7701ec476541885133c7fcae51cbdb0ce236abb05988bbbcb57609",
+    "hash": "e5ce6dcd2ff819fd305695f7f7c650fa78532a2f3d3edbd634188715cc685552",
+    "blockNumber": 1489378
+  },
+  {
+    "id": "audit_1786261137263_179",
+    "index": 179,
+    "timestamp": "2026-08-09T07:38:57.263Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786252149214",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "e5ce6dcd2ff819fd305695f7f7c650fa78532a2f3d3edbd634188715cc685552",
+    "hash": "9612ff0d60748c50e12533f96f4ef0fb05238e5f8875d30d47e49c96b96a44aa",
+    "blockNumber": 1489379
+  },
+  {
+    "id": "audit_1786261137372_180",
+    "index": 180,
+    "timestamp": "2026-08-09T07:38:57.372Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786252149214",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "9612ff0d60748c50e12533f96f4ef0fb05238e5f8875d30d47e49c96b96a44aa",
+    "hash": "9b8154383c8588ddf4ed172fcd659caa1832a5376336d7d41df163bf68ca8077",
+    "blockNumber": 1489380
+  },
+  {
+    "id": "audit_1786261137525_181",
+    "index": 181,
+    "timestamp": "2026-08-09T07:38:57.525Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786252149214",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "9b8154383c8588ddf4ed172fcd659caa1832a5376336d7d41df163bf68ca8077",
+    "hash": "2004c7ce41f62e97c07813bf3ccc407f6b7ee2b7a2ac0f4b248758b4cb2c072f",
+    "blockNumber": 1489381
+  },
+  {
+    "id": "audit_1786261137723_182",
+    "index": 182,
+    "timestamp": "2026-08-09T07:38:57.723Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786252149214",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "2004c7ce41f62e97c07813bf3ccc407f6b7ee2b7a2ac0f4b248758b4cb2c072f",
+    "hash": "6161184271265472c243b4a89a1cdd11540bc05dd3647f25a5aae19e783bdaaf",
+    "blockNumber": 1489382
+  },
+  {
+    "id": "audit_1786261206015_183",
+    "index": 183,
+    "timestamp": "2026-08-09T07:40:06.015Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "meetbhanu6778@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "meetbhanu6778@gmail.com",
+      "subject": "🔐 Nyayakasha — Secure Invite: Independent Validator Access"
+    },
+    "payloadHash": "7852d1ecc1bca859889bf70c5e7f6c700d8c8e82c41c19f81807de41330faf73",
+    "prevHash": "6161184271265472c243b4a89a1cdd11540bc05dd3647f25a5aae19e783bdaaf",
+    "hash": "bc20cba7ab53538a19fb221e39771a42a81195271a4f0fa0776e792397d13f8b",
+    "blockNumber": 1489383
+  },
+  {
+    "id": "audit_1786261211011_184",
+    "index": 184,
+    "timestamp": "2026-08-09T07:40:11.011Z",
+    "eventType": "INVITE_LINK_GENERATED",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "recipientEmail": "meetbhanu6778@gmail.com",
+      "targetRole": "Independent Validator",
+      "emailSent": true
+    },
+    "payloadHash": "8d5da2533fd55f84fe534d291ee4512535482804d8eb82f5ccfa60c24b636df9",
+    "prevHash": "bc20cba7ab53538a19fb221e39771a42a81195271a4f0fa0776e792397d13f8b",
+    "hash": "899dfd556d8f545b0a5f0f1f239b64afcd73ab8afb7d8fa498570dedd82eff4f",
+    "blockNumber": 1489384
+  },
+  {
+    "id": "audit_1786268665441_185",
+    "index": 185,
+    "timestamp": "2026-08-09T09:44:25.441Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786268665440_1h4q5o",
+      "approvalState": "active"
+    },
+    "payloadHash": "e39c947c1dc9319170b6908f313407b8a7a6b9f19da6618f706ad9b4e6af3b31",
+    "prevHash": "899dfd556d8f545b0a5f0f1f239b64afcd73ab8afb7d8fa498570dedd82eff4f",
+    "hash": "ed237b23707f9cc853f4015a7aa7e7641216e70ab6fb3064313305ebd5cef085",
+    "blockNumber": 1489385
+  },
+  {
+    "id": "audit_1786268665461_186",
+    "index": 186,
+    "timestamp": "2026-08-09T09:44:25.461Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande8@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "e7e40ef7a1fa30b2457ea57a61fca28bc700d31697383c94575a00e391451050",
+    "prevHash": "ed237b23707f9cc853f4015a7aa7e7641216e70ab6fb3064313305ebd5cef085",
+    "hash": "9003f84a77c2dc2df25efea7f127f55e1c8a23db913b94b16ceb3ab538a7b0a9",
+    "blockNumber": 1489386
+  },
+  {
+    "id": "audit_1786268678571_187",
+    "index": 187,
+    "timestamp": "2026-08-09T09:44:38.570Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "9003f84a77c2dc2df25efea7f127f55e1c8a23db913b94b16ceb3ab538a7b0a9",
+    "hash": "f81a9aa598bbacbfde9b342227d58ce68c2c250eff982c09b7175473af818ecf",
+    "blockNumber": 1489387
+  },
+  {
+    "id": "audit_1786268802850_188",
+    "index": 188,
+    "timestamp": "2026-08-09T09:46:42.850Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8844",
+      "evidenceHash": "0xdc4f30f66181e2ce144062040c1a47488bc95fd209d12e52f10c5ef97c8bf868",
+      "caseId": "FIR7627672",
+      "txHash": "0x880c0ca2383b2f5dee6ae511c2ac73ff4811d7935249ce5d42ccdf102f8e0657",
+      "merkleRoot": "0xe95dfa88595e49bfc9a9cd222ef82a7ebf7d55669404efee8c1a008eaf44b757",
+      "blockNumber": 15037053,
+      "fullPayload": {
+        "exhibitId": "EV-8844",
+        "caseId": "FIR7627672",
+        "evidenceHash": "0xdc4f30f66181e2ce144062040c1a47488bc95fd209d12e52f10c5ef97c8bf868",
+        "custodian": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+        "title": "Criminal case",
+        "seizureBagId": "SEZ-2026-57855",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "Witness at Scene (Sec 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [
+          "gh2gwhj2"
+        ],
+        "notes": "2hwghwg2",
+        "gpsLocation": "19.0760° N, 72.8774° E",
+        "signature": "ECDSA_SIGNED_SECP256K1",
+        "timestamp": "2026-08-09T09:46:42.840Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "eb7455af9f48c741110095417bf88827f591ae5b8ff55feb151b8f1bbe169549",
+    "prevHash": "f81a9aa598bbacbfde9b342227d58ce68c2c250eff982c09b7175473af818ecf",
+    "hash": "3979bcfe5e01253d93c74d2c64c350f383522b1159703f868f22be866bd60b10",
+    "blockNumber": 1489388
+  },
+  {
+    "id": "audit_1786268803628_189",
+    "index": 189,
+    "timestamp": "2026-08-09T09:46:43.627Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8844",
+      "caseId": "FIR7627672",
+      "hash": "0xdc4f30f66181e2ce144062040c1a47488bc95fd209d12e52f10c5ef97c8bf868",
+      "title": "Criminal case",
+      "txHash": "0x880c0ca2383b2f5dee6ae511c2ac73ff4811d7935249ce5d42ccdf102f8e0657",
+      "blockNumber": 15037053,
+      "merkleRoot": "0xe95dfa88595e49bfc9a9cd222ef82a7ebf7d55669404efee8c1a008eaf44b757",
+      "cnnScore": 98.6,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8774
+      }
+    },
+    "payloadHash": "3bdc1812063581ac76685da8d2627c4da6c1b4d3c78eb2f5f57d9dac864e10c0",
+    "prevHash": "3979bcfe5e01253d93c74d2c64c350f383522b1159703f868f22be866bd60b10",
+    "hash": "a58766af76a2c2b35bb2081d40ddd9e08ce05fa198136906e2ac49bbb45a0a68",
+    "blockNumber": 1489389
+  },
+  {
+    "id": "audit_1786269004849_190",
+    "index": 190,
+    "timestamp": "2026-08-09T09:50:04.848Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786269004649",
+    "userRole": "court_authority",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786269004848_p5rs20",
+      "approvalState": "active"
+    },
+    "payloadHash": "c9f44740de32ab32429d3931e5e9bfe13d2a0d2cbd23a09430450016b9d10966",
+    "prevHash": "a58766af76a2c2b35bb2081d40ddd9e08ce05fa198136906e2ac49bbb45a0a68",
+    "hash": "03b0cac6007948bb7f150c9a9673a6c383fc5eb6dbd572f38190bafff03bbd3a",
+    "blockNumber": 1489390
+  },
+  {
+    "id": "audit_1786269004925_191",
+    "index": 191,
+    "timestamp": "2026-08-09T09:50:04.925Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwand@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwand@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "40b9d64ae79ab58257022ea5e81567d0a6e735ed4b9b16a3b8e0256c04ba28e6",
+    "prevHash": "03b0cac6007948bb7f150c9a9673a6c383fc5eb6dbd572f38190bafff03bbd3a",
+    "hash": "4c8c2bc3064165059b7f85bed5244e78079660ca644a543d267e4512b7170819",
+    "blockNumber": 1489391
+  },
+  {
+    "id": "audit_1786269008973_192",
+    "index": 192,
+    "timestamp": "2026-08-09T09:50:08.972Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "siddheshharwand@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Chrome / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "dcb7fe4e54f2703c65a8f06bd3a9fa85b72232df39e054308e043bf166ef21ae",
+    "prevHash": "4c8c2bc3064165059b7f85bed5244e78079660ca644a543d267e4512b7170819",
+    "hash": "e854cca0902be7519fe98560898b041563dae04959e0c134709f76dbc8efb559",
+    "blockNumber": 1489392
+  },
+  {
+    "id": "audit_1786269017804_193",
+    "index": 193,
+    "timestamp": "2026-08-09T09:50:17.804Z",
+    "eventType": "DURESS_PIN_ENROLLED",
+    "userId": "usr_auto_1786269004649",
+    "userRole": "court_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "hasDuressPin": true,
+      "optInRole": "court_authority"
+    },
+    "payloadHash": "7066aa88384fb0c86eea5bcdc71c7f00303dbeb8a7d29347fa91f13583e9c087",
+    "prevHash": "e854cca0902be7519fe98560898b041563dae04959e0c134709f76dbc8efb559",
+    "hash": "94fb8b2c5e704ba921c01accad618a99d47637b32e71fb0cbb7fc03210ce2305",
+    "blockNumber": 1489393
   }
 ]

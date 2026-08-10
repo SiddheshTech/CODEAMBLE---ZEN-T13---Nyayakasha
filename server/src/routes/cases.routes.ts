@@ -98,25 +98,79 @@ casesRouter.post('/', (req: Request, res: Response) => {
 casesRouter.get('/rich/all', async (req: Request, res: Response) => {
   const richCases = primaryStore.getRichCases();
   const allUsers = await primaryStore.getAllUsers();
-  const defaultFieldUser = allUsers.find(u => u.role === 'field_submitter' && u.profilePhotoUrl) || allUsers.find(u => u.profilePhotoUrl);
+  const fieldSubmitters = allUsers.filter(u => u.role === 'field_submitter');
+  const defaultFieldUser = fieldSubmitters.find(u => u.profilePhotoUrl) || allUsers.find(u => u.profilePhotoUrl);
 
-  const enrichedRichCases = richCases.map(rc => ({
-    ...rc,
-    evidenceTimeline: (rc.evidenceTimeline || []).map(item => {
-      const submitterLower = (item.submittedBy || '').toLowerCase();
-      const matchingUser = allUsers.find(u => {
-        if (!u.fullName || !u.profilePhotoUrl) return false;
+  // Helper: match a field submitter user to a case by officerInCharge or evidence submittedBy name
+  const findFieldSubmitter = (officerInCharge: string, evidenceTimeline: any[]) => {
+    const officerLower = (officerInCharge || '').toLowerCase();
+
+    // Try to match by officerInCharge name first
+    let matched = fieldSubmitters.find(u => {
+      if (!u.fullName) return false;
+      const fnLower = u.fullName.toLowerCase();
+      return officerLower.includes(fnLower.split(' ')[0].toLowerCase()) ||
+             fnLower.split(' ').some((word: string) => officerLower.includes(word.toLowerCase()) && word.length > 3);
+    });
+
+    // Fallback: match via evidence submittedBy
+    if (!matched && evidenceTimeline?.length > 0) {
+      const submitterLower = ((evidenceTimeline[0] as any).submittedBy || '').toLowerCase();
+      matched = fieldSubmitters.find(u => {
+        if (!u.fullName) return false;
         const fnLower = u.fullName.toLowerCase();
-        return fnLower.includes('siddhesh') || submitterLower.includes(fnLower) || fnLower.includes(submitterLower);
-      }) || defaultFieldUser;
+        return fnLower.includes('siddhesh') || submitterLower.includes(fnLower.split(' ')[0]) || fnLower.split(' ').some((w: string) => submitterLower.includes(w) && w.length > 3);
+      });
+    }
 
-      return {
-        ...item,
-        submitterPhotoUrl: matchingUser?.profilePhotoUrl || (item as any).submitterPhotoUrl,
-        signature: (item as any).signature || (matchingUser as any)?.digitalSignatureUrl || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="320" height="70" viewBox="0 0 320 70"><path d="M 20 40 Q 60 10 90 35 T 160 25 T 220 45 T 280 20" stroke="%231e293b" stroke-width="2.5" fill="none"/><text x="20" y="60" font-family="sans-serif" font-size="9" fill="%230284c7" font-weight="bold">SEALED BY OFFICER SIDDHESH HARWANDE • TPM SECURE KEY 0xSIG_FS_8820</text></svg>`
-      };
-    })
-  }));
+    return matched || defaultFieldUser;
+  };
+
+  const enrichedRichCases = richCases.map(rc => {
+    // Find the field submitter connected to this case
+    const submitterUser = findFieldSubmitter(rc.officerInCharge || '', rc.evidenceTimeline || []);
+
+    // Build a clean fieldSubmitter profile object for the frontend
+    const fieldSubmitterProfile = submitterUser ? {
+      id: submitterUser.id,
+      fullName: submitterUser.fullName,
+      email: submitterUser.email,
+      profilePhotoUrl: submitterUser.profilePhotoUrl || null,
+      digitalSignatureUrl: submitterUser.digitalSignatureUrl || null,
+      badgeId: submitterUser.badgeId || submitterUser.barCouncilNumber || null,
+      contactExtension: submitterUser.contactExtension || null,
+      chambersLocation: submitterUser.chambersLocation || null,
+      appointmentRef: submitterUser.appointmentRef || null,
+      authorityScope: submitterUser.authorityScope || null,
+      keyShareFingerprint: submitterUser.keyShareFingerprint || null,
+      hardwareTokenName: submitterUser.hardwareTokenName || null,
+      keyGenesisDate: submitterUser.keyGenesisDate || null,
+      mfaAttestationLevel: submitterUser.mfaAttestationLevel || null,
+      jurisdictionCode: submitterUser.jurisdictionCode || null,
+      institutionVerified: submitterUser.institutionVerified,
+      vettingApproved: submitterUser.vettingApproved,
+      mfaEnrolled: submitterUser.mfaEnrolled,
+    } : null;
+
+    return {
+      ...rc,
+      fieldSubmitter: fieldSubmitterProfile,
+      evidenceTimeline: (rc.evidenceTimeline || []).map(item => {
+        const submitterLower = (item.submittedBy || '').toLowerCase();
+        const matchingUser = allUsers.find(u => {
+          if (!u.fullName || !u.profilePhotoUrl) return false;
+          const fnLower = u.fullName.toLowerCase();
+          return fnLower.includes('siddhesh') || submitterLower.includes(fnLower) || fnLower.includes(submitterLower);
+        }) || defaultFieldUser;
+
+        return {
+          ...item,
+          submitterPhotoUrl: matchingUser?.profilePhotoUrl || (item as any).submitterPhotoUrl,
+          signature: (item as any).signature || (matchingUser as any)?.digitalSignatureUrl || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="320" height="70" viewBox="0 0 320 70"><path d="M 20 40 Q 60 10 90 35 T 160 25 T 220 45 T 280 20" stroke="%231e293b" stroke-width="2.5" fill="none"/><text x="20" y="60" font-family="sans-serif" font-size="9" fill="%230284c7" font-weight="bold">SEALED BY OFFICER SIDDHESH HARWANDE • TPM SECURE KEY 0xSIG_FS_8820</text></svg>`
+        };
+      })
+    };
+  });
   
   // Calculate summary counts dynamically based on actual store data
   let totalCases = enrichedRichCases.length;

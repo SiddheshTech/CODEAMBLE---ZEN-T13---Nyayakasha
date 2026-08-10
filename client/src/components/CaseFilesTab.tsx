@@ -121,6 +121,27 @@ export interface PrecedentMatch {
   summary: string;
 }
 
+export interface FieldSubmitterProfile {
+  id: string;
+  fullName: string;
+  email: string;
+  profilePhotoUrl?: string | null;
+  digitalSignatureUrl?: string | null;
+  badgeId?: string | null;
+  contactExtension?: string | null;
+  chambersLocation?: string | null;
+  appointmentRef?: string | null;
+  authorityScope?: string | null;
+  keyShareFingerprint?: string | null;
+  hardwareTokenName?: string | null;
+  keyGenesisDate?: string | null;
+  mfaAttestationLevel?: string | null;
+  jurisdictionCode?: string | null;
+  institutionVerified?: boolean;
+  vettingApproved?: boolean;
+  mfaEnrolled?: boolean;
+}
+
 export interface CaseRecord {
   id: string;
   title: string;
@@ -142,6 +163,7 @@ export interface CaseRecord {
   orders: CaseOrder[];
   notes: CaseNote[];
   precedents: PrecedentMatch[];
+  fieldSubmitter?: FieldSubmitterProfile | null;
 }
 
 
@@ -595,6 +617,7 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase, role = 'Court
                 <thead>
                   <tr className="border-b border-slate-200 text-[11px] font-extrabold uppercase tracking-wider text-slate-500 bg-slate-50">
                     <th className="py-3.5 px-4 rounded-l-2xl">Case ID & Priority</th>
+                    <th className="py-3.5 px-4">Field Submitter</th>
                     <th className="py-3.5 px-4">Title & Court Bench</th>
                     <th className="py-3.5 px-4">Type & Stage</th>
                     <th className="py-3.5 px-4">Filing Date</th>
@@ -625,6 +648,37 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase, role = 'Court
                           </span>
                         </div>
                         <span className="text-[11px] text-slate-400 font-sans">{c.officerInCharge}</span>
+                      </td>
+
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2.5">
+                          {c.fieldSubmitter?.profilePhotoUrl ? (
+                            <img
+                              src={c.fieldSubmitter.profilePhotoUrl}
+                              alt={c.fieldSubmitter.fullName}
+                              className="w-9 h-9 rounded-full border-2 border-indigo-400 object-cover shadow-xs shrink-0"
+                            />
+                          ) : (
+                            <div className="w-9 h-9 rounded-full bg-indigo-100 border-2 border-indigo-300 flex items-center justify-center shrink-0">
+                              <UserCheck className="w-4 h-4 text-indigo-600" />
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-xs font-bold text-slate-900 truncate max-w-[140px]">
+                              {c.fieldSubmitter?.fullName || c.officerInCharge}
+                            </p>
+                            {c.fieldSubmitter?.badgeId && (
+                              <p className="text-[10px] text-indigo-700 font-mono font-bold">
+                                Badge: {c.fieldSubmitter.badgeId}
+                              </p>
+                            )}
+                            {c.fieldSubmitter?.institutionVerified && (
+                              <span className="inline-flex items-center gap-0.5 text-[9px] text-emerald-700 font-bold">
+                                <CheckCircle2 className="w-3 h-3" /> Verified
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </td>
 
                       <td className="py-4 px-4 max-w-xs">
@@ -886,6 +940,141 @@ export function CaseFilesTab({ initialCaseId, onClearSelectedCase, role = 'Court
                     })}
                   </div>
                 </div>
+
+                {/* 2. Field Submitter Connected Profile */}
+                {selectedCase.fieldSubmitter && (
+                  <div className="space-y-4">
+                    <h3 className="text-xs font-extrabold uppercase text-slate-400 tracking-wider px-2 flex items-center gap-2">
+                      <UserCheck className="w-3.5 h-3.5 text-indigo-500" />
+                      Linked Field Submitter Officer
+                    </h3>
+                    <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-900 rounded-3xl border border-indigo-800/40 p-6 shadow-lg">
+                      <div className="flex flex-col sm:flex-row sm:items-start gap-5">
+                        {/* Avatar */}
+                        <div className="shrink-0 relative">
+                          {selectedCase.fieldSubmitter.profilePhotoUrl ? (
+                            <img
+                              src={selectedCase.fieldSubmitter.profilePhotoUrl}
+                              alt={selectedCase.fieldSubmitter.fullName}
+                              className="w-20 h-20 rounded-2xl border-2 border-indigo-500 object-cover shadow-lg"
+                            />
+                          ) : (
+                            <div className="w-20 h-20 rounded-2xl bg-indigo-800/40 border-2 border-indigo-500 flex items-center justify-center">
+                              <UserCheck className="w-9 h-9 text-indigo-300" />
+                            </div>
+                          )}
+                          {selectedCase.fieldSubmitter.institutionVerified && (
+                            <span className="absolute -bottom-1.5 -right-1.5 bg-emerald-500 rounded-full p-1 border-2 border-slate-900">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Core Identity */}
+                        <div className="flex-1 min-w-0 space-y-3">
+                          <div>
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                              <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 border border-indigo-700/60 rounded px-2 py-0.5 bg-indigo-900/40">
+                                Field Submitter Officer
+                              </span>
+                              {selectedCase.fieldSubmitter.vettingApproved && (
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 border border-emerald-700/60 rounded px-2 py-0.5 bg-emerald-900/30">
+                                  Vetted & Active
+                                </span>
+                              )}
+                            </div>
+                            <h4 className="text-lg font-bold text-white">{selectedCase.fieldSubmitter.fullName}</h4>
+                            <p className="text-xs text-indigo-300 font-mono">{selectedCase.fieldSubmitter.email}</p>
+                          </div>
+
+                          {/* Key Details Grid */}
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            {selectedCase.fieldSubmitter.badgeId && (
+                              <div className="bg-white/5 rounded-xl p-2.5 border border-white/10">
+                                <p className="text-[9px] font-bold uppercase text-slate-400 mb-0.5">Badge / Bar ID</p>
+                                <p className="text-white font-mono font-bold">{selectedCase.fieldSubmitter.badgeId}</p>
+                              </div>
+                            )}
+                            {selectedCase.fieldSubmitter.appointmentRef && (
+                              <div className="bg-white/5 rounded-xl p-2.5 border border-white/10">
+                                <p className="text-[9px] font-bold uppercase text-slate-400 mb-0.5">Appointment Ref</p>
+                                <p className="text-white font-mono font-bold">{selectedCase.fieldSubmitter.appointmentRef}</p>
+                              </div>
+                            )}
+                            {selectedCase.fieldSubmitter.chambersLocation && (
+                              <div className="bg-white/5 rounded-xl p-2.5 border border-white/10">
+                                <p className="text-[9px] font-bold uppercase text-slate-400 mb-0.5">Station / Office</p>
+                                <p className="text-white font-bold">{selectedCase.fieldSubmitter.chambersLocation}</p>
+                              </div>
+                            )}
+                            {selectedCase.fieldSubmitter.contactExtension && (
+                              <div className="bg-white/5 rounded-xl p-2.5 border border-white/10">
+                                <p className="text-[9px] font-bold uppercase text-slate-400 mb-0.5">Contact</p>
+                                <p className="text-white font-bold">{selectedCase.fieldSubmitter.contactExtension}</p>
+                              </div>
+                            )}
+                            {selectedCase.fieldSubmitter.authorityScope && (
+                              <div className="bg-white/5 rounded-xl p-2.5 border border-white/10 col-span-2">
+                                <p className="text-[9px] font-bold uppercase text-slate-400 mb-0.5">Authority Scope</p>
+                                <p className="text-white font-bold">{selectedCase.fieldSubmitter.authorityScope}</p>
+                              </div>
+                            )}
+                            {selectedCase.fieldSubmitter.jurisdictionCode && (
+                              <div className="bg-white/5 rounded-xl p-2.5 border border-white/10">
+                                <p className="text-[9px] font-bold uppercase text-slate-400 mb-0.5">Jurisdiction Code</p>
+                                <p className="text-white font-mono font-bold">{selectedCase.fieldSubmitter.jurisdictionCode}</p>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Hardware & MFA Row */}
+                          <div className="flex flex-wrap gap-2 text-[10px]">
+                            {selectedCase.fieldSubmitter.hardwareTokenName && (
+                              <span className="px-2.5 py-1 rounded-lg bg-indigo-900/60 border border-indigo-700/40 text-indigo-200 font-mono font-bold flex items-center gap-1">
+                                <Key className="w-3 h-3 text-indigo-400" />
+                                {selectedCase.fieldSubmitter.hardwareTokenName}
+                              </span>
+                            )}
+                            {selectedCase.fieldSubmitter.mfaAttestationLevel && (
+                              <span className="px-2.5 py-1 rounded-lg bg-emerald-900/40 border border-emerald-700/40 text-emerald-200 font-bold flex items-center gap-1">
+                                <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                                {selectedCase.fieldSubmitter.mfaAttestationLevel}
+                              </span>
+                            )}
+                            {selectedCase.fieldSubmitter.mfaEnrolled && (
+                              <span className="px-2.5 py-1 rounded-lg bg-blue-900/40 border border-blue-700/40 text-blue-200 font-bold flex items-center gap-1">
+                                <BadgeCheck className="w-3 h-3 text-blue-400" />
+                                MFA Enrolled
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Key Fingerprint */}
+                          {selectedCase.fieldSubmitter.keyShareFingerprint && (
+                            <div className="pt-2 border-t border-white/10">
+                              <p className="text-[9px] font-bold uppercase text-slate-400 mb-1">TPM Key Share Fingerprint</p>
+                              <p className="text-[10px] text-slate-300 font-mono break-all">{selectedCase.fieldSubmitter.keyShareFingerprint}</p>
+                            </div>
+                          )}
+
+                          {/* Digital Signature */}
+                          {selectedCase.fieldSubmitter.digitalSignatureUrl && (
+                            <div className="pt-2 border-t border-white/10">
+                              <p className="text-[9px] font-bold uppercase text-slate-400 mb-1.5">Digital Signature on Record</p>
+                              <div className="rounded-xl overflow-hidden border border-slate-700 bg-white/95 p-3">
+                                <img
+                                  src={selectedCase.fieldSubmitter.digitalSignatureUrl}
+                                  alt="Field Submitter Digital Signature"
+                                  className="h-10 w-auto object-contain"
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* 2. Stakeholders */}
                 <div className="space-y-4">
