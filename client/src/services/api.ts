@@ -102,9 +102,13 @@ export const api = {
   logout: async () => {
     try {
       await fetchAPI('/auth/logout', { method: 'POST' });
+    } catch (e) {
+      // Session might already be expired on server - clear local state cleanly
     } finally {
       localStorage.removeItem('nyayakasha_session_id');
       localStorage.removeItem('nyayakasha_user');
+      localStorage.removeItem('nyayakasha_admin_token');
+      localStorage.removeItem('nyayakasha_is_duress_session');
     }
   },
 

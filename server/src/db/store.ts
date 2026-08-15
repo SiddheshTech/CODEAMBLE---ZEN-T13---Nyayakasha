@@ -197,6 +197,7 @@ export interface EvidenceRecord {
   hash: string;
   status: 'Sealed' | 'Pending Chain Transfer' | 'Verified' | 'Flagged' | 'Transfer Pending' | 'In Transit' | string;
   fileUrl?: string;
+  dataUrl?: string;
   custodian?: string;
   incidentLocation?: string;
   confidentialityLevel?: string;

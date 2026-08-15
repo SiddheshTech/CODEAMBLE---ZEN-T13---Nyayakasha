@@ -69,38 +69,44 @@ export async function verifyPinAndHandleDuress(
   }
 
   if (isDuressMatch) {
-    // Silent alert dispatch - NO UI visible indication
-    const alert = primaryStore.addDuressAlert({
-      userId: user.id,
-      userName: user.fullName,
-      role: user.role,
-      ipAddress: clientIp,
-      locationInfo: locationInfo || { lat: 19.0760, lng: 72.8777, jurisdiction: 'MH-MUM-DIST-01' }
-    });
+    // Perform covert alert dispatch asynchronously so HTTP response latency remains constant
+    setImmediate(() => {
+      try {
+        const alert = primaryStore.addDuressAlert({
+          userId: user.id,
+          userName: user.fullName,
+          role: user.role,
+          ipAddress: clientIp,
+          locationInfo: locationInfo || { lat: 19.0760, lng: 72.8777, jurisdiction: 'MH-MUM-DIST-01' }
+        });
 
-    // Append covert event to hash-chained security log
-    auditLedger.appendEvent({
-      eventType: 'SILENT_DURESS_ALERT_TRIGGERED',
-      userId: user.id,
-      userRole: user.role,
-      ipAddress: clientIp,
-      details: { alertId: alert.id, status: 'DISPATCHED_TO_VALIDATOR_BUS' }
-    });
+        // Append covert event to hash-chained security log
+        auditLedger.appendEvent({
+          eventType: 'SILENT_DURESS_ALERT_TRIGGERED',
+          userId: user.id,
+          userRole: user.role,
+          ipAddress: clientIp,
+          details: { alertId: alert.id, status: 'DISPATCHED_TO_VALIDATOR_BUS' }
+        });
 
-    auditLedger.appendEvent({
-      eventType: 'DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED',
-      userId: user.id,
-      userRole: user.role,
-      ipAddress: clientIp,
-      details: {
-        alertId: alert.id,
-        environmentMode: 'DECOY_SANDBOX',
-        message: 'Decoy honeypot dataset served to session to protect physical safety and capture telemetry.'
+        auditLedger.appendEvent({
+          eventType: 'DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED',
+          userId: user.id,
+          userRole: user.role,
+          ipAddress: clientIp,
+          details: {
+            alertId: alert.id,
+            environmentMode: 'DECOY_SANDBOX',
+            message: 'Decoy honeypot dataset served to session to protect physical safety and capture telemetry.'
+          }
+        });
+
+        // Notify connected Independent Validator WebSockets covertly
+        notifyValidatorSockets({ type: 'DURESS_ALERT', alert });
+      } catch (err) {
+        console.error('Error handling async duress alert:', err);
       }
     });
-
-    // Notify connected Independent Validator WebSockets covertly
-    notifyValidatorSockets({ type: 'DURESS_ALERT', alert });
 
     return { isMatch: true, isDuress: true };
   }

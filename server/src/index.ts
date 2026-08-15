@@ -100,7 +100,7 @@ export function startServer(port = ENV.PORT) {
 }
 
 // Auto start if executed directly
-if (process.argv[1] && process.argv[1].endsWith('index.ts')) {
+if (!process.env.TEST_ENV && process.argv[1] && (process.argv[1].endsWith('index.ts') || process.argv[1].endsWith('index.js') || process.argv[1].includes('index'))) {
   startServer();
 }
 

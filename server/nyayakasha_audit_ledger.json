@@ -4178,5 +4178,2528 @@
     "prevHash": "e854cca0902be7519fe98560898b041563dae04959e0c134709f76dbc8efb559",
     "hash": "94fb8b2c5e704ba921c01accad618a99d47637b32e71fb0cbb7fc03210ce2305",
     "blockNumber": 1489393
+  },
+  {
+    "id": "audit_1786641123978_194",
+    "index": 194,
+    "timestamp": "2026-08-13T17:12:03.978Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786641123977_r1mvgs",
+      "approvalState": "active"
+    },
+    "payloadHash": "d54b16e5294a258f75487c095b8d6283a36cdc33c8d2a72754637c3331c0e10b",
+    "prevHash": "94fb8b2c5e704ba921c01accad618a99d47637b32e71fb0cbb7fc03210ce2305",
+    "hash": "9742a0da2467c22409743438e81d428462e27f9c9c921afa6d3aca4b2044b7d0",
+    "blockNumber": 1489394
+  },
+  {
+    "id": "audit_1786641124029_195",
+    "index": 195,
+    "timestamp": "2026-08-13T17:12:04.019Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande8@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "e7e40ef7a1fa30b2457ea57a61fca28bc700d31697383c94575a00e391451050",
+    "prevHash": "9742a0da2467c22409743438e81d428462e27f9c9c921afa6d3aca4b2044b7d0",
+    "hash": "04fe5fec44093bddd837f1dfa0e804fd17f942adffc3663d0a1047dfd1b45903",
+    "blockNumber": 1489395
+  },
+  {
+    "id": "audit_1786641307449_196",
+    "index": 196,
+    "timestamp": "2026-08-13T17:15:07.449Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786641307448_thp9ao",
+      "approvalState": "active"
+    },
+    "payloadHash": "9500e575b4aa1531ec902dd8a696422b59b9de5eec7dcb7d4d0e1a4ac22e6719",
+    "prevHash": "04fe5fec44093bddd837f1dfa0e804fd17f942adffc3663d0a1047dfd1b45903",
+    "hash": "07f8093b463e571f97c6c816104d8a672357db01ec2a717a3896b68b0a8e3ebd",
+    "blockNumber": 1489396
+  },
+  {
+    "id": "audit_1786641307470_197",
+    "index": 197,
+    "timestamp": "2026-08-13T17:15:07.470Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande8@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "e7e40ef7a1fa30b2457ea57a61fca28bc700d31697383c94575a00e391451050",
+    "prevHash": "07f8093b463e571f97c6c816104d8a672357db01ec2a717a3896b68b0a8e3ebd",
+    "hash": "6bc2217b4b5a1b5beed8b27c290647d2cddb9b9ab6fd4c03ff3f21a4c7b808b7",
+    "blockNumber": 1489397
+  },
+  {
+    "id": "audit_1786641308766_198",
+    "index": 198,
+    "timestamp": "2026-08-13T17:15:08.766Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "6bc2217b4b5a1b5beed8b27c290647d2cddb9b9ab6fd4c03ff3f21a4c7b808b7",
+    "hash": "3424448a6a0a4b8cbd8eb4b78da608077d3452e0a2d2ba1444e33cfd01f92136",
+    "blockNumber": 1489398
+  },
+  {
+    "id": "audit_1786641340773_199",
+    "index": 199,
+    "timestamp": "2026-08-13T17:15:40.773Z",
+    "eventType": "INSTITUTIONAL_REGISTRY_CHECK",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "registrySource": "State Police Department HR & Badge Registry",
+      "verified": true
+    },
+    "payloadHash": "ba2ca921f54d78c44d04940c0aaf34e042f7ead228d26ba9a33169f45e89425e",
+    "prevHash": "3424448a6a0a4b8cbd8eb4b78da608077d3452e0a2d2ba1444e33cfd01f92136",
+    "hash": "03168cd7fff6dad7457f2bdf183859eeef69006ac0a425787f471cd883ebd4b2",
+    "blockNumber": 1489399
+  },
+  {
+    "id": "audit_1786641340805_200",
+    "index": 200,
+    "timestamp": "2026-08-13T17:15:40.805Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "fs_test_1786641339744@nyayakasha.gov.in",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "fs_test_1786641339744@nyayakasha.gov.in",
+      "subject": "Nyayakasha — Registration Confirmation"
+    },
+    "payloadHash": "6979955fe3a6a2d767032120d0fd6133c8e4ca42ba4a5696824b5d45add18cec",
+    "prevHash": "03168cd7fff6dad7457f2bdf183859eeef69006ac0a425787f471cd883ebd4b2",
+    "hash": "9155b1ff949d5e09bfaa6a505c6b18ff071fd3b8244931fe7a94e31e2164e658",
+    "blockNumber": 1489400
+  },
+  {
+    "id": "audit_1786641340836_201",
+    "index": 201,
+    "timestamp": "2026-08-13T17:15:40.836Z",
+    "eventType": "USER_SIGNUP",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "email": "fs_test_1786641339744@nyayakasha.gov.in",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "02b496b3664627a5a88a75e277d9f40af3c997d8100ee22e3ce4baf676d7b1be",
+    "prevHash": "9155b1ff949d5e09bfaa6a505c6b18ff071fd3b8244931fe7a94e31e2164e658",
+    "hash": "b550a977590259801cf4007dc554c3abf43c445fcfc6d54b7e46472114eb618b",
+    "blockNumber": 1489401
+  },
+  {
+    "id": "audit_1786641341840_202",
+    "index": 202,
+    "timestamp": "2026-08-13T17:15:41.840Z",
+    "eventType": "INSTITUTIONAL_REGISTRY_CHECK",
+    "userId": "usr_court_authority_1786641341259",
+    "userRole": "court_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "registrySource": "Bar Council & Judicial Appointment Records",
+      "verified": true
+    },
+    "payloadHash": "0295e9178d23ad171856f1e770258f88a0962e0ee69ef96937abe59f43542ff5",
+    "prevHash": "b550a977590259801cf4007dc554c3abf43c445fcfc6d54b7e46472114eb618b",
+    "hash": "c67898aa47c6a81205d344b0187953b1790c6ece09001a8c2d4ac4e60539cd2a",
+    "blockNumber": 1489402
+  },
+  {
+    "id": "audit_1786641341856_203",
+    "index": 203,
+    "timestamp": "2026-08-13T17:15:41.856Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "court_test_1786641339744@nyayakasha.gov.in",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "court_test_1786641339744@nyayakasha.gov.in",
+      "subject": "Nyayakasha — Registration Confirmation"
+    },
+    "payloadHash": "64cee244d0fba8897d1885c7617868985f64476e040eae7766f20d7e16e452cc",
+    "prevHash": "c67898aa47c6a81205d344b0187953b1790c6ece09001a8c2d4ac4e60539cd2a",
+    "hash": "cb2273cefc327170fab814646d317cf2491393554d13cbe6a161e3d588550640",
+    "blockNumber": 1489403
+  },
+  {
+    "id": "audit_1786641341911_204",
+    "index": 204,
+    "timestamp": "2026-08-13T17:15:41.911Z",
+    "eventType": "USER_SIGNUP",
+    "userId": "usr_court_authority_1786641341259",
+    "userRole": "court_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "email": "court_test_1786641339744@nyayakasha.gov.in",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "a5c22bb2afee3d726db2c6e45daed8ba6afe0e87e35a41ec1009dc1c30aaff58",
+    "prevHash": "cb2273cefc327170fab814646d317cf2491393554d13cbe6a161e3d588550640",
+    "hash": "c2ea6cb689485031a950beb8979bfc91fe492f7abb48b23eb5d8511a78d13db1",
+    "blockNumber": 1489404
+  },
+  {
+    "id": "audit_1786641342840_205",
+    "index": 205,
+    "timestamp": "2026-08-13T17:15:42.839Z",
+    "eventType": "INSTITUTIONAL_REGISTRY_CHECK",
+    "userId": "usr_independent_validator_1786641342282",
+    "userRole": "independent_validator",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "registrySource": "Oversight Committee & High Court Registry",
+      "verified": true
+    },
+    "payloadHash": "7a76d295a8895cde2450ff4b18475f8afe618f829951c2ca68d9dccad20ac7db",
+    "prevHash": "c2ea6cb689485031a950beb8979bfc91fe492f7abb48b23eb5d8511a78d13db1",
+    "hash": "c0cdfebcae8f1980e339cbdbc4cf84b03857ff49b22ba59493a1b64079aa529f",
+    "blockNumber": 1489405
+  },
+  {
+    "id": "audit_1786641343106_206",
+    "index": 206,
+    "timestamp": "2026-08-13T17:15:43.106Z",
+    "eventType": "VALIDATOR_VETTING_QUEUED",
+    "userId": "usr_independent_validator_1786641342282",
+    "userRole": "independent_validator",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "consentGiven": true,
+      "vettingId": "vet_1786641342855"
+    },
+    "payloadHash": "c90143b1ffa2b128aefe1f74db80e9ee648be318d90616c1e1f00e419ccac616",
+    "prevHash": "c0cdfebcae8f1980e339cbdbc4cf84b03857ff49b22ba59493a1b64079aa529f",
+    "hash": "64eeaaf4a0fa2b4589d26f01f7375d3862b608737489360e1f02850221c5ef72",
+    "blockNumber": 1489406
+  },
+  {
+    "id": "audit_1786641343128_207",
+    "index": 207,
+    "timestamp": "2026-08-13T17:15:43.128Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "validator_test_1786641339744@nyayakasha.gov.in",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "validator_test_1786641339744@nyayakasha.gov.in",
+      "subject": "Nyayakasha — Registration Confirmation"
+    },
+    "payloadHash": "959b0de0cce5d21875f6e4e331b63d917294237c18c5dd5208fbd45924eec57e",
+    "prevHash": "64eeaaf4a0fa2b4589d26f01f7375d3862b608737489360e1f02850221c5ef72",
+    "hash": "6a85c5a36df3c19d06255423a7b74447c3dd11b4106d719587a08303c113a9ba",
+    "blockNumber": 1489407
+  },
+  {
+    "id": "audit_1786641343177_208",
+    "index": 208,
+    "timestamp": "2026-08-13T17:15:43.177Z",
+    "eventType": "USER_SIGNUP",
+    "userId": "usr_independent_validator_1786641342282",
+    "userRole": "independent_validator",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "email": "validator_test_1786641339744@nyayakasha.gov.in",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "859628a16c26e8ae832cdb8358907626665dc03209b386927d147c3ee7f03d93",
+    "prevHash": "6a85c5a36df3c19d06255423a7b74447c3dd11b4106d719587a08303c113a9ba",
+    "hash": "55a8e66b4d8352c08a27cc4bcf428f089d5c5770c3c77f5fb3efa489e7bd7442",
+    "blockNumber": 1489408
+  },
+  {
+    "id": "audit_1786641343540_209",
+    "index": 209,
+    "timestamp": "2026-08-13T17:15:43.539Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_court_authority_1786641341259",
+    "userRole": "court_authority",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786641343539_foel1l",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "66b2e21033191c991f4bbcd4c717898f8e336651916a49ae222b2453a1b7aa92",
+    "prevHash": "55a8e66b4d8352c08a27cc4bcf428f089d5c5770c3c77f5fb3efa489e7bd7442",
+    "hash": "54e323512e5d4aa03acd3a6b8577ee6505d1d42fd87e8d122cb904c8f070380f",
+    "blockNumber": 1489409
+  },
+  {
+    "id": "audit_1786641343804_210",
+    "index": 210,
+    "timestamp": "2026-08-13T17:15:43.804Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_court_authority_1786641341259",
+    "userRole": "court_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "institution_review",
+      "toState": "mfa_pending",
+      "actorRole": "court_authority",
+      "note": "Verified against Bar Council Records"
+    },
+    "payloadHash": "1149552e36308575516e87700a998d43b98b02e5b916de9099cee4ca149eaee2",
+    "prevHash": "54e323512e5d4aa03acd3a6b8577ee6505d1d42fd87e8d122cb904c8f070380f",
+    "hash": "a8ca1643dedbfbe7b1389379bfb7b711178af56b68e4f0dff5602e575512cc90",
+    "blockNumber": 1489410
+  },
+  {
+    "id": "audit_1786641343821_211",
+    "index": 211,
+    "timestamp": "2026-08-13T17:15:43.821Z",
+    "eventType": "BLOCKCHAIN_ANCHOR_SUCCESS",
+    "userId": "usr_court_authority_1786641341259",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "txHash": "0xccc8012ffd12dd8169cae1e0871ae0c9927db8d7969e931a690156b405f9e2c1",
+      "blockNumber": 15095086,
+      "eventHash": "2026-08-13T17:15:43.566Z",
+      "state": "mfa_pending"
+    },
+    "payloadHash": "a60458b3eb4fab4a17b49537f068bacc496dd8656968e3b23784c2e635844bfc",
+    "prevHash": "a8ca1643dedbfbe7b1389379bfb7b711178af56b68e4f0dff5602e575512cc90",
+    "hash": "8289cfb23d2c7dff09376691e0f9adb1e5378a38ed65aaaa710e28a7e1d62fc9",
+    "blockNumber": 1489411
+  },
+  {
+    "id": "audit_1786641344133_212",
+    "index": 212,
+    "timestamp": "2026-08-13T17:15:44.133Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "institution_review",
+      "toState": "mfa_pending",
+      "actorRole": "court_authority"
+    },
+    "payloadHash": "10b1c1f9ec9b9838f5ff44fd06d422f5332e5a22e11884b8d0b70ed375b74775",
+    "prevHash": "8289cfb23d2c7dff09376691e0f9adb1e5378a38ed65aaaa710e28a7e1d62fc9",
+    "hash": "ecef1765cb2d5fa553ce0a71f387be32471ce78d998fab2b8afe6253ea41616b",
+    "blockNumber": 1489412
+  },
+  {
+    "id": "audit_1786641344147_213",
+    "index": 213,
+    "timestamp": "2026-08-13T17:15:44.147Z",
+    "eventType": "BLOCKCHAIN_ANCHOR_SUCCESS",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "txHash": "0x0a0d635b2481d1519e502e17aed705ff026c8729aee5937bf0c0e8c3d3e42d35",
+      "blockNumber": 15077506,
+      "eventHash": "2026-08-13T17:15:43.894Z",
+      "state": "mfa_pending"
+    },
+    "payloadHash": "dd400f844a3b5e87f657eb41faf01bb40462f429e37ff41350d82915fd97d5b1",
+    "prevHash": "ecef1765cb2d5fa553ce0a71f387be32471ce78d998fab2b8afe6253ea41616b",
+    "hash": "1cf01533bc699fe490befb686702781c4c745466c3b32f1bcc51b0a35eec5e85",
+    "blockNumber": 1489413
+  },
+  {
+    "id": "audit_1786641344396_214",
+    "index": 214,
+    "timestamp": "2026-08-13T17:15:44.396Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786641344396_c3iu3d",
+      "approvalState": "mfa_pending"
+    },
+    "payloadHash": "cf8bdde816299ba572b3960bb7a9d0a01b19fba5dcc4a3e29055e85714dbca0c",
+    "prevHash": "1cf01533bc699fe490befb686702781c4c745466c3b32f1bcc51b0a35eec5e85",
+    "hash": "7efe2333387c70388ca3ecce7ad98846bf515b444b93464c01edf908a2323da3",
+    "blockNumber": 1489414
+  },
+  {
+    "id": "audit_1786641345031_215",
+    "index": 215,
+    "timestamp": "2026-08-13T17:15:45.031Z",
+    "eventType": "DURESS_PIN_ENROLLED",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "hasDuressPin": true,
+      "optInRole": "field_submitter"
+    },
+    "payloadHash": "939dfc956fb9eeabedcf864fbbbdb47031ed07ba6f0600288f93587c1ee20f36",
+    "prevHash": "7efe2333387c70388ca3ecce7ad98846bf515b444b93464c01edf908a2323da3",
+    "hash": "78af1d52226fefe92e0c2686d17231239eff9367d232c94a1e5ec37cfdabcf96",
+    "blockNumber": 1489415
+  },
+  {
+    "id": "audit_1786641346354_216",
+    "index": 216,
+    "timestamp": "2026-08-13T17:15:46.353Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641346127_flpn",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "de6bbf5712cd1f8822f6ed04052f912869a1529130b8fef4c474bef9908b0fdc",
+    "prevHash": "78af1d52226fefe92e0c2686d17231239eff9367d232c94a1e5ec37cfdabcf96",
+    "hash": "311dae47a93d7163c8fcfef77f49d1d3db305a2e9e73401ba6d0d41f8728a7f5",
+    "blockNumber": 1489416
+  },
+  {
+    "id": "audit_1786641346365_217",
+    "index": 217,
+    "timestamp": "2026-08-13T17:15:46.365Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641346127_flpn",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "a4931dcdc5553514c0afae24863e59547b3aa12853e745e9ffca577baff4ef27",
+    "prevHash": "311dae47a93d7163c8fcfef77f49d1d3db305a2e9e73401ba6d0d41f8728a7f5",
+    "hash": "acab3a6dec77fbd821a9d448087f57e53d2104b158c6f737115af910657958c4",
+    "blockNumber": 1489417
+  },
+  {
+    "id": "audit_1786641347674_218",
+    "index": 218,
+    "timestamp": "2026-08-13T17:15:47.674Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641347450_de2v",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "ca832d3a201e7521d4f1f8f63ca9f72dcc7d9d9c06412fab7f9fe5fdf803129b",
+    "prevHash": "acab3a6dec77fbd821a9d448087f57e53d2104b158c6f737115af910657958c4",
+    "hash": "08ae5bcd5039e961f8b8bd6b5bf11aeef5cc409168665cc54f7fed191379555d",
+    "blockNumber": 1489418
+  },
+  {
+    "id": "audit_1786641347686_219",
+    "index": 219,
+    "timestamp": "2026-08-13T17:15:47.686Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641347450_de2v",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "0534c9ef43b2b804e999f134222baaf2a62c3be5763b8b5dd2bf3f3fb226b5a6",
+    "prevHash": "08ae5bcd5039e961f8b8bd6b5bf11aeef5cc409168665cc54f7fed191379555d",
+    "hash": "86af80bcec771d5fd098818cbfb5e52518a84986229f909b728c378fc8f8cdb5",
+    "blockNumber": 1489419
+  },
+  {
+    "id": "audit_1786641349017_220",
+    "index": 220,
+    "timestamp": "2026-08-13T17:15:49.017Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641348792_lv3w",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "5496ee14483496aae60fadea4379f5ea5cb3d802cbe40a8b2d5037e9c40afddc",
+    "prevHash": "86af80bcec771d5fd098818cbfb5e52518a84986229f909b728c378fc8f8cdb5",
+    "hash": "324f753c1c9712fee01580fb06e0fa5a78a9c69bd56713fda156f60ffa511f66",
+    "blockNumber": 1489420
+  },
+  {
+    "id": "audit_1786641349032_221",
+    "index": 221,
+    "timestamp": "2026-08-13T17:15:49.032Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641348792_lv3w",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "2497a2e03eaa69928fe14a0afdb4a762e0ac0e31de920d9f63c62c3fda601450",
+    "prevHash": "324f753c1c9712fee01580fb06e0fa5a78a9c69bd56713fda156f60ffa511f66",
+    "hash": "2fbd5c7e0d40e44f4f17579f25cf42cd7ee056354fa4da9955990bec9919727b",
+    "blockNumber": 1489421
+  },
+  {
+    "id": "audit_1786641350234_222",
+    "index": 222,
+    "timestamp": "2026-08-13T17:15:50.234Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641349989_j4dv",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "9e1a8d5729131f5b8328a15be8b9cc14a922d3b78dfe0d538362fd82d71b9711",
+    "prevHash": "2fbd5c7e0d40e44f4f17579f25cf42cd7ee056354fa4da9955990bec9919727b",
+    "hash": "e99e04e3693f7135dd303656dffa035d22d64877d3a182de13c1c4484afad1d5",
+    "blockNumber": 1489422
+  },
+  {
+    "id": "audit_1786641350247_223",
+    "index": 223,
+    "timestamp": "2026-08-13T17:15:50.247Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641349989_j4dv",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "212fd9d7efa33b41fd4363f84f30cf7fb4997e227522f8e2176c6a21c4f16101",
+    "prevHash": "e99e04e3693f7135dd303656dffa035d22d64877d3a182de13c1c4484afad1d5",
+    "hash": "3452d8b59cd254cf49e61826ad383f3bae6be5e13ed72408d0d5b001eb7e4761",
+    "blockNumber": 1489423
+  },
+  {
+    "id": "audit_1786641351446_224",
+    "index": 224,
+    "timestamp": "2026-08-13T17:15:51.446Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641351239_g1wi",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "d0baca4f73812cca33151b2685d01bcc3863d5f42a1ceade2860deb3f1663364",
+    "prevHash": "3452d8b59cd254cf49e61826ad383f3bae6be5e13ed72408d0d5b001eb7e4761",
+    "hash": "bb1ea24efd98082c55527622b7d480b1932773bfae1a069fb6ddc780fe46b93e",
+    "blockNumber": 1489424
+  },
+  {
+    "id": "audit_1786641351458_225",
+    "index": 225,
+    "timestamp": "2026-08-13T17:15:51.458Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_field_submitter_1786641340181",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641351239_g1wi",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "1f4a2c708ae3c2bcc93085ab4cfd3e60cd9c578bd3026d36220b14fd9fee2e51",
+    "prevHash": "bb1ea24efd98082c55527622b7d480b1932773bfae1a069fb6ddc780fe46b93e",
+    "hash": "b7aabbfd8ed9d72ddd34a467be231b9a3a81864ba6254ecc3ba3457a896af094",
+    "blockNumber": 1489425
+  },
+  {
+    "id": "audit_1786641351948_226",
+    "index": 226,
+    "timestamp": "2026-08-13T17:15:51.948Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_independent_validator_1786641342282",
+    "userRole": "independent_validator",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786641351948_xxc39j",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "b5164038e6bd91481a879484b3600a9c3da40a159fa133567751d305fcf75d26",
+    "prevHash": "b7aabbfd8ed9d72ddd34a467be231b9a3a81864ba6254ecc3ba3457a896af094",
+    "hash": "7d7e3afa1de420f439e9e19e9fc83147da6ec911918f50ceb2238017cd4040e1",
+    "blockNumber": 1489426
+  },
+  {
+    "id": "audit_1786641492654_227",
+    "index": 227,
+    "timestamp": "2026-08-13T17:18:12.654Z",
+    "eventType": "INSTITUTIONAL_REGISTRY_CHECK",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "registrySource": "State Police Department HR & Badge Registry",
+      "verified": true
+    },
+    "payloadHash": "ba2ca921f54d78c44d04940c0aaf34e042f7ead228d26ba9a33169f45e89425e",
+    "prevHash": "7d7e3afa1de420f439e9e19e9fc83147da6ec911918f50ceb2238017cd4040e1",
+    "hash": "6ac85998f0ff0c14c3e7b49ed3f026804aee5fece18e9c93a368b634c7aefd54",
+    "blockNumber": 1489427
+  },
+  {
+    "id": "audit_1786641492660_228",
+    "index": 228,
+    "timestamp": "2026-08-13T17:18:12.660Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "fs_test_1786641492294@nyayakasha.gov.in",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "fs_test_1786641492294@nyayakasha.gov.in",
+      "subject": "Nyayakasha — Registration Confirmation"
+    },
+    "payloadHash": "2be99483a3cee9947657720a78952c69b7ec7b9cf0d665a36fef50809d9146f0",
+    "prevHash": "6ac85998f0ff0c14c3e7b49ed3f026804aee5fece18e9c93a368b634c7aefd54",
+    "hash": "f84dd564e64cb4cb6d0521bb57bdd71ce5f61f6ac1e6060a788ccdef17abf890",
+    "blockNumber": 1489428
+  },
+  {
+    "id": "audit_1786641492692_229",
+    "index": 229,
+    "timestamp": "2026-08-13T17:18:12.692Z",
+    "eventType": "USER_SIGNUP",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "email": "fs_test_1786641492294@nyayakasha.gov.in",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "69dc4dc30c36230922d207c62a79d5e7cebe0121f5faf35d64172472aa61954e",
+    "prevHash": "f84dd564e64cb4cb6d0521bb57bdd71ce5f61f6ac1e6060a788ccdef17abf890",
+    "hash": "06502fb9ea669ebfbfca8fe61625672929bf8d83d0b2b692d92c2742338d3ce0",
+    "blockNumber": 1489429
+  },
+  {
+    "id": "audit_1786641493074_230",
+    "index": 230,
+    "timestamp": "2026-08-13T17:18:13.074Z",
+    "eventType": "INSTITUTIONAL_REGISTRY_CHECK",
+    "userId": "usr_court_authority_1786641492856",
+    "userRole": "court_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "registrySource": "Bar Council & Judicial Appointment Records",
+      "verified": true
+    },
+    "payloadHash": "0295e9178d23ad171856f1e770258f88a0962e0ee69ef96937abe59f43542ff5",
+    "prevHash": "06502fb9ea669ebfbfca8fe61625672929bf8d83d0b2b692d92c2742338d3ce0",
+    "hash": "453cb3111d5df58972149c44b8470941a57d8aeceb4d7a5c9069976783434f3f",
+    "blockNumber": 1489430
+  },
+  {
+    "id": "audit_1786641493078_231",
+    "index": 231,
+    "timestamp": "2026-08-13T17:18:13.078Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "court_test_1786641492294@nyayakasha.gov.in",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "court_test_1786641492294@nyayakasha.gov.in",
+      "subject": "Nyayakasha — Registration Confirmation"
+    },
+    "payloadHash": "943c6c180786ea65fcfea40129b58e2269f7db00921693d40b6edf6017111355",
+    "prevHash": "453cb3111d5df58972149c44b8470941a57d8aeceb4d7a5c9069976783434f3f",
+    "hash": "34221a731e63b0cf386709eb0dc49e6733d144c63aefaa71c940a802942bfff1",
+    "blockNumber": 1489431
+  },
+  {
+    "id": "audit_1786641493114_232",
+    "index": 232,
+    "timestamp": "2026-08-13T17:18:13.114Z",
+    "eventType": "USER_SIGNUP",
+    "userId": "usr_court_authority_1786641492856",
+    "userRole": "court_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "email": "court_test_1786641492294@nyayakasha.gov.in",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "56c4a8284061be6d14df8188ff45f25240cc7e66c1472fa1f72cf9cef92ba4cd",
+    "prevHash": "34221a731e63b0cf386709eb0dc49e6733d144c63aefaa71c940a802942bfff1",
+    "hash": "cf3bc8629dc8aa1a31a1fed68bce30fef0ffddefa48caa6a32acaf84d637854a",
+    "blockNumber": 1489432
+  },
+  {
+    "id": "audit_1786641493441_233",
+    "index": 233,
+    "timestamp": "2026-08-13T17:18:13.441Z",
+    "eventType": "INSTITUTIONAL_REGISTRY_CHECK",
+    "userId": "usr_independent_validator_1786641493245",
+    "userRole": "independent_validator",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "registrySource": "Oversight Committee & High Court Registry",
+      "verified": true
+    },
+    "payloadHash": "7a76d295a8895cde2450ff4b18475f8afe618f829951c2ca68d9dccad20ac7db",
+    "prevHash": "cf3bc8629dc8aa1a31a1fed68bce30fef0ffddefa48caa6a32acaf84d637854a",
+    "hash": "097856788785c636cddb6c45eea7acfac69a2f600cc1b438c7007fe06a441a8e",
+    "blockNumber": 1489433
+  },
+  {
+    "id": "audit_1786641493579_234",
+    "index": 234,
+    "timestamp": "2026-08-13T17:18:13.579Z",
+    "eventType": "VALIDATOR_VETTING_QUEUED",
+    "userId": "usr_independent_validator_1786641493245",
+    "userRole": "independent_validator",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "consentGiven": true,
+      "vettingId": "vet_1786641493465"
+    },
+    "payloadHash": "c844048bea7068c6154d53952d53545247da5a4e5154d9dc244390d0908fddf9",
+    "prevHash": "097856788785c636cddb6c45eea7acfac69a2f600cc1b438c7007fe06a441a8e",
+    "hash": "e24a0c24f22330c742a205589613ab9ae4d0718787c49a0df705cfdbb88619c8",
+    "blockNumber": 1489434
+  },
+  {
+    "id": "audit_1786641493586_235",
+    "index": 235,
+    "timestamp": "2026-08-13T17:18:13.586Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "validator_test_1786641492294@nyayakasha.gov.in",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "validator_test_1786641492294@nyayakasha.gov.in",
+      "subject": "Nyayakasha — Registration Confirmation"
+    },
+    "payloadHash": "cdd53c61b47378cd556c8edebdbbe6b0329dbc800374e8bdc765f8e61a972b74",
+    "prevHash": "e24a0c24f22330c742a205589613ab9ae4d0718787c49a0df705cfdbb88619c8",
+    "hash": "e134480b680d1595f245570cb1af0b89b2782531787d8ae1c4d1d49996081836",
+    "blockNumber": 1489435
+  },
+  {
+    "id": "audit_1786641493620_236",
+    "index": 236,
+    "timestamp": "2026-08-13T17:18:13.619Z",
+    "eventType": "USER_SIGNUP",
+    "userId": "usr_independent_validator_1786641493245",
+    "userRole": "independent_validator",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "email": "validator_test_1786641492294@nyayakasha.gov.in",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "37d14581286ace41e6b1f0c024532b98efada70c18fd3e1395dcfae4905b55ba",
+    "prevHash": "e134480b680d1595f245570cb1af0b89b2782531787d8ae1c4d1d49996081836",
+    "hash": "4ac611d470d1b0a11779b07d120f3e100986811ed7126aad060705937107c9ca",
+    "blockNumber": 1489436
+  },
+  {
+    "id": "audit_1786641493750_237",
+    "index": 237,
+    "timestamp": "2026-08-13T17:18:13.750Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_court_authority_1786641492856",
+    "userRole": "court_authority",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786641493750_nr1jic",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "7610620f86cc0176e3c42fa03eb3ab56638a72235b90256c17a66955801295ea",
+    "prevHash": "4ac611d470d1b0a11779b07d120f3e100986811ed7126aad060705937107c9ca",
+    "hash": "1e019bbb3027f35cee5bf8171fd13ee29bbdac770b55312643a8f93999b93042",
+    "blockNumber": 1489437
+  },
+  {
+    "id": "audit_1786641493814_238",
+    "index": 238,
+    "timestamp": "2026-08-13T17:18:13.814Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_court_authority_1786641492856",
+    "userRole": "court_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "institution_review",
+      "toState": "mfa_pending",
+      "actorRole": "court_authority",
+      "note": "Verified against Bar Council Records"
+    },
+    "payloadHash": "1149552e36308575516e87700a998d43b98b02e5b916de9099cee4ca149eaee2",
+    "prevHash": "1e019bbb3027f35cee5bf8171fd13ee29bbdac770b55312643a8f93999b93042",
+    "hash": "38a5274368cc4c8dcaadbc4cfdef0e19478027154f500fcd3134d446c633859c",
+    "blockNumber": 1489438
+  },
+  {
+    "id": "audit_1786641493818_239",
+    "index": 239,
+    "timestamp": "2026-08-13T17:18:13.818Z",
+    "eventType": "BLOCKCHAIN_ANCHOR_SUCCESS",
+    "userId": "usr_court_authority_1786641492856",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "txHash": "0xb1113184000beb6c731d35d60f5cd64d36546baa589c4c7595970c674c946de1",
+      "blockNumber": 15016866,
+      "eventHash": "2026-08-13T17:18:13.756Z",
+      "state": "mfa_pending"
+    },
+    "payloadHash": "199d18b6fcb5088b3a9f9bce816ebfbca3f2f12d8dc8b93c74d313fb5a458df5",
+    "prevHash": "38a5274368cc4c8dcaadbc4cfdef0e19478027154f500fcd3134d446c633859c",
+    "hash": "87953e874df5e14e9501a0045eea590c473589e7912d02687b85a7516e078905",
+    "blockNumber": 1489439
+  },
+  {
+    "id": "audit_1786641493925_240",
+    "index": 240,
+    "timestamp": "2026-08-13T17:18:13.925Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "institution_review",
+      "toState": "mfa_pending",
+      "actorRole": "court_authority"
+    },
+    "payloadHash": "10b1c1f9ec9b9838f5ff44fd06d422f5332e5a22e11884b8d0b70ed375b74775",
+    "prevHash": "87953e874df5e14e9501a0045eea590c473589e7912d02687b85a7516e078905",
+    "hash": "93bb1cc3b0d1df14e506245c4362c93f1ff48ef1066eea08f2b384b9918b9cf4",
+    "blockNumber": 1489440
+  },
+  {
+    "id": "audit_1786641493928_241",
+    "index": 241,
+    "timestamp": "2026-08-13T17:18:13.928Z",
+    "eventType": "BLOCKCHAIN_ANCHOR_SUCCESS",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "txHash": "0xbaca0a28ee13ed8b5a952cca00907845da56f75b561a708f7573513a04103092",
+      "blockNumber": 15007046,
+      "eventHash": "2026-08-13T17:18:13.828Z",
+      "state": "mfa_pending"
+    },
+    "payloadHash": "d0d348a8a588d647490f0edd7610cf1b95303267520402efe936c0b1330c77ec",
+    "prevHash": "93bb1cc3b0d1df14e506245c4362c93f1ff48ef1066eea08f2b384b9918b9cf4",
+    "hash": "aa725ac78a270f10166af70d80634ab65f67db94f1f24d0c7645dc2acb811307",
+    "blockNumber": 1489441
+  },
+  {
+    "id": "audit_1786641494052_242",
+    "index": 242,
+    "timestamp": "2026-08-13T17:18:14.052Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786641494052_s3r0ax",
+      "approvalState": "mfa_pending"
+    },
+    "payloadHash": "4844efe6ee9045fb57279b2bf846d7fe11fddcf22dd7a934f88687942382a074",
+    "prevHash": "aa725ac78a270f10166af70d80634ab65f67db94f1f24d0c7645dc2acb811307",
+    "hash": "892a37e8c2bd022d4b14e07c820446f23ab49975d03baf5ed539409eced8e5c3",
+    "blockNumber": 1489442
+  },
+  {
+    "id": "audit_1786641494258_243",
+    "index": 243,
+    "timestamp": "2026-08-13T17:18:14.258Z",
+    "eventType": "DURESS_PIN_ENROLLED",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "hasDuressPin": true,
+      "optInRole": "field_submitter"
+    },
+    "payloadHash": "939dfc956fb9eeabedcf864fbbbdb47031ed07ba6f0600288f93587c1ee20f36",
+    "prevHash": "892a37e8c2bd022d4b14e07c820446f23ab49975d03baf5ed539409eced8e5c3",
+    "hash": "24c723bb6d5e7697286dc70bf03029e7fd30c4798672526767d94b35abd9fed1",
+    "blockNumber": 1489443
+  },
+  {
+    "id": "audit_1786641494568_244",
+    "index": 244,
+    "timestamp": "2026-08-13T17:18:14.568Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641494513_cms9",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "5db8d139cdb903f21fe5a345ce720ec686a56125f1dbbd0183ac70055db76573",
+    "prevHash": "24c723bb6d5e7697286dc70bf03029e7fd30c4798672526767d94b35abd9fed1",
+    "hash": "7bc09de6b2740f1a916c8ff13795a195e768b5aa24b7e3921b88ab0f7ccf83fc",
+    "blockNumber": 1489444
+  },
+  {
+    "id": "audit_1786641494571_245",
+    "index": 245,
+    "timestamp": "2026-08-13T17:18:14.571Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641494513_cms9",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "4dd5622553d9ecd806385fdcc58f40f85e97d71247968d86c5119a91625750b4",
+    "prevHash": "7bc09de6b2740f1a916c8ff13795a195e768b5aa24b7e3921b88ab0f7ccf83fc",
+    "hash": "860f94d42555a4bb8b8e0a77b65c82f15559737862db8b311a1e7514f0894df2",
+    "blockNumber": 1489445
+  },
+  {
+    "id": "audit_1786641494936_246",
+    "index": 246,
+    "timestamp": "2026-08-13T17:18:14.936Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641494882_pjrf",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "c54b314c9fdc6851fd3d25ffff53b376900d4c6d91bc7f2f3e7641846d2d0e40",
+    "prevHash": "860f94d42555a4bb8b8e0a77b65c82f15559737862db8b311a1e7514f0894df2",
+    "hash": "98c2537908359bedf264943045fbdcf5f483ab93a9ec525996489a0335749c3d",
+    "blockNumber": 1489446
+  },
+  {
+    "id": "audit_1786641494939_247",
+    "index": 247,
+    "timestamp": "2026-08-13T17:18:14.939Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641494882_pjrf",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "7e4ae051db8a338e74f1680ce61042324a3c24854768da83bb69a1f9d9b45d17",
+    "prevHash": "98c2537908359bedf264943045fbdcf5f483ab93a9ec525996489a0335749c3d",
+    "hash": "21eb93815ea35c148876c7d7fc5023d32fe72fcca595890ea913642c63ad3caa",
+    "blockNumber": 1489447
+  },
+  {
+    "id": "audit_1786641495318_248",
+    "index": 248,
+    "timestamp": "2026-08-13T17:18:15.318Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641495248_rott",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "ed458e2570ecd4ea2b5b965357d4962275ba246900bd3857d91e845362504759",
+    "prevHash": "21eb93815ea35c148876c7d7fc5023d32fe72fcca595890ea913642c63ad3caa",
+    "hash": "9426801d90fbdf33ed455314a35d217c2f9b49a54eebe7d9fc3560193e31140a",
+    "blockNumber": 1489448
+  },
+  {
+    "id": "audit_1786641495321_249",
+    "index": 249,
+    "timestamp": "2026-08-13T17:18:15.321Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641495248_rott",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "3db77ff8a43d9e9c194046de2686e5067df111165a5349598e6ee6c3113712e3",
+    "prevHash": "9426801d90fbdf33ed455314a35d217c2f9b49a54eebe7d9fc3560193e31140a",
+    "hash": "43df1d1f6db522ee444023f965e21959ae72c66f66b35c56226d866f529ca2d1",
+    "blockNumber": 1489449
+  },
+  {
+    "id": "audit_1786641495676_250",
+    "index": 250,
+    "timestamp": "2026-08-13T17:18:15.676Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641495622_hzms",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "6a606ece3a2dbb40c64d7b602f4d0a74dd0c4be0ae4768cc1bd938c19dde7af8",
+    "prevHash": "43df1d1f6db522ee444023f965e21959ae72c66f66b35c56226d866f529ca2d1",
+    "hash": "21418f0a5fd7fa07c726a09b79f85540e6d81959de916eb34e7b92ed0d330a05",
+    "blockNumber": 1489450
+  },
+  {
+    "id": "audit_1786641495680_251",
+    "index": 251,
+    "timestamp": "2026-08-13T17:18:15.679Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641495622_hzms",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "eee81889d1d3f6475867d0e39041285c5535bde7b0bc31329638cf0ba8a205c6",
+    "prevHash": "21418f0a5fd7fa07c726a09b79f85540e6d81959de916eb34e7b92ed0d330a05",
+    "hash": "639618da9032b540e72b7488bfd1639a513a443aed5e8c32857f91fcd24af57d",
+    "blockNumber": 1489451
+  },
+  {
+    "id": "audit_1786641496066_252",
+    "index": 252,
+    "timestamp": "2026-08-13T17:18:16.066Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641496008_eyuz",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "0d4f1475a18e2bf077e94fc78a731a0f6e715e1576f3da265aced0d1eedd9786",
+    "prevHash": "639618da9032b540e72b7488bfd1639a513a443aed5e8c32857f91fcd24af57d",
+    "hash": "fc04a4b47991d1f942ef0f2c77d79fdd8159cac2875efcac90610920a0d727c7",
+    "blockNumber": 1489452
+  },
+  {
+    "id": "audit_1786641496069_253",
+    "index": 253,
+    "timestamp": "2026-08-13T17:18:16.069Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_field_submitter_1786641492431",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786641496008_eyuz",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "219f54458b10f4da0bc589707ba4db56b0cb174252c6ebe83bf9dd30ffd36fa2",
+    "prevHash": "fc04a4b47991d1f942ef0f2c77d79fdd8159cac2875efcac90610920a0d727c7",
+    "hash": "f2c1807f52ff68f26ecb9a4ccc561cd14797756244a5b47265a20099ca22c965",
+    "blockNumber": 1489453
+  },
+  {
+    "id": "audit_1786641496279_254",
+    "index": 254,
+    "timestamp": "2026-08-13T17:18:16.279Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_independent_validator_1786641493245",
+    "userRole": "independent_validator",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786641496279_52cm6o",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "a5cde1d842a245a9289575082d79012532fc365474597d52aee5ac3d2010f005",
+    "prevHash": "f2c1807f52ff68f26ecb9a4ccc561cd14797756244a5b47265a20099ca22c965",
+    "hash": "fb58d456840fb4ee553e77ebf83fd8c287de6688a9bcc0e879f094e71263de40",
+    "blockNumber": 1489454
+  },
+  {
+    "id": "audit_1786643784934_255",
+    "index": 255,
+    "timestamp": "2026-08-13T17:56:24.934Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8845",
+      "evidenceHash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+      "caseId": "FIR-2026-001",
+      "txHash": "0x7a0d092246eec962f13945888a275d4aad09bc052971b538fa1ab938a596c161",
+      "merkleRoot": "0xdf3f6f812d3728e8dc3c4ef63b884e641f4218e424df6b452ba7578a22e78ebd",
+      "blockNumber": 15070073,
+      "fullPayload": {
+        "exhibitId": "EV-8845",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: fictional_aadhaar_demo.pdf",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "PDF Document",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: Authentic (98.4%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-13T17:56:24.932Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "425e8134e02128d79b8ccccef189badd6aff01bd374f247f75e84adbf35df6cb",
+    "prevHash": "fb58d456840fb4ee553e77ebf83fd8c287de6688a9bcc0e879f094e71263de40",
+    "hash": "53695867bd9ce63b9197110244a833d1c0e2f09d3f58bd36712e8a902cfeeca0",
+    "blockNumber": 1489455
+  },
+  {
+    "id": "audit_1786643785416_256",
+    "index": 256,
+    "timestamp": "2026-08-13T17:56:25.416Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8845",
+      "caseId": "FIR-2026-001",
+      "hash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+      "title": "CNN Analyzed: fictional_aadhaar_demo.pdf",
+      "txHash": "0x7a0d092246eec962f13945888a275d4aad09bc052971b538fa1ab938a596c161",
+      "blockNumber": 15070073,
+      "merkleRoot": "0xdf3f6f812d3728e8dc3c4ef63b884e641f4218e424df6b452ba7578a22e78ebd",
+      "cnnScore": 98.6,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "e8e454708cc8610f47c245f79f6063dd8db4aa6a1e448927a14ae4474631afc9",
+    "prevHash": "53695867bd9ce63b9197110244a833d1c0e2f09d3f58bd36712e8a902cfeeca0",
+    "hash": "b117b26b841b36a19dc8c51c0047eab3ebb1e893cc0af155881b9a8b631986e7",
+    "blockNumber": 1489456
+  },
+  {
+    "id": "audit_1786643798606_257",
+    "index": 257,
+    "timestamp": "2026-08-13T17:56:38.605Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8846",
+      "evidenceHash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+      "caseId": "FIR-2026-001",
+      "txHash": "0x293d746f584f7bf309986de0236797a4be64ba0f2fafa2b95a9b8b4cde59d2d2",
+      "merkleRoot": "0x25f847338f0a1dc7fc428abb092811a8e78f821519a7cf2057e45d7b7dd3b471",
+      "blockNumber": 15098358,
+      "fullPayload": {
+        "exhibitId": "EV-8846",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: file_000000006d2c722fba46d9fcc07c9db1.png",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: Authentic (98.4%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-13T17:56:38.605Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "7c53957df2e8a1b77239319fd1b74f721dd6ce52c401fbddbdb1cf848854b11a",
+    "prevHash": "b117b26b841b36a19dc8c51c0047eab3ebb1e893cc0af155881b9a8b631986e7",
+    "hash": "4edef4b9f62d0e03a64ac0590b42bb2fc1da6603c52d5953c16f47692cb34585",
+    "blockNumber": 1489457
+  },
+  {
+    "id": "audit_1786643799547_258",
+    "index": 258,
+    "timestamp": "2026-08-13T17:56:39.547Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8846",
+      "caseId": "FIR-2026-001",
+      "hash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+      "title": "CNN Analyzed: file_000000006d2c722fba46d9fcc07c9db1.png",
+      "txHash": "0x293d746f584f7bf309986de0236797a4be64ba0f2fafa2b95a9b8b4cde59d2d2",
+      "blockNumber": 15098358,
+      "merkleRoot": "0x25f847338f0a1dc7fc428abb092811a8e78f821519a7cf2057e45d7b7dd3b471",
+      "cnnScore": 98.6,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "2ce272a332b6355ff93f04bb9cd19f760b2da46fb82f0da73956f75ae91e74a3",
+    "prevHash": "4edef4b9f62d0e03a64ac0590b42bb2fc1da6603c52d5953c16f47692cb34585",
+    "hash": "3b322889e09ead3298a2411208804a0cbaa57a61df498137f23de1ad3ee1ed7e",
+    "blockNumber": 1489458
+  },
+  {
+    "id": "audit_1786644059166_259",
+    "index": 259,
+    "timestamp": "2026-08-13T18:00:59.166Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8847",
+      "evidenceHash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+      "caseId": "FIR-2026-001",
+      "txHash": "0x674e45008d3b2e43ef2edf17b81c0f13ac8dd60c3090017c3a2bbed5392b2a39",
+      "merkleRoot": "0x8c59459f185a7fe379755b02a3a27ec84e38f1000e4ce760d42335e249358425",
+      "blockNumber": 15047405,
+      "fullPayload": {
+        "exhibitId": "EV-8847",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: aadhar demo.pdf",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "PDF Document",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: Authentic (98.4%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-13T18:00:59.157Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "02560ee81e918ab00381782032861cbf9be2b4a5ee06eb0dec8a0be912a7e95f",
+    "prevHash": "3b322889e09ead3298a2411208804a0cbaa57a61df498137f23de1ad3ee1ed7e",
+    "hash": "d2166d3b56d0df782b8be3afe70d62570c077d289e09be16da797987d0cbd026",
+    "blockNumber": 1489459
+  },
+  {
+    "id": "audit_1786644060568_260",
+    "index": 260,
+    "timestamp": "2026-08-13T18:01:00.568Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8847",
+      "caseId": "FIR-2026-001",
+      "hash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+      "title": "CNN Analyzed: aadhar demo.pdf",
+      "txHash": "0x674e45008d3b2e43ef2edf17b81c0f13ac8dd60c3090017c3a2bbed5392b2a39",
+      "blockNumber": 15047405,
+      "merkleRoot": "0x8c59459f185a7fe379755b02a3a27ec84e38f1000e4ce760d42335e249358425",
+      "cnnScore": 98.6,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "90289114127c57a8a7afbac20254be431a1be3de44d487662ec8a827a428cfc4",
+    "prevHash": "d2166d3b56d0df782b8be3afe70d62570c077d289e09be16da797987d0cbd026",
+    "hash": "7fa0b96fc7eb57e78951c1dac89635c45b6ff5406423c58a95f9b5be18af304b",
+    "blockNumber": 1489460
+  },
+  {
+    "id": "audit_1786644579937_261",
+    "index": 261,
+    "timestamp": "2026-08-13T18:09:39.937Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8848",
+      "evidenceHash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+      "caseId": "FIR-2026-001",
+      "txHash": "0xbf81679ab17c1e972a14a3b8d40ff277ce16d1d2ff64b5b6356bbaf1749bf3d8",
+      "merkleRoot": "0x00ac682e27d2ddaa34f6baa2faa37bc839c7fbbc46948100df0fc87d240d3b18",
+      "blockNumber": 15013804,
+      "fullPayload": {
+        "exhibitId": "EV-8848",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: file_000000006d2c722fba46d9fcc07c9db1.png",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: Authentic (Original) (98.4%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-13T18:09:39.929Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "bb53ecfafdb44421bdb83a9aab8997de0979341b80a642bcd0478379cf610405",
+    "prevHash": "7fa0b96fc7eb57e78951c1dac89635c45b6ff5406423c58a95f9b5be18af304b",
+    "hash": "070797fb4687431f62b9e2a73d218fba1cddf14c1f53eed7fc2ced219624df9c",
+    "blockNumber": 1489461
+  },
+  {
+    "id": "audit_1786644581948_262",
+    "index": 262,
+    "timestamp": "2026-08-13T18:09:41.948Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8848",
+      "caseId": "FIR-2026-001",
+      "hash": "632ea28ba9b902bb237604e359d9719fbf48c573fee5084cdd0f43d90a2be0a1",
+      "title": "CNN Analyzed: file_000000006d2c722fba46d9fcc07c9db1.png",
+      "txHash": "0xbf81679ab17c1e972a14a3b8d40ff277ce16d1d2ff64b5b6356bbaf1749bf3d8",
+      "blockNumber": 15013804,
+      "merkleRoot": "0x00ac682e27d2ddaa34f6baa2faa37bc839c7fbbc46948100df0fc87d240d3b18",
+      "cnnScore": 98.6,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "fd28db3288b5e160f935dea1a619e6def49c75b8def32bdb4b463013dec9a20d",
+    "prevHash": "070797fb4687431f62b9e2a73d218fba1cddf14c1f53eed7fc2ced219624df9c",
+    "hash": "6c4ecc3a95f65955703fdcf6a02fd8b55baede3f63cc0d77eb3e96b299d50bff",
+    "blockNumber": 1489462
+  },
+  {
+    "id": "audit_1786644587443_263",
+    "index": 263,
+    "timestamp": "2026-08-13T18:09:47.443Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8849",
+      "evidenceHash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+      "caseId": "FIR-2026-001",
+      "txHash": "0x64b4a65ae2bc5d6905e015333d653063100aa82c43213abe1edd0a84ef04c2c2",
+      "merkleRoot": "0xe55a7a067a85fad7d1b6d7f16d4fb6314089252efe1081ef06e72dddc9c5246a",
+      "blockNumber": 15049286,
+      "fullPayload": {
+        "exhibitId": "EV-8849",
+        "caseId": "FIR-2026-001",
+        "evidenceHash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+        "custodian": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+        "title": "CNN Analyzed: aadhar demo.pdf",
+        "seizureBagId": "SEZ-2026-UNKNOWN",
+        "category": "PDF Document",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "N/A (Section 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [],
+        "notes": "Analyzed via ResNet50 CNN & 8-Detector Hybrid Engine. Verdict: Authentic (Original) (98.4%).",
+        "gpsLocation": "GPS Location Attached",
+        "signature": "NONE",
+        "timestamp": "2026-08-13T18:09:47.442Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "3932dc702451a968b7a4683d9999b07608086e54135018613a3296eebab2f6a8",
+    "prevHash": "6c4ecc3a95f65955703fdcf6a02fd8b55baede3f63cc0d77eb3e96b299d50bff",
+    "hash": "1e1366c6fd6a4e00c852b81e77ecae2992a4e69af0e931a97be7737e3f840ea8",
+    "blockNumber": 1489463
+  },
+  {
+    "id": "audit_1786644589480_264",
+    "index": 264,
+    "timestamp": "2026-08-13T18:09:49.480Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (CNN Neural Engine Terminal)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8849",
+      "caseId": "FIR-2026-001",
+      "hash": "e56c99a853687d6a0bf618ed5cb11b210094c3e7e45e005683be61ceb62dbe31",
+      "title": "CNN Analyzed: aadhar demo.pdf",
+      "txHash": "0x64b4a65ae2bc5d6905e015333d653063100aa82c43213abe1edd0a84ef04c2c2",
+      "blockNumber": 15049286,
+      "merkleRoot": "0xe55a7a067a85fad7d1b6d7f16d4fb6314089252efe1081ef06e72dddc9c5246a",
+      "cnnScore": 98.6,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.076,
+        "lng": 72.8777
+      }
+    },
+    "payloadHash": "e072aeba39edfe1692fffe06c380b941c9309fd2456c998eb6072509ab70b069",
+    "prevHash": "1e1366c6fd6a4e00c852b81e77ecae2992a4e69af0e931a97be7737e3f840ea8",
+    "hash": "aa4854710a7ec485138c04bc1e5a85b01a3e0a83fdd9ef8e0a5f744187b3cdf3",
+    "blockNumber": 1489464
+  },
+  {
+    "id": "audit_1786689662495_265",
+    "index": 265,
+    "timestamp": "2026-08-14T06:41:02.495Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "source": "admin_login"
+    },
+    "payloadHash": "9219a716d50f6f7558bd9f90041d3db7cd6808975394924fc3aecc1e317af471",
+    "prevHash": "aa4854710a7ec485138c04bc1e5a85b01a3e0a83fdd9ef8e0a5f744187b3cdf3",
+    "hash": "f2ccff1c87e0ab83122833fcc7d5bc87425610038432d7bd20db04c3ca2dcbb3",
+    "blockNumber": 1489465
+  },
+  {
+    "id": "audit_1786689721267_266",
+    "index": 266,
+    "timestamp": "2026-08-14T06:42:01.267Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "vishakhaharwande@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "vishakhaharwande@gmail.com",
+      "subject": "🔐 Nyayakasha — Secure Invite: Field Submitter Access"
+    },
+    "payloadHash": "5242b4334f543e548fe0bab7ef74588961e29c9cba177ad0e7f7998784371d88",
+    "prevHash": "f2ccff1c87e0ab83122833fcc7d5bc87425610038432d7bd20db04c3ca2dcbb3",
+    "hash": "f0f049ce287466eb7b29c2a8167e291327889a7aae216c82d4b186c8c1b63494",
+    "blockNumber": 1489466
+  },
+  {
+    "id": "audit_1786689739525_267",
+    "index": 267,
+    "timestamp": "2026-08-14T06:42:19.525Z",
+    "eventType": "INVITE_LINK_GENERATED",
+    "userId": "ha_admin_01",
+    "userRole": "higher_authority",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "recipientEmail": "vishakhaharwande@gmail.com",
+      "targetRole": "Field Submitter",
+      "emailSent": true
+    },
+    "payloadHash": "97684a34589c1015af9d829539e022f3cec63c51ce956b8c068233e1ebc0be91",
+    "prevHash": "f0f049ce287466eb7b29c2a8167e291327889a7aae216c82d4b186c8c1b63494",
+    "hash": "5d5278bb4c37c9d56709b7b899955351762537a1455610798657ac50acbb96a6",
+    "blockNumber": 1489467
+  },
+  {
+    "id": "audit_1786689808842_268",
+    "index": 268,
+    "timestamp": "2026-08-14T06:43:28.841Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786689808841_nfk9zq",
+      "approvalState": "active"
+    },
+    "payloadHash": "e1c11941c19e7556fa553c789bc5063d77bf9b9af2c9e53a0f6dbc5d030c1665",
+    "prevHash": "5d5278bb4c37c9d56709b7b899955351762537a1455610798657ac50acbb96a6",
+    "hash": "e1783009b18d31ef531b8c5bcdff36bede1cfeb0dea8c683a9ce078f26cca8ef",
+    "blockNumber": 1489468
+  },
+  {
+    "id": "audit_1786689808877_269",
+    "index": 269,
+    "timestamp": "2026-08-14T06:43:28.866Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande8@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "e7e40ef7a1fa30b2457ea57a61fca28bc700d31697383c94575a00e391451050",
+    "prevHash": "e1783009b18d31ef531b8c5bcdff36bede1cfeb0dea8c683a9ce078f26cca8ef",
+    "hash": "a3bfde3a9f2c10c519dd77970840d75d191f581456ddd4c9f88ba44526da75b7",
+    "blockNumber": 1489469
+  },
+  {
+    "id": "audit_1786689810327_270",
+    "index": 270,
+    "timestamp": "2026-08-14T06:43:30.327Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "a3bfde3a9f2c10c519dd77970840d75d191f581456ddd4c9f88ba44526da75b7",
+    "hash": "d2ff2a38a21444534936320baf644cfbad3e4cec20d28409badf4580c9dc78f9",
+    "blockNumber": 1489470
+  },
+  {
+    "id": "audit_1786690114645_271",
+    "index": 271,
+    "timestamp": "2026-08-14T06:48:34.645Z",
+    "eventType": "INSTITUTIONAL_REGISTRY_CHECK",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "registrySource": "State Police Department HR & Badge Registry",
+      "verified": true
+    },
+    "payloadHash": "ba2ca921f54d78c44d04940c0aaf34e042f7ead228d26ba9a33169f45e89425e",
+    "prevHash": "d2ff2a38a21444534936320baf644cfbad3e4cec20d28409badf4580c9dc78f9",
+    "hash": "3b3740fa5be450e8accbe4bcd6f10d7ea2b1d254a5aebf18834dac6311d81724",
+    "blockNumber": 1489471
+  },
+  {
+    "id": "audit_1786690114713_272",
+    "index": 272,
+    "timestamp": "2026-08-14T06:48:34.712Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "vishakhaharwande@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "vishakhaharwande@gmail.com",
+      "subject": "Nyayakasha — Registration Confirmation"
+    },
+    "payloadHash": "8a7edc85e69cb629dc92800f4ba4f02aaed5160836fbc828fcf2f0aaa18f0a60",
+    "prevHash": "3b3740fa5be450e8accbe4bcd6f10d7ea2b1d254a5aebf18834dac6311d81724",
+    "hash": "20f51c5c9865507e013b1eee127ab01b4d38374f0c18bdbe610b84f798962199",
+    "blockNumber": 1489472
+  },
+  {
+    "id": "audit_1786690114722_273",
+    "index": 273,
+    "timestamp": "2026-08-14T06:48:34.721Z",
+    "eventType": "USER_SIGNUP",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "email": "vishakhaharwande@gmail.com",
+      "approvalState": "institution_review"
+    },
+    "payloadHash": "886a7219aed1d07329aadd07aae53df34230f27995c5f9e2f237a125cc18640f",
+    "prevHash": "20f51c5c9865507e013b1eee127ab01b4d38374f0c18bdbe610b84f798962199",
+    "hash": "405e8604ea20dcef5c189d760023418721713626dab7ca8a03ca345a080025c8",
+    "blockNumber": 1489473
+  },
+  {
+    "id": "audit_1786690120124_274",
+    "index": 274,
+    "timestamp": "2026-08-14T06:48:40.124Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "institution_review",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "0b04fd9a71e5ae15e58d4d3d575c976dabc9a6ead7f6c767539dfe498b52bdee",
+    "prevHash": "405e8604ea20dcef5c189d760023418721713626dab7ca8a03ca345a080025c8",
+    "hash": "6707a0b7d465e782ea9df71649d3bd9299eaef0402306cac8e9f9eceb1a0af8e",
+    "blockNumber": 1489474
+  },
+  {
+    "id": "audit_1786690121113_275",
+    "index": 275,
+    "timestamp": "2026-08-14T06:48:41.113Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "6707a0b7d465e782ea9df71649d3bd9299eaef0402306cac8e9f9eceb1a0af8e",
+    "hash": "fbc81d2477b3e192f40bce50630e6db004a651cb491df50decc0f8b45f2a8cbf",
+    "blockNumber": 1489475
+  },
+  {
+    "id": "audit_1786690121671_276",
+    "index": 276,
+    "timestamp": "2026-08-14T06:48:41.671Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "fbc81d2477b3e192f40bce50630e6db004a651cb491df50decc0f8b45f2a8cbf",
+    "hash": "8273ff90f8c1db5a178796418e5d52f936f17ccbb4ca1abba7841d390359e2dc",
+    "blockNumber": 1489476
+  },
+  {
+    "id": "audit_1786690122299_277",
+    "index": 277,
+    "timestamp": "2026-08-14T06:48:42.299Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "8273ff90f8c1db5a178796418e5d52f936f17ccbb4ca1abba7841d390359e2dc",
+    "hash": "c139fef11f6d3c4ee542a9df71cdc101d5834d2552f3a1147f494d8058795632",
+    "blockNumber": 1489477
+  },
+  {
+    "id": "audit_1786690122905_278",
+    "index": 278,
+    "timestamp": "2026-08-14T06:48:42.904Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "c139fef11f6d3c4ee542a9df71cdc101d5834d2552f3a1147f494d8058795632",
+    "hash": "1a55bb700ca3544137c5bff781831813f7e44da310a86047621ec225059e97dc",
+    "blockNumber": 1489478
+  },
+  {
+    "id": "audit_1786690123482_279",
+    "index": 279,
+    "timestamp": "2026-08-14T06:48:43.482Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "1a55bb700ca3544137c5bff781831813f7e44da310a86047621ec225059e97dc",
+    "hash": "45fab9616e45483e1d0ee5d1a0f4729073cc967f37f4e7b44efb8494dcc599df",
+    "blockNumber": 1489479
+  },
+  {
+    "id": "audit_1786690124034_280",
+    "index": 280,
+    "timestamp": "2026-08-14T06:48:44.034Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "45fab9616e45483e1d0ee5d1a0f4729073cc967f37f4e7b44efb8494dcc599df",
+    "hash": "da59238cdbc8f37f641162bd3bef84fbd918b11c77d9e75f13868378492485ee",
+    "blockNumber": 1489480
+  },
+  {
+    "id": "audit_1786690124553_281",
+    "index": 281,
+    "timestamp": "2026-08-14T06:48:44.553Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "da59238cdbc8f37f641162bd3bef84fbd918b11c77d9e75f13868378492485ee",
+    "hash": "88785cc55ad13b29f8d0fc859b6570e959f9de8bc10651ed0d681dad36be9e5c",
+    "blockNumber": 1489481
+  },
+  {
+    "id": "audit_1786690125110_282",
+    "index": 282,
+    "timestamp": "2026-08-14T06:48:45.110Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "88785cc55ad13b29f8d0fc859b6570e959f9de8bc10651ed0d681dad36be9e5c",
+    "hash": "ba0e8c8856ff1074853b8380ac148fa4be046a007a0c2c8cc6641a082127093e",
+    "blockNumber": 1489482
+  },
+  {
+    "id": "audit_1786690125681_283",
+    "index": 283,
+    "timestamp": "2026-08-14T06:48:45.680Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "ba0e8c8856ff1074853b8380ac148fa4be046a007a0c2c8cc6641a082127093e",
+    "hash": "b003807a0bd1ae3fbbba879075557faa6dba952e8937479c279a4aa2c205b13a",
+    "blockNumber": 1489483
+  },
+  {
+    "id": "audit_1786690126239_284",
+    "index": 284,
+    "timestamp": "2026-08-14T06:48:46.239Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "b003807a0bd1ae3fbbba879075557faa6dba952e8937479c279a4aa2c205b13a",
+    "hash": "94a6c0fc80814cdc120c0f06e228411fa7bab60386554c467f5cba7ce0340bbd",
+    "blockNumber": 1489484
+  },
+  {
+    "id": "audit_1786690126746_285",
+    "index": 285,
+    "timestamp": "2026-08-14T06:48:46.746Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "94a6c0fc80814cdc120c0f06e228411fa7bab60386554c467f5cba7ce0340bbd",
+    "hash": "3b2767d85de29349006e22bf62ee8501a5c7f6fa445821c6b9a5a87536b13f8f",
+    "blockNumber": 1489485
+  },
+  {
+    "id": "audit_1786690134061_286",
+    "index": 286,
+    "timestamp": "2026-08-14T06:48:54.061Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "3b2767d85de29349006e22bf62ee8501a5c7f6fa445821c6b9a5a87536b13f8f",
+    "hash": "a9ae733b55c389c7cdb9c8e8d7a6f1164f1167c79479ee495d71c9c59b16472d",
+    "blockNumber": 1489486
+  },
+  {
+    "id": "audit_1786690134621_287",
+    "index": 287,
+    "timestamp": "2026-08-14T06:48:54.621Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "a9ae733b55c389c7cdb9c8e8d7a6f1164f1167c79479ee495d71c9c59b16472d",
+    "hash": "0740298610369e44a63068547eae87d4454a5b559fbad8f881cafec1e472e27a",
+    "blockNumber": 1489487
+  },
+  {
+    "id": "audit_1786690135161_288",
+    "index": 288,
+    "timestamp": "2026-08-14T06:48:55.161Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "0740298610369e44a63068547eae87d4454a5b559fbad8f881cafec1e472e27a",
+    "hash": "895432a7ab07221eb8eea4051e216c3efc16497d54d10700f461947fd42afd6a",
+    "blockNumber": 1489488
+  },
+  {
+    "id": "audit_1786690135714_289",
+    "index": 289,
+    "timestamp": "2026-08-14T06:48:55.714Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "895432a7ab07221eb8eea4051e216c3efc16497d54d10700f461947fd42afd6a",
+    "hash": "0b19402cdabb60a1e419ca989af2be759924d974929f369f100940ab857071e5",
+    "blockNumber": 1489489
+  },
+  {
+    "id": "audit_1786690136237_290",
+    "index": 290,
+    "timestamp": "2026-08-14T06:48:56.237Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "0b19402cdabb60a1e419ca989af2be759924d974929f369f100940ab857071e5",
+    "hash": "c3d7698c3398f63ddb525a6f94eb370328d08b72a55b056abcae7c32d3bb0f77",
+    "blockNumber": 1489490
+  },
+  {
+    "id": "audit_1786690136756_291",
+    "index": 291,
+    "timestamp": "2026-08-14T06:48:56.756Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "c3d7698c3398f63ddb525a6f94eb370328d08b72a55b056abcae7c32d3bb0f77",
+    "hash": "cb98a39fd603d1c992cd6ab0a0bfac1a51b9790b3e958028486531f33f8b69bb",
+    "blockNumber": 1489491
+  },
+  {
+    "id": "audit_1786690137265_292",
+    "index": 292,
+    "timestamp": "2026-08-14T06:48:57.265Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "cb98a39fd603d1c992cd6ab0a0bfac1a51b9790b3e958028486531f33f8b69bb",
+    "hash": "f433f3cc6da811fb50e7647f343fff10323dd8e9296b3dd793996e233e0fbdd2",
+    "blockNumber": 1489492
+  },
+  {
+    "id": "audit_1786690137764_293",
+    "index": 293,
+    "timestamp": "2026-08-14T06:48:57.764Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "f433f3cc6da811fb50e7647f343fff10323dd8e9296b3dd793996e233e0fbdd2",
+    "hash": "447393d92837876dca7a681737a046d868ce8aade3a4c8908f54d510f0022418",
+    "blockNumber": 1489493
+  },
+  {
+    "id": "audit_1786690138288_294",
+    "index": 294,
+    "timestamp": "2026-08-14T06:48:58.288Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "447393d92837876dca7a681737a046d868ce8aade3a4c8908f54d510f0022418",
+    "hash": "85262e925f27387b43e6d4bf02ff844d3a38be35818e820a584dedeb787f3893",
+    "blockNumber": 1489494
+  },
+  {
+    "id": "audit_1786690138748_295",
+    "index": 295,
+    "timestamp": "2026-08-14T06:48:58.748Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "85262e925f27387b43e6d4bf02ff844d3a38be35818e820a584dedeb787f3893",
+    "hash": "20ae2f39eff209f92c26de1ca20c8135ef005836b06a4b5a977b6d2f3bfec86f",
+    "blockNumber": 1489495
+  },
+  {
+    "id": "audit_1786690138942_296",
+    "index": 296,
+    "timestamp": "2026-08-14T06:48:58.942Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "20ae2f39eff209f92c26de1ca20c8135ef005836b06a4b5a977b6d2f3bfec86f",
+    "hash": "6948b5f9aa45c27f52fa5b02e5ae25ec73054f85cabd377a7fead0ba9f04a489",
+    "blockNumber": 1489496
+  },
+  {
+    "id": "audit_1786690139196_297",
+    "index": 297,
+    "timestamp": "2026-08-14T06:48:59.196Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "6948b5f9aa45c27f52fa5b02e5ae25ec73054f85cabd377a7fead0ba9f04a489",
+    "hash": "9023d6540db6674439cdb503ac3460ddc640698f6ce8ee326ad78531b18dff82",
+    "blockNumber": 1489497
+  },
+  {
+    "id": "audit_1786690139428_298",
+    "index": 298,
+    "timestamp": "2026-08-14T06:48:59.428Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "9023d6540db6674439cdb503ac3460ddc640698f6ce8ee326ad78531b18dff82",
+    "hash": "865a74d287332df5ae114e5878163bbc02ce5a6034dd7d95a14549c0571985ef",
+    "blockNumber": 1489498
+  },
+  {
+    "id": "audit_1786690139627_299",
+    "index": 299,
+    "timestamp": "2026-08-14T06:48:59.627Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "865a74d287332df5ae114e5878163bbc02ce5a6034dd7d95a14549c0571985ef",
+    "hash": "43258309efb7ff082a7b61d7316cf6f7929df50a7688dea8083951e8367411a4",
+    "blockNumber": 1489499
+  },
+  {
+    "id": "audit_1786690139817_300",
+    "index": 300,
+    "timestamp": "2026-08-14T06:48:59.817Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "43258309efb7ff082a7b61d7316cf6f7929df50a7688dea8083951e8367411a4",
+    "hash": "e40a2cee2300366f86740c778e38cc4412f7cc25eae89bf509352631a90c0db4",
+    "blockNumber": 1489500
+  },
+  {
+    "id": "audit_1786690140257_301",
+    "index": 301,
+    "timestamp": "2026-08-14T06:49:00.257Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "e40a2cee2300366f86740c778e38cc4412f7cc25eae89bf509352631a90c0db4",
+    "hash": "7c7d7cb2401d69595de4cc94a9eb2d0bd5d885bad9528c35a14cf7e6d1a963a0",
+    "blockNumber": 1489501
+  },
+  {
+    "id": "audit_1786690140808_302",
+    "index": 302,
+    "timestamp": "2026-08-14T06:49:00.808Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "7c7d7cb2401d69595de4cc94a9eb2d0bd5d885bad9528c35a14cf7e6d1a963a0",
+    "hash": "ec3ef8c79aa8374f101d90fa6c904f068ac481b11cc624fd02dc257aa856d646",
+    "blockNumber": 1489502
+  },
+  {
+    "id": "audit_1786690166780_303",
+    "index": 303,
+    "timestamp": "2026-08-14T06:49:26.780Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "ec3ef8c79aa8374f101d90fa6c904f068ac481b11cc624fd02dc257aa856d646",
+    "hash": "81705acb65829537c458bd50d19a2d1bb0e23d1eb6d646baab83a71a4d62e0b2",
+    "blockNumber": 1489503
+  },
+  {
+    "id": "audit_1786690167381_304",
+    "index": 304,
+    "timestamp": "2026-08-14T06:49:27.380Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "81705acb65829537c458bd50d19a2d1bb0e23d1eb6d646baab83a71a4d62e0b2",
+    "hash": "2bc86bfa416d5c1f4f336e988c51975944a817524ba7c591aa542eb5c057458d",
+    "blockNumber": 1489504
+  },
+  {
+    "id": "audit_1786690167959_305",
+    "index": 305,
+    "timestamp": "2026-08-14T06:49:27.959Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "2bc86bfa416d5c1f4f336e988c51975944a817524ba7c591aa542eb5c057458d",
+    "hash": "15a80ed08f9d1ae302989a02ab2ff47fd1457a953f60a1ce03ddf399f2ada536",
+    "blockNumber": 1489505
+  },
+  {
+    "id": "audit_1786690168471_306",
+    "index": 306,
+    "timestamp": "2026-08-14T06:49:28.471Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "15a80ed08f9d1ae302989a02ab2ff47fd1457a953f60a1ce03ddf399f2ada536",
+    "hash": "4f83b0098cdbafeb2c4bf3210c40e527a991bc6b11bd212183d3f3ef2009e955",
+    "blockNumber": 1489506
+  },
+  {
+    "id": "audit_1786690169028_307",
+    "index": 307,
+    "timestamp": "2026-08-14T06:49:29.027Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "4f83b0098cdbafeb2c4bf3210c40e527a991bc6b11bd212183d3f3ef2009e955",
+    "hash": "1fb06d03bcdcf4188119a952408f0cc1ec6264281f5918ba3c14019c781e8776",
+    "blockNumber": 1489507
+  },
+  {
+    "id": "audit_1786690169612_308",
+    "index": 308,
+    "timestamp": "2026-08-14T06:49:29.612Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "1fb06d03bcdcf4188119a952408f0cc1ec6264281f5918ba3c14019c781e8776",
+    "hash": "0b6c2ffc81d270a7550089064dd4d8d196993906af4a94af57c6fc5dd166906d",
+    "blockNumber": 1489508
+  },
+  {
+    "id": "audit_1786690170172_309",
+    "index": 309,
+    "timestamp": "2026-08-14T06:49:30.172Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "0b6c2ffc81d270a7550089064dd4d8d196993906af4a94af57c6fc5dd166906d",
+    "hash": "15ad9c5ef0a3909c223a3158453ea1fb7b20c518dbe685cc3b8d0914dd76a207",
+    "blockNumber": 1489509
+  },
+  {
+    "id": "audit_1786690170750_310",
+    "index": 310,
+    "timestamp": "2026-08-14T06:49:30.750Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "15ad9c5ef0a3909c223a3158453ea1fb7b20c518dbe685cc3b8d0914dd76a207",
+    "hash": "ffc4a3750f3d28d49cd1caab46fb029117a969e320c1eb3510befa4a840d8e5e",
+    "blockNumber": 1489510
+  },
+  {
+    "id": "audit_1786690171323_311",
+    "index": 311,
+    "timestamp": "2026-08-14T06:49:31.323Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "ffc4a3750f3d28d49cd1caab46fb029117a969e320c1eb3510befa4a840d8e5e",
+    "hash": "fed27dba9eb5a6a33fd24e2e39a132aa3af1050a73548112e16c3c6f36038fb8",
+    "blockNumber": 1489511
+  },
+  {
+    "id": "audit_1786690171868_312",
+    "index": 312,
+    "timestamp": "2026-08-14T06:49:31.867Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "fed27dba9eb5a6a33fd24e2e39a132aa3af1050a73548112e16c3c6f36038fb8",
+    "hash": "40db7aa737a0fa2057de1831d2c2fb7b011a59927a9397c5ab7976ca8cc7c114",
+    "blockNumber": 1489512
+  },
+  {
+    "id": "audit_1786690172423_313",
+    "index": 313,
+    "timestamp": "2026-08-14T06:49:32.423Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "40db7aa737a0fa2057de1831d2c2fb7b011a59927a9397c5ab7976ca8cc7c114",
+    "hash": "d5bb45990dfc347e85456a278a3901cd881f2a8e6a8c3794180e84d684219071",
+    "blockNumber": 1489513
+  },
+  {
+    "id": "audit_1786690172942_314",
+    "index": 314,
+    "timestamp": "2026-08-14T06:49:32.942Z",
+    "eventType": "APPROVAL_STATE_TRANSITION",
+    "userId": "usr_field_submitter_1786690113306",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "fromState": "mfa_pending",
+      "toState": "mfa_pending",
+      "actorRole": "higher_authority",
+      "note": "Approved by Higher Authority"
+    },
+    "payloadHash": "c17c2109043edff5aaf95d1570ff8d10e95b0d8b7792c0cc6e72640765c0af4c",
+    "prevHash": "d5bb45990dfc347e85456a278a3901cd881f2a8e6a8c3794180e84d684219071",
+    "hash": "fa14d7ba5032ec3ae91e108b249531458f70ea0404dcb79fea5eaf00564509b3",
+    "blockNumber": 1489514
+  },
+  {
+    "id": "audit_1786690484074_315",
+    "index": 315,
+    "timestamp": "2026-08-14T06:54:44.074Z",
+    "eventType": "SILENT_DURESS_ALERT_TRIGGERED",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786690483555_z8o7",
+      "status": "DISPATCHED_TO_VALIDATOR_BUS"
+    },
+    "payloadHash": "4268121797021c43e60ef778bdef07b4c9b067d1f1bc221f89aa0e20caad8fbb",
+    "prevHash": "fa14d7ba5032ec3ae91e108b249531458f70ea0404dcb79fea5eaf00564509b3",
+    "hash": "54c34f2f1d9bc9ad0e8bedeaec72f0ca04d892892c43dc261c82467d00af65c7",
+    "blockNumber": 1489515
+  },
+  {
+    "id": "audit_1786690484097_316",
+    "index": 316,
+    "timestamp": "2026-08-14T06:54:44.097Z",
+    "eventType": "DECOY_HONEYPOT_ENVIRONMENT_ACTIVATED",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "alertId": "alert_dur_1786690483555_z8o7",
+      "environmentMode": "DECOY_SANDBOX",
+      "message": "Decoy honeypot dataset served to session to protect physical safety and capture telemetry."
+    },
+    "payloadHash": "914075c248500e2113d3777214be31dde8d1a7d714843361970d812fa5422d06",
+    "prevHash": "54c34f2f1d9bc9ad0e8bedeaec72f0ca04d892892c43dc261c82467d00af65c7",
+    "hash": "9164ff66369b35933e0b48df63d363af6f149b0709add5f3311271218fb62043",
+    "blockNumber": 1489516
+  },
+  {
+    "id": "audit_1786690526932_317",
+    "index": 317,
+    "timestamp": "2026-08-14T06:55:26.932Z",
+    "eventType": "USER_LOGOUT",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "sessionId": "sess_1786689808841_nfk9zq"
+    },
+    "payloadHash": "6ca5a72b45fa3d07c019de72b3e8f5d3a4577ed676d8606ca085db1e1c347434",
+    "prevHash": "9164ff66369b35933e0b48df63d363af6f149b0709add5f3311271218fb62043",
+    "hash": "b35678a4200a249d93970da3799ce97824385df4fae630899bc66f846ad83184",
+    "blockNumber": 1489517
+  },
+  {
+    "id": "audit_1786690530867_318",
+    "index": 318,
+    "timestamp": "2026-08-14T06:55:30.867Z",
+    "eventType": "AUTH_SUCCESS",
+    "userId": "usr_auto_1786200151295",
+    "userRole": "field_submitter",
+    "ipAddress": "::1",
+    "details": {
+      "sessionId": "sess_1786690530866_bk6b5n",
+      "approvalState": "active"
+    },
+    "payloadHash": "75fb91d40d60a7814170db45fae7d8c729741f445e1c41640ab040def1227e7b",
+    "prevHash": "b35678a4200a249d93970da3799ce97824385df4fae630899bc66f846ad83184",
+    "hash": "932fb4b1a8cc4b05b3f6adde0d6a6dc91a67a5bc7a7734be3241f86da4f0722a",
+    "blockNumber": 1489518
+  },
+  {
+    "id": "audit_1786690530884_319",
+    "index": 319,
+    "timestamp": "2026-08-14T06:55:30.884Z",
+    "eventType": "NOTIFICATION_DISPATCH",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "SYSTEM",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "channel": "EMAIL",
+      "recipient": "siddheshharwande8@gmail.com",
+      "subject": "Nyayakasha — 2FA Verification Code"
+    },
+    "payloadHash": "e7e40ef7a1fa30b2457ea57a61fca28bc700d31697383c94575a00e391451050",
+    "prevHash": "932fb4b1a8cc4b05b3f6adde0d6a6dc91a67a5bc7a7734be3241f86da4f0722a",
+    "hash": "a52bc52c5e56d4edd676706d02a186c5f9bc01f325221b2797e5e603dd7423a0",
+    "blockNumber": 1489519
+  },
+  {
+    "id": "audit_1786690532113_320",
+    "index": 320,
+    "timestamp": "2026-08-14T06:55:32.113Z",
+    "eventType": "UNRECOGNIZED_DEVICE_VERIFIED",
+    "userId": "siddheshharwande8@gmail.com",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "deviceInfo": "Microsoft Edge / Windows (x64)",
+      "ip": "::1",
+      "mfaVerified": true,
+      "location": "Regional Network"
+    },
+    "payloadHash": "390bb6085c755ac0bb895f67d6fb67a7b2df5a5648b8b430037b6bdd1285a45e",
+    "prevHash": "a52bc52c5e56d4edd676706d02a186c5f9bc01f325221b2797e5e603dd7423a0",
+    "hash": "f44ec97505865099bd1e5420a64d718c943ac377b8770a235413a88090846b61",
+    "blockNumber": 1489520
+  },
+  {
+    "id": "audit_1786691370314_321",
+    "index": 321,
+    "timestamp": "2026-08-14T07:09:30.314Z",
+    "eventType": "EVIDENCE_BLOCKCHAIN_ANCHORED",
+    "userId": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+    "userRole": "FIELD_SUBMITTER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8850",
+      "evidenceHash": "0x8883ac228f20215b5305d714154d18f6c1af0c562df377393d93b13831c94aa4",
+      "caseId": "EV-2654",
+      "txHash": "0xd8b9e9d703ba37184bf9f62b2a62979d613e5a54d3a73b053929dfee3e91e9eb",
+      "merkleRoot": "0x8cb44ae57967704a2aebbac9d34f2dafda439827d94bf4c040b1551698d43995",
+      "blockNumber": 15089295,
+      "fullPayload": {
+        "exhibitId": "EV-8850",
+        "caseId": "EV-2654",
+        "evidenceHash": "0x8883ac228f20215b5305d714154d18f6c1af0c562df377393d93b13831c94aa4",
+        "custodian": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+        "title": "Evidence",
+        "seizureBagId": "SEZ-2026-36046",
+        "category": "Digital Photo Snapshot",
+        "seizureMethod": "Crime Scene Search",
+        "priorityLevel": "High Priority",
+        "witnessName": "Witness at Scene (Sec 65B)",
+        "preservationType": "Tamper-Evident Sealed Bag",
+        "tags": [
+          "HJGSHJGS"
+        ],
+        "notes": "jyeukdjkjhjdwdaddasdede",
+        "gpsLocation": "19.0165° N, 72.8498° E",
+        "signature": "ECDSA_SIGNED_SECP256K1",
+        "timestamp": "2026-08-14T07:09:30.304Z"
+      },
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased."
+    },
+    "payloadHash": "13bdd2bee74b98ae04a02a99f7240534486c769a96ef6f3ebcbb10c49ed2fb20",
+    "prevHash": "f44ec97505865099bd1e5420a64d718c943ac377b8770a235413a88090846b61",
+    "hash": "ada5d20991952c66a18fc4f0628714ffafbef6932ea2412f2ab21841be5ee12b",
+    "blockNumber": 1489521
+  },
+  {
+    "id": "audit_1786691372430_322",
+    "index": 322,
+    "timestamp": "2026-08-14T07:09:32.430Z",
+    "eventType": "EVIDENCE_EXHIBIT_SEALED",
+    "userId": "Officer Siddhesh Harwande (Zone 4 Field Operations)",
+    "userRole": "USER",
+    "ipAddress": "0.0.0.0",
+    "details": {
+      "exhibitId": "EV-8850",
+      "caseId": "EV-2654",
+      "hash": "0x8883ac228f20215b5305d714154d18f6c1af0c562df377393d93b13831c94aa4",
+      "title": "Evidence",
+      "txHash": "0xd8b9e9d703ba37184bf9f62b2a62979d613e5a54d3a73b053929dfee3e91e9eb",
+      "blockNumber": 15089295,
+      "merkleRoot": "0x8cb44ae57967704a2aebbac9d34f2dafda439827d94bf4c040b1551698d43995",
+      "cnnScore": 98.6,
+      "immutabilityNotice": "Permanent Immutable Blockchain Anchor on Polygon PoS. Cannot be edited, deleted, or erased.",
+      "geoCoords": {
+        "lat": 19.0165,
+        "lng": 72.8498
+      }
+    },
+    "payloadHash": "0d9fd1194508e3e21aa7a3191f4acaddc0857cb5ecb18aba01ce7f6b11fbf693",
+    "prevHash": "ada5d20991952c66a18fc4f0628714ffafbef6932ea2412f2ab21841be5ee12b",
+    "hash": "ae5b65eec5a57a4eb4455da7a698b078a069b308c22017d7c73e5f41203749c6",
+    "blockNumber": 1489522
   }
 ]
